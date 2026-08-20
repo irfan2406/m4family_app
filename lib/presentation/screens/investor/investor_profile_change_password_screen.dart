@@ -148,6 +148,9 @@ class _InvestorProfileChangePasswordScreenState
           // Ambient background glows (mirrors web WealthModeLayout).
           _ambient(),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -298,7 +301,7 @@ class _InvestorProfileChangePasswordScreenState
                   'CREDENTIAL UPDATE',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2.5,
                     color: _gold.withValues(alpha: 0.8),
                   ),
@@ -308,7 +311,7 @@ class _InvestorProfileChangePasswordScreenState
                   'Security',
                   style: GoogleFonts.gelasio(
                     fontSize: 18,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: -0.3,
                     color: textPrimary,
                   ),
@@ -328,7 +331,7 @@ class _InvestorProfileChangePasswordScreenState
         label,
         style: GoogleFonts.gelasio(
           fontSize: 10,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w700,
           letterSpacing: 2,
           color: muted,
         ),
@@ -434,7 +437,7 @@ class _InvestorProfileChangePasswordScreenState
                 'REQUIREMENTS',
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,
                   color: _gold.withValues(alpha: 0.7),
                 ),
@@ -519,7 +522,7 @@ class _InvestorProfileChangePasswordScreenState
                   'SECURE UPDATE',
                   style: GoogleFonts.gelasio(
                     fontSize: 12,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: Colors.black,
                   ),

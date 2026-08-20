@@ -52,6 +52,9 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           color: Theme.of(context).scaffoldBackgroundColor,
         ),
         child: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: Column(
             children: [
               // Header
@@ -64,7 +67,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                   color: Theme.of(context).colorScheme.onSurface,
                   backgroundColor: Theme.of(context).colorScheme.surface,
                   child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 96),
                     children: [
                       const SizedBox(height: 20),
                       _buildSupportMatrix(),
@@ -146,7 +149,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                 'SUPPORT HUB',
                 style: GoogleFonts.gelasio(
                   fontSize: 18,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: scheme.onSurface,
                   letterSpacing: 0.5,
                 ),
@@ -168,7 +171,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           'SUPPORT MATRIX',
           style: GoogleFonts.gelasio(
             fontSize: 9,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: scheme.onSurface,
             letterSpacing: 2,
           ),
@@ -243,7 +246,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               'OPERATIONAL LOGS',
               style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: scheme.onSurface,
                 letterSpacing: 2,
               ),
@@ -265,7 +268,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
             'VIEW ALL LOGS',
             style: GoogleFonts.ebGaramond(
               fontSize: 9,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: scheme.onSurface.withValues(alpha: 0.6),
               letterSpacing: 1.2,
             ),
@@ -282,7 +285,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
       padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
       decoration: BoxDecoration(
         color: scheme.onSurface.withValues(alpha: 0.02),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Center(
@@ -362,7 +365,7 @@ class _MatrixItem extends StatelessWidget {
               title,
               style: GoogleFonts.ebGaramond(
                 color: scheme.onSurface,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 fontSize: 14,
                 letterSpacing: -0.2,
               ),
@@ -373,7 +376,7 @@ class _MatrixItem extends StatelessWidget {
               style: GoogleFonts.ebGaramond(
                 color: scheme.onSurface.withValues(alpha: 0.68),
                 fontSize: 8,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 0.8,
               ),
             ),
@@ -443,7 +446,7 @@ class _TicketPreviewItem extends StatelessWidget {
                             style: GoogleFonts.ebGaramond(
                               color: const Color(0xFFC5A35B),
                               fontSize: 8,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -483,7 +486,7 @@ class _TicketPreviewItem extends StatelessWidget {
                               context,
                             ).colorScheme.onSurface.withOpacity(0.62),
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
@@ -505,7 +508,7 @@ class _TicketPreviewItem extends StatelessWidget {
                   style: GoogleFonts.ebGaramond(
                     color: badgeFg,
                     fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),

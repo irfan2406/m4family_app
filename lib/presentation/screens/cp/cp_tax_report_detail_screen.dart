@@ -112,6 +112,9 @@ class _CpTaxReportDetailScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _header(textPrimary, muted, isDark),
@@ -149,7 +152,7 @@ class _CpTaxReportDetailScreenState
                 Text(
                   'Tax Report',
                   style: GoogleFonts.ebGaramond(
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     fontSize: 16,
                     color: textPrimary,
                   ),
@@ -204,7 +207,7 @@ class _CpTaxReportDetailScreenState
               'Report not found',
               style: GoogleFonts.ebGaramond(
                 fontSize: 15,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 color: textPrimary,
               ),
             ),
@@ -251,7 +254,7 @@ class _CpTaxReportDetailScreenState
                 textAlign: TextAlign.center,
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: -0.3,
                   color: textPrimary,
                 ),

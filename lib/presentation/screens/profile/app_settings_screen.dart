@@ -86,11 +86,14 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     _darkMode = themeMode == ThemeMode.dark;
     final isDark = themeMode == ThemeMode.dark;
 
-    final bg = isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF);
+    final bg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
 
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark),
@@ -152,7 +155,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                 'APP SETTINGS',
                 style: GoogleFonts.gelasio(
                   fontSize: 14,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 2,
                 ),
@@ -162,7 +165,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                 'PLATFORM PREFERENCES',
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.5,
                   ),
@@ -272,7 +275,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: card,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: border),
         boxShadow: isDark
             ? []
@@ -291,7 +294,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
             label,
             style: GoogleFonts.gelasio(
               fontSize: 8,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                 alpha: 0.5,
               ),
@@ -352,7 +355,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                   title,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: textPrimary,
                   ),
                 ),

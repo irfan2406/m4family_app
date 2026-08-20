@@ -149,6 +149,9 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
           ),
         ),
         child: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: Column(
             children: [
               // 🏷️ STANDARDIZED HEADER (Web Parity)
@@ -176,7 +179,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                           'M4 FAMILY',
                           style: GoogleFonts.gelasio(
                             fontSize: 14,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2.5,
                             color: scheme.onSurface,
                           ),
@@ -222,7 +225,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                           'CONTENT HUB',
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 3,
                             color: scheme.onSurface,
                           ),
@@ -234,7 +237,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       _getTitle(),
                       style: GoogleFonts.gelasio(
                         fontSize: 32,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: scheme.onSurface,
                         letterSpacing: -1,
                         height: 0.9,
@@ -319,7 +322,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
               color: scheme.onSurface.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Icon(_getIcon(), size: 40, color: scheme.onSurface),
           ),
@@ -328,7 +331,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
             'NO ${widget.contentType.toUpperCase()} POSTS FOUND',
             style: GoogleFonts.ebGaramond(
               fontSize: 16,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: scheme.onSurface,
             ),
           ),
@@ -432,7 +435,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                                 .toUpperCase(),
                             style: GoogleFonts.ebGaramond(
                               fontSize: 7,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: scheme.onSurface,
                               letterSpacing: 1,
                             ),
@@ -455,7 +458,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 14,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                         letterSpacing: -0.5,
                       ),
@@ -479,7 +482,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                           'READ ARTICLE',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
                             letterSpacing: 1,
                           ),

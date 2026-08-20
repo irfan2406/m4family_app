@@ -60,6 +60,9 @@ class NotificationListScreen extends ConsumerWidget {
             )
           : null,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             // Header
@@ -114,7 +117,7 @@ class NotificationListScreen extends ConsumerWidget {
                                 'NOTIFICATIONS',
                                 style: GoogleFonts.ebGaramond(
                                   fontSize: 17,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w500,
                                   color: scheme.onSurface,
                                   letterSpacing: 0.2,
                                 ),
@@ -172,7 +175,7 @@ class NotificationListScreen extends ConsumerWidget {
                               'MARK ALL',
                               style: GoogleFonts.ebGaramond(
                                 fontSize: 9,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w500,
                                 color: isCp ? purple : scheme.onSurface,
                                 letterSpacing: 1,
                               ),
@@ -246,7 +249,7 @@ class NotificationListScreen extends ConsumerWidget {
             'NO NOTIFICATIONS',
             style: GoogleFonts.gelasio(
               fontSize: 12,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: scheme.onSurface.withValues(alpha: 0.68),
               letterSpacing: 2,
             ),
@@ -341,7 +344,7 @@ class _NotificationItem extends StatelessWidget {
                               notification.title.toString().toUpperCase(),
                               style: GoogleFonts.ebGaramond(
                                 fontSize: 14,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w500,
                                 color: isRead
                                     ? scheme.onSurfaceVariant
                                     : scheme.onSurface,
@@ -424,8 +427,8 @@ class _NotificationItem extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 32),
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141B3A) : Colors.white,
-              borderRadius: BorderRadius.circular(32),
+              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: scheme.outlineVariant.withValues(alpha: 0.2),
               ),
@@ -485,7 +488,7 @@ class _NotificationItem extends StatelessWidget {
                             .toUpperCase(),
                         style: GoogleFonts.ebGaramond(
                           fontSize: 8,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                           color: accent,
                         ),
@@ -497,7 +500,7 @@ class _NotificationItem extends StatelessWidget {
                         '• $timeStr',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 8,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                           color: scheme.onSurface.withValues(alpha: 0.68),
                         ),
@@ -512,7 +515,7 @@ class _NotificationItem extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
                     fontSize: 22,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: scheme.onSurface,
                   ),
                 ),
@@ -556,7 +559,7 @@ class _NotificationItem extends StatelessWidget {
                       isCp ? 'ACKNOWLEDGE' : 'DONE',
                       style: GoogleFonts.gelasio(
                         fontSize: 12,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                       ),
                     ),

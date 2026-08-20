@@ -185,6 +185,9 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
               : null,
         ),
         child: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: _isLoading
               ? Center(
                   child: CircularProgressIndicator(
@@ -350,7 +353,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         decoration: BoxDecoration(
           // Lighter, whiter "shadow box": soft white card with a faint border
           // and a subtle drop shadow (matches the reference empty state).
-          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
+          color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(48),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -418,7 +421,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
           padding: const EdgeInsets.all(30),
           decoration: BoxDecoration(
             // Web parity: bigger white card (p-8, rounded-[2.5rem]) + shadow.
-            color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+            color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -482,7 +485,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                           decoration: BoxDecoration(
                             color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withOpacity(0.03),
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withOpacity(0.1),
@@ -561,7 +564,7 @@ class _HeaderCircleAction extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
+          color: isDark ? Colors.white.withOpacity(0.1) : const Color(0xFFF4EFE3),
           shape: BoxShape.circle,
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),

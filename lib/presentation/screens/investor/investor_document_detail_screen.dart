@@ -145,7 +145,7 @@ class _InvestorDocumentDetailScreenState
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Material(
                   color: bg,
-                  borderRadius: BorderRadius.circular(32),
+                  borderRadius: BorderRadius.circular(20),
                   clipBehavior: Clip.antiAlias,
                   child: _buildContent(isDark, bg),
                 ),
@@ -217,7 +217,7 @@ class _InvestorDocumentDetailScreenState
             textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               fontSize: 14,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               color: textPrimary,
               letterSpacing: 1.5,
             ),
@@ -339,7 +339,7 @@ class _InvestorDocumentDetailScreenState
                     'SECURED ${type.toUpperCase()}',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       color: _gold,
                       letterSpacing: 1.5,
                     ),
@@ -350,7 +350,7 @@ class _InvestorDocumentDetailScreenState
                   title.toUpperCase(),
                   style: GoogleFonts.gelasio(
                     fontSize: 20,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: textPrimary,
                     height: 1.15,
                   ),
@@ -394,7 +394,7 @@ class _InvestorDocumentDetailScreenState
                   'VERIFICATION STATUS',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: muted,
                     letterSpacing: 1.5,
                   ),
@@ -423,7 +423,7 @@ class _InvestorDocumentDetailScreenState
                         'ENCRYPTED & VERIFIED',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 11,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w500,
                           color: _green,
                           letterSpacing: 1,
                         ),
@@ -438,7 +438,7 @@ class _InvestorDocumentDetailScreenState
                   'DOCUMENT OVERVIEW',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: muted,
                     letterSpacing: 1.5,
                   ),
@@ -513,7 +513,7 @@ class _MetaCell extends StatelessWidget {
                 label,
                 style: GoogleFonts.ebGaramond(
                   fontSize: 9,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   color: muted,
                   letterSpacing: 1,
                 ),
@@ -525,7 +525,7 @@ class _MetaCell extends StatelessWidget {
             value,
             style: GoogleFonts.ebGaramond(
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               color: textPrimary,
             ),
           ),
@@ -560,7 +560,7 @@ class _PrimaryButton extends StatelessWidget {
           label,
           style: GoogleFonts.gelasio(
             fontSize: 11,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
           ),
         ),

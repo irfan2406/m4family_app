@@ -59,6 +59,9 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
           color: Theme.of(context).scaffoldBackgroundColor,
         ),
         child: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -102,7 +105,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                       style: GoogleFonts.gelasio(
                         color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 32,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: -1,
                       ),
                     ),
@@ -114,7 +117,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                           context,
                         ).colorScheme.onSurface.withOpacity(0.72),
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                       ),
                     ),
@@ -228,7 +231,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                                       context,
                                     ).colorScheme.onSurface,
                                     fontSize: 14,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w500,
                                     letterSpacing: -0.5,
                                   ),
                                 ),
@@ -256,7 +259,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                                         (isDark ? Colors.white : Color(0xFF163A2C))
                                             .withOpacity(0.72),
                                     fontSize: 8,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w600,
                                     letterSpacing: 1,
                                   ),
                                 ),
@@ -272,7 +275,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                                   color: (isDark ? Colors.white : Color(0xFF163A2C))
                                       .withOpacity(0.72),
                                   fontSize: 9,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w500,
                                   letterSpacing: 1,
                                 ),
                               ),

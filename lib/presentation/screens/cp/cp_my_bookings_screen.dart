@@ -322,7 +322,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 14,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: -0.2,
                         color: onSurf,
                       ),
@@ -343,7 +343,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.ebGaramond(
                               fontSize: 10,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w500,
                               letterSpacing: 1.2,
                               color: muted,
                             ),
@@ -365,7 +365,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1.2,
                             color: scheme.primary.withValues(alpha: 0.8),
                           ),
@@ -390,7 +390,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                   status.toUpperCase(),
                   style: GoogleFonts.gelasio(
                     fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.8,
                     color: st.fg,
                   ),
@@ -487,7 +487,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.gelasio(
                           fontSize: 9,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2.0,
                           color: muted.withValues(alpha: 0.85),
                         ),
@@ -498,7 +498,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                       '$paymentProgress%',
                       style: GoogleFonts.ebGaramond(
                         fontSize: 16,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         fontStyle: FontStyle.italic,
                         color: scheme.primary,
                       ),
@@ -603,7 +603,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     'CP-TRK / ${id.substring(id.length - (id.length >= 8 ? 8 : id.length)).toUpperCase()}',
                     style: GoogleFonts.gelasio(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                       color: muted.withValues(alpha: 0.75),
                     ),
@@ -634,7 +634,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
       label,
       style: GoogleFonts.gelasio(
         fontSize: 9,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
         letterSpacing: 2.4,
         color: muted.withValues(alpha: 0.68),
       ),
@@ -647,7 +647,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
       textAlign: rightAlign ? TextAlign.right : TextAlign.left,
       style: GoogleFonts.ebGaramond(
         fontSize: 13,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w600,
         fontStyle: italic ? FontStyle.italic : FontStyle.normal,
         letterSpacing: -0.1,
         color: onSurf.withValues(alpha: 0.82),
@@ -723,14 +723,14 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               onChanged: (v) => setState(() => _searchQuery = v),
               style: GoogleFonts.ebGaramond(
                 fontSize: 15,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 1,
               ),
               decoration: InputDecoration(
                 hintText: 'SEARCH CLIENT, ID...',
                 hintStyle: GoogleFonts.ebGaramond(
                   fontSize: 9,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 1,
                   color: scheme.onSurface.withValues(alpha: 0.68),
                 ),
@@ -783,7 +783,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               ),
               style: GoogleFonts.ebGaramond(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 0.8,
                 color: scheme.onSurface,
               ),
@@ -826,6 +826,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
             child: ColoredBox(color: scheme.surface),
           ),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: Column(
               children: [
                 Padding(
@@ -863,7 +866,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                   'CLIENT BOOKINGS',
                                   style: GoogleFonts.ebGaramond(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w600,
                                     letterSpacing: -0.2,
                                     color: scheme.onSurface,
                                   ),
@@ -921,7 +924,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                             textAlign: TextAlign.center,
                                             style: GoogleFonts.gelasio(
                                               fontSize: 10,
-                                              fontWeight: FontWeight.w900,
+                                              fontWeight: FontWeight.w700,
                                               letterSpacing: 2.8,
                                               color: scheme.onSurface
                                                   .withValues(alpha: 0.68),
@@ -935,7 +938,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                               'CHECK SCHEDULED VISITS',
                                               style: GoogleFonts.gelasio(
                                                 fontSize: 10,
-                                                fontWeight: FontWeight.w900,
+                                                fontWeight: FontWeight.w700,
                                                 letterSpacing: 2.4,
                                                 color: scheme.primary,
                                               ),

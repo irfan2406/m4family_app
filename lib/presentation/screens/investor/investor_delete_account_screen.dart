@@ -109,7 +109,7 @@ class _InvestorDeleteAccountScreenState
             'FINAL CONFIRMATION',
             style: GoogleFonts.ebGaramond(
               fontSize: 13,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
               color: _danger,
             ),
@@ -132,7 +132,7 @@ class _InvestorDeleteAccountScreenState
                 'CANCEL',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 10,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.6,
                   ),
@@ -151,7 +151,7 @@ class _InvestorDeleteAccountScreenState
                 'EXECUTE PURGE',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1,
                   color: const Color(0xFFF4EFE3),
                 ),
@@ -226,6 +226,9 @@ class _InvestorDeleteAccountScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _header(textPrimary, muted),
@@ -295,7 +298,7 @@ class _InvestorDeleteAccountScreenState
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
                     fontSize: 16,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: _danger,
                   ),
@@ -306,7 +309,7 @@ class _InvestorDeleteAccountScreenState
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: muted,
                   ),
@@ -352,7 +355,7 @@ class _InvestorDeleteAccountScreenState
                   'CRITICAL WARNING',
                   style: GoogleFonts.gelasio(
                     fontSize: 12,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: _danger,
                   ),
@@ -383,7 +386,7 @@ class _InvestorDeleteAccountScreenState
       text,
       style: GoogleFonts.gelasio(
         fontSize: 11,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
         letterSpacing: 2,
         color: muted,
       ),
@@ -431,7 +434,7 @@ class _InvestorDeleteAccountScreenState
                           _purgeScope[i]['title'] as String,
                           style: GoogleFonts.ebGaramond(
                             fontSize: 12,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             color: textPrimary,
                           ),
                         ),
@@ -481,7 +484,7 @@ class _InvestorDeleteAccountScreenState
             'TYPE "$_confirmWord" TO CONFIRM',
             style: GoogleFonts.gelasio(
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: muted,
             ),
@@ -504,7 +507,7 @@ class _InvestorDeleteAccountScreenState
             textCapitalization: TextCapitalization.characters,
             style: GoogleFonts.gelasio(
               fontSize: 16,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: 3,
               color: textPrimary,
             ),
@@ -512,7 +515,7 @@ class _InvestorDeleteAccountScreenState
               hintText: _confirmWord,
               hintStyle: GoogleFonts.gelasio(
                 fontSize: 16,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 3,
                 color: muted.withValues(alpha: 0.72),
               ),
@@ -554,7 +557,7 @@ class _InvestorDeleteAccountScreenState
             'CREDENTIAL AUTHORIZATION',
             style: GoogleFonts.gelasio(
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: muted,
             ),
@@ -704,7 +707,7 @@ class _InvestorDeleteAccountScreenState
                       'EXECUTE PURGE',
                       style: GoogleFonts.gelasio(
                         fontSize: 11,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: const Color(0xFFF4EFE3),
                       ),
@@ -733,7 +736,7 @@ class _InvestorDeleteAccountScreenState
           'ABORT PROTOCOL',
           style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2,
             color: muted,
           ),

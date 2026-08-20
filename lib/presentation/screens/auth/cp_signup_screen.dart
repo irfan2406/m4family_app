@@ -158,11 +158,14 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
         GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2A20),
+      backgroundColor: const Color(0xFF0C312B),
       body: Stack(
         fit: StackFit.expand,
         children: [
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Column(
@@ -181,7 +184,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.06),
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: Colors.white.withOpacity(0.14),
                             ),
@@ -199,7 +202,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                                 'BACK TO GUEST PORTAL',
                                 style: GoogleFonts.gelasio(
                                   color: Colors.white,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w700,
                                   fontSize: 11,
                                   letterSpacing: 2,
                                 ),
@@ -239,7 +242,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     'PARTNER\nREGISTRATION',
                     style: GoogleFonts.gelasio(
                       fontSize: 42,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: Colors.white,
                       height: 1.1,
                       letterSpacing: -1,
@@ -330,9 +333,9 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                       onPressed: _submitting ? null : _submit,
                       style: FilledButton.styleFrom(
                         backgroundColor: const Color(0xFFF4EFE3),
-                        foregroundColor: const Color(0xFF0F2A20),
+                        foregroundColor: const Color(0xFF0C312B),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                       child: _submitting
@@ -350,7 +353,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                                 Text(
                                   'COMPLETE REGISTRATION',
                                   style: GoogleFonts.gelasio(
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w700,
                                     fontSize: 13,
                                     letterSpacing: 1.5,
                                   ),
@@ -379,7 +382,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                       'ALREADY HAVE AN ACCOUNT? LOGIN',
                       style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         color: Colors.white70,
                         letterSpacing: 2,
                       ),

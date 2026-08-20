@@ -201,7 +201,7 @@ class _InvestorPurgeCacheScreenState
             Text(
               'Purge Data',
               style: GoogleFonts.ebGaramond(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: textPrimary,
               ),
@@ -246,7 +246,7 @@ class _InvestorPurgeCacheScreenState
               'M4 FAMILY PRIVATE OFFICE',
               style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 4,
                 color: textPrimary.withValues(alpha: 0.72),
               ),
@@ -292,7 +292,7 @@ class _InvestorPurgeCacheScreenState
                   'NOTICE',
                   style: GoogleFonts.gelasio(
                     fontSize: 11,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: _red,
                   ),
@@ -357,7 +357,7 @@ class _InvestorPurgeCacheScreenState
                   'ESTIMATED CACHE SIZE',
                   style: GoogleFonts.gelasio(
                     fontSize: 11,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: muted,
                   ),
@@ -367,7 +367,7 @@ class _InvestorPurgeCacheScreenState
                   _formatBytes(_cacheBytes),
                   style: GoogleFonts.gelasio(
                     fontSize: 22,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: -0.5,
                     color: textPrimary,
                   ),
@@ -615,7 +615,7 @@ class _InvestorPurgeCacheScreenState
                     allDone ? 'CORE PURGE COMPLETE' : 'INITIATE FULL RESET',
                     style: GoogleFonts.gelasio(
                       fontSize: 12,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                       color: const Color(0xFFF4EFE3),
                     ),
@@ -642,7 +642,7 @@ class _InvestorPurgeCacheScreenState
           text,
           style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2,
             color: muted,
           ),

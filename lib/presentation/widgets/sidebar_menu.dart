@@ -71,7 +71,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.black.withOpacity(0.4)
-                    : const Color(0xFF0F2A20).withValues(alpha: 0.72),
+                    : const Color(0xFF0C312B).withValues(alpha: 0.72),
                 border: Border(
                   right: BorderSide(
                     color:
@@ -100,7 +100,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         style: GoogleFonts.gelasio(
                           color: Colors.white,
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 4,
                         ),
                       ),
@@ -276,7 +276,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                               context,
                             ).colorScheme.onSurface.withOpacity(0.68),
                             fontSize: 10,
-                            fontWeight: FontWeight.w900, // 👈 Match web bold
+                            fontWeight: FontWeight.w700, // 👈 Match web bold
                             letterSpacing: 4,
                           ),
                         ),
@@ -345,7 +345,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                               style: GoogleFonts.gelasio(
                                 color: isDark ? Colors.white70 : const Color(0xFFF4EFE3),
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                               ),
                             ),
@@ -492,7 +492,7 @@ class _SidebarExitButton extends ConsumerWidget {
               style: GoogleFonts.gelasio(
                 color: const Color(0xFFC65B46),
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 4,
               ),
             ),
@@ -584,7 +584,7 @@ class _SidebarItem extends StatelessWidget {
               style: GoogleFonts.ebGaramond(
                 color: isActive ? activeColor : const Color(0xFFF4EFE3),
                 fontSize: 14,
-                fontWeight: isActive ? FontWeight.w900 : FontWeight.w800,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                 letterSpacing: -0.2,
               ),
             ),
@@ -676,7 +676,7 @@ class _SidebarSubItem extends StatelessWidget {
         style: GoogleFonts.ebGaramond(
           color: const Color(0xFFF4EFE3),
           fontSize: 14,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

@@ -49,6 +49,9 @@ class GuestProfileScreen extends ConsumerWidget {
             ),
           ),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -115,7 +118,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                   shape: BoxShape.circle,
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.04)
-                                      : const Color(0xFFFBF7EF),
+                                      : const Color(0xFFF4EFE3),
                                   border: Border.all(
                                     color: borderColor,
                                     width: 2,
@@ -149,7 +152,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.ebGaramond(
                                   fontSize: 9,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w600,
                                   color: textMuted,
                                   letterSpacing: 1,
                                   height: 1.6,
@@ -235,7 +238,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.05)
-                                      : const Color(0xFFFBF7EF),
+                                      : const Color(0xFFF4EFE3),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(color: borderColor),
                                 ),
@@ -265,7 +268,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                       isDarkMode ? 'ENABLED' : 'DISABLED',
                                       style: GoogleFonts.ebGaramond(
                                         fontSize: 8,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w600,
                                         color: textMuted,
                                         letterSpacing: 1,
                                       ),
@@ -325,7 +328,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                     'INVESTOR LOGIN',
                                     style: GoogleFonts.gelasio(
                                       fontSize: 10,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w700,
                                       color: const Color(0xFFC65B46),
                                       letterSpacing: 1.5,
                                     ),
@@ -474,7 +477,7 @@ class _CircleButton extends StatelessWidget {
           shape: BoxShape.circle,
           color: isDark
               ? Colors.white.withValues(alpha: 0.05)
-              : const Color(0xFFFBF7EF),
+              : const Color(0xFFF4EFE3),
           border: Border.all(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.08)

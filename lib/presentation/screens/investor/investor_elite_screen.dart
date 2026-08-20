@@ -149,6 +149,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(textPrimary),
@@ -218,7 +221,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
               textAlign: TextAlign.center,
               style: GoogleFonts.gelasio(
                 fontSize: 16,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: textPrimary,
                 letterSpacing: 1.5,
               ),
@@ -242,7 +245,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
           end: Alignment.bottomRight,
           colors: [Color(0xFF141B3A), Color(0xFF141B3A), Colors.black],
         ),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.4),
@@ -252,7 +255,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
             // Abstract glow shape (bottom-right)
@@ -292,7 +295,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                                   'PLATINUM MEMBER',
                                   style: GoogleFonts.gelasio(
                                     fontSize: 10,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w700,
                                     letterSpacing: 2,
                                     color: Colors.white.withValues(alpha: 0.85),
                                   ),
@@ -304,7 +307,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                               'Active Membership',
                               style: GoogleFonts.gelasio(
                                 fontSize: 22,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 color: const Color(0xFFF4EFE3),
                               ),
                             ),
@@ -328,7 +331,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                           'PRO',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                             color: _gold,
                           ),
@@ -377,7 +380,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                 label.toUpperCase(),
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,
                   color: Colors.white.withValues(alpha: 0.7),
                 ),
@@ -387,7 +390,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                 value,
                 style: GoogleFonts.ebGaramond(
                   fontSize: 14,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   color: const Color(0xFFF4EFE3),
                 ),
               ),
@@ -409,7 +412,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
           'DOCUMENT REPOSITORY',
           style: GoogleFonts.gelasio(
             fontSize: 11,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2,
             color: textPrimary.withValues(alpha: 0.5),
           ),
@@ -424,7 +427,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
             'M4 SECURE',
             style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: textPrimary.withValues(alpha: 0.5),
             ),
@@ -440,7 +443,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 40),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: textPrimary.withValues(alpha: 0.06)),
         ),
@@ -456,7 +459,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
               'NO DOCUMENTS YET',
               style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: textPrimary.withValues(alpha: 0.72),
               ),
@@ -491,7 +494,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: textPrimary.withValues(alpha: 0.06)),
         boxShadow: isDark
@@ -529,7 +532,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 13,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: textPrimary,
                   ),
                 ),
@@ -553,7 +556,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                         meta[i].toUpperCase(),
                         style: GoogleFonts.ebGaramond(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 0.8,
                           color: muted,
                         ),
@@ -616,7 +619,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                       overflow: TextOverflow.visible,
                       style: GoogleFonts.gelasio(
                         fontSize: 28,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: textPrimary,
                       ),
                     ),
@@ -651,7 +654,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                         'SECURE ACCESS ONLY',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                           color: textPrimary,
                         ),
@@ -699,7 +702,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
               'UPGRADE MEMBERSHIP TIER',
               style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
                 color: textPrimary,
               ),

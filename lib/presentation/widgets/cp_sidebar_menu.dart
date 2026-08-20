@@ -70,7 +70,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                 'Logout',
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : const Color(0xFF163A2C),
                 ),
               ),
@@ -107,7 +107,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           'NO',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 13,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
                             color: isDark ? Colors.white70 : Colors.grey[800],
                           ),
@@ -130,7 +130,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           'YES',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 13,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
                             color: Colors.white,
                           ),
@@ -170,7 +170,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
-                color: isDark ? Colors.black.withOpacity(0.6) : const Color(0xFF0F2A20).withValues(alpha: 0.72),
+                color: isDark ? Colors.black.withOpacity(0.6) : const Color(0xFF0C312B).withValues(alpha: 0.72),
               ),
             ),
           ),
@@ -187,7 +187,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         'PARTNER MENU',
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                           color: Colors.white,
                         ),
@@ -303,7 +303,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           'QUICK ACTIONS',
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2,
                             color: Colors.white,
                           ),
@@ -353,7 +353,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         'THEME MODE',
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                           color: Colors.white,
                         ),
@@ -402,7 +402,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         // Web parity: bg-red-50 (light) / red-900/10 (dark).
                         color: isDark
                             ? const Color(0xFFC65B46).withOpacity(0.1)
-                            : const Color(0xFFFBF7EF),
+                            : const Color(0xFFF4EFE3),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
@@ -418,7 +418,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                             'LOGOUT',
                             style: GoogleFonts.gelasio(
                               fontSize: 12,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 1.5,
                               color: const Color(0xFFC65B46),
                             ),
@@ -489,7 +489,7 @@ class _SidebarItem extends StatelessWidget {
                 label,
                 style: GoogleFonts.ebGaramond(
                   fontSize: 14,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: -0.2,
                   color: isActive
                       ? purple
@@ -538,7 +538,7 @@ class _SubItem extends StatelessWidget {
               label,
               style: GoogleFonts.ebGaramond(
                 fontSize: 13,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 color: isDark ? Colors.white : const Color(0xFFF4EFE3),
               ),
             ),

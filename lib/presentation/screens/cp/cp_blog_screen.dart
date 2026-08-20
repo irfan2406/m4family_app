@@ -93,7 +93,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   'M4 FAMILY',
                   style: GoogleFonts.gelasio(
                     fontSize: 14,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     height: 1,
                   ),
@@ -149,7 +149,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                         'CONTENT HUB',
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 3,
                           color: isLight ? Colors.black : scheme.primary,
                         ),
@@ -161,7 +161,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                     'M4 BLOG',
                     style: GoogleFonts.gelasio(
                       fontSize: 32,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: -1,
                       height: 1.0,
                       color: isLight ? Colors.black : Colors.white,
@@ -202,7 +202,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                     'No blog posts found',
                     style: GoogleFonts.gelasio(
                       fontSize: 18,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: isLight ? Colors.black : Colors.white,
                     ),
                   ),
@@ -256,7 +256,7 @@ class _BlogCard extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: scheme.onSurface.withOpacity(0.05)),
         boxShadow: [
@@ -324,7 +324,7 @@ class _BlogCard extends ConsumerWidget {
                               (item['type'] ?? 'BLOG').toString().toUpperCase(),
                               style: GoogleFonts.ebGaramond(
                                 fontSize: 8,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                                 letterSpacing: 1.2,
                                 color: scheme.onSurface.withOpacity(0.7),
                               ),
@@ -348,7 +348,7 @@ class _BlogCard extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.ebGaramond(
                           fontSize: 13,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           height: 1.15,
                           letterSpacing: -0.3,
                           color: isLight ? Colors.black : Colors.white,
@@ -361,7 +361,7 @@ class _BlogCard extends ConsumerWidget {
                             'READ ARTICLE',
                             style: GoogleFonts.ebGaramond(
                               fontSize: 9,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 1,
                               color: isLight ? Colors.black : scheme.primary,
                             ),

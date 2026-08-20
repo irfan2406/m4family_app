@@ -183,7 +183,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               context,
             ).colorScheme.onSurface.withValues(alpha: 0.72),
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
           ),
         ),
@@ -370,7 +370,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           style: GoogleFonts.ebGaramond(
             color: foreground.withOpacity(0.85),
             fontSize: 10.5,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
             height: 1.4,
           ),
@@ -571,7 +571,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   style: GoogleFonts.gelasio(
                                     color: Colors.white,
                                     fontSize: 7,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w700,
                                     letterSpacing: 1.5,
                                   ),
                                 ),
@@ -713,7 +713,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   context,
                                 ).colorScheme.onSurface.withValues(alpha: 0.72),
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 1.5,
                               ),
                             ),
@@ -982,7 +982,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           style: GoogleFonts.gelasio(
                                             color: const Color(0xFFC5A35B),
                                             fontSize: 11,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.w700,
                                             letterSpacing: 2,
                                           ),
                                         ),
@@ -1037,7 +1037,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                         style: GoogleFonts.gelasio(
                                           color: Colors.white,
                                           fontSize: 8,
-                                          fontWeight: FontWeight.w900,
+                                          fontWeight: FontWeight.w700,
                                           letterSpacing: 1.5,
                                         ),
                                       ),
@@ -1141,7 +1141,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 Theme.of(context).brightness == Brightness.dark
                                 ? Colors.white
                                 : Colors.black,
-                            borderRadius: BorderRadius.circular(35),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             'READ MORE',
@@ -1151,7 +1151,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       Brightness.dark
                                   ? Colors.black
                                   : Colors.white,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               fontSize: 13,
                               letterSpacing: 1.5,
                             ),
@@ -1407,7 +1407,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
           ),
 
-          SliverToBoxAdapter(child: SizedBox(height: 120)),
+          SliverToBoxAdapter(child: SizedBox(height: 96)),
         ],
       ),
     );
@@ -1433,7 +1433,7 @@ class _CategoryChip extends StatelessWidget {
               : (isDark
                     ? Colors.white.withOpacity(0.05)
                     : Colors.black.withOpacity(0.05)),
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.1),
           ),
@@ -1750,7 +1750,7 @@ class _EngageCell extends StatelessWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
                 fontSize: 15,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
                 letterSpacing: 0.8,
                 height: 1.2,
@@ -1782,7 +1782,7 @@ class _QuickFilterSheet extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(35),
           topRight: Radius.circular(35),
@@ -1811,7 +1811,7 @@ class _QuickFilterSheet extends StatelessWidget {
                 'QUICK FILTERS',
                 style: GoogleFonts.gelasio(
                   fontSize: 18,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: Theme.of(context).colorScheme.onSurface,
                   letterSpacing: 1,
                 ),
@@ -1853,14 +1853,14 @@ class _QuickFilterSheet extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 20),
               decoration: BoxDecoration(
                 color: isDark ? Colors.white : Color(0xFF163A2C),
-                borderRadius: BorderRadius.circular(35),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Center(
                 child: Text(
                   'SHOW RESULTS',
                   style: GoogleFonts.gelasio(
-                    color: isDark ? Colors.black : Colors.white,
-                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    fontWeight: FontWeight.w700,
                     fontSize: 12,
                     letterSpacing: 1.5,
                   ),
@@ -1890,7 +1890,7 @@ class _FilterSection extends StatelessWidget {
           title,
           style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
             letterSpacing: 1.5,
           ),
@@ -1922,7 +1922,7 @@ class _FilterSection extends StatelessWidget {
                     style: GoogleFonts.ebGaramond(
                       color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                     ),
                   ),
@@ -2007,7 +2007,7 @@ class _PremiumInputField extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   // Web parity: white field with a soft shadow.
-                  color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+                  color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: hasError
@@ -2115,7 +2115,7 @@ class _PremiumDropdownField extends StatelessWidget {
             child: DropdownButtonHideUnderline(
               child: DropdownButtonFormField<String>(
                 value: value,
-                dropdownColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+                dropdownColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
                 style: GoogleFonts.ebGaramond(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 13,
@@ -2360,7 +2360,7 @@ class _UpdateCard extends StatelessWidget {
         margin: const EdgeInsets.only(left: 20, right: 10),
         decoration: BoxDecoration(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.04),
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
           ),
@@ -2400,7 +2400,7 @@ class _UpdateCard extends StatelessWidget {
                     type,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 7,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: Theme.of(
                         context,
                       ).colorScheme.onSurface.withOpacity(0.5),
@@ -2424,7 +2424,7 @@ class _UpdateCard extends StatelessWidget {
               title,
               style: GoogleFonts.ebGaramond(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: -0.5,
               ),
@@ -2468,7 +2468,7 @@ class _MediaCard extends StatelessWidget {
         width: 280,
         margin: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -2478,7 +2478,7 @@ class _MediaCard extends StatelessWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(20),
           child: Stack(
             children: [
               M4Image(
@@ -2520,7 +2520,7 @@ class _MediaCard extends StatelessWidget {
                     style: GoogleFonts.gelasio(
                       color: Colors.white,
                       fontSize: 7,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                     ),
                   ),
@@ -2619,7 +2619,7 @@ class _CommunityCard extends StatelessWidget {
                       style: GoogleFonts.gelasio(
                         color: Colors.white,
                         fontSize: 22,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -2629,7 +2629,7 @@ class _CommunityCard extends StatelessWidget {
                       style: GoogleFonts.ebGaramond(
                         color: Colors.white.withOpacity(0.7),
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         letterSpacing: 0.5,
                         height: 1.4,
                       ),

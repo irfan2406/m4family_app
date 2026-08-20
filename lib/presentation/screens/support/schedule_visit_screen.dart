@@ -49,7 +49,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -75,7 +75,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                 'SELECT DATE & TIME',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 15,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
                   color: isDark ? Colors.white : Color(0xFF163A2C),
                 ),
@@ -108,7 +108,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                     child: Text(
                       'CANCEL',
                       style: GoogleFonts.ebGaramond(
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
                     ),
@@ -120,7 +120,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
                       backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                      foregroundColor: isDark ? Colors.black : Colors.white,
+                      foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -129,7 +129,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                     child: Text(
                       'CONFIRM',
                       style: GoogleFonts.ebGaramond(
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
                     ),
@@ -268,7 +268,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               'SCHEDULE VISIT',
               style: GoogleFonts.ebGaramond(
                 fontSize: 16,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: 0,
               ),
@@ -335,7 +335,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                       'NOTE: OUR RELATIONSHIP MANAGER WILL CONTACT YOU WITHIN 2 HOURS TO CONFIRM YOUR SCHEDULE.',
                       style: GoogleFonts.ebGaramond(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         color: Theme.of(
                           context,
                         ).colorScheme.onSurface.withOpacity(0.7),
@@ -394,7 +394,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.gelasio(
                   fontSize: 8,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: Theme.of(
                     context,
                   ).colorScheme.onSurface.withOpacity(0.68),
@@ -414,7 +414,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       label,
       style: GoogleFonts.gelasio(
         fontSize: 10,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
         letterSpacing: 2,
       ),
@@ -434,7 +434,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     // draw a drop shadow, so this wraps the field in a shadowed Container.
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
@@ -509,7 +509,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141B3A) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isProjectDropdownOpen
@@ -562,7 +562,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141B3A) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(16),
               boxShadow: isDark
                   ? null
@@ -609,7 +609,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                             : (isDark ? Colors.white70 : Color(0xFF163A2C)),
                         fontSize: 11,
                         fontWeight: isSelected
-                            ? FontWeight.w900
+                            ? FontWeight.w600
                             : FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -636,7 +636,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         height: 56,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
@@ -691,7 +691,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         onPressed: _isSubmitting ? null : _submit,
         style: ElevatedButton.styleFrom(
           backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-          foregroundColor: isDark ? Colors.black : Colors.white,
+          foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
           disabledBackgroundColor: (isDark ? Colors.white : Color(0xFF163A2C))
               .withOpacity(0.7),
           shape: RoundedRectangleBorder(
@@ -705,7 +705,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: isDark ? Colors.black : Colors.white,
+                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                 ),
               )
             : Row(
@@ -714,7 +714,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                   Text(
                     'SECURE BOOKING',
                     style: GoogleFonts.gelasio(
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       fontSize: 13,
                       letterSpacing: 2,
                     ),
@@ -722,7 +722,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                   const SizedBox(width: 12),
                   Icon(
                     LucideIcons.send,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     size: 16,
                   ),
                 ],

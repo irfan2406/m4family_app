@@ -94,7 +94,7 @@ class _CpEliteCpConnectScreenState
             Text(
               'Partners Portal',
               style: GoogleFonts.ebGaramond(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: scheme.onSurface,
               ),
@@ -103,7 +103,7 @@ class _CpEliteCpConnectScreenState
               'INSTITUTIONAL CP NETWORK',
               style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: scheme.primary,
               ),
@@ -169,7 +169,7 @@ class _CpEliteCpConnectScreenState
                       'VERIFIED NODE MATRIX',
                       style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                         color: scheme.onSurface.withValues(alpha: 0.6),
                       ),
@@ -188,7 +188,7 @@ class _CpEliteCpConnectScreenState
                       'TOP TIER',
                       style: GoogleFonts.gelasio(
                         fontSize: 8,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: scheme.primary,
                       ),
@@ -227,7 +227,7 @@ class _CpEliteCpConnectScreenState
                           'NO MATCHES FOUND',
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2,
                             color: scheme.onSurface.withValues(alpha: 0.68),
                           ),
@@ -260,7 +260,7 @@ class _CpEliteCpConnectScreenState
         controller: _search,
         style: GoogleFonts.ebGaramond(
           fontSize: 15,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w500,
           letterSpacing: 0.5,
           color: scheme.onSurface,
         ),
@@ -269,7 +269,7 @@ class _CpEliteCpConnectScreenState
           hintText: 'SCAN VERIFIED INSTITUTIONAL PARTNERS…',
           hintStyle: GoogleFonts.ebGaramond(
             fontSize: 10,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.5,
             color: scheme.onSurface.withValues(alpha: 0.68),
           ),
@@ -381,7 +381,7 @@ class _StatCardState extends State<_StatCard> {
                       widget.stat.label.toUpperCase(),
                       style: GoogleFonts.gelasio(
                         fontSize: 9,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: widget.muted,
                       ),
@@ -391,7 +391,7 @@ class _StatCardState extends State<_StatCard> {
                       widget.stat.value.toUpperCase(),
                       style: GoogleFonts.gelasio(
                         fontSize: 18,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         color: scheme.onSurface,
                         height: 1,
                       ),
@@ -524,7 +524,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.ebGaramond(
                           fontSize: 15,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w500,
                           color: scheme.onSurface,
                           height: 1.05,
                         ),
@@ -556,7 +556,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                           p.rating,
                           style: GoogleFonts.ebGaramond(
                             fontSize: 12,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             color: scheme.primary,
                           ),
                         ),
@@ -594,7 +594,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                         'TRANSMIT',
                         style: GoogleFonts.gelasio(
                           fontSize: 9,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
                           color: scheme.onSurface,
                         ),
@@ -626,7 +626,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                         'LINK-UP',
                         style: GoogleFonts.gelasio(
                           fontSize: 9,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
                           color: scheme.surface,
                         ),
@@ -720,7 +720,7 @@ class _AcceleratorCard extends StatelessWidget {
                           'ACCELERATOR PROTOCOL',
                           style: GoogleFonts.gelasio(
                             fontSize: 18,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: -0.5,
                             color: scheme.surface,
                             height: 1,
@@ -765,7 +765,7 @@ class _AcceleratorCard extends StatelessWidget {
                         'VIEW YIELD STRUCTURES',
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                           color: scheme.onSurface,
                         ),

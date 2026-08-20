@@ -144,7 +144,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                         style: GoogleFonts.gelasio(
                           color: isDark ? Colors.white70 : Color(0xFF163A2C),
                           fontSize: 9,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                         ),
                       ),
@@ -156,7 +156,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                       (job['title'] ?? '').toString().toUpperCase(),
                       style: GoogleFonts.gelasio(
                         color: isDark ? Colors.white : Color(0xFF163A2C),
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         fontSize: 32,
                         letterSpacing: -1.5,
                         height: 0.95,
@@ -200,7 +200,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                         color: (isDark ? Colors.white : const Color(0xFF163A2C))
                             .withOpacity(0.9),
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 3,
                       ),
                     ),
@@ -211,7 +211,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                       decoration: BoxDecoration(
                         color: isDark
                             ? Colors.white.withOpacity(0.03)
-                            : Colors.white,
+                            : const Color(0xFFF4EFE3),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
                           color: (isDark ? Colors.white : Color(0xFF163A2C))
@@ -242,7 +242,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                         color: (isDark ? Colors.white : const Color(0xFF163A2C))
                             .withOpacity(0.9),
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 3,
                       ),
                     ),
@@ -291,7 +291,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                                   item.toString().toUpperCase(),
                                   style: GoogleFonts.gelasio(
                                     color: Theme.of(context).scaffoldBackgroundColor,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w700,
                                     fontSize: 9,
                                     letterSpacing: 1.5,
                                   ),
@@ -354,9 +354,9 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-              foregroundColor: isDark ? Colors.black : Colors.white,
+              foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(32),
+                borderRadius: BorderRadius.circular(20),
               ),
               elevation: 20,
               shadowColor: Colors.white.withOpacity(0.2),
@@ -367,7 +367,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                 Text(
                   'APPLY FOR THIS POSITION',
                   style: GoogleFonts.gelasio(
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     fontSize: 11,
                     letterSpacing: 1.5,
                   ),
@@ -388,7 +388,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
       style: GoogleFonts.gelasio(
         color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.9),
         fontSize: 10,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
         letterSpacing: 3,
       ),
     );
@@ -501,7 +501,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             style: GoogleFonts.ebGaramond(
               color: isDark ? Colors.white : Color(0xFF163A2C),
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: 1,
             ),
             maxLines: 2,
@@ -517,7 +517,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
       decoration: BoxDecoration(
         // Web parity: white pill with a subtle border/shadow and dark content.
-        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+        color: isDark ? Colors.white.withOpacity(0.05) : const Color(0xFFF4EFE3),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.1),
         ),
@@ -545,7 +545,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
               style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white : Color(0xFF163A2C),
                 fontSize: 10,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 1.2,
               ),
             ),
@@ -577,13 +577,11 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
         style: style.copyWith(color: Colors.white.withOpacity(0.85)),
       );
     }
-    return ShaderMask(
-      shaderCallback: (bounds) => const LinearGradient(
-        colors: [Color(0xFF141B3A), Color(0xFFFBF7EF)],
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-      ).createShader(bounds),
-      child: Text(text, style: style.copyWith(color: Colors.white)),
+    // Solid forest green (was a left-to-right navy->cream gradient that faded
+    // the last words into the cream card and made them unreadable).
+    return Text(
+      text,
+      style: style.copyWith(color: const Color(0xFF163A2C)),
     );
   }
 
@@ -594,7 +592,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
+        color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.08),
@@ -674,7 +672,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                         ? Colors.white.withOpacity(0.85)
                         : const Color(0xFF163A2C),
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                   ),
                 ),
@@ -684,7 +682,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                   style: GoogleFonts.ebGaramond(
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                     fontSize: 15,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: -0.2,
                   ),
                 ),

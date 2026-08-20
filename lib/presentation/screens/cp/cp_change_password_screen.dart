@@ -145,6 +145,9 @@ class _CpChangePasswordScreenState
           // Ambient background glows (mirrors web WealthModeLayout).
           _ambient(),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -295,7 +298,7 @@ class _CpChangePasswordScreenState
                   'SECURITY SETTINGS',
                   style: GoogleFonts.gelasio(
                     fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2.5,
                     color: _purple.withValues(alpha: 0.7),
                   ),
@@ -305,7 +308,7 @@ class _CpChangePasswordScreenState
                   'Change Password',
                   style: GoogleFonts.gelasio(
                     fontSize: 18,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: -0.3,
                     color: textPrimary,
                   ),
@@ -325,7 +328,7 @@ class _CpChangePasswordScreenState
         label,
         style: GoogleFonts.gelasio(
           fontSize: 10,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w700,
           letterSpacing: 2,
           color: muted,
         ),
@@ -431,7 +434,7 @@ class _CpChangePasswordScreenState
                 'REQUIREMENTS',
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,
                   color: _purple.withValues(alpha: 0.6),
                 ),
@@ -516,7 +519,7 @@ class _CpChangePasswordScreenState
                   'UPDATE PASSWORD',
                   style: GoogleFonts.gelasio(
                     fontSize: 12,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: Colors.white,
                   ),

@@ -170,7 +170,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
       decoration: BoxDecoration(
         color: isDark
             ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
-            : Colors.white,
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.1),
@@ -199,7 +199,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
           hintStyle: GoogleFonts.ebGaramond(
             color: scheme.onSurface.withValues(alpha: 0.68),
             fontSize: 12,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.5,
           ),
           prefixIcon: Icon(
@@ -279,7 +279,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
       decoration: BoxDecoration(
         color: isDark
             ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
-            : Colors.white,
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.1),
@@ -317,7 +317,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
             'STILL NEED HELP?',
             style: GoogleFonts.gelasio(
               fontSize: 20,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: scheme.onSurface,
               letterSpacing: 0.5,
             ),
@@ -347,7 +347,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                foregroundColor: isDark ? Colors.black : Colors.white,
+                foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -356,7 +356,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
               child: Text(
                 'CONTACT SUPPORT',
                 style: GoogleFonts.gelasio(
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   fontSize: 11,
                   letterSpacing: 1.5,
                 ),
@@ -411,7 +411,7 @@ class _FaqCategory extends StatelessWidget {
           decoration: BoxDecoration(
             color: isDark
                 ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
-                : Colors.white,
+                : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(24),
             // Web parity: a clean, visible thin outline border — the FAQ groups
             // read as outlined cards, not soft-shadow "floating" cards.
@@ -490,7 +490,7 @@ class _FaqRowState extends State<_FaqRow> {
                       // full-strength dark, heavier than the previous 11px/700.
                       style: GoogleFonts.ebGaramond(
                         color: scheme.onSurface,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         fontSize: 12,
                         letterSpacing: 0.2,
                         height: 1.3,

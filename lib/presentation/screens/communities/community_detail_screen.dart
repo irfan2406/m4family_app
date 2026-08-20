@@ -231,7 +231,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.7),
                         fontSize: 13,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                       ),
                     ),
@@ -309,9 +309,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                 .toString()
                                 .toUpperCase(),
                             style: GoogleFonts.gelasio(
-                              color: const Color(0xFFFBF7EF),
+                              color: const Color(0xFFF4EFE3),
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 3,
                             ),
                           ).animate().fadeIn(delay: 400.ms),
@@ -434,7 +434,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           decoration: BoxDecoration(
                             color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withOpacity(0.04),
-                            borderRadius: BorderRadius.circular(32),
+                            borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withOpacity(0.06),
@@ -470,7 +470,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                         (isDark ? Colors.white : Color(0xFF163A2C))
                                             .withOpacity(0.7),
                                     fontSize: 8,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w600,
                                     letterSpacing: 0.5,
                                     height: 1.4,
                                   ),
@@ -512,7 +512,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                               color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withOpacity(0.68),
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 2,
                             ),
                           ),
@@ -541,10 +541,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                               width: 280,
                               margin: const EdgeInsets.only(right: 20),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
+                                borderRadius: BorderRadius.circular(20),
                               ),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(30),
+                                borderRadius: BorderRadius.circular(20),
                                 child: Stack(
                                   fit: StackFit.expand,
                                   children: [
@@ -596,7 +596,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                             style: GoogleFonts.ebGaramond(
                                               color: Colors.white,
                                               fontSize: 16,
-                                              fontWeight: FontWeight.w900,
+                                              fontWeight: FontWeight.w600,
                                               letterSpacing: -0.5,
                                             ),
                                           ),
@@ -758,7 +758,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                   'REGISTER INTEREST',
                                   style: GoogleFonts.gelasio(
                                     fontSize: 12,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w700,
                                     letterSpacing: 3,
                                   ),
                                 ),
@@ -772,7 +772,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                             color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withOpacity(0.68),
                             fontSize: 8,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2,
                           ),
                         ),
@@ -843,7 +843,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                         style: GoogleFonts.ebGaramond(
                                           color: Colors.white,
                                           fontSize: 16,
-                                          fontWeight: FontWeight.w900,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                       const SizedBox(height: 5),
@@ -924,7 +924,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
           hintStyle: GoogleFonts.gelasio(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2,
           ),
         ),
@@ -985,7 +985,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     return PopupMenuButton<String>(
       offset: const Offset(0, 64),
       constraints: const BoxConstraints(minWidth: 240),
-      color: isDark ? const Color(0xFF141B3A) : Colors.white,
+      color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
       elevation: 8,
       // Web popup: `rounded-2xl border shadow-2xl`.
       shape: RoundedRectangleBorder(
@@ -1098,7 +1098,7 @@ class _SectionHeader extends StatelessWidget {
                     style: GoogleFonts.gelasio(
                       color: isDark ? Colors.white : Color(0xFF163A2C),
                       fontSize: 24,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: -0.5,
                       height: 1.15,
                     ),
@@ -1111,7 +1111,7 @@ class _SectionHeader extends StatelessWidget {
                         color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.68),
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                       ),
                     ),
@@ -1181,7 +1181,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                             color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withOpacity(0.68),
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2,
                           ),
                         ),
@@ -1196,7 +1196,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                         style: GoogleFonts.gelasio(
                           color: isDark ? Colors.white : Color(0xFF163A2C),
                           fontSize: 18,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: -1,
                         ),
                       ),
@@ -1313,7 +1313,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                   style: GoogleFonts.ebGaramond(
                                     color: Colors.white,
                                     fontSize: 8,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w600,
                                     letterSpacing: 1,
                                   ),
                                 ),
@@ -1340,7 +1340,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                         style: GoogleFonts.gelasio(
                                           color: Colors.white,
                                           fontSize: 22,
-                                          fontWeight: FontWeight.w900,
+                                          fontWeight: FontWeight.w700,
                                           letterSpacing: -1,
                                         ),
                                       ),
@@ -1384,7 +1384,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                               0.68,
                                             ),
                                             fontSize: 7,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.w600,
                                             letterSpacing: 1,
                                           ),
                                         ),

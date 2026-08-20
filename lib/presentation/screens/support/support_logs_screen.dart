@@ -61,8 +61,11 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
     return Scaffold(
       backgroundColor: isDark
           ? const Color(0xFF141B3A)
-          : const Color(0xFFFBF7EF),
+          : const Color(0xFFF4EFE3),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Stack(
           children: [
             Column(
@@ -144,7 +147,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                   'TICKET LOGS',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 16,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                     letterSpacing: 0,
                   ),
@@ -208,7 +211,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                         hintStyle: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.white12 : Colors.black12,
                           fontSize: 11,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 0.5,
                         ),
                         filled: false,
@@ -239,7 +242,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
               ),
               child: Icon(
                 LucideIcons.sliders,
-                color: isDark ? Colors.black : Colors.white,
+                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                 size: 18,
               ),
             ),
@@ -267,7 +270,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                   style: GoogleFonts.ebGaramond(
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                     fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1,
                   ),
                 ),
@@ -282,7 +285,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
   void _showCategoryFilter(bool isDark) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -297,7 +300,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
               style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                 fontSize: 10,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 1,
               ),
             ),
@@ -341,7 +344,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                 ? (isDark ? Colors.black : Colors.white)
                 : (isDark ? Colors.white : Color(0xFF163A2C)),
             fontSize: 10,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),
@@ -368,7 +371,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
             style: GoogleFonts.ebGaramond(
               color: isDark ? Colors.white38 : Color(0xFF5E6B60),
               fontSize: 10,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               letterSpacing: 1,
             ),
           ),
@@ -414,16 +417,16 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
               Text(
                 'INITIATE NEW SERVICE TICKET',
                 style: GoogleFonts.ebGaramond(
-                  color: isDark ? Colors.black : Colors.white,
+                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
                 ),
               ),
               const SizedBox(width: 12),
               Icon(
                 LucideIcons.messageSquare,
-                color: isDark ? Colors.black : Colors.white,
+                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                 size: 16,
               ),
             ],
@@ -440,7 +443,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
         style: GoogleFonts.gelasio(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.62),
           fontSize: 10,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w700,
           letterSpacing: 2,
         ),
       ),
@@ -507,7 +510,7 @@ class _TicketCard extends StatelessWidget {
                         style: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                           fontSize: 8,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
@@ -530,7 +533,7 @@ class _TicketCard extends StatelessWidget {
                             style: GoogleFonts.ebGaramond(
                               color: statusColor,
                               fontSize: 8,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
@@ -544,7 +547,7 @@ class _TicketCard extends StatelessWidget {
                   style: GoogleFonts.ebGaramond(
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                     fontSize: 16,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -597,7 +600,7 @@ class _TicketDetailSheet extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
       ),
       padding: const EdgeInsets.all(32),
@@ -635,7 +638,7 @@ class _TicketDetailSheet extends StatelessWidget {
                   style: GoogleFonts.ebGaramond(
                     color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -655,7 +658,7 @@ class _TicketDetailSheet extends StatelessWidget {
                   style: GoogleFonts.ebGaramond(
                     color: isResolved ? Colors.green : const Color(0xFFC5A35B),
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -667,7 +670,7 @@ class _TicketDetailSheet extends StatelessWidget {
             style: GoogleFonts.gelasio(
               color: isDark ? Colors.white : Color(0xFF163A2C),
               fontSize: 20,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 32),
@@ -695,7 +698,7 @@ class _TicketDetailSheet extends StatelessWidget {
             style: GoogleFonts.ebGaramond(
               color: isDark ? Colors.white24 : Colors.black26,
               fontSize: 10,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               letterSpacing: 1,
             ),
           ),
@@ -716,7 +719,7 @@ class _TicketDetailSheet extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                foregroundColor: isDark ? Colors.black : Colors.white,
+                foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -724,7 +727,7 @@ class _TicketDetailSheet extends StatelessWidget {
               child: Text(
                 'DISMISS AUDIT',
                 style: GoogleFonts.ebGaramond(
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   fontSize: 12,
                 ),
               ),
@@ -750,7 +753,7 @@ class _TicketDetailSheet extends StatelessWidget {
           style: GoogleFonts.ebGaramond(
             color: isDark ? Colors.white24 : Colors.black26,
             fontSize: 10,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.5,
           ),
         ),
@@ -759,7 +762,7 @@ class _TicketDetailSheet extends StatelessWidget {
           style: GoogleFonts.ebGaramond(
             color: valueColor ?? (isDark ? Colors.white : Color(0xFF163A2C)),
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],
@@ -791,7 +794,7 @@ class _DetailItem extends StatelessWidget {
             style: GoogleFonts.ebGaramond(
               color: isDark ? Colors.white24 : Colors.black26,
               fontSize: 8,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               letterSpacing: 0.5,
             ),
           ),
@@ -801,7 +804,7 @@ class _DetailItem extends StatelessWidget {
             style: GoogleFonts.ebGaramond(
               color: valueColor ?? (isDark ? Colors.white70 : Color(0xFF163A2C)),
               fontSize: 10,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

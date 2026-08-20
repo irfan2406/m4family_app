@@ -185,6 +185,9 @@ class _InvestorChangePasswordScreenState
           // Ambient background glows (mirrors web WealthModeLayout).
           _ambient(),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -347,7 +350,7 @@ class _InvestorChangePasswordScreenState
                   'SECURITY SETTINGS',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2.5,
                     color: _gold.withValues(alpha: 0.8),
                   ),
@@ -357,7 +360,7 @@ class _InvestorChangePasswordScreenState
                   'Change Password',
                   style: GoogleFonts.gelasio(
                     fontSize: 18,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: -0.3,
                     color: textPrimary,
                   ),
@@ -377,7 +380,7 @@ class _InvestorChangePasswordScreenState
         label,
         style: GoogleFonts.gelasio(
           fontSize: 10,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w700,
           letterSpacing: 2,
           color: muted,
         ),
@@ -480,7 +483,7 @@ class _InvestorChangePasswordScreenState
             'STRENGTH: $_strengthLabel',
             style: GoogleFonts.gelasio(
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: color,
             ),
@@ -553,7 +556,7 @@ class _InvestorChangePasswordScreenState
                 'REQUIREMENTS',
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,
                   color: _gold.withValues(alpha: 0.7),
                 ),
@@ -638,7 +641,7 @@ class _InvestorChangePasswordScreenState
                   'UPDATE PASSWORD',
                   style: GoogleFonts.gelasio(
                     fontSize: 12,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: Colors.black,
                   ),

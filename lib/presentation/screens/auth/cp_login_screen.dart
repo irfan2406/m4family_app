@@ -36,12 +36,15 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
     });
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2A20),
+      backgroundColor: const Color(0xFF0C312B),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const Positioned.fill(child: ColoredBox(color: Color(0xFF0F2A20))),
+          const Positioned.fill(child: ColoredBox(color: Color(0xFF0C312B))),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Column(
@@ -128,7 +131,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                     'CHANNEL\nPARTNER',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 46,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: Colors.white,
                       height: 1.05,
                       letterSpacing: -1.5,
@@ -183,7 +186,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                           'FORGOT PASSWORD?',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             color: Colors.white70,
                             letterSpacing: 1.5,
                           ),
@@ -197,7 +200,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                           'REGISTER NOW',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: const Color(0xFFF4EFE3),
                             letterSpacing: 1.5,
                           ),
@@ -217,9 +220,9 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         height: 64,
                         child: Material(
                           color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(32),
+                          borderRadius: BorderRadius.circular(20),
                           child: InkWell(
-                            borderRadius: BorderRadius.circular(32),
+                            borderRadius: BorderRadius.circular(20),
                             onTap: loading
                                 ? null
                                 : () async {
@@ -260,9 +263,9 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                 gradient: const LinearGradient(
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
-                                  colors: [Color(0xFFF4EFE3), Color(0xFFFBF7EF)],
+                                  colors: [Color(0xFFF4EFE3), Color(0xFFF4EFE3)],
                                 ),
-                                borderRadius: BorderRadius.circular(32),
+                                borderRadius: BorderRadius.circular(20),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -285,8 +288,8 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                             Text(
                                               'AUTHORIZE ACCESS',
                                               style: GoogleFonts.ebGaramond(
-                                                color: const Color(0xFF0F2A20),
-                                                fontWeight: FontWeight.w800,
+                                                color: const Color(0xFF0C312B),
+                                                fontWeight: FontWeight.w500,
                                                 fontSize: 13,
                                                 letterSpacing: 1.5,
                                               ),
@@ -294,7 +297,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                             Container(
                                               padding: const EdgeInsets.all(6),
                                               decoration: BoxDecoration(
-                                                color: const Color(0xFF0F2A20).withOpacity(
+                                                color: const Color(0xFF0C312B).withOpacity(
                                                   0.2,
                                                 ),
                                                 shape: BoxShape.circle,
@@ -321,7 +324,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: Colors.white70,
                       letterSpacing: 2,
                       height: 1.6,

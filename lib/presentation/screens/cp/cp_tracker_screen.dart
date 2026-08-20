@@ -108,6 +108,9 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
       backgroundColor: scheme.surface,
       drawer: const CpSidebarMenu(),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildCustomHeader(scheme),
@@ -123,7 +126,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                       onRefresh: _load,
                       color: Colors.black,
                       child: ListView(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 96),
                         children: [
                           const SizedBox(height: 12),
                           _buildStatBar(scheme, fmt),
@@ -192,7 +195,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                     'SUCCESS PIPELINE',
                     style: GoogleFonts.gelasio(
                       fontSize: 14,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: scheme.onSurface,
                       letterSpacing: 1.5,
                     ),
@@ -204,7 +207,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 'STATEMENT & PULSE',
                 style: GoogleFonts.gelasio(
                   fontSize: 12.5,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: scheme.onSurface.withValues(alpha: 0.68),
                   letterSpacing: 2,
                 ),
@@ -303,7 +306,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             label,
             style: GoogleFonts.ebGaramond(
               fontSize: 12,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: scheme.onSurface.withValues(alpha: 0.68),
               letterSpacing: 1,
             ),
@@ -313,7 +316,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             value,
             style: GoogleFonts.ebGaramond(
               fontSize: 12.5,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: scheme.onSurface,
             ),
           ),
@@ -355,7 +358,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                       hintText: 'SEARCH PROSPECT...',
                       hintStyle: GoogleFonts.gelasio(
                         fontSize: 12,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: scheme.onSurface.withValues(alpha: 0.62),
                         letterSpacing: 1.5,
                       ),
@@ -390,7 +393,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
               ),
               style: GoogleFonts.ebGaramond(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
                 letterSpacing: 1,
               ),
@@ -422,7 +425,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         // Web parity: subtle border + a prominent shadow-2xl so every card
         // has a clear, consistent outline that lifts off the background.
         border: Border.all(
@@ -476,7 +479,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                                 .toUpperCase(),
                             style: GoogleFonts.ebGaramond(
                               fontSize: 12,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: scheme.onSurface,
                               letterSpacing: 0.5,
                             ),
@@ -498,7 +501,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                                       .toUpperCase(),
                                   style: GoogleFonts.ebGaramond(
                                     fontSize: 10.5,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w600,
                                     color: scheme.onSurface.withValues(
                                       alpha: 0.62,
                                     ),
@@ -534,7 +537,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                         status,
                         style: GoogleFonts.ebGaramond(
                           fontSize: 12.5,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: isCompleted
                               ? Colors.green[700]
                               : scheme.onSurface.withValues(alpha: 0.68),
@@ -623,7 +626,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                       'VERIFICATION LIFECYCLE',
                       style: GoogleFonts.gelasio(
                         fontSize: 12.5,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: scheme.onSurface.withValues(alpha: 0.62),
                         letterSpacing: 1.5,
                       ),
@@ -682,7 +685,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
           title,
           style: GoogleFonts.ebGaramond(
             fontSize: 12,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: titleColor.withValues(alpha: 0.82),
             letterSpacing: 1.2,
           ),
@@ -698,7 +701,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                   r.$1,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 11.5,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: scheme.onSurface.withValues(alpha: 0.62),
                   ),
                 ),
@@ -707,7 +710,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                   r.$2.toUpperCase(),
                   style: GoogleFonts.ebGaramond(
                     fontSize: 11.5,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: scheme.onSurface.withValues(alpha: 0.92),
                   ),
                 ),
@@ -760,7 +763,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
         label,
         style: GoogleFonts.ebGaramond(
           fontSize: 12,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           color: fg,
           letterSpacing: 1.2,
         ),
@@ -773,7 +776,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
@@ -802,7 +805,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                     DateFormat('MMM yyyy').format(_month).toUpperCase(),
                     style: GoogleFonts.gelasio(
                       fontSize: 12.5,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                     ),
                   ),
@@ -841,7 +844,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                   d,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 12.5,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: scheme.onSurface.withValues(alpha: 0.62),
                   ),
                 ),
@@ -873,7 +876,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                   '$dayNo',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 12,
-                    fontWeight: sel ? FontWeight.w900 : FontWeight.w700,
+                    fontWeight: sel ? FontWeight.w600 : FontWeight.w700,
                     color: sel
                         ? Colors.purple
                         : scheme.onSurface.withValues(alpha: 0.8),

@@ -102,7 +102,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
 
     if (_isSuccess) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(40),
@@ -114,11 +114,11 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                   height: 100,
                   decoration: BoxDecoration(
                     color: isDark ? Colors.white : Color(0xFF163A2C),
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Icon(
                     LucideIcons.check,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     size: 50,
                   ),
                 ).animate().scale(duration: 500.ms, curve: Curves.elasticOut),
@@ -127,7 +127,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                   'REQUEST REGISTERED',
                   style: GoogleFonts.gelasio(
                     fontSize: 24,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: -1,
                   ),
                 ).animate().fadeIn(delay: 200.ms),
@@ -138,7 +138,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
                     color: isDark ? Colors.white38 : Color(0xFF5E6B60),
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     height: 1.8,
                   ),
@@ -151,7 +151,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                     height: 64,
                     decoration: BoxDecoration(
                       color: isDark ? Colors.white : Color(0xFF163A2C),
-                      borderRadius: BorderRadius.circular(32),
+                      borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
                           color: (isDark ? Colors.white : Color(0xFF163A2C))
@@ -165,8 +165,8 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                       child: Text(
                         'RETURN TO PROJECT',
                         style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.black : Colors.white,
-                          fontWeight: FontWeight.w900,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          fontWeight: FontWeight.w700,
                           fontSize: 10,
                           letterSpacing: 2,
                         ),
@@ -182,7 +182,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -208,7 +208,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
               'SEND INQUIRY',
               style: GoogleFonts.ebGaramond(
                 fontSize: 14,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: isDark ? Colors.white : Color(0xFF163A2C),
               ),
             ),
@@ -217,7 +217,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
               style: GoogleFonts.gelasio(
                 fontSize: 8,
                 color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
               ),
             ),
@@ -252,7 +252,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                     color: isDark
                         ? Colors.white.withOpacity(0.02)
                         : Colors.white,
-                    borderRadius: BorderRadius.circular(32),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isDark
                           ? Colors.white.withOpacity(0.05)
@@ -286,7 +286,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                         ),
                         child: Icon(
                           LucideIcons.sparkles,
-                          color: isDark ? Colors.black : Colors.white,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           size: 28,
                         ),
                       ),
@@ -299,7 +299,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                               'PRIORITY INTEREST',
                               style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 1.5,
                                 color: isDark ? Colors.white : Color(0xFF163A2C),
                               ),
@@ -371,7 +371,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                     height: 72,
                     decoration: BoxDecoration(
                       color: isDark ? Colors.white : Color(0xFF163A2C),
-                      borderRadius: BorderRadius.circular(36),
+                      borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
                           color: (isDark ? Colors.white : Color(0xFF163A2C))
@@ -387,7 +387,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                               width: 24,
                               height: 24,
                               child: CircularProgressIndicator(
-                                color: isDark ? Colors.black : Colors.white,
+                                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                 strokeWidth: 3,
                               ),
                             )
@@ -397,8 +397,8 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                                 Text(
                                   'AUTHORIZE INQUIRY',
                                   style: GoogleFonts.gelasio(
-                                    color: isDark ? Colors.black : Colors.white,
-                                    fontWeight: FontWeight.w900,
+                                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                    fontWeight: FontWeight.w700,
                                     fontSize: 11,
                                     letterSpacing: 3,
                                   ),
@@ -406,7 +406,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                                 const SizedBox(width: 16),
                                 Icon(
                                   LucideIcons.send,
-                                  color: isDark ? Colors.black : Colors.white,
+                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                   size: 18,
                                 ),
                               ],
@@ -424,7 +424,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                       textAlign: TextAlign.center,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 8,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: isDark ? Colors.white24 : Colors.black26,
                         letterSpacing: 0.5,
                         height: 1.6,
@@ -449,7 +449,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
         label,
         style: GoogleFonts.gelasio(
           fontSize: 9,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w700,
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
           letterSpacing: 2,
         ),
@@ -486,7 +486,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
         inputFormatters: inputFormatters,
         style: GoogleFonts.ebGaramond(
           fontSize: 15,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           color: isDark ? Colors.white : Color(0xFF163A2C),
           letterSpacing: 0.5,
         ),
@@ -499,7 +499,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
           hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
           ),
           icon: maxLines == 1
               ? Icon(

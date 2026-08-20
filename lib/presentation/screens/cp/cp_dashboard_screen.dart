@@ -116,6 +116,9 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
     showModalBottomSheet<void>(
       context: context,
       builder: (ctx) => SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -230,7 +233,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                     offset: const Offset(0, 0),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 0),
-                      child: M4Theme.taglineWordmark(context, height: 300),
+                      child: M4Theme.taglineWordmark(context, height: 120),
                     ),
                   ),
 
@@ -247,7 +250,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                                 aspectRatio: 4 / 3,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(32),
+                                    borderRadius: BorderRadius.circular(20),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withOpacity(0.15),
@@ -257,7 +260,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                                     ],
                                   ),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(32),
+                                    borderRadius: BorderRadius.circular(20),
                                     child: CachedNetworkImage(
                                       imageUrl:
                                           'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
@@ -301,7 +304,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                                     style: GoogleFonts.gelasio(
                                       color: Colors.white,
                                       fontSize: 7,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w700,
                                       letterSpacing: 1.5,
                                     ),
                                   ),
@@ -375,7 +378,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.black,
-        borderRadius: BorderRadius.circular(34),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -387,7 +390,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                 'AVAILABLE COMMISSION',
                 style: GoogleFonts.gelasio(
                   fontSize: 9,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2.5,
                   color: Colors.white70,
                 ),
@@ -404,7 +407,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                 'AED ',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 16,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: Colors.white70,
                 ),
               ),
@@ -412,7 +415,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                 _balance().toString(),
                 style: GoogleFonts.gelasio(
                   fontSize: 48,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: Colors.white,
                   height: 1,
                 ),
@@ -447,7 +450,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
               label,
               style: GoogleFonts.ebGaramond(
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: Colors.white70,
                 letterSpacing: 1,
               ),
@@ -457,7 +460,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
               val,
               style: GoogleFonts.ebGaramond(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),
             ),
@@ -538,7 +541,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       child: Container(
         width: 180,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(34),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -548,7 +551,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(34),
+          borderRadius: BorderRadius.circular(20),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -580,7 +583,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                     'ONGOING',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -596,7 +599,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                       p['title'] ?? '',
                       style: GoogleFonts.ebGaramond(
                         color: Colors.white,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         fontSize: 16,
                       ),
                     ),
@@ -605,7 +608,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                       'FROM 18% YOY',
                       style: GoogleFonts.ebGaramond(
                         color: Colors.white70,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         fontSize: 8,
                         letterSpacing: 1,
                       ),
@@ -644,7 +647,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
         Text(
           'REGISTERED LEADS',
           style: GoogleFonts.ebGaramond(
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
           ),
         ),
@@ -668,7 +671,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                   'FILTER',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1,
                   ),
                 ),
@@ -693,7 +696,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
           hintText: 'SEARCH PROSPECTS...',
           hintStyle: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: Colors.black12,
             letterSpacing: 2,
           ),
@@ -719,7 +722,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(34),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.04),
@@ -743,7 +746,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                         _leadName(lead).toLowerCase(),
                         style: GoogleFonts.gelasio(
                           fontSize: 20,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: -0.5,
                         ),
                       ),
@@ -751,7 +754,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                         _leadProject(lead).toUpperCase(),
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           color: Colors.black45,
                           letterSpacing: 1.5,
                         ),
@@ -764,15 +767,15 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFBF7EF).withOpacity(0.15),
+                      color: const Color(0xFFF4EFE3).withOpacity(0.15),
                       borderRadius: BorderRadius.circular(99),
                     ),
                     child: Text(
                       status.replaceAll('_', ' ').toUpperCase(),
                       style: GoogleFonts.ebGaramond(
                         fontSize: 8,
-                        fontWeight: FontWeight.w900,
-                        color: const Color(0xFFFBF7EF),
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFFF4EFE3),
                         letterSpacing: 1,
                       ),
                     ),
@@ -807,7 +810,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                     child: Container(
                       height: 4,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFBF7EF),
+                        color: const Color(0xFFF4EFE3),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -833,7 +836,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                         'CALL CLIENT',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: Colors.black,
                           letterSpacing: 1,
                         ),
@@ -858,7 +861,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                         'UPDATE STATUS',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                         ),
                       ),
@@ -890,7 +893,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                             'PAYMENT JOURNEY',
                             style: GoogleFonts.ebGaramond(
                               fontSize: 9,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 1,
                             ),
                           ),
@@ -922,7 +925,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       label,
       style: GoogleFonts.ebGaramond(
         fontSize: 8,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w600,
         color: active ? Colors.black : Colors.black12,
         letterSpacing: 1,
       ),

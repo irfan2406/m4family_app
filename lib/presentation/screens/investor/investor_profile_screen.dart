@@ -106,8 +106,11 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 120),
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 96),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -290,7 +293,11 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     required bool hasPhoto,
     required String avatarUrl,
   }) {
-    final card = isDark ? const Color(0xFFF4EFE3).withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    // Deeper cream (lightAccent) so the card reads as cream against the greige
+    // page instead of near-white.
+    final card = isDark
+        ? const Color(0xFFF4EFE3).withValues(alpha: 0.03)
+        : const Color(0xFFEDE5D6);
     final border = (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
       alpha: isDark ? 0.08 : 0.06,
     );
@@ -301,14 +308,14 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
         initials,
         style: GoogleFonts.gelasio(
           fontSize: 28,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w700,
           color: Colors.black,
         ),
       ),
     );
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: border),
         color: card,
         boxShadow: [
@@ -333,7 +340,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
-                    color: const Color(0xFFFBF7EF),
+                    color: const Color(0xFFF4EFE3),  // lighter cream tile on the deeper cream card
                   ),
                   child: hasPhoto
                       ? CachedNetworkImage(
@@ -355,7 +362,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.ebGaramond(
                           fontSize: 16,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w500,
                           color: textPrimary,
                           letterSpacing: 0.2,
                         ),
@@ -376,7 +383,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                         phone,
                         style: GoogleFonts.ebGaramond(
                           fontSize: 11,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w500,
                           color: textPrimary,
                           letterSpacing: 0.5,
                         ),
@@ -403,7 +410,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.ebGaramond(
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w600,
                                   color: bg,
                                   letterSpacing: 1,
                                 ),
@@ -422,7 +429,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                               'BORN: $born',
                               style: GoogleFonts.ebGaramond(
                                 fontSize: 11,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w500,
                                 color: textPrimary.withValues(alpha: 0.7),
                                 letterSpacing: 0.8,
                               ),
@@ -449,7 +456,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                   'POINTS',
                   style: GoogleFonts.gelasio(
                     fontSize: 11,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: textPrimary,
                     letterSpacing: 2,
                   ),
@@ -458,7 +465,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                   '$points',
                   style: GoogleFonts.gelasio(
                     fontSize: 22,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: textPrimary,
                     letterSpacing: -0.5,
                   ),
@@ -476,7 +483,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
       text,
       style: GoogleFonts.gelasio(
         fontSize: 11,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
         color: muted,
         letterSpacing: 2.5,
       ),
@@ -541,7 +548,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                       subtitle.toUpperCase(),
                       style: GoogleFonts.ebGaramond(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         color: muted,
                         letterSpacing: 1,
                       ),
@@ -610,7 +617,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                 'LOG OUT',
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: Colors.red,
                   letterSpacing: 2,
                 ),

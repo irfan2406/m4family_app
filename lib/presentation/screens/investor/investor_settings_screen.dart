@@ -23,7 +23,7 @@ class _InvestorSettingsScreenState
     extends ConsumerState<InvestorSettingsScreen> {
   // Accent for this screen: M4 deep green. Gold is an accent token, not a
   // button/toggle fill - as a primary surface it read as off-brand tan.
-  static const _gold = Color(0xFF0F2A20);
+  static const _gold = Color(0xFF0C312B);
 
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -209,6 +209,9 @@ class _InvestorSettingsScreenState
       return Scaffold(
         backgroundColor: bg,
         body: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(32),
@@ -233,7 +236,7 @@ class _InvestorSettingsScreenState
                       'RETRY',
                       style: GoogleFonts.gelasio(
                         fontSize: 11,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         color: M4Theme.premiumBlue,
                         letterSpacing: 1.5,
                       ),
@@ -250,6 +253,9 @@ class _InvestorSettingsScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark, textPrimary, muted),
@@ -385,7 +391,7 @@ class _InvestorSettingsScreenState
                   'CONFIGURATION',
                   style: GoogleFonts.gelasio(
                     fontSize: 14,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: textPrimary,
                     letterSpacing: 2,
                   ),
@@ -395,7 +401,7 @@ class _InvestorSettingsScreenState
                   'PRIVATE OFFICE SETTINGS',
                   style: GoogleFonts.gelasio(
                     fontSize: 11,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: muted,
                     letterSpacing: 2,
                   ),
@@ -427,7 +433,7 @@ class _InvestorSettingsScreenState
                         'SAVE',
                         style: GoogleFonts.gelasio(
                           fontSize: 11,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           color: Colors.black,
                           letterSpacing: 1.5,
                         ),
@@ -445,7 +451,7 @@ class _InvestorSettingsScreenState
       text,
       style: GoogleFonts.gelasio(
         fontSize: 11,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
         color: muted,
         letterSpacing: 2.5,
       ),
@@ -478,7 +484,7 @@ class _InvestorSettingsScreenState
           label,
           style: GoogleFonts.gelasio(
             fontSize: 11,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             color: muted,
             letterSpacing: 1.5,
           ),
@@ -545,7 +551,7 @@ class _InvestorSettingsScreenState
                     'VERIFIED',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: _gold,
                       letterSpacing: 1,
                     ),
@@ -612,7 +618,7 @@ class _InvestorSettingsScreenState
                   subtitle,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: muted,
                     letterSpacing: 1,
                   ),
@@ -654,7 +660,7 @@ class _InvestorSettingsScreenState
                 'SIGN OUT ON ALL DEVICES',
                 style: GoogleFonts.gelasio(
                   fontSize: 11,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: Color(0xFFC65B46),
                   letterSpacing: 2,
                 ),

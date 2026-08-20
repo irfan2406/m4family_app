@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/nav_style.dart';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -30,31 +31,26 @@ class CpBottomNav extends StatelessWidget {
     final surface = isDark
         ? Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.5)
         : Colors.white.withValues(alpha: 0.6);
-    final border = (isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0F2A20))
+    final border = (isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0C312B))
         .withValues(alpha: 0.14);
 
     return SafeArea(
+      bottom: false,
       top: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
+        padding: const EdgeInsets.fromLTRB(M4Nav.sideInset, 0, M4Nav.sideInset, M4Nav.bottomInset),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(M4Nav.radius),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            filter: ImageFilter.blur(sigmaX: M4Nav.blur, sigmaY: M4Nav.blur),
             child: Container(
-              height: 62,
+              height: M4Nav.height,
               padding: const EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
                 color: surface,
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(M4Nav.radius),
                 border: Border.all(color: border),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.0 : 0.1),
-                    blurRadius: 28,
-                    offset: const Offset(0, 14),
-                  ),
-                ],
+                boxShadow: M4Nav.shadow(isDark),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -77,7 +73,9 @@ class CpBottomNav extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Container(
+                          AnimatedContainer(
+                            duration: M4Nav.animation,
+                            curve: M4Nav.curve,
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(14),
@@ -92,14 +90,16 @@ class CpBottomNav extends StatelessWidget {
                             ),
                             child: Icon(
                               _icons[i],
-                              size: 22,
+                              size: M4Nav.iconSize,
                               color: active
                                   ? purple
                                   : onSurf.withValues(alpha: 0.5),
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Container(
+                          AnimatedContainer(
+                            duration: M4Nav.animation,
+                            curve: M4Nav.curve,
                             width: 4,
                             height: 4,
                             decoration: BoxDecoration(

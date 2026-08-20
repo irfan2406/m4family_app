@@ -173,7 +173,7 @@ class _InvestorSecurityScreenState
                 Text(
                   'Security & Privacy',
                   style: GoogleFonts.ebGaramond(
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     fontSize: 16,
                     color: textPrimary,
                   ),

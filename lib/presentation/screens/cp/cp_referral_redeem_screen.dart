@@ -138,6 +138,9 @@ class _CpReferralRedeemScreenState
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             // ─── Header ──────────────────────────────────────────
@@ -177,7 +180,7 @@ class _CpReferralRedeemScreenState
                           textAlign: TextAlign.center,
                           style: GoogleFonts.gelasio(
                             fontSize: 16,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: scheme.onSurface,
                             letterSpacing: 1.5,
                           ),
@@ -188,7 +191,7 @@ class _CpReferralRedeemScreenState
                           textAlign: TextAlign.center,
                           style: GoogleFonts.gelasio(
                             fontSize: 8,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: scheme.onSurface.withValues(alpha: 0.68),
                             letterSpacing: 2,
                           ),
@@ -227,7 +230,7 @@ class _CpReferralRedeemScreenState
                               'REDEMPTION MATRIX',
                               style: GoogleFonts.gelasio(
                                 fontSize: 9,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                                 color: scheme.onSurface.withValues(alpha: 0.68),
                               ),
@@ -263,7 +266,7 @@ class _CpReferralRedeemScreenState
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
@@ -293,7 +296,7 @@ class _CpReferralRedeemScreenState
                   'AVAILABLE BALANCE',
                   style: GoogleFonts.gelasio(
                     fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: scheme.onSurface.withValues(alpha: 0.68),
                   ),
@@ -308,7 +311,7 @@ class _CpReferralRedeemScreenState
                       _formatNumber(_balance),
                       style: GoogleFonts.gelasio(
                         fontSize: 44,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: scheme.onSurface,
                         height: 1,
                       ),
@@ -318,7 +321,7 @@ class _CpReferralRedeemScreenState
                       'PTS',
                       style: GoogleFonts.gelasio(
                         fontSize: 16,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: scheme.onSurface.withValues(alpha: 0.68),
                         letterSpacing: 2,
                       ),
@@ -342,7 +345,7 @@ class _CpReferralRedeemScreenState
                     'VALUE: ₹${_formatNumber(_balance)}',
                     style: GoogleFonts.gelasio(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                       color: scheme.onSurface,
                     ),
@@ -417,7 +420,7 @@ class _CpReferralRedeemScreenState
                     opt['title'] as String,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 13,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: scheme.onSurface,
                     ),
                   ),
@@ -426,7 +429,7 @@ class _CpReferralRedeemScreenState
                     opt['subtitle'] as String,
                     style: GoogleFonts.gelasio(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                       color: scheme.onSurface.withValues(alpha: 0.68),
                     ),
@@ -455,7 +458,7 @@ class _CpReferralRedeemScreenState
             'REDEEM VOLUME',
             style: GoogleFonts.gelasio(
               fontSize: 9,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: scheme.onSurface.withValues(alpha: 0.68),
             ),
@@ -477,14 +480,14 @@ class _CpReferralRedeemScreenState
             onChanged: (_) => setState(() {}),
             style: GoogleFonts.gelasio(
               fontSize: 26,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: scheme.onSurface,
             ),
             decoration: InputDecoration(
               hintText: '0000',
               hintStyle: GoogleFonts.gelasio(
                 fontSize: 26,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: scheme.onSurface.withValues(alpha: 0.62),
               ),
               filled: false,
@@ -529,7 +532,7 @@ class _CpReferralRedeemScreenState
             label,
             style: GoogleFonts.gelasio(
               fontSize: 9,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: scheme.onSurface.withValues(alpha: isMax ? 1 : 0.68),
             ),
@@ -584,7 +587,7 @@ class _CpReferralRedeemScreenState
                       'CONFIRM REDEMPTION',
                       style: GoogleFonts.gelasio(
                         fontSize: 11,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                         color: scheme.surface,
                       ),

@@ -127,6 +127,9 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _header(textPrimary, muted, isDark),
@@ -164,7 +167,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
                 Text(
                   'Commission details',
                   style: GoogleFonts.ebGaramond(
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     fontSize: 16,
                     color: textPrimary,
                   ),
@@ -219,7 +222,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
               'Commission not found',
               style: GoogleFonts.ebGaramond(
                 fontSize: 15,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 color: textPrimary,
               ),
             ),
@@ -265,7 +268,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
               '+${_amountLabel()}',
               style: GoogleFonts.gelasio(
                 fontSize: 30,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: -0.5,
                 color: green,
               ),

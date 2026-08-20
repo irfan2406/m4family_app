@@ -238,7 +238,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black : Colors.white,
+        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
         border: Border(bottom: BorderSide(color: border)),
       ),
       child: Row(
@@ -257,7 +257,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.03)
-                    : Colors.white,
+                    : const Color(0xFFF4EFE3),
                 shape: BoxShape.circle,
                 border: Border.all(color: border),
               ),
@@ -279,7 +279,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 14,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: textPrimary,
                     letterSpacing: 1,
                   ),
@@ -300,7 +300,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                       'SUPPORT AGENT ONLINE',
                       style: GoogleFonts.gelasio(
                         fontSize: 8,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: muted,
                         letterSpacing: 2,
                       ),
@@ -323,7 +323,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               _statusLabel,
               style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: _isOpen ? const Color(0xFFC5A35B) : const Color(0xFF163A2C),
                 letterSpacing: 2,
               ),
@@ -347,7 +347,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               'UNABLE TO LOAD TICKET',
               style: GoogleFonts.ebGaramond(
                 fontSize: 13,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: textPrimary,
                 letterSpacing: 1,
               ),
@@ -374,7 +374,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   'RETRY',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: textPrimary == Colors.white
                         ? Colors.black
                         : Colors.white,
@@ -406,7 +406,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               'NO MESSAGES YET',
               style: GoogleFonts.ebGaramond(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: textPrimary,
                 letterSpacing: 1,
               ),
@@ -416,7 +416,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               'START THE CONVERSATION BELOW',
               style: GoogleFonts.ebGaramond(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: muted,
                 letterSpacing: 1,
               ),
@@ -438,7 +438,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.03)
-                  : Colors.white,
+                  : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(40),
               border: Border.all(color: border),
             ),
@@ -446,7 +446,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               DateFormat('EEEE, MMM d').format(DateTime.now()).toUpperCase(),
               style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: muted,
                 letterSpacing: 2,
               ),
@@ -472,7 +472,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   'SECURE CONSULTATION',
                   style: GoogleFonts.gelasio(
                     fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: muted,
                     letterSpacing: 2,
                   ),
@@ -505,7 +505,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     // User bubble: solid (foreground/background inversion). Support: card style.
     final bubbleColor = isUser
         ? textPrimary
-        : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white);
+        : (isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3));
     final bubbleTextColor = isUser
         ? (isDark ? Colors.black : Colors.white)
         : textPrimary;
@@ -569,7 +569,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   time,
                   style: GoogleFonts.gelasio(
                     fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: muted,
                     letterSpacing: 1.5,
                   ),
@@ -613,7 +613,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 'VIEW ATTACHMENT',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 9,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
               ),
@@ -638,7 +638,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             'VIEW ATTACHMENT',
             style: GoogleFonts.ebGaramond(
               fontSize: 9,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: textColor,
               letterSpacing: 1,
             ),
@@ -663,7 +663,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
         12 + MediaQuery.of(context).viewPadding.bottom,
       ),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black : Colors.white,
+        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
         border: Border(top: BorderSide(color: border)),
       ),
       child: Row(
@@ -690,7 +690,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   hintText: 'TYPE MESSAGE...',
                   hintStyle: GoogleFonts.ebGaramond(
                     fontSize: 11,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: muted.withValues(alpha: 0.6),
                     letterSpacing: 1,
                   ),
@@ -721,13 +721,13 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                       padding: const EdgeInsets.all(14),
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       ),
                     )
                   : Icon(
                       LucideIcons.send,
                       size: 18,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     ),
             ),
           ),

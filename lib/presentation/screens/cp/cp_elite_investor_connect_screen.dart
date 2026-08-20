@@ -92,7 +92,7 @@ class _CpEliteInvestorConnectScreenState
             Text(
               'Partner Terminal',
               style: GoogleFonts.ebGaramond(
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 fontSize: 16,
               ),
             ),
@@ -100,7 +100,7 @@ class _CpEliteInvestorConnectScreenState
               'INSTITUTIONAL PORTFOLIO ENGINE',
               style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: scheme.primary,
               ),
@@ -125,7 +125,7 @@ class _CpEliteInvestorConnectScreenState
                         'PERFORMANCE METRICS',
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 4,
                           color: muted,
                         ),
@@ -143,7 +143,7 @@ class _CpEliteInvestorConnectScreenState
                           'REAL-TIME DATA',
                           style: GoogleFonts.gelasio(
                             fontSize: 8,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                             color: scheme.primary,
                           ),
@@ -171,7 +171,7 @@ class _CpEliteInvestorConnectScreenState
                     'HIGH-YIELD VENTURES',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 4,
                       color: muted,
                     ),
@@ -252,8 +252,8 @@ class _CpEliteInvestorConnectScreenState
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.black : Colors.white,
-                  borderRadius: BorderRadius.circular(32),
+                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: border),
                   boxShadow: [
                     BoxShadow(
@@ -277,7 +277,7 @@ class _CpEliteInvestorConnectScreenState
                       s.label.toUpperCase(),
                       style: GoogleFonts.gelasio(
                         fontSize: 11,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 3,
                         color: muted,
                       ),
@@ -291,7 +291,7 @@ class _CpEliteInvestorConnectScreenState
                             s.value.toUpperCase(),
                             style: GoogleFonts.gelasio(
                               fontSize: 28,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               height: 1,
                               letterSpacing: -1,
                               color: textPrimary,
@@ -305,7 +305,7 @@ class _CpEliteInvestorConnectScreenState
                             s.growth.toUpperCase(),
                             style: GoogleFonts.ebGaramond(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: -0.5,
                               color: Colors.green.shade500,
                             ),
@@ -404,7 +404,7 @@ class _CpEliteInvestorConnectScreenState
                           o.roi.toUpperCase(),
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                             color: scheme.onPrimary,
                           ),
@@ -424,7 +424,7 @@ class _CpEliteInvestorConnectScreenState
                       o.title.toUpperCase(),
                       style: GoogleFonts.gelasio(
                         fontSize: 22,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: -1,
                         height: 1,
                         color: textPrimary,
@@ -444,7 +444,7 @@ class _CpEliteInvestorConnectScreenState
                             o.type.toUpperCase(),
                             style: GoogleFonts.gelasio(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 1.5,
                               color: muted,
                             ),
@@ -467,7 +467,7 @@ class _CpEliteInvestorConnectScreenState
                                 'INSTITUTIONAL ENTRY',
                                 style: GoogleFonts.gelasio(
                                   fontSize: 9,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: 3,
                                   color: muted,
                                 ),
@@ -477,7 +477,7 @@ class _CpEliteInvestorConnectScreenState
                                 o.minTicket.toUpperCase(),
                                 style: GoogleFonts.gelasio(
                                   fontSize: 20,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: -1,
                                   height: 1,
                                   color: textPrimary,
@@ -593,7 +593,7 @@ class _CpEliteInvestorConnectScreenState
                               'WEALTH CONCIERGE',
                               style: GoogleFonts.gelasio(
                                 fontSize: 20,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: -1,
                                 height: 1,
                                 color: onPanel,
@@ -604,7 +604,7 @@ class _CpEliteInvestorConnectScreenState
                               'GLOBAL STRATEGY DESK',
                               style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 1.5,
                                 color: onPanel.withValues(alpha: 0.6),
                               ),
@@ -638,7 +638,7 @@ class _CpEliteInvestorConnectScreenState
                         'SCHEDULE PROTOCOL CALL',
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 3,
                           color: onPanel,
                         ),
@@ -700,7 +700,7 @@ class _CommitButtonState extends State<_CommitButton> {
             'COMMIT FUNDS',
             style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: bg,
             ),

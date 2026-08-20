@@ -109,6 +109,9 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
               : null,
         ),
         child: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: _isLoading
               ? Center(
                   child: Column(
@@ -122,7 +125,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                           color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.72),
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                         ),
                       ),
@@ -224,7 +227,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
           style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 28,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: -1,
             height: 1.1,
           ),
@@ -268,7 +271,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                       0.3,
                     ),
                     fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                   ),
                 ),
@@ -386,7 +389,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                               style: GoogleFonts.gelasio(
                                 color: isDark ? Colors.white : Color(0xFF163A2C),
                                 fontSize: 18,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                           ),

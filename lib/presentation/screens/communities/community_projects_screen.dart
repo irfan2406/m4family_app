@@ -147,7 +147,7 @@ class _CommunityProjectsListScreenState
                                   .toUpperCase(),
                               style: GoogleFonts.gelasio(
                                 fontSize: 30,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 color: textPrimary,
                                 letterSpacing: -1,
                                 height: 1.0,
@@ -271,7 +271,7 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
                       'BACK',
                       style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: muted,
                         letterSpacing: 2,
                       ),
@@ -288,7 +288,7 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
                     'M4 FAMILY',
                     style: GoogleFonts.gelasio(
                       fontSize: 18,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: textPrimary,
                       letterSpacing: -1,
                       height: 1.0,
@@ -428,7 +428,7 @@ class _ProjectCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: Colors.white.withValues(alpha: 0.1),
                     ),
@@ -437,7 +437,7 @@ class _ProjectCard extends StatelessWidget {
                     status.toUpperCase(),
                     style: GoogleFonts.gelasio(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: Colors.white,
                       letterSpacing: 2,
                     ),
@@ -457,7 +457,7 @@ class _ProjectCard extends StatelessWidget {
                     (project['title'] ?? '').toString().toUpperCase(),
                     style: GoogleFonts.gelasio(
                       fontSize: 24,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: Colors.white,
                       letterSpacing: -1,
                       height: 1.0,
@@ -502,7 +502,7 @@ class _ProjectCard extends StatelessWidget {
                       'STARTING FROM',
                       style: GoogleFonts.gelasio(
                         fontSize: 7,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: Colors.white.withValues(alpha: 0.68),
                         letterSpacing: 2,
                       ),
@@ -512,8 +512,8 @@ class _ProjectCard extends StatelessWidget {
                       startingPrice!,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                        color: const Color(0xFFFBF7EF),
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFFF4EFE3),
                         letterSpacing: -0.2,
                       ),
                     ),
@@ -601,7 +601,7 @@ class _EmptyState extends StatelessWidget {
             textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               fontSize: 12,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: muted,
               letterSpacing: 2,
             ),
@@ -624,7 +624,7 @@ class _EmptyState extends StatelessWidget {
               'RETURN',
               style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: 2,
               ),
@@ -669,7 +669,7 @@ class _ErrorState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.gelasio(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: 2,
               ),
@@ -707,7 +707,7 @@ class _ErrorState extends StatelessWidget {
                 'GO BACK',
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 2,
                 ),

@@ -102,6 +102,9 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             // ─── Header ─────────────────────────────────
@@ -137,7 +140,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                         'CHOOSE PLAN',
                         style: GoogleFonts.gelasio(
                           fontSize: 22,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: -0.5,
                           color: textPrimary,
                         ),
@@ -147,7 +150,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                         'SELECT YOUR PREFERRED SCHEDULE',
                         style: GoogleFonts.gelasio(
                           fontSize: 8,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                           color: muted,
                         ),
@@ -227,7 +230,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                 color: M4Theme.premiumBlue.withValues(
                                   alpha: 0.05,
                                 ),
-                                borderRadius: BorderRadius.circular(32),
+                                borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
                                   color: M4Theme.premiumBlue.withValues(
                                     alpha: 0.12,
@@ -259,7 +262,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                           'COMPARE PLANS',
                                           style: GoogleFonts.gelasio(
                                             fontSize: 11,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.w700,
                                             letterSpacing: 1.5,
                                             color: textPrimary,
                                           ),
@@ -314,7 +317,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                     'DOWNLOAD ALL PAYMENT PLANS (PDF)',
                                     style: GoogleFonts.gelasio(
                                       fontSize: 9,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w700,
                                       letterSpacing: 2,
                                       color: M4Theme.premiumBlue,
                                     ),
@@ -408,7 +411,7 @@ class _PaymentPlanCard extends StatelessWidget {
                     'MOST POPULAR',
                     style: GoogleFonts.gelasio(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                       color: Colors.white,
                     ),
@@ -431,7 +434,7 @@ class _PaymentPlanCard extends StatelessWidget {
                               (plan['name'] ?? 'Plan').toString().toUpperCase(),
                               style: GoogleFonts.gelasio(
                                 fontSize: 22,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 height: 1.1,
                                 letterSpacing: -0.5,
                                 color: textPrimary,
@@ -490,7 +493,7 @@ class _PaymentPlanCard extends StatelessWidget {
                             benefit.toUpperCase(),
                             style: GoogleFonts.ebGaramond(
                               fontSize: 9,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 1,
                               color: accent,
                             ),
@@ -513,7 +516,7 @@ class _PaymentPlanCard extends StatelessWidget {
                               'SELECT PLAN',
                               style: GoogleFonts.ebGaramond(
                                 fontSize: 9,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                                 letterSpacing: 1,
                                 color: textPrimary,
                               ),

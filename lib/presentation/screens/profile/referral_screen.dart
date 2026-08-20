@@ -71,6 +71,9 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(),
@@ -153,7 +156,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             style: GoogleFonts.gelasio(
               color: foreground,
               fontSize: 14,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
             ),
           ),
@@ -165,7 +168,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
   Widget _buildPremiumRewardsCard() {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final cardBg = isDark ? theme.cardColor : const Color(0xFF0F2A20);
+    final cardBg = isDark ? theme.cardColor : const Color(0xFF0C312B);
     final cardFg = Colors.white;
 
     return Container(
@@ -201,7 +204,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   style: GoogleFonts.gelasio(
                     color: cardFg.withOpacity(0.72),
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -214,7 +217,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                       style: GoogleFonts.gelasio(
                         color: cardFg,
                         fontSize: 48,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         height: 1,
                         fontStyle: FontStyle.italic,
                       ),
@@ -227,7 +230,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                         style: GoogleFonts.ebGaramond(
                           color: cardFg.withOpacity(0.72),
                           fontSize: 14,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -279,7 +282,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                           style: GoogleFonts.ebGaramond(
                             color: Colors.black,
                             fontSize: 12,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                           ),
                         ),
@@ -313,7 +316,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
         style: GoogleFonts.ebGaramond(
           color: const Color(0xFFF4EFE3),
           fontSize: 8,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
         ),
       ),
@@ -355,7 +358,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
         height: 120,
         decoration: BoxDecoration(
           color: theme.cardColor.withOpacity(0.4),
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: foreground.withOpacity(0.05)),
         ),
         child: Column(
@@ -368,7 +371,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               style: GoogleFonts.ebGaramond(
                 color: foreground.withOpacity(0.72),
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
               ),
             ),
@@ -387,7 +390,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           style: GoogleFonts.gelasio(
             color: foreground.withOpacity(0.72),
             fontSize: 10,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
           ),
         ),
@@ -407,7 +410,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             style: GoogleFonts.gelasio(
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.72),
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
             ),
           ),
@@ -451,7 +454,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                         style: GoogleFonts.ebGaramond(
                           color: foreground,
                           fontSize: 12,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.5,
                         ),
                       ),
@@ -461,7 +464,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                         style: GoogleFonts.ebGaramond(
                           color: foreground.withOpacity(0.72),
                           fontSize: 8,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -485,7 +488,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     style: GoogleFonts.ebGaramond(
                       color: theme.colorScheme.primary,
                       fontSize: 7,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -505,7 +508,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   style: GoogleFonts.ebGaramond(
                     color: foreground.withOpacity(0.72),
                     fontSize: 7,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1,
                   ),
                 ),
@@ -514,7 +517,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   style: GoogleFonts.ebGaramond(
                     color: const Color(0xFFC5A35B),
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -536,7 +539,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             style: GoogleFonts.gelasio(
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.72),
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
             ),
           ),
@@ -580,7 +583,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 style: GoogleFonts.ebGaramond(
                   color: foreground,
                   fontSize: 9,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 2),
@@ -589,7 +592,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 style: GoogleFonts.ebGaramond(
                   color: foreground.withOpacity(0.72),
                   fontSize: 7,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
@@ -604,7 +607,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                       ? Colors.redAccent
                       : const Color(0xFF163A2C),
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -613,7 +616,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 style: GoogleFonts.ebGaramond(
                   color: foreground.withOpacity(0.72),
                   fontSize: 6,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -663,7 +666,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     style: GoogleFonts.gelasio(
                       color: foreground,
                       fontSize: 24,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -672,7 +675,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     style: GoogleFonts.gelasio(
                       color: foreground.withOpacity(0.72),
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 3,
                     ),
                   ),
@@ -686,7 +689,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                         style: GoogleFonts.ebGaramond(
                           color: foreground.withOpacity(0.72),
                           fontSize: 8,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                         ),
                       ),
@@ -716,7 +719,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                       ? foreground.withOpacity(0.72)
                                       : foreground,
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                               const Spacer(),
@@ -798,7 +801,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                                         0.6,
                                                       ),
                                                 fontSize: 10,
-                                                fontWeight: FontWeight.w900,
+                                                fontWeight: FontWeight.w600,
                                               ),
                                             ),
                                           ),
@@ -951,7 +954,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                               style: GoogleFonts.gelasio(
                                 color: theme.colorScheme.surface,
                                 fontSize: 12,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                               ),
                             ),
@@ -982,7 +985,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           style: GoogleFonts.ebGaramond(
             color: foreground.withOpacity(0.72),
             fontSize: 8,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             letterSpacing: 1,
           ),
         ),
@@ -1030,14 +1033,14 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   style: GoogleFonts.ebGaramond(
                     color: foreground,
                     fontSize: 15,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                   ),
                   decoration: InputDecoration(
                     hintText: hint,
                     hintStyle: GoogleFonts.ebGaramond(
                       color: foreground.withOpacity(0.72),
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                     ),
                     filled: false,
                     border: InputBorder.none,

@@ -111,6 +111,9 @@ class _InvestorReferralScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark, textPrimary),
@@ -128,7 +131,7 @@ class _InvestorReferralScreenState
                       color: isDark ? Colors.white : Color(0xFF163A2C),
                       backgroundColor: isDark
                           ? const Color(0xFF141B3A)
-                          : Colors.white,
+                          : const Color(0xFFF4EFE3),
                       child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -198,7 +201,7 @@ class _InvestorReferralScreenState
               textAlign: TextAlign.center,
               style: GoogleFonts.gelasio(
                 fontSize: 16,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: textPrimary,
                 letterSpacing: 1.5,
               ),
@@ -239,7 +242,7 @@ class _InvestorReferralScreenState
             'MY REFERRAL IDENTITY CODE',
             style: GoogleFonts.gelasio(
               fontSize: 11,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: textPrimary.withValues(alpha: 0.75),
             ),
@@ -259,7 +262,7 @@ class _InvestorReferralScreenState
                   code,
                   style: GoogleFonts.gelasio(
                     fontSize: 18,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 3,
                     // Was the gold accent — plain ink now (white on dark, since
                     // black there would be unreadable).
@@ -334,7 +337,7 @@ class _InvestorReferralScreenState
             label,
             style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: textPrimary.withValues(alpha: 0.75),
             ),
@@ -344,7 +347,7 @@ class _InvestorReferralScreenState
             value,
             style: GoogleFonts.gelasio(
               fontSize: 24,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: textPrimary,
               height: 1,
             ),
@@ -382,7 +385,7 @@ class _InvestorReferralScreenState
               'REDEEM REWARDS',
               style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: isDark ? Colors.black : const Color(0xFFF4EFE3),
               ),
@@ -448,7 +451,7 @@ class _InvestorReferralScreenState
         height: 130,
         decoration: BoxDecoration(
           color: card,
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: border),
         ),
         child: Column(
@@ -468,7 +471,7 @@ class _InvestorReferralScreenState
               label,
               style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
                 color: textPrimary.withValues(alpha: 0.75),
               ),
@@ -492,7 +495,7 @@ class _InvestorReferralScreenState
           title,
           style: GoogleFonts.gelasio(
             fontSize: 11,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2,
             color: textPrimary.withValues(alpha: 0.72),
           ),
@@ -554,7 +557,7 @@ class _InvestorReferralScreenState
                   name.toUpperCase(),
                   style: GoogleFonts.ebGaramond(
                     fontSize: 13,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: textPrimary,
                   ),
                 ),
@@ -563,7 +566,7 @@ class _InvestorReferralScreenState
                   project.toUpperCase(),
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     // Was the gold accent — plain ink now.
                     color: isDark ? Colors.white : Color(0xFF163A2C),
@@ -599,7 +602,7 @@ class _InvestorReferralScreenState
               status.toUpperCase(),
               style: GoogleFonts.ebGaramond(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 1,
                 color: textPrimary.withValues(alpha: 0.75),
               ),
@@ -641,7 +644,7 @@ class _InvestorReferralScreenState
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: border),
       ),
@@ -656,7 +659,7 @@ class _InvestorReferralScreenState
                   title,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: textPrimary,
                   ),
                 ),
@@ -679,7 +682,7 @@ class _InvestorReferralScreenState
                 '${isDebit ? '-' : '+'}$amount',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 12,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: isDebit ? Colors.redAccent : const Color(0xFF163A2C),
                 ),
               ),
@@ -688,7 +691,7 @@ class _InvestorReferralScreenState
                   'STATUS: ${status.toUpperCase()}',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: textPrimary.withValues(alpha: 0.72),
                   ),
                 ),
@@ -708,7 +711,7 @@ class _InvestorReferralScreenState
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 40),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: border),
       ),
@@ -717,7 +720,7 @@ class _InvestorReferralScreenState
           label,
           style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2,
             color: textPrimary.withValues(alpha: 0.72),
           ),
@@ -744,7 +747,7 @@ class _InvestorReferralScreenState
               textAlign: TextAlign.center,
               style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
                 color: textPrimary.withValues(alpha: 0.75),
               ),
@@ -766,7 +769,7 @@ class _InvestorReferralScreenState
                   'RETRY',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   ),
@@ -834,7 +837,7 @@ class _InvestorReferralScreenState
                       'NEW\nREFERRAL',
                       style: GoogleFonts.gelasio(
                         fontSize: 24,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: textPrimary,
                         height: 1.1,
                       ),
@@ -844,7 +847,7 @@ class _InvestorReferralScreenState
                       'REFER & EARN REWARDS',
                       style: GoogleFonts.gelasio(
                         fontSize: 11,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                         color: textPrimary.withValues(alpha: 0.72),
                       ),
@@ -881,7 +884,7 @@ class _InvestorReferralScreenState
                               'COULD NOT LOAD PROJECTS',
                               style: GoogleFonts.ebGaramond(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w500,
                                 color: textPrimary.withValues(alpha: 0.72),
                               ),
                             ),
@@ -898,13 +901,13 @@ class _InvestorReferralScreenState
                                   'SELECT PROJECT',
                                   style: GoogleFonts.ebGaramond(
                                     fontSize: 11,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w500,
                                     color: textPrimary.withValues(alpha: 0.72),
                                   ),
                                 ),
                                 dropdownColor: isDark
                                     ? const Color(0xFF141B3A)
-                                    : Colors.white,
+                                    : const Color(0xFFF4EFE3),
                                 icon: Icon(
                                   LucideIcons.chevronDown,
                                   size: 16,
@@ -921,7 +924,7 @@ class _InvestorReferralScreenState
                                               .toUpperCase(),
                                           style: GoogleFonts.ebGaramond(
                                             fontSize: 10,
-                                            fontWeight: FontWeight.w800,
+                                            fontWeight: FontWeight.w500,
                                             color: textPrimary,
                                           ),
                                         ),
@@ -1048,7 +1051,7 @@ class _InvestorReferralScreenState
                                 'SUBMIT REFERRAL',
                                 style: GoogleFonts.gelasio(
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: 2,
                                   color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                 ),
@@ -1071,7 +1074,7 @@ class _InvestorReferralScreenState
       text,
       style: GoogleFonts.gelasio(
         fontSize: 11,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
         letterSpacing: 1.5,
         color: textPrimary.withValues(alpha: 0.72),
       ),

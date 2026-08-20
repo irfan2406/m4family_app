@@ -264,6 +264,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               : null,
         ),
         child: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: Column(
             children: [
               _buildStepIndicator(),
@@ -365,7 +368,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               color: isActive
                                   ? colorScheme.primary
                                   : isCompleted
-                                  ? (isDark ? const Color(0xFF141B3A) : Colors.white)
+                                  ? (isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3))
                                   : (isDark
                                         ? Colors.white.withOpacity(0.05)
                                         : Colors.black.withOpacity(0.04)),
@@ -394,7 +397,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                             child: Icon(
                               step['icon'],
                               color: isActive
-                                  ? (isDark ? const Color(0xFF141B3A) : Colors.white)
+                                  ? (isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3))
                                   : isCompleted
                                   ? colorScheme.primary
                                   : (isDark ? Colors.white60 : Color(0xFF5E6B60)),
@@ -417,7 +420,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                           ? Colors.white60
                                           : Color(0xFF5E6B60)),
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                                 letterSpacing: -0.3,
                               ),
                             ),
@@ -578,7 +581,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                             style: GoogleFonts.gelasio(
                               color: colorScheme.primary,
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 2,
                             ),
                           ),
@@ -588,7 +591,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                             style: GoogleFonts.ebGaramond(
                               color: isDark ? Colors.white : Color(0xFF163A2C),
                               fontSize: 16,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: -0.5,
                             ),
                           ),
@@ -645,8 +648,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             return Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
-                borderRadius: BorderRadius.circular(32),
+                color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isDark
                       ? Colors.white.withOpacity(0.05)
@@ -680,7 +683,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     style: GoogleFonts.gelasio(
                       color: isDark ? Colors.white : Color(0xFF163A2C),
                       fontSize: 11,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                     ),
                   ),
@@ -784,7 +787,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+        color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -807,7 +810,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             style: GoogleFonts.gelasio(
               color: colorScheme.primary,
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
             ),
           ),
@@ -817,7 +820,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             style: GoogleFonts.ebGaramond(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.7),
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               height: 1.7,
               fontStyle: FontStyle.italic,
               letterSpacing: 0.2,
@@ -869,7 +872,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     style: GoogleFonts.gelasio(
                       color: Colors.white70,
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 3,
                     ),
                   ),
@@ -879,7 +882,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     style: GoogleFonts.gelasio(
                       color: Colors.white,
                       fontSize: 32,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: -1,
                       height: 1.1,
                     ),
@@ -927,7 +930,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 18,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: -1,
           ),
         ),
@@ -940,7 +943,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+        color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: isDark
@@ -997,7 +1000,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 height: 48,
                 decoration: BoxDecoration(
                   // Web: glass white tile, rounded-2xl, subtle border + shadow.
-                  color: isDark ? Colors.white.withOpacity(0.06) : Colors.white,
+                  color: isDark ? Colors.white.withOpacity(0.06) : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: colorScheme.primary.withOpacity(0.1),
@@ -1030,7 +1033,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       style: GoogleFonts.ebGaramond(
                         color: isDark ? Colors.white : Color(0xFF163A2C),
                         fontSize: 15,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -1071,7 +1074,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       aspectRatio: 1,
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isDark
                 ? Colors.white.withOpacity(0.1)
@@ -1079,7 +1082,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           ),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20),
           child: CachedNetworkImage(
             imageUrl: url,
             fit: BoxFit.cover,
@@ -1149,7 +1152,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     style: GoogleFonts.gelasio(
                       color: Colors.white,
                       fontSize: 22,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: -1,
                     ),
                   ),
@@ -1159,7 +1162,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     style: GoogleFonts.gelasio(
                       color: Colors.white.withOpacity(0.68),
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                     ),
                   ),
@@ -1212,7 +1215,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                 ? 'CUSTOM VIEWS'
                                 : 'ENQUIRE FOR CUSTOM VIEWS',
                             style: GoogleFonts.ebGaramond(
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               fontSize: 11,
                               letterSpacing: 1,
                             ),
@@ -1243,7 +1246,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           // Web parity: a centered floating card with margins on every edge,
           // rounded on all corners — not a full-width bottom sheet.
           return Dialog(
-            backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+            backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
             insetPadding: const EdgeInsets.symmetric(
               horizontal: 20,
               vertical: 44,
@@ -1271,7 +1274,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               'CUSTOM PERSONALISATION',
                               style: GoogleFonts.ebGaramond(
                                 color: isDark ? Colors.white : Color(0xFF163A2C),
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                                 fontSize: 17,
                                 letterSpacing: -0.3,
                               ),
@@ -1459,7 +1462,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                 : Color(0xFF163A2C),
                             foregroundColor: isDark
                                 ? Colors.black
-                                : Colors.white,
+                                : const Color(0xFFF4EFE3),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -1595,7 +1598,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   'BACK',
                   style: GoogleFonts.gelasio(
                     color: isDark ? Colors.white : Color(0xFF163A2C),
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     fontSize: 10,
                     letterSpacing: 2,
                   ),
@@ -1619,7 +1622,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                foregroundColor: isDark ? Colors.black : Colors.white,
+                foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -1631,7 +1634,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     'NEXT STEP',
                     style: GoogleFonts.gelasio(
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       fontSize: 10,
                       letterSpacing: 2,
                     ),

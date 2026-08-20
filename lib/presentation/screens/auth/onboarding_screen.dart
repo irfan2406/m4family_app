@@ -49,12 +49,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2A20),
+      backgroundColor: const Color(0xFF0C312B),
       body: Stack(
         fit: StackFit.expand,
         children: [
           // Pure Black Background
-          Positioned.fill(child: Container(color: const Color(0xFF0F2A20))),
+          Positioned.fill(child: Container(color: const Color(0xFF0C312B))),
 
           // Main Animation Stack
           Center(

@@ -98,6 +98,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark),
@@ -130,7 +133,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.03)
-                    : Colors.white,
+                    : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: border),
               ),
@@ -149,7 +152,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 'PORTFOLIO',
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: textPrimary,
                   letterSpacing: 0.5,
                   height: 1,
@@ -269,7 +272,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                     text: count,
                     style: GoogleFonts.gelasio(
                       fontSize: 24,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       color: textPrimary,
                       letterSpacing: -0.5,
                     ),
@@ -306,7 +309,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 _formatValue(_combinedValue),
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: _gold,
                   letterSpacing: -0.5,
                 ),
@@ -343,7 +346,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         color: card,
-        borderRadius: BorderRadius.circular(36),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: border),
         boxShadow: isDark
             ? null
@@ -356,7 +359,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(36),
+        borderRadius: BorderRadius.circular(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -417,7 +420,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                     name.toUpperCase(),
                     style: GoogleFonts.gelasio(
                       fontSize: 18,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       color: textPrimary,
                       letterSpacing: -0.2,
                     ),
@@ -492,7 +495,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                             'VIEW SPECIFICATIONS',
                             style: GoogleFonts.gelasio(
                               fontSize: 9,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w700,
                               color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                               letterSpacing: 2,
                             ),
@@ -621,7 +624,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                                 name.toUpperCase(),
                                 style: GoogleFonts.gelasio(
                                   fontSize: 22,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w700,
                                   color: textPrimary,
                                   letterSpacing: -0.3,
                                 ),
@@ -719,7 +722,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                                   'VERIFIED PROPERTY',
                                   style: GoogleFonts.gelasio(
                                     fontSize: 9,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w700,
                                     color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                     letterSpacing: 2,
                                   ),
@@ -755,7 +758,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               'NO HOLDINGS YET',
               style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 color: faint,
                 letterSpacing: 2,
               ),
@@ -792,7 +795,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               'UNABLE TO LOAD PORTFOLIO',
               style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 color: muted,
                 letterSpacing: 2,
               ),
@@ -813,7 +816,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                   'RETRY',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     letterSpacing: 2,
                   ),
@@ -903,7 +906,7 @@ class _Pill extends StatelessWidget {
         text.toUpperCase(),
         style: GoogleFonts.gelasio(
           fontSize: 8,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w700,
           color: fg,
           letterSpacing: 1.5,
         ),
@@ -934,7 +937,7 @@ class _StatusPill extends StatelessWidget {
         status.toUpperCase(),
         style: GoogleFonts.gelasio(
           fontSize: 8,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w700,
           color: color,
           letterSpacing: 1.5,
         ),
@@ -979,7 +982,7 @@ class _DetailItem extends StatelessWidget {
           textAlign: alignEnd ? TextAlign.right : TextAlign.left,
           style: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             fontStyle: FontStyle.italic,
             color: textPrimary,
           ),
@@ -1030,7 +1033,7 @@ class _SpecItem extends StatelessWidget {
           value.toUpperCase(),
           style: GoogleFonts.ebGaramond(
             fontSize: 12,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             color: textPrimary,
           ),
         ),

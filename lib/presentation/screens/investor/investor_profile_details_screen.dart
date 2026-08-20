@@ -301,6 +301,9 @@ class _InvestorProfileDetailsScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -427,7 +430,7 @@ class _InvestorProfileDetailsScreenState
                   'MY PROFILE',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 15,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: -0.3,
                     color: textPrimary,
                   ),
@@ -576,7 +579,7 @@ class _InvestorProfileDetailsScreenState
               'PLATINUM MEMBER',
               style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: _gold,
               ),
@@ -614,7 +617,7 @@ class _InvestorProfileDetailsScreenState
             label,
             style: GoogleFonts.gelasio(
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: muted,
             ),
@@ -695,7 +698,7 @@ class _InvestorProfileDetailsScreenState
             'DATE OF BIRTH',
             style: GoogleFonts.gelasio(
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: muted,
             ),
@@ -801,7 +804,7 @@ class _InvestorProfileDetailsScreenState
                         'SAVE CHANGES',
                         style: GoogleFonts.gelasio(
                           fontSize: 11,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
                           color: Colors.black,
                         ),

@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/nav_style.dart';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -25,38 +26,56 @@ class InvestorBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // Nav icons carry the brand: forest green on the cream surfaces, cream
-    // on navy, instead of a washed-out 38% grey.
-    final navIcon = isDark ? const Color(0xFFF4EFE3) : const Color(0xFF163A2C);
+    // The pill is green on the showcase tabs and cream on the light ones, so
+    // the glyphs invert to keep contrast on whichever surface they sit on.
+    final navIcon = isDark
+        ? const Color(0xFFF4EFE3)
+        : const Color(0xFF163A2C);
+    final activeDisc = isDark
+        ? const Color(0xFFF4EFE3)
+        : const Color(0xFF0C312B);
+    final activeGlyph = isDark
+        ? const Color(0xFF0C312B)
+        : const Color(0xFFF4EFE3);
 
     return SafeArea(
+      bottom: false,
       top: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(36, 0, 36, 24),
+        padding: const EdgeInsets.fromLTRB(M4Nav.sideInset, 0, M4Nav.sideInset, M4Nav.bottomInset),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(M4Nav.radius),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+            filter: ImageFilter.blur(sigmaX: M4Nav.blur, sigmaY: M4Nav.blur),
             child: Container(
-              height: 62,
+              height: M4Nav.height,
               padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40),
-                  // Pure glass: no colour tint at all - just a faint white sheen over
-                  // the blur, so whatever is behind shows through in its own colour
-                  // rather than being washed navy.
+                  borderRadius: BorderRadius.circular(M4Nav.radius),
+                  // Frosted tint follows the page: deep green on the showcase tabs, cream
+                  // on the light ones. Cream over the greige page keeps the bar visibly
+                  // lighter than what is behind it, so it still reads as glass.
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.white.withValues(alpha: isDark ? 0.14 : 0.20),
-                      Colors.white.withValues(alpha: isDark ? 0.05 : 0.08),
-                    ],
+                    colors: isDark
+                        ? [
+                            Color.alphaBlend(
+                              Colors.white.withValues(alpha: 0.16),
+                              const Color(0xFF0C312B).withValues(alpha: 0.62),
+                            ),
+                            const Color(0xFF0C312B).withValues(alpha: M4Nav.inactiveOpacity),
+                          ]
+                        : [
+                            const Color(0xFFF4EFE3).withValues(alpha: 0.82),
+                            const Color(0xFFF4EFE3).withValues(alpha: 0.68),
+                          ],
                   ),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: isDark ? 0.18 : 0.28),
+                    color: Colors.white.withValues(alpha: 0.16),
                     width: 0.8,
                   ),
+                  boxShadow: M4Nav.shadow(isDark),
                 ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -77,22 +96,26 @@ class InvestorBottomNav extends StatelessWidget {
                         children: [
                           // Figma: the selected tab is a solid deep-green disc with a cream
                           // glyph; unselected tabs are the bare icon on the glass.
-                          Container(
+                          AnimatedContainer(
+                            duration: M4Nav.animation,
+                            curve: M4Nav.curve,
                             padding: const EdgeInsets.all(9),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: active ? const Color(0xFF0F2A20) : Colors.transparent,
+                              color: active ? activeDisc : Colors.transparent,
                             ),
                             child: Icon(
                               _icons[i],
-                              size: 22,
+                              size: M4Nav.iconSize,
                               color: active
-                                  ? const Color(0xFFF4EFE3)
-                                  : navIcon.withValues(alpha: 0.72),
+                                  ? activeGlyph
+                                  : navIcon.withValues(alpha: M4Nav.inactiveOpacity),
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Container(
+                          AnimatedContainer(
+                            duration: M4Nav.animation,
+                            curve: M4Nav.curve,
                             width: 4,
                             height: 4,
                             decoration: BoxDecoration(

@@ -459,7 +459,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                           style: GoogleFonts.gelasio(
                                             color: Colors.white,
                                             fontSize: 7,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.w700,
                                             letterSpacing: 1.5,
                                           ),
                                         ),
@@ -508,7 +508,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.only(bottom: 120),
+            padding: const EdgeInsets.only(bottom: 96),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 Padding(
@@ -534,7 +534,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildInterestForm(),
                 ),
-                const SizedBox(height: 120),
+                const SizedBox(height: 96),
               ]),
             ),
           ),
@@ -711,7 +711,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                     : (isDark ? Colors.white : Color(0xFF163A2C))
                                           .withValues(alpha: 0.68),
                                 fontSize: 12,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                               ),
                             ),
@@ -918,7 +918,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       style: GoogleFonts.ebGaramond(
                         color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         letterSpacing: 0.5,
                         height: 1.4,
                       ),
@@ -992,8 +992,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         width: 288,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
-          borderRadius: BorderRadius.circular(32),
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
               alpha: 0.08,
@@ -1008,7 +1008,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -1064,7 +1064,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           style: GoogleFonts.ebGaramond(
                             color: Colors.white,
                             fontSize: 6,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                           ),
                         ),
@@ -1129,9 +1129,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           Text(
                             'READ MORE',
                             style: GoogleFonts.gelasio(
-                              color: isDark ? Colors.black : Colors.white,
+                              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 2,
                             ),
                           ),
@@ -1139,7 +1139,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           Icon(
                             LucideIcons.chevronRight,
                             size: 14,
-                            color: isDark ? Colors.black : Colors.white,
+                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           ),
                         ],
                       ),
@@ -1241,7 +1241,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         style: GoogleFonts.gelasio(
                           color: Colors.white,
                           fontSize: 7,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -1258,7 +1258,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         Text(
                           'FEATURED PROPERTY',
                           style: GoogleFonts.gelasio(
-                            color: const Color(0xFFFBF7EF),
+                            color: const Color(0xFFF4EFE3),
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 1.8,
@@ -1377,8 +1377,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       child: Text(
                         'READ MORE',
                         style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.black : Colors.white,
-                          fontWeight: FontWeight.w900,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          fontWeight: FontWeight.w700,
                           fontSize: 12,
                           letterSpacing: 3,
                         ),
@@ -1431,7 +1431,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 9,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
           ),
         ),
@@ -1463,7 +1463,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             color: isDark
                 ? Colors.white.withValues(alpha: 0.03)
                 : Colors.black.withValues(alpha: 0.02),
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                 alpha: 0.08,
@@ -1478,7 +1478,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             child: GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -1565,7 +1565,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white : Color(0xFF163A2C),
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 fontSize: 13,
                 letterSpacing: 1,
               ),
@@ -1653,7 +1653,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 if (_agreedToTerms) _termsError = false;
               }),
               activeColor: isDark ? Colors.white : Color(0xFF163A2C),
-              checkColor: isDark ? Colors.black : Colors.white,
+              checkColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
               side: BorderSide(
                 color: _termsError
                     ? const Color(0xFFC65B46)
@@ -1689,12 +1689,12 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               child: Center(
                 child: _submitting
                     ? CircularProgressIndicator(
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       )
                     : Text(
                         'SUBMIT INTEREST',
                         style: GoogleFonts.ebGaramond(
-                          color: isDark ? Colors.black : Colors.white,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w400,
                           letterSpacing: 2,
                         ),

@@ -107,7 +107,7 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
         title: Text(
           'UPDATES',
           style: GoogleFonts.gelasio(
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2,
           ),
         ),
@@ -231,7 +231,7 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.ebGaramond(
                                         fontSize: 11,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w600,
                                         letterSpacing: 1.2,
                                       ),
                                     ),

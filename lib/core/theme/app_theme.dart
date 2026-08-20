@@ -24,7 +24,7 @@ class M4Theme {
   static const Color creamMuted = Color(0xFFFBF7EF);
 
   /// Deep forest greens.
-  static const Color deepGreen = Color(0xFF0F2A20);
+  static const Color deepGreen = Color(0xFF0C312B); // Figma: #0C312B
   static const Color forestGreen = Color(0xFF163A2C);
   static const Color midGreen = Color(0xFF1C4535);
 
@@ -34,7 +34,7 @@ class M4Theme {
   // ===================================================================
   // LIGHT (:root) — CREAM
   // ===================================================================
-  static const Color lightBackground = Color(0xFFD4CFBC); // warm greige page
+  static const Color lightBackground = Color(0xFFF3EDE0); // Figma cream page
   static const Color lightForeground = Color(0xFF15271E); // dark green-black
   static const Color lightCard = Color(0xFFF4EFE3); // warm cream card (never white)
   static const Color lightPrimary = Color(0xFF15271E); // dark green fill
@@ -44,7 +44,7 @@ class M4Theme {
   static const Color lightMutedFg = Color(0xFF5E6B60); // muted green-gray
   static const Color lightAccent = Color(0xFFEDE5D6);
   static const Color lightDestructive = coral;
-  static const Color lightBorder = Color(0xFFDED4BF); // cream hairline
+  static const Color lightBorder = Color(0xFFD4CFBC); // Figma: 1px input border
 
   // ===================================================================
   // DARK (.dark) — GREEN
@@ -150,7 +150,7 @@ class M4Theme {
                     fontSize: 26,
                     height: 1.15,
                     fontWeight: FontWeight.w400,
-                    color: fg.withValues(alpha: 0.95),
+                    color: fg.withValues(alpha: 0.78),
                   ),
                 ),
                 TextSpan(
@@ -309,18 +309,18 @@ class M4Theme {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: lightCard,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: lightBorder),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: lightBorder),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: forestGreen, width: 1.5),
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: forestGreen, width: 1),
       ),
       hintStyle: TextStyle(color: lightMutedFg.withOpacity(0.8)),
     ),
@@ -557,7 +557,7 @@ class M4Theme {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: darkCard,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: const BorderSide(color: darkBorder),

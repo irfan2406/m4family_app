@@ -95,7 +95,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                 Text(
                   'Security & Privacy',
                   style: GoogleFonts.ebGaramond(
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     fontSize: 16,
                     color: textPrimary,
                   ),
@@ -215,14 +215,14 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                       shape: BoxShape.circle,
                       color: _green,
                       border: Border.all(
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                         width: 4,
                       ),
                     ),
                     child: Icon(
                       LucideIcons.check,
                       size: 12,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     ),
                   ),
                 ),

@@ -209,6 +209,9 @@ class _InvestorInstallmentsScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             // ─── Header ─────────────────────────────────
@@ -245,7 +248,7 @@ class _InvestorInstallmentsScreenState
                           'INSTALLMENT SCHEDULE',
                           style: GoogleFonts.gelasio(
                             fontSize: 20,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: -0.5,
                             color: textPrimary,
                           ),
@@ -255,7 +258,7 @@ class _InvestorInstallmentsScreenState
                           'PAYMENT PLAN',
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2,
                             color: muted,
                           ),
@@ -401,7 +404,7 @@ class _InvestorInstallmentsScreenState
           label,
           style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
             color: muted,
           ),
@@ -411,7 +414,7 @@ class _InvestorInstallmentsScreenState
           value,
           style: GoogleFonts.ebGaramond(
             fontSize: 15,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: color,
           ),
         ),
@@ -455,7 +458,7 @@ class _InvestorInstallmentsScreenState
                 (f == 'All' ? 'All' : _statusLabel(f)).toUpperCase(),
                 style: GoogleFonts.ebGaramond(
                   fontSize: 11,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 1,
                   color: active ? activeColor : muted,
                 ),
@@ -566,7 +569,7 @@ class _InvestorInstallmentsScreenState
                 _formatAmount(item.amount),
                 style: GoogleFonts.ebGaramond(
                   fontSize: 14,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: textPrimary,
                 ),
               ),
@@ -582,7 +585,7 @@ class _InvestorInstallmentsScreenState
                   _statusLabel(item.status).toUpperCase(),
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 0.8,
                     color: color,
                   ),
@@ -614,7 +617,7 @@ class _InvestorInstallmentsScreenState
               textAlign: TextAlign.center,
               style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
                 color: muted,
               ),
@@ -655,7 +658,7 @@ class _InvestorInstallmentsScreenState
               textAlign: TextAlign.center,
               style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
                 color: textPrimary,
               ),
@@ -686,7 +689,7 @@ class _InvestorInstallmentsScreenState
                   'RETRY',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: const Color(0xFFF4EFE3),
                   ),

@@ -144,6 +144,9 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(textPrimary),
@@ -213,7 +216,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
               textAlign: TextAlign.center,
               style: GoogleFonts.gelasio(
                 fontSize: 16,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: textPrimary,
                 letterSpacing: 1.5,
               ),
@@ -238,7 +241,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
           end: Alignment.bottomRight,
           colors: [Color(0xFF141B3A), Color(0xFF141B3A), Colors.black],
         ),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.4),
@@ -248,7 +251,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
             // Abstract glow shape (bottom-right)
@@ -288,7 +291,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                                   'PLATINUM MEMBER',
                                   style: GoogleFonts.gelasio(
                                     fontSize: 10,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w700,
                                     letterSpacing: 2,
                                     color: Colors.white.withValues(alpha: 0.85),
                                   ),
@@ -300,7 +303,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                               'Active Membership',
                               style: GoogleFonts.gelasio(
                                 fontSize: 22,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 color: Colors.white,
                               ),
                             ),
@@ -324,7 +327,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                           'PRO',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                             color: gold,
                           ),
@@ -373,7 +376,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                 label.toUpperCase(),
                 style: GoogleFonts.gelasio(
                   fontSize: 8,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,
                   color: Colors.white.withValues(alpha: 0.7),
                 ),
@@ -383,7 +386,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                 value,
                 style: GoogleFonts.ebGaramond(
                   fontSize: 14,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   color: Colors.white,
                 ),
               ),
@@ -405,7 +408,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
           'DOCUMENT REPOSITORY',
           style: GoogleFonts.gelasio(
             fontSize: 9,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2,
             color: textPrimary.withValues(alpha: 0.68),
           ),
@@ -420,7 +423,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
             'M4 SECURE',
             style: GoogleFonts.gelasio(
               fontSize: 8,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: textPrimary.withValues(alpha: 0.68),
             ),
@@ -436,7 +439,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 40),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: textPrimary.withValues(alpha: 0.06)),
         ),
@@ -452,7 +455,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
               'NO DOCUMENTS YET',
               style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: textPrimary.withValues(alpha: 0.62),
               ),
@@ -487,7 +490,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: textPrimary.withValues(alpha: 0.06)),
         boxShadow: isDark
@@ -525,7 +528,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 13,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: textPrimary,
                   ),
                 ),
@@ -549,7 +552,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                         meta[i].toUpperCase(),
                         style: GoogleFonts.ebGaramond(
                           fontSize: 8,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 0.8,
                           color: muted,
                         ),
@@ -612,7 +615,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                       overflow: TextOverflow.visible,
                       style: GoogleFonts.gelasio(
                         fontSize: 28,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: textPrimary,
                       ),
                     ),
@@ -647,7 +650,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                         'SECURE ACCESS ONLY',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                           color: textPrimary,
                         ),
@@ -695,7 +698,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
               'UPGRADE MEMBERSHIP TIER',
               style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
                 color: textPrimary,
               ),

@@ -208,6 +208,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
         },
       ),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark, textPrimary, muted, border),
@@ -293,7 +296,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     'TEAM MANAGEMENT',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 13,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: textPrimary,
                       letterSpacing: 1.2,
                     ),
@@ -305,7 +308,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                 'MANAGE YOUR PORTAL EMPLOYEES',
                 style: GoogleFonts.gelasio(
                   fontSize: 8,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: muted,
                   letterSpacing: 1.5,
                 ),
@@ -360,7 +363,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                 hintText: 'SEARCH BY NAME OR PHONE...',
                 hintStyle: GoogleFonts.ebGaramond(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: muted.withValues(alpha: 0.6),
                   letterSpacing: 1.2,
                 ),
@@ -443,7 +446,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.ebGaramond(
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: textPrimary,
                           letterSpacing: 0.3,
                         ),
@@ -467,7 +470,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                       phone,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 11,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         color: textPrimary.withValues(alpha: 0.78),
                         letterSpacing: 0.3,
                       ),
@@ -557,7 +560,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
         isActive ? 'ACTIVE' : 'INACTIVE',
         style: GoogleFonts.ebGaramond(
           fontSize: 7,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           color: color,
           letterSpacing: 0.5,
         ),
@@ -586,7 +589,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: muted,
               letterSpacing: 1.5,
             ),
@@ -621,7 +624,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                 'RETRY',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -644,7 +647,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
           'DELETE EMPLOYEE',
           style: GoogleFonts.ebGaramond(
             fontSize: 13,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: textPrimary,
             letterSpacing: 0.5,
           ),
@@ -664,7 +667,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               'CANCEL',
               style: GoogleFonts.ebGaramond(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: muted,
               ),
             ),
@@ -679,7 +682,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               'DELETE',
               style: GoogleFonts.ebGaramond(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -735,7 +738,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                       label,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 9,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: textPrimary.withValues(alpha: 0.8),
                         letterSpacing: 0.5,
                       ),
@@ -798,7 +801,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                 isEdit ? 'EDIT TEAM MEMBER' : 'ADD NEW EMPLOYEE',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 13,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: textPrimary,
                   letterSpacing: 1.0,
                 ),
@@ -833,7 +836,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     'CANCEL',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 11,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: muted,
                     ),
                   ),
@@ -842,7 +845,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                   // Web parity: black save button (white in dark mode).
                   style: FilledButton.styleFrom(
                     backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                    foregroundColor: isDark ? Colors.black : Colors.white,
+                    foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   ),
                   onPressed: saving
                       ? null
@@ -879,7 +882,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                         : (isEdit ? 'SAVE CHANGES' : 'ADD EMPLOYEE'),
                     style: GoogleFonts.ebGaramond(
                       fontSize: 11,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),

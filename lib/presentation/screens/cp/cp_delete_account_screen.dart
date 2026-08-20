@@ -98,7 +98,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
       builder: (ctx) {
         final isDark = Theme.of(ctx).brightness == Brightness.dark;
         return AlertDialog(
-          backgroundColor: isDark ? Colors.black : Colors.white,
+          backgroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
@@ -106,7 +106,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
             'FINAL CONFIRMATION',
             style: GoogleFonts.ebGaramond(
               fontSize: 13,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
               color: _danger,
             ),
@@ -129,7 +129,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                 'CANCEL',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 10,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.6,
                   ),
@@ -148,7 +148,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                 'DELETE FOREVER',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1,
                   color: Colors.white,
                 ),
@@ -204,6 +204,9 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _header(textPrimary, muted),
@@ -273,7 +276,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
                     fontSize: 16,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: _danger,
                   ),
@@ -284,7 +287,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
                     fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: muted,
                   ),
@@ -330,7 +333,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                   'CRITICAL ACTION',
                   style: GoogleFonts.gelasio(
                     fontSize: 12,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: _danger,
                   ),
@@ -361,7 +364,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
       text,
       style: GoogleFonts.gelasio(
         fontSize: 9,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
         letterSpacing: 2,
         color: muted,
       ),
@@ -409,7 +412,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                           _purgeScope[i]['title'] as String,
                           style: GoogleFonts.ebGaramond(
                             fontSize: 12,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             color: textPrimary,
                           ),
                         ),
@@ -459,7 +462,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
             'TYPE "$_confirmWord" TO CONFIRM',
             style: GoogleFonts.gelasio(
               fontSize: 9,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: muted,
             ),
@@ -482,7 +485,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
             textCapitalization: TextCapitalization.characters,
             style: GoogleFonts.gelasio(
               fontSize: 16,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: 3,
               color: textPrimary,
             ),
@@ -490,7 +493,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
               hintText: _confirmWord,
               hintStyle: GoogleFonts.gelasio(
                 fontSize: 16,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 3,
                 color: muted.withValues(alpha: 0.68),
               ),
@@ -532,7 +535,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
             'CONFIRM YOUR PASSWORD',
             style: GoogleFonts.gelasio(
               fontSize: 9,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: muted,
             ),
@@ -682,7 +685,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                       'PERMANENTLY DELETE ACCOUNT',
                       style: GoogleFonts.gelasio(
                         fontSize: 11,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: Colors.white,
                       ),
@@ -711,7 +714,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
           'KEEP MY ACCOUNT',
           style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2,
             color: muted,
           ),

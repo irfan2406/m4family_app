@@ -100,13 +100,16 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
           'ELITE CHECKOUT',
           style: GoogleFonts.gelasio(
             fontSize: 14,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: textPrimary,
             letterSpacing: 1.5,
           ),
         ),
       ),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: switch (_step) {
           _CheckoutStep.details => _buildDetails(isDark),
           _CheckoutStep.processing => _buildProcessing(isDark),
@@ -162,7 +165,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                                   'M4 ELITE',
                                   style: GoogleFonts.ebGaramond(
                                     fontSize: 10,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w600,
                                     color: Colors.black,
                                     letterSpacing: 0.5,
                                   ),
@@ -224,7 +227,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
               'PAYMENT DETAILS',
               style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: muted,
                 letterSpacing: 2,
               ),
@@ -402,7 +405,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
       text,
       style: GoogleFonts.ebGaramond(
         fontSize: 10,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w600,
         color: muted,
         letterSpacing: 0.5,
       ),
@@ -588,7 +591,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
               'ELITE ACTIVE',
               style: GoogleFonts.gelasio(
                 fontSize: 24,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: textPrimary,
               ),
             ),
@@ -636,7 +639,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                           style: GoogleFonts.ebGaramond(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.black : Colors.white,
+                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           ),
                         ),
                       ),

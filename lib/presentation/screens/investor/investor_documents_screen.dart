@@ -173,6 +173,9 @@ class _InvestorDocumentsScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark, textPrimary),
@@ -238,7 +241,7 @@ class _InvestorDocumentsScreenState
                   'LEGAL VAULT',
                   style: GoogleFonts.gelasio(
                     fontSize: 18,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: textPrimary,
                     letterSpacing: -0.3,
                   ),
@@ -315,7 +318,7 @@ class _InvestorDocumentsScreenState
                   f.toUpperCase(),
                   style: GoogleFonts.gelasio(
                     fontSize: 11,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: selected
                         ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
@@ -414,7 +417,7 @@ class _InvestorDocumentsScreenState
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 13,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: textPrimary,
                       letterSpacing: -0.2,
                     ),
@@ -540,7 +543,7 @@ class _InvestorDocumentsScreenState
           'NO DOCUMENTS FOUND',
           style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             color: muted,
             letterSpacing: 3,
           ),
@@ -588,7 +591,7 @@ class _InvestorDocumentsScreenState
                   'RETRY',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   ),
@@ -623,7 +626,7 @@ class _SquareIconButton extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: border),
         ),
@@ -667,13 +670,13 @@ class _DocumentDetail extends StatelessWidget {
       decoration: BoxDecoration(
         color: bg,
         borderRadius: rounded
-            ? BorderRadius.circular(36)
+            ? BorderRadius.circular(20)
             : const BorderRadius.vertical(top: Radius.circular(36)),
         border: rounded ? Border.all(color: border) : null,
       ),
       child: ClipRRect(
         borderRadius: rounded
-            ? BorderRadius.circular(36)
+            ? BorderRadius.circular(20)
             : const BorderRadius.vertical(top: Radius.circular(36)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -717,7 +720,7 @@ class _DocumentDetail extends StatelessWidget {
                       'SECURED ${type.toUpperCase()}',
                       style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         color: _gold,
                         letterSpacing: 1.5,
                       ),
@@ -728,7 +731,7 @@ class _DocumentDetail extends StatelessWidget {
                     (doc['title'] ?? 'DOCUMENT').toString().toUpperCase(),
                     style: GoogleFonts.gelasio(
                       fontSize: 20,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       color: textPrimary,
                       letterSpacing: -0.3,
                       height: 1.2,
@@ -761,7 +764,7 @@ class _DocumentDetail extends StatelessWidget {
                     'VERIFICATION STATUS',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       color: muted,
                       letterSpacing: 2,
                     ),
@@ -792,7 +795,7 @@ class _DocumentDetail extends StatelessWidget {
                           'ENCRYPTED & VERIFIED',
                           style: GoogleFonts.gelasio(
                             fontSize: 11,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             color: const Color(0xFF163A2C),
                             letterSpacing: 1.5,
                           ),
@@ -807,7 +810,7 @@ class _DocumentDetail extends StatelessWidget {
                       'DOCUMENT OVERVIEW',
                       style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         color: muted,
                         letterSpacing: 2,
                       ),
@@ -838,7 +841,7 @@ class _DocumentDetail extends StatelessWidget {
                         'OPEN SECURE LINK',
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -907,7 +910,7 @@ class _MetaTile extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.gelasio(
                     fontSize: 9,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: muted,
                     letterSpacing: 1.5,
                   ),
@@ -922,7 +925,7 @@ class _MetaTile extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.ebGaramond(
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               color: textPrimary,
             ),
           ),

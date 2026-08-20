@@ -181,7 +181,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
         ),
         title: Text(
           'Reports',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w900),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600),
         ),
       ),
       body: Column(
@@ -275,7 +275,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
             'FY $y',
             style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.6,
               color: selected ? (isDark ? Colors.black : Colors.white) : muted,
             ),
@@ -330,7 +330,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                 'TOTAL TAX DEDUCTED',
                 style: GoogleFonts.gelasio(
                   fontSize: 9,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.6,
                   color: muted,
                 ),
@@ -340,7 +340,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                 _formatAed(total),
                 style: GoogleFonts.gelasio(
                   fontSize: 26,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: -0.5,
                   color: textPrimary,
                 ),
@@ -365,7 +365,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                     'DOWNLOAD SUMMARY',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1.4,
                     ),
                   ),
@@ -470,7 +470,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                       type,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 7,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 0.6,
                         color: Colors.white,
                       ),
@@ -490,7 +490,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: textPrimary,
                     ),
                   ),
@@ -544,11 +544,14 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) => SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -618,7 +621,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.ebGaramond(
               fontSize: 13,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               color: textPrimary,
             ),
           ),

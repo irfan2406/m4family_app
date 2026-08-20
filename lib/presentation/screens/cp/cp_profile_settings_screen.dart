@@ -305,7 +305,7 @@ class _CpProfileSettingsScreenState
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -331,7 +331,7 @@ class _CpProfileSettingsScreenState
                 'SELECT DATE',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 15,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
                   color: isDark ? Colors.white : Color(0xFF163A2C),
                 ),
@@ -364,7 +364,7 @@ class _CpProfileSettingsScreenState
                     child: Text(
                       'CANCEL',
                       style: GoogleFonts.ebGaramond(
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
                     ),
@@ -376,7 +376,7 @@ class _CpProfileSettingsScreenState
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
                       backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                      foregroundColor: isDark ? Colors.black : Colors.white,
+                      foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -385,7 +385,7 @@ class _CpProfileSettingsScreenState
                     child: Text(
                       'CONFIRM',
                       style: GoogleFonts.ebGaramond(
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
                     ),
@@ -408,7 +408,7 @@ class _CpProfileSettingsScreenState
       builder: (ctx) => AlertDialog(
         title: Text(
           'Deactivate sessions?',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w800),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w500),
         ),
         content: const Text(
           'You will be logged out everywhere, including this device.',
@@ -470,7 +470,7 @@ class _CpProfileSettingsScreenState
       builder: (ctx) => AlertDialog(
         title: Text(
           'Permanent deactivation',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w800),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w500),
         ),
         content: const Text(
           'CRITICAL: This will remove your data from M4 Family. Continue?',
@@ -617,7 +617,7 @@ class _CpProfileSettingsScreenState
                 'UPDATE SECURITY PASSCODE',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 12,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.2,
                 ),
               ),
@@ -650,7 +650,7 @@ class _CpProfileSettingsScreenState
                     'CANCEL',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
@@ -675,7 +675,7 @@ class _CpProfileSettingsScreenState
                           'CONFIRM',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 9,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                 ),
@@ -695,7 +695,7 @@ class _CpProfileSettingsScreenState
           label.toUpperCase(),
           style: GoogleFonts.gelasio(
             fontSize: 8,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
           ),
         ),
@@ -748,7 +748,7 @@ class _CpProfileSettingsScreenState
                     'ESTABLISHING SECURE CONNECTION...',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 3,
                       color: scheme.onSurface.withValues(alpha: 0.68),
                     ),
@@ -767,6 +767,9 @@ class _CpProfileSettingsScreenState
         children: [
           _ambient(),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -848,7 +851,7 @@ class _CpProfileSettingsScreenState
                     'CONFIGURATION',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 14,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: -0.5,
                       color: scheme.onSurface.withValues(alpha: 0.9),
                     ),
@@ -892,7 +895,7 @@ class _CpProfileSettingsScreenState
                           'SAVE CHANGES',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                             color: Colors.white,
                           ),
@@ -928,7 +931,7 @@ class _CpProfileSettingsScreenState
           title,
           style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2.5,
             color: scheme.onSurface.withValues(alpha: 0.9),
           ),
@@ -941,7 +944,7 @@ class _CpProfileSettingsScreenState
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 20, 18, 20),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: scheme.outlineVariant.withValues(alpha: 0.45),
         ),
@@ -1056,7 +1059,7 @@ class _CpProfileSettingsScreenState
                   'ACCOUNT AVATAR',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                   ),
                 ),
@@ -1090,7 +1093,7 @@ class _CpProfileSettingsScreenState
                     keyboardType: TextInputType.name,
                     inputFormatters: Validators.nameFormatters,
                     style: GoogleFonts.ebGaramond(
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       fontSize: 16,
                       color: scheme.onSurface,
                     ),
@@ -1116,7 +1119,7 @@ class _CpProfileSettingsScreenState
                     keyboardType: TextInputType.name,
                     inputFormatters: Validators.nameFormatters,
                     style: GoogleFonts.ebGaramond(
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       fontSize: 16,
                       color: scheme.onSurface,
                     ),
@@ -1187,7 +1190,7 @@ class _CpProfileSettingsScreenState
                           'VERIFIED',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 8,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: const Color(0xFF163A2C),
                             letterSpacing: 0.5,
                           ),
@@ -1365,7 +1368,7 @@ class _CpProfileSettingsScreenState
             label,
             style: GoogleFonts.gelasio(
               fontSize: 9,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: scheme.onSurface.withValues(alpha: 0.85),
             ),
@@ -1398,7 +1401,7 @@ class _CpProfileSettingsScreenState
                 'CHANGE ACCESS PASSCODE',
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,
                   color: scheme.onSurface.withValues(alpha: 0.82),
                 ),
@@ -1443,7 +1446,7 @@ class _CpProfileSettingsScreenState
                   'SECURITY LOGOUT (ALL DEVICES)',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: scheme.error,
                   ),
@@ -1469,7 +1472,7 @@ class _CpProfileSettingsScreenState
               'DELETE ACCOUNT PERMANENTLY',
               style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2.5,
                 color: scheme.onSurface.withValues(alpha: 0.68),
               ),

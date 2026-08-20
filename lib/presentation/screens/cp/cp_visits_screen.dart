@@ -289,6 +289,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
         },
       ),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
           children: [
@@ -349,7 +352,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             Text(
               'PERFORMANCE TRACKER',
               style: GoogleFonts.ebGaramond(
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 fontSize: 13,
                 letterSpacing: 1.2,
               ),
@@ -411,7 +414,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
               label,
               style: GoogleFonts.ebGaramond(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
                 color: active ? scheme.onPrimary : scheme.onSurfaceVariant,
               ),
@@ -469,7 +472,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     'SYNCHRONIZING RECORDS...',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                       color: scheme.onSurfaceVariant,
                     ),
@@ -530,7 +533,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 hintText: 'SEARCH CLIENT OR PROJECT...',
                 hintStyle: GoogleFonts.ebGaramond(
                   fontSize: 9,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   color: scheme.onSurface.withValues(alpha: 0.62),
                   letterSpacing: 1.0,
                 ),
@@ -576,7 +579,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
               ),
               style: GoogleFonts.ebGaramond(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
                 letterSpacing: 0.8,
               ),
@@ -659,7 +662,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                       dateStr,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 11,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
                         color: scheme.onSurface,
                       ),
@@ -669,7 +672,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                       'VISIT ID: $shortId',
                       style: GoogleFonts.ebGaramond(
                         fontSize: 8,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 0.8,
                         color: scheme.onSurfaceVariant.withValues(alpha: 0.6),
                       ),
@@ -702,7 +705,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.ebGaramond(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
                           ),
                         ),
@@ -735,7 +738,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                       textAlign: TextAlign.right,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 11,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
                     ),
@@ -767,7 +770,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.ebGaramond(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
                           ),
                         ),
@@ -786,7 +789,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     textAlign: TextAlign.right,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 11,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: scheme.onSurface,
                     ),
                   ),
@@ -843,7 +846,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     'VIEW BOOKING',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                     ),
                   ),
@@ -872,7 +875,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           label,
           style: GoogleFonts.ebGaramond(
             fontSize: 7,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             letterSpacing: 1,
             color: scheme.onSurfaceVariant.withValues(alpha: 0.68),
           ),
@@ -948,7 +951,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
         'AWAITING ADMIN CLOSURE',
         style: GoogleFonts.ebGaramond(
           fontSize: 7,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           letterSpacing: 0.8,
           color: scheme.onSurfaceVariant.withValues(alpha: 0.68),
         ),
@@ -965,7 +968,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             'Interested',
             style: GoogleFonts.ebGaramond(
               fontSize: 11,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: Colors.amber.shade800,
             ),
           ),
@@ -976,7 +979,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             'Not Interested',
             style: GoogleFonts.ebGaramond(
               fontSize: 11,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: Colors.red,
             ),
           ),
@@ -998,7 +1001,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
               'UPDATE STATUS',
               style: GoogleFonts.ebGaramond(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 1,
                 color: scheme.onSurface,
               ),
@@ -1021,7 +1024,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 40),
       decoration: BoxDecoration(
         color: scheme.onSurface.withValues(alpha: 0.02),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.2)),
       ),
       child: Column(
@@ -1037,7 +1040,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.ebGaramond(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: scheme.onSurfaceVariant.withValues(alpha: 0.68),
               letterSpacing: 1,
             ),
@@ -1068,7 +1071,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             'PAGE $_page / $_totalPages',
             style: GoogleFonts.ebGaramond(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
             ),
           ),
@@ -1127,7 +1130,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
         label,
         style: GoogleFonts.ebGaramond(
           fontSize: 7,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           color: fg,
           letterSpacing: 0.5,
         ),
@@ -1165,7 +1168,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     'PAYMENT TRACKER',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                       color: scheme.onSurfaceVariant,
                     ),
@@ -1174,7 +1177,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     'SETTLEMENT & COMMISSION STATUS',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 7,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: scheme.onSurfaceVariant.withValues(alpha: 0.6),
                       letterSpacing: 0.6,
                     ),
@@ -1199,7 +1202,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   '${_bookings.length} TOTAL',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 0.8,
                     color: scheme.primary,
                   ),
@@ -1223,7 +1226,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     'LOADING FINANCIAL LOGS...',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                       color: scheme.onSurfaceVariant,
                     ),
@@ -1237,7 +1240,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             padding: const EdgeInsets.symmetric(vertical: 50),
             decoration: BoxDecoration(
               color: scheme.onSurface.withValues(alpha: 0.02),
-              borderRadius: BorderRadius.circular(32),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: scheme.outlineVariant.withValues(alpha: 0.3),
                 style: BorderStyle.solid,
@@ -1266,7 +1269,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   'ZERO FINANCIAL LOGS DETECTED',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1.2,
                     color: scheme.onSurfaceVariant.withValues(alpha: 0.62),
                   ),
@@ -1299,7 +1302,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
         color: isReady
             ? (scheme.brightness == Brightness.dark
                   ? const Color(0xFF141B3A)
-                  : const Color(0xFFFBF7EF))
+                  : const Color(0xFFF4EFE3))
             : scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
@@ -1347,7 +1350,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                         '$progress%',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           fontStyle: FontStyle.italic,
                           color: accent,
                         ),
@@ -1370,7 +1373,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.ebGaramond(
                               fontSize: 13,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: scheme.onSurface,
                             ),
                           ),
@@ -1412,7 +1415,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                         sanctioned ? 'SANCTIONED' : 'PENDING SANCTION',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 7,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: sanctioned
                               ? Colors.green
                               : Colors.amber.shade800,
@@ -1488,7 +1491,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                           .toUpperCase(),
                       style: GoogleFonts.ebGaramond(
                         fontSize: 7,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: Colors.amber.shade800,
                         letterSpacing: 0.4,
                       ),

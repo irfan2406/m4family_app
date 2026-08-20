@@ -29,10 +29,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
 
     return Material(
-      color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+      color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
       child: Stack(
         children: [
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: Column(
               children: [
                 _buildHeader(context, isDark),
@@ -88,7 +91,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             'MY PROFILE',
             style: GoogleFonts.gelasio(
               fontSize: 22,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: isDark ? Colors.white : Color(0xFF163A2C),
               letterSpacing: -0.5,
             ),
@@ -176,7 +179,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         fullName.toUpperCase(),
                         style: GoogleFonts.gelasio(
                           fontSize: 20,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: isDark ? Colors.white : Color(0xFF163A2C),
                           letterSpacing: -0.5,
                         ),
@@ -228,7 +231,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.ebGaramond(
                                   fontSize: 9,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w500,
                                   color: isDark
                                       ? Colors.white70
                                       : Color(0xFF163A2C),
@@ -285,7 +288,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   'POINTS',
                   style: GoogleFonts.gelasio(
                     fontSize: 12,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                     letterSpacing: 1.5,
                   ),
@@ -294,7 +297,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   points,
                   style: GoogleFonts.gelasio(
                     fontSize: 22,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
@@ -378,7 +381,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               'LOG OUT',
               style: GoogleFonts.ebGaramond(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: Colors.redAccent,
                 letterSpacing: 1,
               ),
@@ -412,7 +415,7 @@ class _SectionTitle extends StatelessWidget {
         title,
         style: GoogleFonts.gelasio(
           fontSize: 11,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w700,
           color: isDark
               ? Colors.white.withOpacity(0.72)
               : Colors.black.withOpacity(0.72),
@@ -441,12 +444,12 @@ class _SupportTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(32),
+      borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
@@ -481,7 +484,7 @@ class _SupportTile extends StatelessWidget {
                     label,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: isDark ? Colors.white : Color(0xFF163A2C),
                     ),
                   ),
@@ -529,7 +532,7 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+          color: isDark ? Colors.white.withOpacity(0.05) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark

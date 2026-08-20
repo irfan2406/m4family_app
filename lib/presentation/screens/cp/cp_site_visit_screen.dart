@@ -108,7 +108,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 'SELECT DATE & TIME',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 15,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
                   color: isDark ? Colors.white : Color(0xFF163A2C),
                 ),
@@ -141,7 +141,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     child: Text(
                       'CANCEL',
                       style: GoogleFonts.ebGaramond(
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
                     ),
@@ -153,7 +153,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
                       backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                      foregroundColor: isDark ? Colors.black : Colors.white,
+                      foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -162,7 +162,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     child: Text(
                       'CONFIRM',
                       style: GoogleFonts.ebGaramond(
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
                     ),
@@ -319,7 +319,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
               'SITE VISIT',
               style: GoogleFonts.ebGaramond(
                 fontSize: 16,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: 0,
               ),
@@ -351,7 +351,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   decoration: BoxDecoration(
                     color: Theme.of(context).brightness == Brightness.dark
                         ? const Color(0xFF141B3A)
-                        : const Color(0xFF0F2A20),
+                        : const Color(0xFF0C312B),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: Colors.white.withOpacity(0.08)),
                   ),
@@ -375,7 +375,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                           'NOTE: OUR MANAGER WILL CONTACT YOU WITHIN 2 HOURS TO CONFIRM YOUR SCHEDULE.',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             color: Colors.white,
                             letterSpacing: 0.2,
                             height: 1.5,
@@ -464,7 +464,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
       label,
       style: GoogleFonts.gelasio(
         fontSize: 10,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
         letterSpacing: 2,
       ),
@@ -661,7 +661,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                             : (isDark ? Colors.white70 : Color(0xFF163A2C)),
                         fontSize: 11,
                         fontWeight: isSelected
-                            ? FontWeight.w900
+                            ? FontWeight.w600
                             : FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -793,7 +793,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                             : (isDark ? Colors.white70 : Color(0xFF163A2C)),
                         fontSize: 11,
                         fontWeight: isSelected
-                            ? FontWeight.w900
+                            ? FontWeight.w600
                             : FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -875,7 +875,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).brightness == Brightness.dark
               ? Colors.white
-              : const Color(0xFF0F2A20),
+              : const Color(0xFF0C312B),
           foregroundColor: Theme.of(context).brightness == Brightness.dark
               ? Colors.black
               : Colors.white,
@@ -901,7 +901,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   Text(
                     'SECURE BOOKING',
                     style: GoogleFonts.gelasio(
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       fontSize: 13,
                       letterSpacing: 2,
                     ),

@@ -58,8 +58,11 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
     return Scaffold(
       backgroundColor: isDark
           ? const Color(0xFF141B3A)
-          : const Color(0xFFFBF7EF),
+          : const Color(0xFFF4EFE3),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark),
@@ -113,7 +116,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                 style: GoogleFonts.gelasio(
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 16,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 2,
                 ),
@@ -140,7 +143,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
         ),
@@ -165,7 +168,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                 style: GoogleFonts.gelasio(
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 8,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                   letterSpacing: 1.5,
                 ),
@@ -176,7 +179,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                 style: GoogleFonts.ebGaramond(
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 16,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   color: isDark ? Colors.white : Color(0xFF163A2C),
                 ),
               ),
@@ -190,7 +193,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                 style: GoogleFonts.gelasio(
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 8,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                   letterSpacing: 1.5,
                 ),
@@ -201,7 +204,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                 style: GoogleFonts.ebGaramond(
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 16,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   color: const Color(0xFF163A2C),
                 ),
               ),
@@ -221,7 +224,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
         ),
@@ -266,7 +269,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                         style: GoogleFonts.ebGaramond(
                           textStyle: const TextStyle(inherit: true),
                           fontSize: 14,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w500,
                           color: isDark ? Colors.white : Color(0xFF163A2C),
                         ),
                       ),
@@ -357,7 +360,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                           'PAYMENT PROGRESS',
                           style: GoogleFonts.gelasio(
                             fontSize: 8,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: isDark ? Colors.white24 : Colors.black26,
                             letterSpacing: 1.5,
                           ),
@@ -366,7 +369,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                           '$paymentPercent% PAID',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: const Color(0xFF163A2C),
                           ),
                         ),
@@ -417,7 +420,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
           style: GoogleFonts.gelasio(
             textStyle: const TextStyle(inherit: true),
             fontSize: 10,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
             letterSpacing: 2,
           ),
@@ -447,7 +450,7 @@ class _StatusBadge extends StatelessWidget {
         status.toUpperCase(),
         style: GoogleFonts.ebGaramond(
           fontSize: 8,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           color: color,
           letterSpacing: 0.5,
         ),
@@ -477,7 +480,7 @@ class _InfoItem extends StatelessWidget {
           label,
           style: GoogleFonts.ebGaramond(
             fontSize: 8,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             color: isDark ? Colors.white38 : Color(0xFF5E6B60),
             letterSpacing: 1,
           ),
@@ -487,7 +490,7 @@ class _InfoItem extends StatelessWidget {
           value,
           style: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: isDark ? Colors.white : Color(0xFF163A2C),
           ),
         ),

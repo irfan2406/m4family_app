@@ -94,7 +94,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
         ),
         title: Text(
           'Network',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w800),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w500),
         ),
       ),
       body: _loading
@@ -144,7 +144,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                             'Upcoming Events',
                             style: GoogleFonts.ebGaramond(
                               fontSize: 12,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 0.2,
                             ),
                           ),
@@ -162,7 +162,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           'VIEW ALL',
                           style: GoogleFonts.gelasio(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.6,
                             color: purple,
                           ),
@@ -195,7 +195,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                   e['title']!.toString(),
                                   style: GoogleFonts.ebGaramond(
                                     fontSize: 13,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
@@ -213,7 +213,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                   (e['type'] ?? '').toString().toUpperCase(),
                                   style: GoogleFonts.ebGaramond(
                                     fontSize: 8,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w600,
                                     letterSpacing: 1.2,
                                     color: Colors.white,
                                   ),
@@ -251,7 +251,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                               'RSVP NOW',
                               style: GoogleFonts.gelasio(
                                 fontSize: 9,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                               ),
                             ),
@@ -276,7 +276,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                             'Member Spotlight',
                             style: GoogleFonts.ebGaramond(
                               fontSize: 12,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 0.2,
                             ),
                           ),
@@ -288,7 +288,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           'VIEW ALL REFERRALS',
                           style: GoogleFonts.gelasio(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.6,
                             color: purple,
                           ),
@@ -364,7 +364,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                     initial,
                                     style: GoogleFonts.ebGaramond(
                                       color: Colors.white,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
@@ -376,7 +376,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.ebGaramond(
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -386,7 +386,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.ebGaramond(
                                   fontSize: 8,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w500,
                                   letterSpacing: 1.2,
                                   color: scheme.onSurface.withValues(
                                     alpha: 0.68,
@@ -416,7 +416,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                 'Private Forum',
                                 style: GoogleFonts.ebGaramond(
                                   fontSize: 12,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -484,7 +484,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.gelasio(
               fontSize: 18,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 4),
@@ -492,7 +492,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
             label,
             style: GoogleFonts.ebGaramond(
               fontSize: 8,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
               color: scheme.onSurface.withValues(alpha: 0.68),
             ),

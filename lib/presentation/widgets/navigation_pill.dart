@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/nav_style.dart';
 import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -18,23 +19,17 @@ class NavigationPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+      margin: const EdgeInsets.fromLTRB(M4Nav.sideInset, 30, M4Nav.sideInset, M4Nav.bottomInset),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(35),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.0 : 0.08),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(M4Nav.radius),
+        boxShadow: M4Nav.shadow(isDark),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(35),
+        borderRadius: BorderRadius.circular(M4Nav.radius),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+          filter: ImageFilter.blur(sigmaX: M4Nav.blur, sigmaY: M4Nav.blur),
           child: Container(
-            height: 62,
+            height: M4Nav.height,
             padding: const EdgeInsets.symmetric(horizontal: 25),
             decoration: BoxDecoration(
               // Frosted glass: translucent deep-green on the green screens,
@@ -45,7 +40,7 @@ class NavigationPill extends StatelessWidget {
               color: isDark
                   ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5)
                   : Theme.of(context).scaffoldBackgroundColor.withOpacity(0.62),
-              borderRadius: BorderRadius.circular(35),
+              borderRadius: BorderRadius.circular(M4Nav.radius),
               border: Border.all(
                 color: (isDark ? M4Theme.cream : M4Theme.deepGreen)
                     .withOpacity(isDark ? 0.14 : 0.28),
@@ -117,7 +112,9 @@ class _NavItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
+          AnimatedContainer(
+            duration: M4Nav.animation,
+            curve: M4Nav.curve,
             padding: const EdgeInsets.all(9),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -126,7 +123,7 @@ class _NavItem extends StatelessWidget {
             child: Icon(
               icon,
               color: isActive ? activeIcon : inactiveIcon,
-              size: 22,
+              size: M4Nav.iconSize,
             ),
           ),
         ],

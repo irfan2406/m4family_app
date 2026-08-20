@@ -52,7 +52,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
-    const subtle = Color(0xFFFBF7EF);
+    const subtle = Color(0xFFF4EFE3);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
@@ -82,6 +82,9 @@ class PremiumUpsellScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.only(bottom: 40),
@@ -289,7 +292,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                   decoration: BoxDecoration(
                                     color:
                                         textPrimary, // foreground container (inverted)
-                                    borderRadius: BorderRadius.circular(32),
+                                    borderRadius: BorderRadius.circular(20),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withValues(
@@ -481,7 +484,7 @@ class _CircleAction extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFF4EFE3),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(

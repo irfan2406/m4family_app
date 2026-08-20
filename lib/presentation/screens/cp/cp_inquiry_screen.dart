@@ -132,6 +132,9 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
         },
       ),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 48),
           child: Column(
@@ -218,7 +221,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                     onChanged: (val) =>
                         setState(() => _agreedToTerms = val ?? false),
                     activeColor: isDark ? Colors.white : Color(0xFF163A2C),
-                    checkColor: isDark ? Colors.black : Colors.white,
+                    checkColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     side: BorderSide(
                       color: isDark ? Colors.white24 : Colors.black26,
                     ),
@@ -241,7 +244,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                               style: GoogleFonts.ebGaramond(
                                 color: isDark ? Colors.white : Color(0xFF163A2C),
                                 fontSize: 11,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                                 letterSpacing: 0.8,
                                 decoration: TextDecoration.underline,
                               ),
@@ -262,7 +265,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                   onPressed: _submitting ? null : _submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                    foregroundColor: isDark ? Colors.black : Colors.white,
+                    foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -274,13 +277,13 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                           height: 22,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: isDark ? Colors.black : Colors.white,
+                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           ),
                         )
                       : Text(
                           'SUBMIT INTEREST',
                           style: GoogleFonts.gelasio(
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             fontSize: 13,
                             letterSpacing: 2,
                           ),
@@ -306,7 +309,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? Colors.black : Colors.white,
+        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.12),

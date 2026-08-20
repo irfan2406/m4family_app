@@ -56,6 +56,9 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
       body: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
         child: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: Column(
             children: [
               _buildHeader(context),
@@ -137,7 +140,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
                   'CUSTOMIZATION LOGS',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 16,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: foreground,
                     letterSpacing: -0.5,
                   ),
@@ -146,7 +149,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
                   'PREVIOUS SELECTIONS',
                   style: GoogleFonts.gelasio(
                     fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: foreground.withOpacity(0.72),
                     letterSpacing: 4,
                   ),
@@ -176,7 +179,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
             hintStyle: GoogleFonts.ebGaramond(
               color: foreground.withOpacity(0.72),
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: 1,
             ),
             prefixIcon: Icon(
@@ -208,7 +211,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
             'SELECTION AUDIT',
             style: GoogleFonts.gelasio(
               fontSize: 9,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: foreground.withOpacity(0.72),
               letterSpacing: 2,
             ),
@@ -217,7 +220,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
             '$count LOGS RETRIEVED',
             style: GoogleFonts.ebGaramond(
               fontSize: 9,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: foreground.withOpacity(0.72),
               letterSpacing: 1,
             ),
@@ -274,7 +277,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.gelasio(
                   color: foreground.withOpacity(0.5),
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   fontSize: 11,
                   letterSpacing: 2,
                 ),
@@ -297,7 +300,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
                     'START CUSTOMIZING',
                     style: GoogleFonts.gelasio(
                       color: const Color(0xFFC5A35B),
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       fontSize: 11,
                       letterSpacing: 1.5,
                     ),
@@ -421,7 +424,7 @@ class _LogCard extends StatelessWidget {
                             style: GoogleFonts.ebGaramond(
                               color: foreground.withOpacity(0.72),
                               fontSize: 9,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -458,7 +461,7 @@ class _LogCard extends StatelessWidget {
                     style: GoogleFonts.ebGaramond(
                       color: foreground,
                       fontSize: 15,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: -0.2,
                     ),
                   ),
@@ -485,7 +488,7 @@ class _LogCard extends StatelessWidget {
                     'SELECTION SUMMARY',
                     style: GoogleFonts.gelasio(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: foreground.withOpacity(0.72),
                       letterSpacing: 1.5,
                     ),
@@ -502,7 +505,7 @@ class _LogCard extends StatelessWidget {
                         ' +${summaryItems.length - 2} MORE',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 8,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: foreground.withOpacity(0.72),
                         ),
                       ),
@@ -534,7 +537,7 @@ class _LogCard extends StatelessWidget {
         style: GoogleFonts.ebGaramond(
           color: color,
           fontSize: 8,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
         ),
       ),
@@ -557,7 +560,7 @@ class _LogCard extends StatelessWidget {
           label,
           style: GoogleFonts.ebGaramond(
             fontSize: 8,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: foreground.withOpacity(0.72),
             letterSpacing: 1,
           ),
@@ -567,7 +570,7 @@ class _LogCard extends StatelessWidget {
           value,
           style: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             color: foreground.withOpacity(0.8),
             fontStyle: FontStyle.italic,
           ),
@@ -591,7 +594,7 @@ class _LogCard extends StatelessWidget {
         style: GoogleFonts.ebGaramond(
           color: foreground.withOpacity(0.7),
           fontSize: 7.5,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -689,7 +692,7 @@ class _LogDetailDialog extends ConsumerWidget {
                               style: GoogleFonts.ebGaramond(
                                 color: foreground.withOpacity(0.5),
                                 fontSize: 9,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
@@ -712,7 +715,7 @@ class _LogDetailDialog extends ConsumerWidget {
                     projectName.toUpperCase(),
                     style: GoogleFonts.gelasio(
                       fontSize: 24,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: foreground,
                       letterSpacing: -1,
                     ),
@@ -731,7 +734,7 @@ class _LogDetailDialog extends ConsumerWidget {
                           'LOCATION: ${space.toUpperCase()}',
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: foreground.withOpacity(0.5),
                             letterSpacing: 2,
                           ),
@@ -744,7 +747,7 @@ class _LogDetailDialog extends ConsumerWidget {
                     'CHOSEN SPECIFICATIONS',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: foreground.withOpacity(0.72),
                       letterSpacing: 2,
                     ),
@@ -761,7 +764,7 @@ class _LogDetailDialog extends ConsumerWidget {
                     'PROTOCOL STATUS',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: foreground.withOpacity(0.72),
                       letterSpacing: 2,
                     ),
@@ -897,7 +900,7 @@ class _LogDetailDialog extends ConsumerWidget {
         style: GoogleFonts.ebGaramond(
           color: color,
           fontSize: 8,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -947,7 +950,7 @@ class _LogDetailDialog extends ConsumerWidget {
                   key.toUpperCase(),
                   style: GoogleFonts.ebGaramond(
                     fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: foreground.withOpacity(0.72),
                     letterSpacing: 1,
                   ),
@@ -957,7 +960,7 @@ class _LogDetailDialog extends ConsumerWidget {
                   displayValue.toUpperCase(),
                   style: GoogleFonts.ebGaramond(
                     fontSize: 12,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: foreground,
                   ),
                 ),
@@ -992,7 +995,7 @@ class _LogDetailDialog extends ConsumerWidget {
           label,
           style: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: isPrimary
                 ? Theme.of(context).scaffoldBackgroundColor
                 : foreground.withOpacity(0.6),

@@ -88,7 +88,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
         ),
         title: Text(
           'Analytics',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w900),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600),
         ),
       ),
       body: _loading
@@ -100,7 +100,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   'PORTFOLIO PERFORMANCE',
                   style: GoogleFonts.gelasio(
                     fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2.4,
                     color: scheme.onSurface.withValues(alpha: 0.68),
                   ),
@@ -159,7 +159,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                       'Asset Allocation',
                       style: GoogleFonts.ebGaramond(
                         fontSize: 12,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -204,7 +204,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                           'BACKEND (CP PERFORMANCE)',
                           style: GoogleFonts.gelasio(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2,
                             color: scheme.onSurface.withValues(alpha: 0.68),
                           ),
@@ -279,7 +279,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1.4,
                       color: selected == r
                           ? Colors.white
@@ -316,7 +316,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.ebGaramond(
               fontSize: 9,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: 1.1,
               color: scheme.onSurface.withValues(alpha: 0.68),
             ),
@@ -326,7 +326,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
             value,
             style: GoogleFonts.ebGaramond(
               fontSize: 12,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 6),
@@ -346,7 +346,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   change,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: trendUp
                         ? const Color(0xFF163A2C)
                         : const Color(0xFFC65B46),
@@ -401,7 +401,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                     'Growth Trajectory',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -470,7 +470,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.gelasio(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.8,
                       color: scheme.onSurface.withValues(alpha: 0.68),
                     ),
@@ -501,7 +501,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   label,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: scheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
@@ -510,7 +510,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                 '$value%',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: scheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
@@ -565,7 +565,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
           v,
           style: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],

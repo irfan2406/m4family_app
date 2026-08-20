@@ -258,7 +258,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                           color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.6),
                           fontSize: 8,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                         ),
                       ),
@@ -269,7 +269,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       textAlign: TextAlign.center,
                       style: GoogleFonts.gelasio(
                         color: isDark ? Colors.white : Color(0xFF163A2C),
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         fontSize: 22,
                         letterSpacing: -1,
                         height: 1.1,
@@ -286,7 +286,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                             ? Colors.white.withOpacity(0.7)
                             : const Color(0xFF141B3A),
                         fontSize: 12,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 3,
                       ),
                     ),
@@ -354,7 +354,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withOpacity(0.03)
-                          : Colors.white,
+                          : const Color(0xFFF4EFE3),
                       borderRadius: BorderRadius.circular(40),
                       boxShadow: isDark
                           ? null
@@ -411,7 +411,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                             style: GoogleFonts.gelasio(
                               color: isDark ? Colors.white : Color(0xFF163A2C),
                               fontSize: 12,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 2,
                             ),
                           ),
@@ -431,7 +431,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                   onPressed: _isSubmitting ? null : _submitApplication,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                    foregroundColor: isDark ? Colors.black : Colors.white,
+                    foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
                     ),
@@ -445,7 +445,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                           'SUBMIT APPLICATION',
                           style: GoogleFonts.gelasio(
                             fontSize: 12,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2,
                           ),
                         ),
@@ -467,7 +467,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
         style: GoogleFonts.ebGaramond(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
           fontSize: 12,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           letterSpacing: 1,
         ),
       ),
@@ -520,7 +520,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             fontSize: 13,
           ),
           filled: true,
-          fillColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+          fillColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 24,
             vertical: 24,

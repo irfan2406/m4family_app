@@ -55,7 +55,7 @@ class _CpResidentialConnectScreenState
             Text(
               'Residence Suite',
               style: GoogleFonts.ebGaramond(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: scheme.onSurface,
               ),
@@ -64,7 +64,7 @@ class _CpResidentialConnectScreenState
               'INSTITUTIONAL CONCIERGE',
               style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: scheme.primary,
               ),
@@ -190,7 +190,7 @@ class _SectionHeader extends StatelessWidget {
         label,
         style: GoogleFonts.gelasio(
           fontSize: 10,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w700,
           letterSpacing: 3,
           color: muted,
         ),
@@ -277,7 +277,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.gelasio(
                             fontSize: 18,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             color: scheme.onSurface,
                             height: 1.05,
                           ),
@@ -289,7 +289,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
                             color: widget.muted,
                           ),
@@ -312,7 +312,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                       'VERIFIED',
                       style: GoogleFonts.gelasio(
                         fontSize: 8,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: scheme.onPrimary,
                       ),
@@ -329,7 +329,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                     'ASSET UTILIZATION',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                       color: widget.muted,
                     ),
@@ -338,7 +338,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                     '85% ACTIVE',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                       color: scheme.onSurface,
                     ),
@@ -438,7 +438,7 @@ class _ServiceCardState extends State<_ServiceCard> {
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 13,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: scheme.onSurface,
                       height: 1.05,
                     ),
@@ -450,7 +450,7 @@ class _ServiceCardState extends State<_ServiceCard> {
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       letterSpacing: 1.2,
                       color: widget.muted,
                       height: 1,
@@ -540,7 +540,7 @@ class _AlertItemState extends State<_AlertItem> {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 13,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         color: scheme.onSurface,
                         height: 1.1,
                       ),
@@ -552,7 +552,7 @@ class _AlertItemState extends State<_AlertItem> {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 9,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         letterSpacing: 1.2,
                         color: widget.muted,
                       ),
@@ -657,7 +657,7 @@ class _CommunityChatCard extends StatelessWidget {
                               'GLOBAL LOUNGE',
                               style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 3,
                                 color: scheme.surface.withValues(alpha: 0.6),
                                 height: 1,
@@ -668,7 +668,7 @@ class _CommunityChatCard extends StatelessWidget {
                               'RESIDENT LINK',
                               style: GoogleFonts.gelasio(
                                 fontSize: 18,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: -0.5,
                                 color: scheme.surface,
                                 height: 1,
@@ -704,7 +704,7 @@ class _CommunityChatCard extends StatelessWidget {
                         'INITIATE SECURE LINK',
                         style: GoogleFonts.gelasio(
                           fontSize: 11,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 3,
                           color: scheme.onSurface,
                         ),

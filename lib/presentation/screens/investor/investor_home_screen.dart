@@ -487,7 +487,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                 'M4 FAMILY',
                 style: GoogleFonts.gelasio(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 5,
                   color: Theme.of(
                     context,
@@ -573,7 +573,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Tagline (Living the M4 Life) — script image, not text.
-                M4Theme.taglineWordmark(context, height: 200),
+                M4Theme.taglineWordmark(context, height: 120),
 
                 // Hero carousel (4:3, auto-cycle, badge, dots).
                 // Was -110, which pulled the hero up until it touched the
@@ -605,7 +605,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                               aspectRatio: 4 / 3,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(32),
+                                  borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withValues(
@@ -617,7 +617,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                   ],
                                 ),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(32),
+                                  borderRadius: BorderRadius.circular(20),
                                   child: AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 800),
                                     transitionBuilder:
@@ -663,7 +663,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                   style: GoogleFonts.gelasio(
                                     color: const Color(0xFFF4EFE3),
                                     fontSize: 9,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w700,
                                     letterSpacing: 1.5,
                                   ),
                                 ),
@@ -706,7 +706,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.only(bottom: 120),
+            padding: const EdgeInsets.only(bottom: 96),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 // Pull the tabs up under the hero, but keep them tappable: the
@@ -742,7 +742,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildInterestForm(),
                 ),
-                const SizedBox(height: 120),
+                const SizedBox(height: 96),
               ]),
             ),
           ),
@@ -839,7 +839,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                     : (isDark ? Colors.white : Color(0xFF163A2C))
                                           .withValues(alpha: 0.72),
                                 fontSize: 12,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                               ),
                             ),
@@ -1193,7 +1193,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           // Brighter on the dark card = clearly readable.
                           color: Colors.white.withValues(alpha: 0.92),
                           fontSize: 10.5,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 0.5,
                           height: 1.4,
                         ),
@@ -1343,7 +1343,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         style: GoogleFonts.gelasio(
                           color: const Color(0xFFF4EFE3),
                           fontSize: 9,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -1362,7 +1362,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           style: GoogleFonts.gelasio(
                             color: const Color(0xFFC5A35B),
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2.5,
                           ),
                         ),
@@ -1372,7 +1372,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           // Lighter serif: DM Serif Display ships only weight
                           // 400, so fontWeight can't thin it. Playfair Display
                           // at w400 reads noticeably less bold.
-                          style: GoogleFonts.playfairDisplay(
+                          style: GoogleFonts.gelasio(
                             color: Colors.black,
                             fontSize: 44,
                             fontWeight: FontWeight.w600,
@@ -1395,7 +1395,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                             color: Colors.white.withValues(alpha: 0.8),
                             fontSize: 11,
                             height: 1.6,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1.2,
                           ),
                         ),
@@ -1483,7 +1483,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         'READ MORE',
                         style: GoogleFonts.gelasio(
                           color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           fontSize: 12,
                           letterSpacing: 3,
                         ),
@@ -1535,7 +1535,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 11,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
           ),
         ),
@@ -1567,7 +1567,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             color: isDark
                 ? Colors.white.withValues(alpha: 0.03)
                 : Colors.black.withValues(alpha: 0.02),
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                 alpha: 0.08,
@@ -1582,7 +1582,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             child: GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -1668,7 +1668,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white : Color(0xFF163A2C),
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 fontSize: 13,
                 letterSpacing: 1,
               ),
@@ -1771,7 +1771,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       style: GoogleFonts.ebGaramond(
                         color: isDark ? Colors.white : Color(0xFF163A2C),
                         fontSize: 11,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 0.8,
                         decoration: TextDecoration.underline,
                       ),

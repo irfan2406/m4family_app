@@ -90,7 +90,7 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
         title: Text(
           'Wallet & history',
           style: GoogleFonts.ebGaramond(
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             fontSize: 16,
           ),
         ),
@@ -236,7 +236,7 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
           Text(
             value,
             style: GoogleFonts.ebGaramond(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               fontSize: 14,
               color: highlight ? Colors.greenAccent : null,
             ),

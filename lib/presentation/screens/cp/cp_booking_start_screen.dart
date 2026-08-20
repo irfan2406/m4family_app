@@ -69,6 +69,9 @@ class CpBookingStartScreen extends ConsumerWidget {
           ).animate().fadeIn(duration: 1000.ms),
 
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
               child: Column(
@@ -121,7 +124,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                     'HOW CAN\nWE HELP?',
                     style: GoogleFonts.gelasio(
                       fontSize: 36,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: textPrimary,
                       height: 0.9,
                       letterSpacing: -2,
@@ -136,7 +139,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
                       color: textPrimary.withValues(alpha: 0.68),
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2.5,
                       height: 1.8,
                     ),
@@ -207,7 +210,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                                     'M4 FAMILY MEMBERS GET PRIORITY SITE VISITS AND EXCLUSIVE UNIT SELECTION WINDOWS.',
                                     style: GoogleFonts.ebGaramond(
                                       fontSize: 9,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w600,
                                       color: textPrimary.withValues(
                                         alpha: isDark ? 0.6 : 0.68,
                                       ),
@@ -222,7 +225,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                                       'LEARN MORE',
                                       style: GoogleFonts.ebGaramond(
                                         fontSize: 10,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w600,
                                         color: M4Theme.premiumBlue,
                                         letterSpacing: 1,
                                         decoration: TextDecoration.underline,
@@ -272,7 +275,7 @@ class _BookingOptionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark
@@ -309,7 +312,7 @@ class _BookingOptionCard extends StatelessWidget {
                     opt['title'] as String,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: 0.5,
                     ),

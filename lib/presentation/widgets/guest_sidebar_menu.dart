@@ -33,7 +33,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF141B3A) : const Color(0xFF0F2A20).withValues(alpha: 0.72),
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFF0C312B).withValues(alpha: 0.72),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isDark
@@ -62,7 +62,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                 'Exit App',
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                 ),
               ),
@@ -99,7 +99,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                           'NO',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 13,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
                             color: isDark ? Colors.white70 : Colors.grey[800],
                           ),
@@ -122,7 +122,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                           'YES',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 13,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
                             color: Colors.white,
                           ),
@@ -159,7 +159,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
               decoration: BoxDecoration(
                 color: isDark
                     ? const Color(0xFF0B1026).withValues(alpha: 0.82)
-                    : const Color(0xFF0F2A20).withValues(alpha: 0.72),
+                    : const Color(0xFF0C312B).withValues(alpha: 0.72),
                 border: Border(
                   right: BorderSide(
                     color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(
@@ -183,7 +183,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         0.68,
                       ),
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 4,
                     ),
                   ),
@@ -330,7 +330,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                             color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                 .withOpacity(0.6),
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 3,
                           ),
                         ),
@@ -383,7 +383,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         style: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.white70 : const Color(0xFFF4EFE3),
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                         ),
                       ),
@@ -442,7 +442,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                             'EXIT APP',
                             style: GoogleFonts.ebGaramond(
                               color: const Color(0xFFC65B46),
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               fontSize: 13,
                               letterSpacing: 1,
                             ),
@@ -507,7 +507,7 @@ class _MenuItem extends StatelessWidget {
                     ? Colors.white.withOpacity(0.7)
                     : const Color(0xFFF4EFE3).withValues(alpha: 0.92)),
           fontSize: 16.5,
-          fontWeight: isActive ? FontWeight.w900 : FontWeight.w800,
+          fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
           letterSpacing: -0.2,
         ),
       ),
@@ -566,7 +566,7 @@ class _DropdownMenuItem extends StatelessWidget {
                 isOpen ? 1.0 : 0.8,
               ),
               fontSize: 16.5,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               letterSpacing: -0.2,
             ),
           ),
@@ -613,7 +613,7 @@ class _SubItem extends StatelessWidget {
           style: GoogleFonts.ebGaramond(
             color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.85),
             fontSize: 13,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),
@@ -655,7 +655,7 @@ class _QuickActionItem extends StatelessWidget {
         style: GoogleFonts.ebGaramond(
           color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.8),
           fontSize: 16.5,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w500,
           letterSpacing: -0.2,
         ),
       ),

@@ -40,7 +40,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
         ),
         title: Text(
           'Calculator',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w900),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600),
         ),
       ),
       body: ListView(
@@ -67,7 +67,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
                   'PROJECTED MATURITY VALUE',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: purple,
                   ),
@@ -78,7 +78,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
                     fontSize: 28,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: -0.4,
                   ),
                 ),
@@ -108,7 +108,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
                         '+${fmt.format(profit)} PROFIT',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
                           color: const Color(0xFF163A2C),
                         ),
@@ -214,7 +214,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
               label.toUpperCase(),
               style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.6,
                 color: Theme.of(
                   context,
@@ -225,7 +225,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
               valueText,
               style: GoogleFonts.ebGaramond(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],

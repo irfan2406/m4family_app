@@ -60,8 +60,11 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
     return Scaffold(
       backgroundColor: isDark
           ? const Color(0xFF141B3A)
-          : const Color(0xFFFBF7EF),
+          : const Color(0xFFF4EFE3),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark),
@@ -121,7 +124,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                 style: GoogleFonts.gelasio(
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 16,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 2,
                 ),
@@ -192,7 +195,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                   style: GoogleFonts.gelasio(
                     textStyle: const TextStyle(inherit: true),
                     fontSize: 8,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                     letterSpacing: 1.5,
                   ),
@@ -202,7 +205,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                   style: GoogleFonts.ebGaramond(
                     textStyle: const TextStyle(inherit: true),
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
@@ -233,7 +236,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                   labelStyle: GoogleFonts.ebGaramond(
                     textStyle: const TextStyle(inherit: true),
                     fontSize: 9,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: _selectedFilter == f
                         ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
                         : (isDark ? Colors.white54 : Color(0xFF5E6B60)),
@@ -241,7 +244,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                   selectedColor: isDark ? Colors.white : Color(0xFF163A2C),
                   backgroundColor: isDark
                       ? const Color(0xFF141B3A)
-                      : Colors.white,
+                      : const Color(0xFFF4EFE3),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 8,
@@ -301,7 +304,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
           (doc['name'] ?? 'DOCUMENT').toUpperCase(),
           style: GoogleFonts.ebGaramond(
             fontSize: 12,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             color: isDark ? Colors.white : Color(0xFF163A2C),
           ),
           overflow: TextOverflow.ellipsis,
@@ -379,7 +382,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
           style: GoogleFonts.gelasio(
             textStyle: const TextStyle(inherit: true),
             fontSize: 10,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
             letterSpacing: 2,
           ),
@@ -427,7 +430,7 @@ class _DocumentDetailSheet extends StatelessWidget {
             textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               fontSize: 18,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               color: isDark ? Colors.white : Color(0xFF163A2C),
             ),
           ),
@@ -436,7 +439,7 @@ class _DocumentDetailSheet extends StatelessWidget {
             'SECURE DOCUMENT ACCESS',
             style: GoogleFonts.gelasio(
               fontSize: 9,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               color: isDark ? Colors.white38 : Color(0xFF5E6B60),
               letterSpacing: 2,
             ),
@@ -538,7 +541,7 @@ class _DetailRow extends StatelessWidget {
                 label,
                 style: GoogleFonts.ebGaramond(
                   fontSize: 9,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                   letterSpacing: 1,
                 ),
@@ -549,7 +552,7 @@ class _DetailRow extends StatelessWidget {
             value,
             style: GoogleFonts.ebGaramond(
               fontSize: 10,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               color: color ?? (isDark ? Colors.white : Color(0xFF163A2C)),
             ),
           ),
@@ -584,7 +587,7 @@ class _ActionButton extends StatelessWidget {
           label,
           style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
           ),
         ),

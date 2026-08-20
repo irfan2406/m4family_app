@@ -20,7 +20,7 @@ class InvestorLoginScreen extends ConsumerStatefulWidget {
 class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
   static const _gold = Colors.white;
   static const _amber = Colors.white;
-  static const _deepGreen = Color(0xFF0F2A20);
+  static const _deepGreen = Color(0xFF0C312B);
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -80,8 +80,11 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2A20),
+      backgroundColor: const Color(0xFF0C312B),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Column(
@@ -154,7 +157,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
           textAlign: TextAlign.center,
           style: GoogleFonts.gelasio(
             fontSize: 38,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: const Color(0xFFF4EFE3),
             height: 1.0,
             letterSpacing: -1,
@@ -165,7 +168,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
           textAlign: TextAlign.center,
           style: GoogleFonts.gelasio(
             fontSize: 38,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: _gold,
             height: 1.0,
             letterSpacing: -1,
@@ -212,7 +215,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                 Text(
                   'ACCESS INVESTOR HUB',
                   style: GoogleFonts.gelasio(
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     fontSize: 12,
                     letterSpacing: 1.5,
                   ),
@@ -243,7 +246,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
               'INSTITUTIONAL GRADE SECURITY',
               style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 color: Colors.white70,
                 letterSpacing: 2.5,
               ),
@@ -284,7 +287,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                     'INVESTOR',
                     style: GoogleFonts.gelasio(
                       fontSize: 22,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: const Color(0xFFF4EFE3),
                       height: 1.0,
                     ),
@@ -293,7 +296,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                     'CREDENTIALS',
                     style: GoogleFonts.gelasio(
                       fontSize: 18,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: _gold,
                       height: 1.1,
                     ),
@@ -363,7 +366,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                       Text(
                         'AUTHENTICATING',
                         style: GoogleFonts.gelasio(
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           fontSize: 12,
                           letterSpacing: 1.5,
                         ),
@@ -376,7 +379,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                       Text(
                         'LOGIN',
                         style: GoogleFonts.gelasio(
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           fontSize: 13,
                           letterSpacing: 1.5,
                         ),
@@ -400,7 +403,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               color: Colors.white70,
               letterSpacing: 2,
               height: 1.6,

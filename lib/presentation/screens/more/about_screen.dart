@@ -46,7 +46,7 @@ class _AboutScreenState extends State<AboutScreen> {
               'WHO WE ARE',
               style: GoogleFonts.ebGaramond(
                 fontSize: 14,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: 1,
               ),
@@ -55,7 +55,7 @@ class _AboutScreenState extends State<AboutScreen> {
               'M4 FAMILY COLLECTIVE',
               style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: M4Theme.premiumBlue,
                 letterSpacing: 1.5,
               ),
@@ -137,7 +137,7 @@ class _AboutScreenState extends State<AboutScreen> {
                             _tabs[index]['name'],
                             style: GoogleFonts.ebGaramond(
                               fontSize: 7,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: isActive
                                   ? (isDark ? Colors.white : Color(0xFF163A2C))
                                   : (isDark ? Colors.white24 : Colors.black26),
@@ -197,7 +197,7 @@ class _AboutScreenState extends State<AboutScreen> {
                         'THE COLLECTIVE',
                         style: GoogleFonts.gelasio(
                           fontSize: 12,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white70,
                           letterSpacing: 2,
                         ),
@@ -206,7 +206,7 @@ class _AboutScreenState extends State<AboutScreen> {
                         'M4 LEGACY',
                         style: GoogleFonts.gelasio(
                           fontSize: 32,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
                           letterSpacing: -1,
                           height: 1,
@@ -246,7 +246,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     'OUR STORY',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 16,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: -0.5,
                     ),
@@ -262,7 +262,7 @@ class _AboutScreenState extends State<AboutScreen> {
               child: Container(
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+                  color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(40),
                   border: Border.all(
                     color: isDark

@@ -1,3 +1,5 @@
+import 'package:m4_mobile/presentation/widgets/nav_swipe.dart';
+import 'package:m4_mobile/presentation/widgets/nav_style.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
@@ -66,7 +68,13 @@ class GuestMainShell extends ConsumerWidget {
                 bottom: MediaQuery.of(context).padding.bottom + _navFootprint,
               ),
             ),
-            child: IndexedStack(index: currentIndex, children: screens),
+            child: NavSwipe(
+              index: currentIndex,
+              count: screens.length,
+              onIndexChanged: (i) =>
+                  ref.read(guestNavigationProvider.notifier).state = i,
+              child: IndexedStack(index: currentIndex, children: screens),
+            ),
           ),
           if (!isDrawerOpen)
             Align(
@@ -86,8 +94,8 @@ class GuestMainShell extends ConsumerWidget {
   }
 }
 
-/// Height the floating pill occupies: 62px bar + 48px bottom margin.
-const double _navFootprint = 110;
+/// Height the floating pill occupies: 62px bar + 14px bottom margin.
+const double _navFootprint = 80;
 
 class _GuestNavigationPill extends StatelessWidget {
   final int currentIndex;
@@ -102,16 +110,16 @@ class _GuestNavigationPill extends StatelessWidget {
     // on the showcase tabs, cream on the info tabs, navy in dark), with a
     // hairline border and a soft shadow — no heavy dark halo.
     return Container(
-      margin: const EdgeInsets.only(bottom: 48),
+      margin: const EdgeInsets.only(bottom: M4Nav.bottomInset),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(100),
+        borderRadius: BorderRadius.circular(M4Nav.radius),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(100),
+        borderRadius: BorderRadius.circular(M4Nav.radius),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+          filter: ImageFilter.blur(sigmaX: M4Nav.blur, sigmaY: M4Nav.blur),
           child: Container(
-      padding: const EdgeInsets.all(6),
+      padding: const EdgeInsets.symmetric(horizontal: M4Nav.innerPadding, vertical: (M4Nav.height - M4Nav.activeDisc) / 2),
       decoration: BoxDecoration(
         // Frosted glass: a translucent tint over the 30px blur, with a top-down
         // reflection so the bar reads as glass rather than a flat panel.
@@ -128,7 +136,7 @@ class _GuestNavigationPill extends StatelessWidget {
                   Colors.white.withValues(alpha: 0.38),
                 ],
         ),
-        borderRadius: BorderRadius.circular(100),
+        borderRadius: BorderRadius.circular(M4Nav.radius),
         border: Border.all(
           color: (isDark ? M4Theme.cream : Colors.white)
               .withValues(alpha: isDark ? 0.16 : 0.65),
@@ -192,9 +200,11 @@ class _NavIcon extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return _ScaleButton(
       onTap: onTap,
-      child: Container(
-        width: 50,
-        height: 50,
+      child: AnimatedContainer(
+        duration: M4Nav.animation,
+        curve: M4Nav.curve,
+        width: M4Nav.activeDisc,
+        height: M4Nav.activeDisc,
         decoration: BoxDecoration(
           color: isActive
               ? (isDark ? Colors.white : Color(0xFF163A2C))
@@ -217,7 +227,7 @@ class _NavIcon extends StatelessWidget {
             color: isActive
                 ? (isDark ? Colors.black : Colors.white)
                 : (isDark ? Colors.white70 : Color(0xFF5E6B60)),
-            size: 24,
+            size: M4Nav.iconSize,
           ),
         ),
       ),

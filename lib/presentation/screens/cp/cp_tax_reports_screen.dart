@@ -116,7 +116,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
             Text(
               'Tax Reports',
               style: GoogleFonts.ebGaramond(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: textPrimary,
               ),
@@ -279,7 +279,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                       fmt.format(total),
                       style: GoogleFonts.gelasio(
                         fontSize: 36,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         height: 1,
                         letterSpacing: -0.5,
                         color: textPrimary,

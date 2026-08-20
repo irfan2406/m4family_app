@@ -145,6 +145,9 @@ class _InvestorPortfolioScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark),
@@ -177,7 +180,7 @@ class _InvestorPortfolioScreenState
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.03)
-                    : Colors.white,
+                    : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: border),
               ),
@@ -196,7 +199,7 @@ class _InvestorPortfolioScreenState
                 'PORTFOLIO',
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: textPrimary,
                   letterSpacing: 0.5,
                   height: 1,
@@ -315,7 +318,7 @@ class _InvestorPortfolioScreenState
                 'PORTFOLIO VALUATION',
                 style: GoogleFonts.gelasio(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2.5,
                   color: Colors.white.withValues(alpha: 0.6),
                 ),
@@ -331,7 +334,7 @@ class _InvestorPortfolioScreenState
                   _formatValue(_currentValue),
                   style: GoogleFonts.gelasio(
                     fontSize: 32,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: const Color(0xFFF4EFE3),
                     height: 1.0,
                     letterSpacing: -1,
@@ -367,7 +370,7 @@ class _InvestorPortfolioScreenState
                         '${_roiPct >= 0 ? '+' : ''}${_roiPct.toStringAsFixed(1)}%',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: _gains >= 0 ? _green : _amber,
                         ),
                       ),
@@ -382,7 +385,7 @@ class _InvestorPortfolioScreenState
             'CURRENT MARKET VALUE',
             style: GoogleFonts.gelasio(
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: Colors.white.withValues(alpha: 0.72),
             ),
@@ -430,7 +433,7 @@ class _InvestorPortfolioScreenState
           label,
           style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
             color: Colors.white.withValues(alpha: 0.72),
           ),
@@ -440,7 +443,7 @@ class _InvestorPortfolioScreenState
           value,
           style: GoogleFonts.ebGaramond(
             fontSize: 16,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: valueColor,
           ),
         ),
@@ -532,7 +535,7 @@ class _InvestorPortfolioScreenState
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.ebGaramond(
               fontSize: 16,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: textPrimary,
               letterSpacing: -0.3,
             ),
@@ -653,7 +656,7 @@ class _InvestorPortfolioScreenState
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.ebGaramond(
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               color: textPrimary,
               letterSpacing: 0.2,
             ),
@@ -664,7 +667,7 @@ class _InvestorPortfolioScreenState
           '${pct.toStringAsFixed(0)}%',
           style: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: muted,
           ),
         ),
@@ -695,7 +698,7 @@ class _InvestorPortfolioScreenState
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         color: card,
-        borderRadius: BorderRadius.circular(36),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: border),
         boxShadow: isDark
             ? null
@@ -708,7 +711,7 @@ class _InvestorPortfolioScreenState
               ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(36),
+        borderRadius: BorderRadius.circular(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -767,7 +770,7 @@ class _InvestorPortfolioScreenState
                     name.toUpperCase(),
                     style: GoogleFonts.gelasio(
                       fontSize: 18,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       color: textPrimary,
                       letterSpacing: -0.2,
                     ),
@@ -847,7 +850,7 @@ class _InvestorPortfolioScreenState
                                 'VIEW PERFORMANCE',
                                 style: GoogleFonts.gelasio(
                                   fontSize: 11,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w700,
                                   color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                   letterSpacing: 1.5,
                                 ),
@@ -988,7 +991,7 @@ class _InvestorPortfolioScreenState
                                 name.toUpperCase(),
                                 style: GoogleFonts.gelasio(
                                   fontSize: 22,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w700,
                                   color: textPrimary,
                                   letterSpacing: -0.3,
                                 ),
@@ -1064,7 +1067,7 @@ class _InvestorPortfolioScreenState
                                       'NET RETURN',
                                       style: GoogleFonts.gelasio(
                                         fontSize: 10,
-                                        fontWeight: FontWeight.w800,
+                                        fontWeight: FontWeight.w700,
                                         color: muted,
                                         letterSpacing: 2,
                                       ),
@@ -1074,7 +1077,7 @@ class _InvestorPortfolioScreenState
                                       '${gains >= 0 ? '+' : '-'}${_formatValue(gains.abs())}',
                                       style: GoogleFonts.gelasio(
                                         fontSize: 18,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w700,
                                         color: gains >= 0 ? _green : _amber,
                                       ),
                                     ),
@@ -1085,7 +1088,7 @@ class _InvestorPortfolioScreenState
                                 '${roi >= 0 ? '+' : ''}${roi.toStringAsFixed(1)}%',
                                 style: GoogleFonts.gelasio(
                                   fontSize: 20,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   color: gains >= 0 ? _green : _amber,
                                 ),
                               ),
@@ -1163,7 +1166,7 @@ class _InvestorPortfolioScreenState
                                   'VERIFIED INVESTMENT',
                                   style: GoogleFonts.gelasio(
                                     fontSize: 11,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w700,
                                     color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                     letterSpacing: 2,
                                   ),
@@ -1199,7 +1202,7 @@ class _InvestorPortfolioScreenState
               'NO INVESTMENTS YET',
               style: GoogleFonts.gelasio(
                 fontSize: 13,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 color: faint,
                 letterSpacing: 2,
               ),
@@ -1232,7 +1235,7 @@ class _InvestorPortfolioScreenState
                   'EXPLORE OPPORTUNITIES',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     letterSpacing: 2,
                   ),
@@ -1260,7 +1263,7 @@ class _InvestorPortfolioScreenState
               'UNABLE TO LOAD PORTFOLIO',
               style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 color: muted,
                 letterSpacing: 2,
               ),
@@ -1281,7 +1284,7 @@ class _InvestorPortfolioScreenState
                   'RETRY',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     letterSpacing: 2,
                   ),
@@ -1448,7 +1451,7 @@ class _Pill extends StatelessWidget {
         text.toUpperCase(),
         style: GoogleFonts.gelasio(
           fontSize: 10,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w700,
           color: fg,
           letterSpacing: 1.5,
         ),
@@ -1481,7 +1484,7 @@ class _StatusPill extends StatelessWidget {
         status.toUpperCase(),
         style: GoogleFonts.gelasio(
           fontSize: 10,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w700,
           color: color,
           letterSpacing: 1.5,
         ),
@@ -1518,7 +1521,7 @@ class _RoiBadge extends StatelessWidget {
             '${positive ? '+' : ''}${roi.toStringAsFixed(1)}% ROI',
             style: GoogleFonts.ebGaramond(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: color,
               letterSpacing: 0.3,
             ),
@@ -1565,7 +1568,7 @@ class _DetailItem extends StatelessWidget {
           textAlign: alignEnd ? TextAlign.right : TextAlign.left,
           style: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             fontStyle: FontStyle.italic,
             color: textPrimary,
           ),
@@ -1616,7 +1619,7 @@ class _SpecItem extends StatelessWidget {
           value.toUpperCase(),
           style: GoogleFonts.ebGaramond(
             fontSize: 12,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             color: textPrimary,
           ),
         ),

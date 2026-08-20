@@ -394,7 +394,7 @@ class _InvestorProjectDetailScreenState
                           headerLabel,
                           style: GoogleFonts.gelasio(
                             fontSize: 30,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: isDark ? Colors.white : Color(0xFF163A2C),
                             height: 1.1,
                             letterSpacing: -1.2,
@@ -406,7 +406,7 @@ class _InvestorProjectDetailScreenState
                           style: GoogleFonts.ebGaramond(
                             fontSize: 11,
                             color: isDark ? Colors.white38 : Color(0xFF5E6B60),
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                           ),
                         ),
@@ -442,7 +442,7 @@ class _InvestorProjectDetailScreenState
                             'PREFERRED PLAN',
                             style: GoogleFonts.ebGaramond(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                               letterSpacing: 1,
                             ),
@@ -486,7 +486,7 @@ class _InvestorProjectDetailScreenState
                                     n.toUpperCase(),
                                     style: GoogleFonts.ebGaramond(
                                       fontSize: 10,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w600,
                                       color: isActive
                                           ? Colors.white
                                           : (isDark
@@ -507,7 +507,7 @@ class _InvestorProjectDetailScreenState
                             'VISIT TYPE',
                             style: GoogleFonts.ebGaramond(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                               letterSpacing: 1,
                             ),
@@ -551,7 +551,7 @@ class _InvestorProjectDetailScreenState
                                               : 'SITE VISIT',
                                           style: GoogleFonts.ebGaramond(
                                             fontSize: 11,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.w600,
                                             color: localType == t
                                                 ? (isDark
                                                       ? Colors.black
@@ -606,7 +606,7 @@ class _InvestorProjectDetailScreenState
                               decoration: BoxDecoration(
                                 color: isDark
                                     ? Colors.white.withValues(alpha: 0.03)
-                                    : const Color(0xFFFBF7EF),
+                                    : const Color(0xFFF4EFE3),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: isDark
@@ -628,7 +628,7 @@ class _InvestorProjectDetailScreenState
                                         : _formatSchedule(scheduledAt!),
                                     style: GoogleFonts.ebGaramond(
                                       fontSize: 11,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w600,
                                       color: scheduledAt == null
                                           ? (isDark
                                                 ? Colors.white24
@@ -651,7 +651,7 @@ class _InvestorProjectDetailScreenState
                           'ADDITIONAL NOTES',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                             letterSpacing: 1,
                           ),
@@ -665,7 +665,7 @@ class _InvestorProjectDetailScreenState
                           decoration: BoxDecoration(
                             color: isDark
                                 ? Colors.white.withValues(alpha: 0.03)
-                                : const Color(0xFFFBF7EF),
+                                : const Color(0xFFF4EFE3),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDark
@@ -690,7 +690,7 @@ class _InvestorProjectDetailScreenState
                                   'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
                               hintStyle: GoogleFonts.ebGaramond(
                                 fontSize: 11,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                                 color: isDark ? Colors.white24 : Colors.black26,
                                 letterSpacing: 1,
                               ),
@@ -726,7 +726,7 @@ class _InvestorProjectDetailScreenState
                                 style: GoogleFonts.gelasio(
                                   color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                   fontSize: 11,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: 2,
                                 ),
                               ),
@@ -840,6 +840,9 @@ class _InvestorProjectDetailScreenState
       return Scaffold(
         backgroundColor: bg,
         body: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(32),
@@ -858,7 +861,7 @@ class _InvestorProjectDetailScreenState
                     'PROJECT NOT FOUND',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 16,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: 1,
                     ),
@@ -891,13 +894,13 @@ class _InvestorProjectDetailScreenState
                       ),
                       decoration: BoxDecoration(
                         color: isDark ? Colors.white : Color(0xFF163A2C),
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         'GO BACK',
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           letterSpacing: 1.5,
                         ),
@@ -1032,7 +1035,7 @@ class _InvestorProjectDetailScreenState
                 style: GoogleFonts.ebGaramond(
                   color: const Color(0xFFF4EFE3),
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1,
                 ),
               ),
@@ -1101,7 +1104,7 @@ class _InvestorProjectDetailScreenState
               color: isDark ? Colors.white : Color(0xFF163A2C),
               fontSize: 32,
               height: 1.0,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: -1.5,
             ),
           ),
@@ -1113,8 +1116,8 @@ class _InvestorProjectDetailScreenState
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.06)
-                    : const Color(0xFFFBF7EF),
-                borderRadius: BorderRadius.circular(30),
+                    : const Color(0xFFF4EFE3),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.12,
@@ -1264,7 +1267,7 @@ class _InvestorProjectDetailScreenState
               // a touch larger, so the overview copy reads clearly.
               fontSize: 12.5,
               color: isDark ? Colors.white : Color(0xFF163A2C),
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               height: 1.65,
               letterSpacing: 0.5,
             ),
@@ -1285,7 +1288,7 @@ class _InvestorProjectDetailScreenState
                   'STARTING PRICE',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                     letterSpacing: 1,
                   ),
@@ -1295,7 +1298,7 @@ class _InvestorProjectDetailScreenState
                   startingPrice,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 13,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
@@ -1345,7 +1348,7 @@ class _InvestorProjectDetailScreenState
         'DOCUMENTS',
         style: GoogleFonts.ebGaramond(
           fontSize: 10,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           color: isDark ? Colors.white38 : Color(0xFF5E6B60),
           letterSpacing: 1,
         ),
@@ -1413,7 +1416,7 @@ class _InvestorProjectDetailScreenState
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.03)
-                        : Colors.white,
+                        : const Color(0xFFF4EFE3),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: isDark
@@ -1444,7 +1447,7 @@ class _InvestorProjectDetailScreenState
                             : Container(
                                 color: isDark
                                     ? Colors.white.withValues(alpha: 0.04)
-                                    : const Color(0xFFFBF7EF),
+                                    : const Color(0xFFF4EFE3),
                                 child: Center(
                                   child: Icon(
                                     LucideIcons.layoutGrid,
@@ -1465,7 +1468,7 @@ class _InvestorProjectDetailScreenState
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.ebGaramond(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                                 color: isDark ? Colors.white : Color(0xFF163A2C),
                                 letterSpacing: 0.5,
                               ),
@@ -1480,7 +1483,7 @@ class _InvestorProjectDetailScreenState
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.ebGaramond(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                                 color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                                 letterSpacing: 0.5,
                               ),
@@ -1514,7 +1517,7 @@ class _InvestorProjectDetailScreenState
                 'COMING SOON',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 13,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 1,
                   color: isDark ? Colors.white70 : Color(0xFF5E6B60),
                 ),
@@ -1555,8 +1558,8 @@ class _InvestorProjectDetailScreenState
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.03)
-                        : const Color(0xFFFBF7EF),
-                    borderRadius: BorderRadius.circular(32),
+                        : const Color(0xFFF4EFE3),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.08)
@@ -1575,7 +1578,7 @@ class _InvestorProjectDetailScreenState
                           textAlign: TextAlign.center,
                           style: GoogleFonts.ebGaramond(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: isDark ? Colors.white : Color(0xFF163A2C),
                             letterSpacing: 1,
                             height: 1.2,
@@ -1620,7 +1623,7 @@ class _InvestorProjectDetailScreenState
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.03)
-                  : const Color(0xFFFBF7EF),
+                  : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(40),
               border: Border.all(
                 color: isDark
@@ -1641,7 +1644,7 @@ class _InvestorProjectDetailScreenState
                             'ESTIMATED\nCOMPLETION\nDATE',
                             style: GoogleFonts.ebGaramond(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withValues(alpha: 0.72),
                               letterSpacing: 1,
@@ -1653,7 +1656,7 @@ class _InvestorProjectDetailScreenState
                             estimated.toUpperCase().replaceAll(' ', '\n'),
                             style: GoogleFonts.gelasio(
                               fontSize: 40,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               height: 1.0,
                               letterSpacing: -1,
                               color: isDark ? Colors.white : Color(0xFF163A2C),
@@ -1684,7 +1687,7 @@ class _InvestorProjectDetailScreenState
                               _showFullProgress ? 'Show less' : 'Read more',
                               style: GoogleFonts.ebGaramond(
                                 fontSize: 11,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                                 color: isDark ? Colors.white : Color(0xFF163A2C),
                                 decoration: TextDecoration.underline,
                               ),
@@ -1721,7 +1724,7 @@ class _InvestorProjectDetailScreenState
                                 '${overall.toInt()}%',
                                 style: GoogleFonts.gelasio(
                                   fontSize: 22,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   color: isDark ? Colors.white : Color(0xFF163A2C),
                                 ),
                               ),
@@ -1729,7 +1732,7 @@ class _InvestorProjectDetailScreenState
                                 'OVERALL',
                                 style: GoogleFonts.ebGaramond(
                                   fontSize: 12,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w600,
                                   color: (isDark ? Colors.white : Color(0xFF163A2C))
                                       .withValues(alpha: 0.85),
                                   letterSpacing: 1,
@@ -1752,7 +1755,7 @@ class _InvestorProjectDetailScreenState
                         '2026',
                         style: GoogleFonts.gelasio(
                           fontSize: 20,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: isDark ? Colors.white : Color(0xFF163A2C),
                         ),
                       ),
@@ -1773,7 +1776,7 @@ class _InvestorProjectDetailScreenState
                                 shape: BoxShape.circle,
                                 color: isDark
                                     ? const Color(0xFF0B1026)
-                                    : Colors.white,
+                                    : const Color(0xFFF4EFE3),
                                 border: Border.all(
                                   color: isDark ? Colors.white : Color(0xFF163A2C),
                                   width: 2,
@@ -1846,7 +1849,7 @@ class _InvestorProjectDetailScreenState
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(24),
           // Same card frame as the guest portal phase card (subtle in dark so
           // it doesn't show as a bright edge behind the image).
@@ -1915,7 +1918,7 @@ class _InvestorProjectDetailScreenState
                         status,
                         style: GoogleFonts.ebGaramond(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: const Color(0xFFF4EFE3),
                           letterSpacing: 1,
                         ),
@@ -1936,7 +1939,7 @@ class _InvestorProjectDetailScreenState
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 13,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: fg,
                       letterSpacing: 1,
                     ),
@@ -1963,7 +1966,7 @@ class _InvestorProjectDetailScreenState
                                   '$pct%',
                                   style: GoogleFonts.ebGaramond(
                                     fontSize: 10,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w600,
                                     color: fg,
                                   ),
                                 ),
@@ -1980,7 +1983,7 @@ class _InvestorProjectDetailScreenState
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.ebGaramond(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: fg.withValues(alpha: 0.75),
                             letterSpacing: 0.8,
                           ),
@@ -2022,7 +2025,7 @@ class _InvestorProjectDetailScreenState
                   'PHASE TRACKING',
                   style: GoogleFonts.gelasio(
                     fontSize: 13,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
@@ -2032,7 +2035,7 @@ class _InvestorProjectDetailScreenState
                   'REAL-TIME DEVELOPMENT STATUS',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1,
                     color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                   ),
@@ -2056,7 +2059,7 @@ class _InvestorProjectDetailScreenState
                 '${phases.length} MILESTONES',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1,
                   color: isDark ? Colors.white : Color(0xFF163A2C),
                 ),
@@ -2084,7 +2087,7 @@ class _InvestorProjectDetailScreenState
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.white,
+                  : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: isDark
@@ -2114,7 +2117,7 @@ class _InvestorProjectDetailScreenState
                         (i + 1).toString().padLeft(2, '0'),
                         style: GoogleFonts.ebGaramond(
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: isDark ? Colors.white54 : Color(0xFF5E6B60),
                         ),
                       ),
@@ -2130,7 +2133,7 @@ class _InvestorProjectDetailScreenState
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.ebGaramond(
                               fontSize: 11,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 0.5,
                               color: isDark ? Colors.white : Color(0xFF163A2C),
                             ),
@@ -2151,7 +2154,7 @@ class _InvestorProjectDetailScreenState
                                 status.toUpperCase(),
                                 style: GoogleFonts.ebGaramond(
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w600,
                                   letterSpacing: 1,
                                   color: statusColor,
                                 ),
@@ -2165,7 +2168,7 @@ class _InvestorProjectDetailScreenState
                       '$pct%',
                       style: GoogleFonts.ebGaramond(
                         fontSize: 16,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: isDark ? Colors.white : Color(0xFF163A2C),
                       ),
                     ),
@@ -2292,8 +2295,8 @@ class _InvestorProjectDetailScreenState
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.03)
-                    : const Color(0xFFFBF7EF),
-                borderRadius: BorderRadius.circular(32),
+                    : const Color(0xFFF4EFE3),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.08)
@@ -2311,7 +2314,7 @@ class _InvestorProjectDetailScreenState
                           name.toUpperCase(),
                           style: GoogleFonts.ebGaramond(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: isDark ? Colors.white : Color(0xFF163A2C),
                             letterSpacing: 0.5,
                           ),
@@ -2343,7 +2346,7 @@ class _InvestorProjectDetailScreenState
                                 '${item['percentage'] ?? 0}%',
                                 style: GoogleFonts.ebGaramond(
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w600,
                                   color: isDark ? Colors.white : Color(0xFF163A2C),
                                 ),
                               ),
@@ -2361,7 +2364,7 @@ class _InvestorProjectDetailScreenState
                                       'INSTALLMENT',
                                   style: GoogleFonts.ebGaramond(
                                     fontSize: 11,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w600,
                                     color: isDark ? Colors.white : Color(0xFF163A2C),
                                     letterSpacing: 0.5,
                                   ),
@@ -2399,7 +2402,7 @@ class _InvestorProjectDetailScreenState
                           'INQUIRE ABOUT THIS PLAN',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: isDark ? Colors.white : Color(0xFF163A2C),
                             letterSpacing: 1,
                           ),
@@ -2429,7 +2432,7 @@ class _InvestorProjectDetailScreenState
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.03)
-                  : Colors.white,
+                  : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(28),
               border: Border.all(
                 color: isDark
@@ -2460,7 +2463,7 @@ class _InvestorProjectDetailScreenState
                             'READY TO INVEST?',
                             style: GoogleFonts.ebGaramond(
                               fontSize: 12,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: isDark ? Colors.white : Color(0xFF163A2C),
                             ),
                           ),
@@ -2469,7 +2472,7 @@ class _InvestorProjectDetailScreenState
                             'CONNECT WITH OUR WEALTH ADVISORS',
                             style: GoogleFonts.ebGaramond(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                               letterSpacing: 1,
                             ),
@@ -2505,7 +2508,7 @@ class _InvestorProjectDetailScreenState
                         'INVEST IN THIS PROJECT NOW',
                         style: GoogleFonts.gelasio(
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           letterSpacing: 2,
                         ),
@@ -2540,8 +2543,8 @@ class _InvestorProjectDetailScreenState
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.03)
-                    : const Color(0xFFFBF7EF),
-                borderRadius: BorderRadius.circular(32),
+                    : const Color(0xFFF4EFE3),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.08)
@@ -2549,7 +2552,7 @@ class _InvestorProjectDetailScreenState
                 ),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(32),
+                borderRadius: BorderRadius.circular(20),
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
@@ -2579,7 +2582,7 @@ class _InvestorProjectDetailScreenState
                           color: isDark
                               ? const Color(0xFF141B3A)
                               : Colors.white.withValues(alpha: 0.9),
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -2594,7 +2597,7 @@ class _InvestorProjectDetailScreenState
                               'VIEW ON MAPS',
                               style: GoogleFonts.ebGaramond(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                                 color: isDark ? Colors.white : Color(0xFF163A2C),
                                 letterSpacing: 1,
                               ),
@@ -2627,7 +2630,7 @@ class _InvestorProjectDetailScreenState
           title.toUpperCase(),
           style: GoogleFonts.gelasio(
             fontSize: 12,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: isDark ? Colors.white : Color(0xFF163A2C),
             letterSpacing: 4,
           ),
@@ -2660,7 +2663,7 @@ class _SquareAction extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
@@ -2756,7 +2759,7 @@ class _MediaThumb extends StatelessWidget {
                   style: GoogleFonts.ebGaramond(
                     color: const Color(0xFFF4EFE3),
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -2787,7 +2790,7 @@ class _IconThumb extends StatelessWidget {
         width: 64,
         height: 64,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark
@@ -2835,7 +2838,7 @@ class _IconThumb extends StatelessWidget {
               label,
               style: GoogleFonts.ebGaramond(
                 fontSize: 7.5,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: 0.5,
               ),
@@ -2870,8 +2873,8 @@ class _ActionCard extends StatelessWidget {
         height: 140,
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
-          borderRadius: BorderRadius.circular(32),
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.08)
@@ -2905,7 +2908,7 @@ class _ActionCard extends StatelessWidget {
                   style: GoogleFonts.gelasio(
                     color: isDark ? Colors.white70 : Color(0xFF5E6B60),
                     fontSize: 11,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -2916,7 +2919,7 @@ class _ActionCard extends StatelessWidget {
                   style: GoogleFonts.ebGaramond(
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                     fontSize: 13,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: -0.2,
                   ),
                 ),
@@ -2950,7 +2953,7 @@ class _AssetCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -2995,7 +2998,7 @@ class _AssetCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 11,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                     letterSpacing: 0.5,
                   ),
@@ -3006,7 +3009,7 @@ class _AssetCard extends StatelessWidget {
                   // Was fontSize 8 / 38% — too faint. Larger + darker.
                   style: GoogleFonts.ebGaramond(
                     fontSize: 9.5,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: isDark ? Colors.white60 : Color(0xFF5E6B60),
                     letterSpacing: 1,
                   ),
@@ -3062,7 +3065,7 @@ class _AssetButton extends StatelessWidget {
           label,
           style: GoogleFonts.ebGaramond(
             fontSize: 7.5,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: fg,
             letterSpacing: 1.0,
           ),
@@ -3084,7 +3087,7 @@ class _WalkthroughCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -3129,7 +3132,7 @@ class _WalkthroughCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 11,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                     letterSpacing: 0.5,
                   ),
@@ -3140,7 +3143,7 @@ class _WalkthroughCard extends StatelessWidget {
                   // Was fontSize 8 / 38% — too faint. Larger + darker.
                   style: GoogleFonts.ebGaramond(
                     fontSize: 9.5,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: isDark ? Colors.white60 : Color(0xFF5E6B60),
                     letterSpacing: 1,
                   ),
@@ -3161,7 +3164,7 @@ class _WalkthroughCard extends StatelessWidget {
                 'WATCH STORY',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 7.5,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   letterSpacing: 1.0,
                 ),
@@ -3194,7 +3197,7 @@ class _RoundIcon extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark
               ? Colors.white.withValues(alpha: 0.05)
-              : const Color(0xFFFBF7EF),
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isDark
@@ -3234,7 +3237,7 @@ class _InquiryField extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.03)
-            : const Color(0xFFFBF7EF),
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDark
@@ -3259,7 +3262,7 @@ class _InquiryField extends StatelessWidget {
           hintText: hint,
           hintStyle: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: isDark ? Colors.white24 : Colors.black26,
             letterSpacing: 1,
           ),

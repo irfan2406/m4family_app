@@ -224,7 +224,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                 widget.content['type'].toString().toUpperCase(),
                                 style: GoogleFonts.gelasio(
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: 2,
                                   color: scheme.onSurface,
                                 ),
@@ -234,7 +234,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                 'DEEP DIVE',
                                 style: GoogleFonts.gelasio(
                                   fontSize: 8,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: 3,
                                   color: scheme.onSurface.withValues(
                                     alpha: 0.4,
@@ -337,7 +337,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                 widget.content['type'].toString().toUpperCase(),
                                 style: GoogleFonts.gelasio(
                                   fontSize: 9,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   color: scheme.onSurface,
                                   letterSpacing: 1.5,
                                 ),
@@ -361,7 +361,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           widget.content['title'].toString().toUpperCase(),
                           style: GoogleFonts.gelasio(
                             fontSize: 30,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: scheme.onSurface,
                             letterSpacing: -1,
                             height: 1.1,
@@ -416,7 +416,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             height: 65,
                             decoration: BoxDecoration(
                               color: Colors.transparent,
-                              borderRadius: BorderRadius.circular(35),
+                              borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color: scheme.onSurface.withOpacity(0.1),
                               ),
@@ -426,7 +426,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                 'CLOSE',
                                 style: GoogleFonts.gelasio(
                                   fontSize: 12,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   color: scheme.onSurface.withOpacity(0.6),
                                   letterSpacing: 2,
                                 ),
@@ -497,7 +497,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         height: 65,
         decoration: BoxDecoration(
           color: const Color(0xFF141B3A),
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.15),
@@ -513,7 +513,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               'SHARE THIS ARTICLE',
               style: GoogleFonts.gelasio(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: Colors.white,
                 letterSpacing: 2,
               ),
@@ -636,14 +636,14 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Text(
           status.toUpperCase(),
           style: GoogleFonts.gelasio(
             fontSize: 9,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: color,
             letterSpacing: 1.5,
           ),
@@ -657,7 +657,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -704,7 +704,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 label.toUpperCase(),
                 style: GoogleFonts.gelasio(
                   fontSize: 8,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                   letterSpacing: 1.5,
                 ),
@@ -714,7 +714,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 value,
                 style: GoogleFonts.ebGaramond(
                   fontSize: 12,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: -0.2,
                 ),
@@ -788,7 +788,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     'LOCATION',
                     style: GoogleFonts.gelasio(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                       letterSpacing: 1.5,
                     ),
@@ -798,7 +798,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     location,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: -0.2,
                     ),
@@ -808,7 +808,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     'VIEW ON MAPS ↗',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: M4Theme.premiumBlue,
                       letterSpacing: 1,
                     ),
@@ -848,7 +848,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 '$count ATTENDING',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 1,
                 ),
@@ -879,7 +879,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       initial,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 12,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: M4Theme.premiumBlue,
                       ),
                     ),
@@ -901,7 +901,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         height: 65,
         decoration: BoxDecoration(
           color: const Color(0xFF141B3A),
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.15),
@@ -917,7 +917,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               'RSVP TO EVENT',
               style: GoogleFonts.gelasio(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: Colors.white,
                 letterSpacing: 2,
               ),
@@ -1058,7 +1058,7 @@ class _M4VideoControlsState extends State<_M4VideoControls> {
     return Container(
       constraints: const BoxConstraints(minWidth: 190),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(

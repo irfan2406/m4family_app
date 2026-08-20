@@ -294,7 +294,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                               'SEARCH RESULTS',
                               style: GoogleFonts.gelasio(
                                 fontSize: 22,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 color: textPrimary,
                                 letterSpacing: -0.5,
                               ),
@@ -304,7 +304,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                               'FOUND $count PROPERTIES',
                               style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 color: muted,
                                 letterSpacing: 4,
                               ),
@@ -442,7 +442,7 @@ class _FilterBadge extends StatelessWidget {
         text.toUpperCase(),
         style: GoogleFonts.gelasio(
           fontSize: 10,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w700,
           color: foreground,
           letterSpacing: 1.5,
         ),
@@ -474,7 +474,7 @@ class _LoadingSkeletons extends StatelessWidget {
                         accent.withValues(alpha: 0.02),
                         card,
                       ),
-                      borderRadius: BorderRadius.circular(32),
+                      borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: border),
                     ),
                   )
@@ -538,7 +538,7 @@ class _ResultCard extends StatelessWidget {
         height: 280,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: border),
           boxShadow: [
             BoxShadow(
@@ -602,7 +602,7 @@ class _ResultCard extends StatelessWidget {
                         status.toUpperCase(),
                         style: GoogleFonts.gelasio(
                           fontSize: 9,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
                           letterSpacing: 1.5,
                         ),
@@ -629,7 +629,7 @@ class _ResultCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.gelasio(
                         fontSize: 20,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: Colors.white,
                         letterSpacing: -0.5,
                       ),
@@ -654,7 +654,7 @@ class _ResultCard extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.gelasio(
                                     fontSize: 9,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w700,
                                     color: Colors.white.withValues(alpha: 0.7),
                                     letterSpacing: 1.5,
                                   ),
@@ -685,7 +685,7 @@ class _ResultCard extends StatelessWidget {
                                   startingPrice,
                                   style: GoogleFonts.gelasio(
                                     fontSize: 18,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w700,
                                     fontStyle: FontStyle.italic,
                                     color: Colors.white,
                                     letterSpacing: -0.5,
@@ -729,7 +729,7 @@ class _EmptyState extends StatelessWidget {
       child: Column(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
               child: Container(
@@ -737,7 +737,7 @@ class _EmptyState extends StatelessWidget {
                 height: 128,
                 decoration: BoxDecoration(
                   color: textPrimary.withValues(alpha: 0.03),
-                  borderRadius: BorderRadius.circular(32),
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: border),
                 ),
                 child: Icon(
@@ -753,7 +753,7 @@ class _EmptyState extends StatelessWidget {
             'NO MATCHES',
             style: GoogleFonts.gelasio(
               fontSize: 22,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: textPrimary,
               letterSpacing: -0.5,
             ),
@@ -766,7 +766,7 @@ class _EmptyState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.gelasio(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: muted,
                 letterSpacing: 3.6,
                 height: 1.8,
@@ -789,7 +789,7 @@ class _EmptyState extends StatelessWidget {
                 'CHANGE FILTERS',
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: textPrimary,
                   letterSpacing: 1.5,
                 ),

@@ -60,7 +60,7 @@ class _GuestCustomViewsScreenState
     final isCp = role == 'cp';
 
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
       drawer: const ConditionalDrawer(),
       extendBody: true,
       bottomNavigationBar: isCp
@@ -78,7 +78,7 @@ class _GuestCustomViewsScreenState
           // 🔝 Premium Header
           SliverAppBar(
             pinned: true,
-            backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+            backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3),
             elevation: 0,
             leadingWidth: 72,
             toolbarHeight: 80,
@@ -104,7 +104,7 @@ class _GuestCustomViewsScreenState
                   'INTERACTIVE LIVING',
                   style: GoogleFonts.ebGaramond(
                     color: isDark ? Colors.white : Color(0xFF163A2C),
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     fontSize: 14,
                     letterSpacing: 0.5,
                   ),
@@ -115,7 +115,7 @@ class _GuestCustomViewsScreenState
                     color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.68,
                     ),
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     fontSize: 7,
                     letterSpacing: 1.5,
                   ),
@@ -237,7 +237,7 @@ class _GuestCustomViewsScreenState
                                 cat['title']!,
                                 style: GoogleFonts.gelasio(
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   color: Colors.white,
                                   letterSpacing: 2.5,
                                   height: 1.3,
@@ -278,7 +278,7 @@ class _HeaderCircleAction extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
+          color: isDark ? Colors.white.withOpacity(0.1) : const Color(0xFFF4EFE3),
           shape: BoxShape.circle,
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),

@@ -95,7 +95,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
             Text(
               'Partner Dashboard',
               style: GoogleFonts.ebGaramond(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: textPrimary,
               ),
@@ -104,7 +104,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
               'ID: CP-9021 • M4 PARTNER',
               style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: _gold,
               ),
@@ -162,7 +162,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
                   'REGISTERED LEADS',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: textPrimary.withValues(alpha: 0.6),
                   ),
@@ -178,7 +178,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
                   '${filtered.length} ACTIVE',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: _gold,
                   ),
@@ -218,7 +218,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
                       'NO LEADS FOUND',
                       style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                         color: textPrimary.withValues(alpha: 0.72),
                       ),
@@ -347,7 +347,7 @@ class _StatCard extends StatelessWidget {
                   stat.label.toUpperCase(),
                   style: GoogleFonts.gelasio(
                     fontSize: 11,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: muted,
                   ),
@@ -357,7 +357,7 @@ class _StatCard extends StatelessWidget {
                   stat.value,
                   style: GoogleFonts.gelasio(
                     fontSize: 18,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: textPrimary,
                     height: 1,
                   ),
@@ -432,7 +432,7 @@ class _LeadCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 15,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         color: textPrimary,
                         height: 1.05,
                       ),
@@ -444,7 +444,7 @@ class _LeadCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: _gold,
                       ),
@@ -466,7 +466,7 @@ class _LeadCard extends StatelessWidget {
                   lead.status.toUpperCase(),
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 1,
                     color: _gold,
                   ),
@@ -487,7 +487,7 @@ class _LeadCard extends StatelessWidget {
                       'CALL CLIENT',
                       style: GoogleFonts.gelasio(
                         fontSize: 11,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: textPrimary,
                       ),
@@ -512,7 +512,7 @@ class _LeadCard extends StatelessWidget {
                       'UPDATE STATUS',
                       style: GoogleFonts.gelasio(
                         fontSize: 11,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: bg,
                       ),
@@ -585,7 +585,7 @@ class _RegisterCard extends StatelessWidget {
                     'REGISTER NEW LEAD',
                     style: GoogleFonts.gelasio(
                       fontSize: 18,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: -0.5,
                       color: bg,
                       height: 1,
@@ -623,7 +623,7 @@ class _RegisterCard extends StatelessWidget {
                   'REGISTER LEAD',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: textPrimary,
                   ),
@@ -722,7 +722,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                         'Register New Lead',
                         style: GoogleFonts.gelasio(
                           fontSize: 18,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           color: textPrimary,
                         ),
                       ),
@@ -731,7 +731,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                         'HIGH PRIORITY REGISTRATION',
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                           color: _gold,
                         ),
@@ -761,7 +761,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                   isExpanded: true,
                   dropdownColor: isDark
                       ? const Color(0xFF141B3A)
-                      : Colors.white,
+                      : const Color(0xFFF4EFE3),
                   icon: Icon(LucideIcons.chevronDown, size: 18, color: muted),
                   style: GoogleFonts.ebGaramond(
                     fontSize: 13,
@@ -816,7 +816,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                   'SUBMIT LEAD',
                   style: GoogleFonts.gelasio(
                     fontSize: 11,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: bg,
                   ),
@@ -833,7 +833,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
     text,
     style: GoogleFonts.gelasio(
       fontSize: 11,
-      fontWeight: FontWeight.w800,
+      fontWeight: FontWeight.w700,
       letterSpacing: 1.5,
       color: muted,
     ),

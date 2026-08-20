@@ -70,6 +70,9 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             // Header
@@ -101,7 +104,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                       textAlign: TextAlign.center,
                       style: GoogleFonts.gelasio(
                         fontSize: 16,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: scheme.onSurface,
                         letterSpacing: 1.5,
                       ),
@@ -147,7 +150,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                               'ACTIVE REFERRALS',
                               style: GoogleFonts.gelasio(
                                 fontSize: 9,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                                 color: scheme.onSurface.withValues(alpha: 0.68),
                               ),
@@ -176,7 +179,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
@@ -207,7 +210,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   'WALLET BALANCE',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: scheme.onSurface.withValues(alpha: 0.68),
                   ),
@@ -223,7 +226,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                       _formatNumber(pts),
                       style: GoogleFonts.gelasio(
                         fontSize: 48,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: scheme.onSurface,
                         height: 1,
                       ),
@@ -235,7 +238,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                         'PTS',
                         style: GoogleFonts.gelasio(
                           fontSize: 18,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: scheme.onSurface.withValues(alpha: 0.68),
                           letterSpacing: 2,
                         ),
@@ -251,7 +254,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   'VALUE: AED ${_formatNumber(pts)}',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: scheme.onSurface.withValues(alpha: 0.68),
                   ),
@@ -292,7 +295,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                           'REDEEM NOW',
                           style: GoogleFonts.gelasio(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2,
                             color: scheme.surface,
                           ),
@@ -369,7 +372,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
           color: isDark
               ? scheme.onSurface.withValues(alpha: 0.04)
               : Colors.white.withValues(alpha: 0.4),
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: scheme.onSurface.withValues(alpha: 0.08)),
         ),
         child: Column(
@@ -391,7 +394,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
               label,
               style: GoogleFonts.gelasio(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
                 color: scheme.onSurface.withValues(alpha: 0.68),
               ),
@@ -422,7 +425,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
             'NO REFERRALS YET',
             style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: scheme.onSurface.withValues(alpha: 0.62),
             ),
@@ -478,7 +481,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   name.toUpperCase(),
                   style: GoogleFonts.ebGaramond(
                     fontSize: 13,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: scheme.onSurface,
                   ),
                 ),
@@ -488,7 +491,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                     project.toUpperCase(),
                     style: GoogleFonts.gelasio(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                       color: scheme.primary,
                     ),
@@ -514,7 +517,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
               status.toUpperCase(),
               style: GoogleFonts.ebGaramond(
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 1,
                 color: status == 'CONVERTED'
                     ? scheme.primary
@@ -552,7 +555,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
               ),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(40),
                 ),
@@ -579,7 +582,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                     'NEW\nREFERRAL',
                     style: GoogleFonts.gelasio(
                       fontSize: 24,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: scheme.onSurface,
                       height: 1.1,
                     ),
@@ -589,7 +592,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                     'REFER & EARN REWARDS',
                     style: GoogleFonts.gelasio(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                       color: scheme.onSurface.withValues(alpha: 0.68),
                     ),
@@ -627,7 +630,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                                   'SELECT PROJECT',
                                   style: GoogleFonts.ebGaramond(
                                     fontSize: 11,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w500,
                                     color: scheme.onSurface.withValues(
                                       alpha: 0.68,
                                     ),
@@ -654,7 +657,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                                               .toUpperCase(),
                                           style: GoogleFonts.ebGaramond(
                                             fontSize: 10,
-                                            fontWeight: FontWeight.w800,
+                                            fontWeight: FontWeight.w500,
                                             color: scheme.onSurface,
                                           ),
                                         ),
@@ -783,7 +786,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                               'SUBMIT REFERRAL',
                               style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                                 color: scheme.surface,
                               ),
@@ -805,7 +808,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
       text,
       style: GoogleFonts.gelasio(
         fontSize: 9,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
         letterSpacing: 1.5,
         color: scheme.onSurface.withValues(alpha: 0.68),
       ),
@@ -845,7 +848,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
           hintText: hint,
           hintStyle: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             color: scheme.onSurface.withValues(alpha: 0.62),
           ),
           filled: false,

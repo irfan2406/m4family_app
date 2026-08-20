@@ -150,7 +150,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
             Text(
               'Purge Cache',
               style: GoogleFonts.ebGaramond(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: textPrimary,
               ),
@@ -189,7 +189,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
               'M4 FAMILY PRIVATE OFFICE',
               style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 4,
                 color: textPrimary.withValues(alpha: 0.72),
               ),
@@ -242,7 +242,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                   'DESTRUCTIVE OPERATION',
                   style: GoogleFonts.gelasio(
                     fontSize: 11,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: _amber,
                   ),
@@ -437,7 +437,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                     allDone ? 'CACHE PURGED' : 'PURGE CACHE & REBUILD',
                     style: GoogleFonts.gelasio(
                       fontSize: 12,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                       color: Colors.white,
                     ),
@@ -464,7 +464,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
           text,
           style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2,
             color: muted,
           ),

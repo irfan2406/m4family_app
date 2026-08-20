@@ -150,6 +150,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             ),
           ),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: RefreshIndicator(
               onRefresh: _load,
               color: scheme.onSurface,
@@ -174,7 +177,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                     'TOOL MATRIX',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 3,
                       color: scheme.onSurface.withValues(
                         alpha: isLight ? 0.7 : 0.68,
@@ -239,7 +242,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                         'PRIORITY ACCESS',
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 3,
                           color: scheme.onSurface.withValues(
                             alpha: isLight ? 0.7 : 0.68,
@@ -259,7 +262,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                           'VIEW ALL',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                           ),
                         ),
@@ -304,7 +307,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            isDark ? accent.withValues(alpha: 0.08) : Colors.white,
+            isDark ? accent.withValues(alpha: 0.08) : const Color(0xFFF4EFE3),
             isDark
                 ? scheme.surfaceContainerHighest.withValues(alpha: 0.15)
                 : Colors.white,
@@ -329,7 +332,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   'TOTAL ASSET PORTFOLIO',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: scheme.onSurface.withValues(
                       alpha: isDark ? 0.68 : 0.7,
@@ -360,7 +363,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             _portfolioValue(),
             style: GoogleFonts.gelasio(
               fontSize: 28,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               height: 1,
               color: scheme.onSurface,
             ),
@@ -386,7 +389,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   'PORTFOLIO GROWTH',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: scheme.onSurface,
                   ),
@@ -398,7 +401,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   'Performance: Optimal',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1,
                     color: scheme.onSurface.withValues(
                       alpha: isDark ? 0.68 : 0.7,
@@ -425,7 +428,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           'MY HOLDINGS',
           style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 3,
             color: scheme.onSurface.withValues(alpha: isDark ? 0.68 : 0.7),
           ),
@@ -445,7 +448,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             '${_holdings.length} Active Projects',
             style: GoogleFonts.ebGaramond(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: 1,
               color: scheme.primary,
             ),
@@ -478,7 +481,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               'NO HOLDINGS YET',
               style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: scheme.onSurface.withValues(alpha: 0.68),
               ),
@@ -490,7 +493,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 'EXPLORE OPPORTUNITIES',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1,
                   color: scheme.onSurface,
                 ),
@@ -555,7 +558,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
-        color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         border: Border.all(
           color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55),
         ),
@@ -600,7 +603,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 14,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
                     ),
@@ -611,7 +614,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.gelasio(
                         fontSize: 8,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: scheme.onSurface.withValues(
                           alpha: isDark ? 0.68 : 0.6,
@@ -629,7 +632,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                     _holdingValue(h),
                     style: GoogleFonts.ebGaramond(
                       fontSize: 14,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: scheme.onSurface,
                     ),
                   ),
@@ -638,7 +641,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                     'EQUITY',
                     style: GoogleFonts.gelasio(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                       color: scheme.onSurface.withValues(
                         alpha: isDark ? 0.68 : 0.6,
@@ -657,7 +660,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 'CONSTRUCTION',
                 style: GoogleFonts.gelasio(
                   fontSize: 8,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,
                   color: scheme.onSurface.withValues(
                     alpha: isDark ? 0.68 : 0.6,
@@ -668,7 +671,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 '${(progress * 100).round()}%',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 8,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: scheme.onSurface.withValues(
                     alpha: isDark ? 0.68 : 0.6,
                   ),
@@ -709,7 +712,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       'EXPLORE',
                       style: GoogleFonts.gelasio(
                         fontSize: 9,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                         color: scheme.surface,
                       ),
@@ -830,7 +833,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               label,
               style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: scheme.onSurface.withValues(alpha: isDark ? 0.68 : 0.7),
               ),
@@ -865,7 +868,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 'Partner Hub',
                 style: GoogleFonts.gelasio(
                   fontSize: 18,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: -0.2,
                   color: accent,
                 ),
@@ -902,7 +905,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(34),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: scheme.outlineVariant.withValues(alpha: isLight ? 0.55 : 0.35),
         ),
@@ -950,7 +953,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 'PLATINUM TIER',
                 style: GoogleFonts.gelasio(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: scheme.onSurface,
                 ),
@@ -962,7 +965,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             'Welcome, $name',
             style: GoogleFonts.gelasio(
               fontSize: 22,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: scheme.onSurface,
             ),
           ),
@@ -1006,7 +1009,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             label.toUpperCase(),
             style: GoogleFonts.ebGaramond(
               fontSize: 9,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               letterSpacing: 1.4,
               color: scheme.onSurface.withValues(alpha: isLight ? 0.65 : 0.68),
             ),
@@ -1016,7 +1019,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             value,
             style: GoogleFonts.gelasio(
               fontSize: 18,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: scheme.onSurface,
             ),
           ),
@@ -1068,7 +1071,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 title,
                 style: GoogleFonts.ebGaramond(
                   fontSize: 12,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   color: scheme.onSurface.withValues(
                     alpha: isLight ? 0.92 : 0.85,
                   ),
@@ -1111,9 +1114,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
     final bg = p == null ? null : _hero(p);
     return Material(
       color: scheme.surfaceContainerHighest.withValues(alpha: 0.18),
-      borderRadius: BorderRadius.circular(34),
+      borderRadius: BorderRadius.circular(20),
       child: InkWell(
-        borderRadius: BorderRadius.circular(34),
+        borderRadius: BorderRadius.circular(20),
         onTap: () {
           if (id.isNotEmpty) {
             context.push('/cp/projects/$id', extra: p);
@@ -1124,7 +1127,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
         child: Container(
           height: 190,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(34),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: scheme.outlineVariant.withValues(alpha: 0.4),
             ),
@@ -1177,7 +1180,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                             .toUpperCase(),
                         style: GoogleFonts.ebGaramond(
                           fontSize: 9,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
                           color: Colors.white,
                         ),
@@ -1188,7 +1191,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       title,
                       style: GoogleFonts.gelasio(
                         fontSize: 22,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -1209,7 +1212,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                           'Explore Opportunity',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 12,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: Colors.black,
                           ),
                         ),

@@ -62,7 +62,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
           // on the LEFT, dark "..." pill on the RIGHT.
           SliverToBoxAdapter(
             child: Container(
-              padding: const EdgeInsets.fromLTRB(25, 60, 20, 20),
+              padding: const EdgeInsets.fromLTRB(40, 60, 40, 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -105,7 +105,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                             style: GoogleFonts.ebGaramond(
                               color: isDark ? Colors.white : Color(0xFF163A2C),
                               fontSize: 16,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: -0.3,
                             ),
                           ),
@@ -132,7 +132,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
           // 🏗️ Intro Section
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -237,7 +237,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
             )
           else
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(25, 20, 25, 100),
+              padding: const EdgeInsets.fromLTRB(40, 20, 40, 100),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final community = state.communities[index];

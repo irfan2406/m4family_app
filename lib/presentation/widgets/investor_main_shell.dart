@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/nav_swipe.dart';
 import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,7 +49,22 @@ class InvestorMainShell extends ConsumerWidget {
     return Scaffold(
       backgroundColor: navTheme.scaffoldBackgroundColor,
       drawer: const InvestorSidebarMenu(),
-      body: IndexedStack(index: idx, children: screens),
+      // No extendBody: Scaffold reserves the pill's slot so page content stops
+      // above it. With it enabled, cards scrolled into the margins beside and
+      // under the floating bar and read as a stray footer.
+      // Content runs to the bottom edge behind the floating pill, so scrolling
+      // reads as full-screen. Each tab carries 96px trailing clearance so the
+      // last card still comes to rest above the bar.
+      extendBody: true,
+      // Horizontal fling moves a tab. It sets the same provider the bottom
+      // bar sets, so no second navigation path is introduced.
+      body: NavSwipe(
+        index: idx,
+        count: screens.length,
+        onIndexChanged: (i) =>
+            ref.read(investorNavigationIndexProvider.notifier).state = i,
+        child: IndexedStack(index: idx, children: screens),
+      ),
       bottomNavigationBar: Theme(
         data: navTheme,
         child: InvestorBottomNav(

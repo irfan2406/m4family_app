@@ -85,15 +85,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2A20),
+      backgroundColor: const Color(0xFF0C312B),
       body: Stack(
         fit: StackFit.expand,
         children: [
           // Solid black background (no photo).
-          const Positioned.fill(child: ColoredBox(color: Color(0xFF0F2A20))),
+          const Positioned.fill(child: ColoredBox(color: Color(0xFF0C312B))),
 
           // Main Content
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
               child: Column(
@@ -206,7 +209,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     'BACK TO GUEST PORTAL',
                     style: GoogleFonts.gelasio(
                       color: Colors.white,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       fontSize: 12,
                       letterSpacing: 2.5,
                     ),
@@ -284,7 +287,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(32),
+                borderRadius: BorderRadius.circular(20),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 24),
             ),
@@ -303,7 +306,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       Text(
                         'REQUEST TOKEN',
                         style: GoogleFonts.ebGaramond(
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           fontSize: 13,
                           letterSpacing: 1,
                         ),

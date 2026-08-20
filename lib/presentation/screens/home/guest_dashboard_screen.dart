@@ -743,7 +743,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildInterestForm(),
                 ),
-                const SizedBox(height: 120),
+                const SizedBox(height: 96),
               ]),
             ),
           ),
@@ -1001,7 +1001,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     stops: const [0.55, 1.0],
                     colors: [
                       Colors.transparent,
-                      const Color(0xFF0F2A20).withValues(alpha: 0.82),
+                      const Color(0xFF0C312B).withValues(alpha: 0.82),
                     ],
                   ),
                 ),
@@ -1047,7 +1047,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0F2A20).withValues(alpha: 0.72),
+                      color: const Color(0xFF0C312B).withValues(alpha: 0.72),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: Colors.white.withValues(alpha: 0.1),
@@ -1254,7 +1254,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         width: MediaQuery.of(context).size.width * 0.68,
         margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
-          color: const Color(0xFF0F2A20),
+          color: const Color(0xFF0C312B),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -1422,7 +1422,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     double errorIconSize = 64,
   }) {
     Widget errorBox() => Container(
-      color: const Color(0xFF0F2A20),
+      color: const Color(0xFF0C312B),
       child: Center(
         child: Icon(errorIcon, color: Colors.white24, size: errorIconSize),
       ),
@@ -1645,7 +1645,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           // Lighter serif: DM Serif Display ships only weight
                           // 400, so fontWeight can't thin it. Playfair Display
                           // at w400 reads noticeably less bold.
-                          style: GoogleFonts.playfairDisplay(
+                          style: GoogleFonts.gelasio(
                             color: Colors.white,
                             fontSize: 44,
                             fontWeight: FontWeight.w400,
@@ -1747,7 +1747,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       child: Text(
                         'READ MORE',
                         style: GoogleFonts.ebGaramond(
-                          color: isDark ? Colors.black : Colors.white,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                           letterSpacing: 3,
@@ -1817,7 +1817,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: isDark ? Colors.black : Colors.white,
+          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -1856,7 +1856,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             color: isDark
                 ? Colors.white.withOpacity(0.03)
                 : Colors.black.withOpacity(0.02),
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.08),
             ),
@@ -1869,7 +1869,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             child: GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -2034,7 +2034,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               value: _agreedToTerms,
               onChanged: (val) => setState(() => _agreedToTerms = val ?? false),
               activeColor: isDark ? Colors.white : Color(0xFF163A2C),
-              checkColor: isDark ? Colors.black : Colors.white,
+              checkColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
               side: BorderSide(color: isDark ? Colors.white24 : Colors.black26),
             ),
             Expanded(
@@ -2063,12 +2063,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               child: Center(
                 child: _submitting
                     ? CircularProgressIndicator(
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       )
                     : Text(
                         'SUBMIT INTEREST',
                         style: GoogleFonts.ebGaramond(
-                          color: isDark ? Colors.black : Colors.white,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w400,
                           letterSpacing: 2,
                         ),

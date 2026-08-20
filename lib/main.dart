@@ -133,10 +133,17 @@ void main() async {
   debugRepaintRainbowEnabled = false;
 
   WidgetsFlutterBinding.ensureInitialized();
-  // Transparent status bar so the navy (dark) / cream (light) scaffold shows
-  // through - no black strip at the top.
+  // Edge-to-edge: the app paints behind the status bar and the gesture bar,
+  // so every portal fills the whole screen instead of sitting inside two
+  // system-coloured strips. SafeArea still keeps controls out of those areas.
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    ),
   );
 
   // .env MUST stay awaited: OnboardingScreen.initState reads authProvider,

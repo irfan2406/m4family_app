@@ -121,6 +121,9 @@ class _InvestorReferralClosedScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(textPrimary, muted, border),
@@ -175,7 +178,7 @@ class _InvestorReferralClosedScreenState
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
                     fontSize: 13,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: textPrimary,
                   ),
@@ -186,7 +189,7 @@ class _InvestorReferralClosedScreenState
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 3,
                     color: muted,
                   ),
@@ -220,7 +223,7 @@ class _InvestorReferralClosedScreenState
                 '${_referrals.length} CONVERTED',
                 style: GoogleFonts.gelasio(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: muted,
                 ),
@@ -274,7 +277,7 @@ class _InvestorReferralClosedScreenState
                             name,
                             style: GoogleFonts.ebGaramond(
                               fontSize: 15,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: textPrimary,
                             ),
                           ),
@@ -292,7 +295,7 @@ class _InvestorReferralClosedScreenState
                       project.toUpperCase(),
                       style: GoogleFonts.gelasio(
                         fontSize: 11,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: muted,
                       ),
@@ -323,7 +326,7 @@ class _InvestorReferralClosedScreenState
                           'UNIT CONFIG',
                           style: GoogleFonts.gelasio(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                             color: muted,
                           ),
@@ -335,7 +338,7 @@ class _InvestorReferralClosedScreenState
                       unitConfig.toUpperCase(),
                       style: GoogleFonts.ebGaramond(
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: textPrimary,
                       ),
                     ),
@@ -351,7 +354,7 @@ class _InvestorReferralClosedScreenState
                     'REWARD EARNED',
                     style: GoogleFonts.gelasio(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                       color: muted,
                     ),
@@ -361,7 +364,7 @@ class _InvestorReferralClosedScreenState
                     '+${_formatNumber(points)} PTS',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: _emerald,
                     ),
                   ),
@@ -379,7 +382,7 @@ class _InvestorReferralClosedScreenState
                   'CLOSED $date',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: muted,
                   ),
@@ -404,7 +407,7 @@ class _InvestorReferralClosedScreenState
         'CONVERTED',
         style: GoogleFonts.ebGaramond(
           fontSize: 10,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           letterSpacing: 1,
           color: _emerald,
         ),
@@ -432,7 +435,7 @@ class _InvestorReferralClosedScreenState
             textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: muted,
             ),
@@ -454,7 +457,7 @@ class _InvestorReferralClosedScreenState
             'COULD NOT LOAD SUCCESS VAULT',
             style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: muted,
             ),
@@ -472,7 +475,7 @@ class _InvestorReferralClosedScreenState
                 'RETRY',
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: const Color(0xFFF4EFE3),
                 ),

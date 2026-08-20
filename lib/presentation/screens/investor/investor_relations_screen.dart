@@ -170,7 +170,7 @@ class _InvestorRelationsScreenState
               'M4 FAMILY DEVELOPMENTS',
               style: GoogleFonts.gelasio(
                 color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.5),
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 fontSize: 11,
                 letterSpacing: 4,
               ),
@@ -206,6 +206,9 @@ class _InvestorRelationsScreenState
               : null,
         ),
         child: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: _isLoading
               ? Center(
                   child: CircularProgressIndicator(
@@ -284,7 +287,7 @@ class _InvestorRelationsScreenState
   Widget _buildImage() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return ClipRRect(
-      borderRadius: BorderRadius.circular(32),
+      borderRadius: BorderRadius.circular(20),
       child: AspectRatio(
         aspectRatio: 4 / 3,
         child: CachedNetworkImage(
@@ -369,7 +372,7 @@ class _InvestorRelationsScreenState
           style: GoogleFonts.gelasio(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.54),
             fontSize: 11,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2,
           ),
         ),
@@ -432,7 +435,7 @@ class _InvestorRelationsScreenState
                     'SUBMIT',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 14,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                     ),
                   ),
@@ -466,7 +469,7 @@ class _InvestorRelationsScreenState
           style: GoogleFonts.gelasio(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
             fontSize: 11,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
             height: 1.6,
           ),
@@ -543,7 +546,7 @@ class _InvestorRelationsScreenState
                           color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.54),
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                         ),
                       ),
@@ -553,7 +556,7 @@ class _InvestorRelationsScreenState
                         style: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.white : Color(0xFF163A2C),
                           fontSize: 14,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.5,
                         ),
                       ),

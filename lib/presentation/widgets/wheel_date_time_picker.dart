@@ -270,7 +270,7 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
               label(i),
               style: GoogleFonts.ebGaramond(
                 fontSize: 14,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 color: isDark ? Colors.white : Color(0xFF163A2C),
               ),
             ),
@@ -349,7 +349,7 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
                   ':',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 16,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                       alpha: 0.68,
                     ),

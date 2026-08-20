@@ -204,7 +204,7 @@ class _CpForgotPasswordScreenState
         GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2A20),
+      backgroundColor: const Color(0xFF0C312B),
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -222,6 +222,9 @@ class _CpForgotPasswordScreenState
             ),
           ),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
@@ -303,7 +306,7 @@ class _CpForgotPasswordScreenState
                       onPressed: _loading ? null : _sendEmail,
                       style: FilledButton.styleFrom(
                         backgroundColor: const Color(0xFFF4EFE3),
-                        foregroundColor: const Color(0xFF0F2A20),
+                        foregroundColor: const Color(0xFF0C312B),
                         minimumSize: const Size(double.infinity, 52),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -380,7 +383,7 @@ class _CpForgotPasswordScreenState
                       onPressed: _goPasswordStep,
                       style: FilledButton.styleFrom(
                         backgroundColor: const Color(0xFFF4EFE3),
-                        foregroundColor: const Color(0xFF0F2A20),
+                        foregroundColor: const Color(0xFF0C312B),
                         minimumSize: const Size(double.infinity, 52),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -432,7 +435,7 @@ class _CpForgotPasswordScreenState
                       onPressed: _loading ? null : _resetPassword,
                       style: FilledButton.styleFrom(
                         backgroundColor: const Color(0xFFF4EFE3),
-                        foregroundColor: const Color(0xFF0F2A20),
+                        foregroundColor: const Color(0xFF0C312B),
                         minimumSize: const Size(double.infinity, 52),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),

@@ -140,6 +140,9 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
             ),
           ),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(28, 8, 28, 120),
               child: Column(
@@ -334,7 +337,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                               'LOG OUT',
                               style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w700,
                                 color: scheme.error,
                                 letterSpacing: 2,
                               ),
@@ -526,7 +529,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
         text.toUpperCase(),
         style: GoogleFonts.ebGaramond(
           fontSize: 10,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           color: scheme.primary,
           letterSpacing: 0.6,
         ),
@@ -585,7 +588,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 9.5,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: scheme.onSurface,
                       letterSpacing: 1.2,
                       height: 1.15,

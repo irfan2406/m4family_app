@@ -96,7 +96,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
           message,
           style: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             color: isError
                 ? const Color(0xFFF4EFE3)
                 : (isDark ? Colors.black : const Color(0xFFF4EFE3)),
@@ -117,7 +117,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
         child: Container(
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFEDE5D6),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(
               color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
@@ -140,7 +140,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                 'REMOVE MEMBER',
                 style: GoogleFonts.gelasio(
                   fontSize: 13,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C),
                   letterSpacing: 1.5,
                 ),
@@ -259,7 +259,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                    color: isDark ? const Color(0xFF141B3A) : const Color(0xFFEDE5D6),
                     borderRadius: BorderRadius.circular(40),
                     border: Border.all(
                       color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
@@ -284,7 +284,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                         isEdit ? 'EDIT FAMILY MEMBER' : 'ADD FAMILY MEMBER',
                         style: GoogleFonts.gelasio(
                           fontSize: 13,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C),
                           letterSpacing: 1.5,
                         ),
@@ -353,7 +353,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                                       : dobDisplay,
                                   style: GoogleFonts.ebGaramond(
                                     fontSize: 12,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w500,
                                     color: dobDisplay.isEmpty
                                         ? (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C))
                                               .withValues(alpha: 0.72)
@@ -462,6 +462,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark, textColor),
@@ -535,7 +538,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
               'FAMILY MEMBERS',
               style: GoogleFonts.gelasio(
                 fontSize: 22,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: textColor,
                 letterSpacing: -0.5,
               ),
@@ -587,7 +590,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
               onChanged: (val) => setState(() => _searchQuery = val),
               style: GoogleFonts.gelasio(
                 fontSize: 15,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: textColor,
                 letterSpacing: 1.5,
               ),
@@ -601,7 +604,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                 hintText: 'SEARCH MEMBERS...',
                 hintStyle: GoogleFonts.gelasio(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
                     alpha: 0.3,
                   ),
@@ -644,7 +647,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               fontSize: 11,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: muted,
               letterSpacing: 1.5,
             ),
@@ -673,7 +676,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFFF4EFE3).withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(alpha: 0.08),
         ),
@@ -720,7 +723,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.ebGaramond(
                           fontSize: 13,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: textColor,
                           letterSpacing: -0.3,
                         ),
@@ -747,7 +750,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                           relation.toUpperCase(),
                           style: GoogleFonts.ebGaramond(
                             fontSize: 7,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C))
                                 .withValues(alpha: 0.6),
                             letterSpacing: 0.5,
@@ -938,7 +941,7 @@ class _DialogLabel extends StatelessWidget {
         label,
         style: GoogleFonts.ebGaramond(
           fontSize: 8,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(alpha: 0.72),
           letterSpacing: 1,
         ),
@@ -974,7 +977,7 @@ class _DialogInput extends StatelessWidget {
         onChanged: onChanged,
         style: GoogleFonts.ebGaramond(
           fontSize: 15,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w500,
           color: isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C),
         ),
         decoration: InputDecoration(
@@ -1054,7 +1057,7 @@ class _RelationDropdown extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           style: GoogleFonts.ebGaramond(
             fontSize: 12,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             color: isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C),
           ),
           items: [
@@ -1132,7 +1135,7 @@ class _DialogButton extends StatelessWidget {
             label,
             style: GoogleFonts.ebGaramond(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: fg,
               letterSpacing: 1,
             ),

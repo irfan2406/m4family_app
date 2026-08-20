@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/nav_swipe.dart';
 import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/screens/home/dashboard_screen.dart';
@@ -86,16 +87,22 @@ class _MainShellState extends ConsumerState<MainShell> {
             MediaQuery(
               data: MediaQuery.of(context).copyWith(
                 padding: MediaQuery.of(context).padding.copyWith(
-                  bottom: MediaQuery.of(context).padding.bottom + 110,
+                  bottom: MediaQuery.of(context).padding.bottom + 80,
                 ),
               ),
-              child: IndexedStack(
-                  index: currentIndex,
-                  children: [
-                    for (int i = 0; i < _screens.length; i++)
-                      showcase(i, _screens[i]),
-                  ],
-                ),
+              child: NavSwipe(
+                index: currentIndex,
+                count: _screens.length,
+                onIndexChanged: (i) =>
+                    ref.read(navigationProvider.notifier).state = i,
+                  child: IndexedStack(
+                      index: currentIndex,
+                      children: [
+                        for (int i = 0; i < _screens.length; i++)
+                          showcase(i, _screens[i]),
+                      ],
+                    ),
+              ),
             ),
             if (!_isDrawerOpen)
               Align(

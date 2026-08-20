@@ -96,7 +96,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
       ),
       child: SafeArea(
@@ -121,7 +121,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                   'SELECT DATE',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 16,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 0.5,
                     color: fg,
                   ),
@@ -195,7 +195,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                           'CANCEL',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 12,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1,
                             color: fg,
                           ),
@@ -225,9 +225,9 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                           'CONFIRM',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 12,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1,
-                            color: isDark ? Colors.black : Colors.white,
+                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           ),
                         ),
                       ),

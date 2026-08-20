@@ -90,6 +90,9 @@ class _InvestorReferralActiveScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(textPrimary, muted, border),
@@ -144,7 +147,7 @@ class _InvestorReferralActiveScreenState
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
                     fontSize: 13,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: textPrimary,
                   ),
@@ -155,7 +158,7 @@ class _InvestorReferralActiveScreenState
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 3,
                     color: muted,
                   ),
@@ -189,7 +192,7 @@ class _InvestorReferralActiveScreenState
                 '${_referrals.length} IN PIPELINE',
                 style: GoogleFonts.gelasio(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: muted,
                 ),
@@ -240,7 +243,7 @@ class _InvestorReferralActiveScreenState
                       name,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 14,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         color: textPrimary,
                       ),
                     ),
@@ -249,7 +252,7 @@ class _InvestorReferralActiveScreenState
                       project.toUpperCase(),
                       style: GoogleFonts.gelasio(
                         fontSize: 11,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: muted,
                       ),
@@ -291,7 +294,7 @@ class _InvestorReferralActiveScreenState
                     'PIPELINE STATUS',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                       color: muted,
                     ),
@@ -303,7 +306,7 @@ class _InvestorReferralActiveScreenState
                   phone,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: textPrimary,
                   ),
                 ),
@@ -326,7 +329,7 @@ class _InvestorReferralActiveScreenState
         status.toUpperCase(),
         style: GoogleFonts.ebGaramond(
           fontSize: 10,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           letterSpacing: 1,
           color: M4Theme.premiumBlue,
         ),
@@ -354,7 +357,7 @@ class _InvestorReferralActiveScreenState
             textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: muted,
             ),
@@ -376,7 +379,7 @@ class _InvestorReferralActiveScreenState
             'COULD NOT LOAD REFERRALS',
             style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: muted,
             ),
@@ -394,7 +397,7 @@ class _InvestorReferralActiveScreenState
                 'RETRY',
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: const Color(0xFFF4EFE3),
                 ),

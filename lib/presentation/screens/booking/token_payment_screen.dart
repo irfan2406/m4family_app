@@ -235,7 +235,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
         child: Container(
           padding: const EdgeInsets.all(22),
           decoration: BoxDecoration(
-            color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+            color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(26),
             border: Border.all(
               // Web parity: selected = dark border (not gold).
@@ -274,7 +274,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                 name,
                 style: GoogleFonts.ebGaramond(
                   fontSize: 13,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: onSurface,
                 ),
               ),
@@ -322,7 +322,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
 
     if (_isSuccess) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(40),
@@ -339,7 +339,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                   'BOOKING SUCCESSFUL',
                   style: GoogleFonts.gelasio(
                     fontSize: 24,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
@@ -352,7 +352,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.6,
                     ),
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     height: 1.8,
                   ),
@@ -366,14 +366,14 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     height: 64,
                     decoration: BoxDecoration(
                       color: isDark ? Colors.white : Color(0xFF163A2C),
-                      borderRadius: BorderRadius.circular(32),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
                       child: Text(
                         'BACK TO HOME',
                         style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.black : Colors.white,
-                          fontWeight: FontWeight.w900,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          fontWeight: FontWeight.w700,
                           fontSize: 10,
                           letterSpacing: 2,
                         ),
@@ -391,7 +391,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
     return Scaffold(
       backgroundColor: isDark
           ? const Color(0xFF141B3A)
-          : const Color(0xFFC5A35B),
+          : const Color(0xFFD4CFBC),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -414,7 +414,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
           'SECURE PAYMENT',
           style: GoogleFonts.ebGaramond(
             fontSize: 14,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: isDark ? Colors.white : Color(0xFF163A2C),
           ),
         ),
@@ -481,7 +481,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                           'TOKEN AMOUNT',
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: Colors.white70,
                             letterSpacing: 2,
                           ),
@@ -491,7 +491,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                           '₹$formattedAmount',
                           style: GoogleFonts.gelasio(
                             fontSize: 36,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: Colors.white,
                             letterSpacing: -1,
                           ),
@@ -507,7 +507,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                               ),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.12),
-                                borderRadius: BorderRadius.circular(30),
+                                borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -522,7 +522,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                                     '100% REFUNDABLE',
                                     style: GoogleFonts.ebGaramond(
                                       fontSize: 8,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                       letterSpacing: 1,
                                     ),
@@ -541,7 +541,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                               'INSTANT RECEIPT',
                               style: GoogleFonts.ebGaramond(
                                 fontSize: 8,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w500,
                                 color: Colors.white.withOpacity(0.68),
                                 letterSpacing: 1,
                               ),
@@ -564,7 +564,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                   'SELECT UNIT',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.6,
                     ),
@@ -584,8 +584,8 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     'REQUIRED',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
-                      color: isDark ? Colors.black : Colors.white,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       letterSpacing: 1,
                     ),
                   ),
@@ -623,7 +623,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     'AVAILABLE UNITS',
                     style: GoogleFonts.gelasio(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.6,
                       ),
@@ -655,7 +655,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                           _unitsError!.toUpperCase(),
                           style: GoogleFonts.ebGaramond(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: Colors.red,
                             letterSpacing: 1,
                           ),
@@ -677,7 +677,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                           'NO AVAILABLE UNITS FOUND FOR THIS PROJECT.',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: Colors.red,
                             letterSpacing: 1,
                           ),
@@ -692,7 +692,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                         color: isDark
                             ? Colors.white.withValues(alpha: 0.04)
                             : Colors.black.withValues(alpha: 0.03),
-                        borderRadius: BorderRadius.circular(32),
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isDark
                               ? Colors.white.withValues(alpha: 0.05)
@@ -754,7 +754,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     'A UNIT IS LOCKED EXCLUSIVELY TO YOUR PROFILE ONCE THE TOKEN RESERVATION PAYMENT IS PROCESSED.',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.6,
                       ),
@@ -774,7 +774,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                   'COMPLIANCE DOCUMENTS',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.6,
                     ),
@@ -796,7 +796,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     'OPTIONAL',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.6,
                       ),
@@ -850,7 +850,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: isDark ? Colors.white : Color(0xFF163A2C),
                             letterSpacing: 0.5,
                           ),
@@ -883,8 +883,8 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
-                borderRadius: BorderRadius.circular(34),
+                color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.06,
@@ -926,7 +926,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                                 : (isDark
                                       ? Colors.white.withValues(alpha: 0.02)
                                       : Colors.white),
-                            borderRadius: BorderRadius.circular(32),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: Center(
                             child: Column(
@@ -967,7 +967,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                                       : 'QUICK UPLOAD DOCUMENTS',
                                   style: GoogleFonts.ebGaramond(
                                     fontSize: 11,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w600,
                                     color: isDark ? Colors.white : Color(0xFF163A2C),
                                   ),
                                 ),
@@ -998,12 +998,12 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.orange.withOpacity(0.05)
-                          : const Color(0xFFFBF7EF),
+                          : const Color(0xFFF4EFE3),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isDark
                             ? Colors.orange.withOpacity(0.2)
-                            : const Color(0xFFFBF7EF),
+                            : const Color(0xFFF4EFE3),
                       ),
                     ),
                     child: Row(
@@ -1019,7 +1019,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                             'DOCUMENTS ENSURE FASTER BOOKING VERIFICATION BY OUR TEAM.',
                             style: GoogleFonts.ebGaramond(
                               fontSize: 8,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: isDark
                                   ? Colors.orange.withOpacity(0.8)
                                   : const Color(0xFFC65B46),
@@ -1039,7 +1039,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
               'PAYMENT METHOD',
               style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
                 letterSpacing: 1.5,
               ),
@@ -1092,7 +1092,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                       child: _agreed
                           ? Icon(
                               LucideIcons.check,
-                              color: isDark ? Colors.black : Colors.white,
+                              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                               size: 14,
                             )
                           : null,
@@ -1105,7 +1105,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                           fontSize: 9,
                           color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.6),
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           height: 1.6,
                         ),
                       ),
@@ -1124,7 +1124,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                 onPressed: _isLoading ? null : _submitBooking,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                  foregroundColor: isDark ? Colors.black : Colors.white,
+                  foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   disabledBackgroundColor:
                       (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.7),
                   padding: const EdgeInsets.symmetric(vertical: 24),
@@ -1135,7 +1135,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                 ),
                 child: _isLoading
                     ? CupertinoActivityIndicator(
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       )
                     : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -1144,7 +1144,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                             'PAY ₹$formattedAmount',
                             style: GoogleFonts.ebGaramond(
                               fontSize: 14,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 1,
                             ),
                           ),
@@ -1170,7 +1170,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     'PCI-DSS COMPLIANT • 256-BIT SSL ENCRYPTION',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 7,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: isDark ? Colors.white24 : Colors.black26,
                       letterSpacing: 1,
                     ),

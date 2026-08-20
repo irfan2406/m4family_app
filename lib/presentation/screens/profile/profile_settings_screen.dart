@@ -146,7 +146,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       "SELECT BIRTHDAY",
                       style: GoogleFonts.ebGaramond(
                         fontSize: 12,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         letterSpacing: 1,
                       ),
                     ),
@@ -167,7 +167,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                           "DONE",
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: const Color(0xFFC5A35B),
                           ),
                         ),
@@ -307,7 +307,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     return Scaffold(
       backgroundColor: isDark
           ? const Color(0xFF141B3A)
-          : const Color(0xFFFBF7EF),
+          : const Color(0xFFF4EFE3),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -342,7 +342,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         'ACCOUNT DETAILS',
                         style: GoogleFonts.gelasio(
                           fontSize: 9,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                           letterSpacing: 2,
                         ),
@@ -353,7 +353,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-                        borderRadius: BorderRadius.circular(32),
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.05),
@@ -537,7 +537,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         border: Border.all(
                           color: isDark
                               ? const Color(0xFF141B3A)
-                              : Colors.white,
+                              : const Color(0xFFF4EFE3),
                           width: 3,
                         ),
                       ),
@@ -557,7 +557,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               fontSize: 18,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: isDark ? Colors.white : Color(0xFF163A2C),
               letterSpacing: -0.3,
             ),
@@ -568,7 +568,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               fontSize: 9,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               color: isDark ? Colors.white38 : Colors.black45,
               letterSpacing: 2,
             ),
@@ -587,7 +587,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           style: GoogleFonts.gelasio(
             textStyle: const TextStyle(inherit: true),
             fontSize: 32,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             color: isDark ? Colors.white38 : Color(0xFF5E6B60),
           ),
         ),
@@ -612,7 +612,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 style: GoogleFonts.gelasio(
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 14,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 2,
                 ),
@@ -649,7 +649,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 'SAVE',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 10,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 1,
                 ),
               ),
@@ -678,7 +678,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             style: GoogleFonts.ebGaramond(
               textStyle: const TextStyle(inherit: true),
               fontSize: 8,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               color: isDark ? Colors.white38 : Color(0xFF5E6B60),
               letterSpacing: 1,
             ),
@@ -689,7 +689,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             // Flat inset input — the single shadow lives on the outer card.
             color: isDark
                 ? Colors.white.withOpacity(0.03)
-                : const Color(0xFFFBF7EF),
+                : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
@@ -704,7 +704,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             style: GoogleFonts.ebGaramond(
               textStyle: const TextStyle(inherit: true),
               fontSize: 15,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               // Keep values dark/readable even when not editing.
               color: enabled
                   ? (isDark ? Colors.white : Color(0xFF163A2C))
@@ -741,7 +741,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             style: GoogleFonts.ebGaramond(
               textStyle: const TextStyle(inherit: true),
               fontSize: 8,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               color: isDark ? Colors.white38 : Color(0xFF5E6B60),
               letterSpacing: 1,
             ),
@@ -754,7 +754,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               // Flat inset input — the single shadow lives on the outer card.
               color: isDark
                   ? Colors.white.withOpacity(0.03)
-                  : const Color(0xFFFBF7EF),
+                  : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
@@ -773,7 +773,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       style: GoogleFonts.ebGaramond(
                         textStyle: const TextStyle(inherit: true),
                         fontSize: 13,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         color: _isEditing
                             ? (isDark ? Colors.white : Color(0xFF163A2C))
                             : (isDark ? Colors.white70 : Color(0xFF163A2C)),
@@ -806,7 +806,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           style: GoogleFonts.gelasio(
             textStyle: const TextStyle(inherit: true),
             fontSize: 9,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             color: isDark ? Colors.white38 : Color(0xFF5E6B60),
             letterSpacing: 1.5,
           ),
@@ -817,7 +817,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
             ),
@@ -880,7 +880,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   title,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
@@ -925,7 +925,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           style: GoogleFonts.gelasio(
             textStyle: const TextStyle(inherit: true),
             fontSize: 9,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
           ),
         ),

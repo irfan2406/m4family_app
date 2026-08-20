@@ -171,7 +171,7 @@ class _InvestorPaymentsScreenState
               'Payment History',
               style: GoogleFonts.ebGaramond(
                 color: textPrimary,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 fontSize: 16,
               ),
             ),
@@ -179,7 +179,7 @@ class _InvestorPaymentsScreenState
               'FINANCIAL LEDGER',
               style: GoogleFonts.gelasio(
                 color: muted,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 fontSize: 10,
                 letterSpacing: 3,
               ),
@@ -262,7 +262,7 @@ class _InvestorPaymentsScreenState
             style: GoogleFonts.gelasio(
               color: muted,
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
             ),
           ),
@@ -272,7 +272,7 @@ class _InvestorPaymentsScreenState
             style: GoogleFonts.ebGaramond(
               color: valueColor,
               fontSize: 14,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -348,7 +348,7 @@ class _InvestorPaymentsScreenState
               style: GoogleFonts.ebGaramond(
                 color: selected ? _gold : muted,
                 fontSize: 11,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 1,
               ),
             ),
@@ -494,7 +494,7 @@ class _InvestorPaymentsScreenState
                 style: GoogleFonts.ebGaramond(
                   color: isIn ? _green : textPrimary,
                   fontSize: 13,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: 4),
@@ -512,7 +512,7 @@ class _InvestorPaymentsScreenState
                   style: GoogleFonts.ebGaramond(
                     color: statusColor,
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -598,7 +598,7 @@ class _InvestorPaymentsScreenState
                 'RETRY',
                 style: GoogleFonts.ebGaramond(
                   fontSize: 12,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 1,
                 ),
               ),

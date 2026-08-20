@@ -116,7 +116,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
         ),
         title: Text(
           'Insights',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w800),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w500),
         ),
       ),
       body: _loading
@@ -159,7 +159,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                           'DAILY PULSE',
                           style: GoogleFonts.ebGaramond(
                             fontSize: 8,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1.4,
                             color: Colors.white,
                           ),
@@ -170,7 +170,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                         'Conversion rate $rate with $books bookings from $leads leads',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 16,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: Colors.white,
                           height: 1.2,
                         ),
@@ -198,7 +198,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                               'READ REPORT',
                               style: GoogleFonts.gelasio(
                                 fontSize: 9,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                               ),
                             ),
@@ -219,7 +219,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                       'Latest Analysis',
                       style: GoogleFonts.ebGaramond(
                         fontSize: 12,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -295,7 +295,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                         category.toUpperCase(),
                         style: GoogleFonts.ebGaramond(
                           fontSize: 8,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1.3,
                           color: const Color(0xFFC5A35B),
                         ),
@@ -311,7 +311,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
             title,
             style: GoogleFonts.ebGaramond(
               fontSize: 13,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               height: 1.2,
             ),
           ),
@@ -320,7 +320,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
             readTime.isEmpty ? 'READ' : readTime.toUpperCase(),
             style: GoogleFonts.ebGaramond(
               fontSize: 9,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               letterSpacing: 1.4,
               color: scheme.onSurface.withValues(alpha: 0.68),
             ),

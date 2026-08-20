@@ -147,7 +147,7 @@ class _InvestorEliteInvestorConnectScreenState
             Text(
               'Investor Connect',
               style: GoogleFonts.ebGaramond(
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 fontSize: 16,
                 color: textPrimary,
               ),
@@ -156,7 +156,7 @@ class _InvestorEliteInvestorConnectScreenState
               'ELITE INVESTOR NETWORK',
               style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: M4Theme.premiumBlue,
               ),
@@ -181,7 +181,7 @@ class _InvestorEliteInvestorConnectScreenState
                     greeting,
                     style: GoogleFonts.gelasio(
                       fontSize: 22,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: -1,
                       height: 1,
                       color: textPrimary,
@@ -206,7 +206,7 @@ class _InvestorEliteInvestorConnectScreenState
                         'NETWORK STATS',
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 4,
                           color: muted,
                         ),
@@ -224,7 +224,7 @@ class _InvestorEliteInvestorConnectScreenState
                           'LIVE',
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                             color: M4Theme.premiumBlue,
                           ),
@@ -245,7 +245,7 @@ class _InvestorEliteInvestorConnectScreenState
                     'ACTIVE CO-INVESTORS',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 4,
                       color: muted,
                     ),
@@ -272,7 +272,7 @@ class _InvestorEliteInvestorConnectScreenState
                     'SUCCESSFUL DEALS',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 4,
                       color: muted,
                     ),
@@ -336,7 +336,7 @@ class _InvestorEliteInvestorConnectScreenState
                 'RETRY',
                 style: GoogleFonts.gelasio(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: M4Theme.premiumBlue,
                 ),
@@ -379,7 +379,7 @@ class _InvestorEliteInvestorConnectScreenState
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: card,
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: border),
           boxShadow: [
             BoxShadow(
@@ -411,7 +411,7 @@ class _InvestorEliteInvestorConnectScreenState
                     s.label.toUpperCase(),
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                       color: muted,
                     ),
@@ -421,7 +421,7 @@ class _InvestorEliteInvestorConnectScreenState
                     s.value.toUpperCase(),
                     style: GoogleFonts.gelasio(
                       fontSize: 26,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       height: 1,
                       letterSpacing: -1,
                       color: textPrimary,
@@ -432,7 +432,7 @@ class _InvestorEliteInvestorConnectScreenState
                     s.growth,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: Colors.green.shade500,
                     ),
                   ),
@@ -460,7 +460,7 @@ class _InvestorEliteInvestorConnectScreenState
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: card,
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: border),
           boxShadow: [
             BoxShadow(
@@ -514,7 +514,7 @@ class _InvestorEliteInvestorConnectScreenState
                         p.name,
                         style: GoogleFonts.ebGaramond(
                           fontSize: 16,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.5,
                           color: textPrimary,
                         ),
@@ -546,7 +546,7 @@ class _InvestorEliteInvestorConnectScreenState
                       'PORTFOLIO',
                       style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: muted,
                       ),
@@ -556,7 +556,7 @@ class _InvestorEliteInvestorConnectScreenState
                       p.portfolio,
                       style: GoogleFonts.ebGaramond(
                         fontSize: 16,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: -0.5,
                         color: M4Theme.premiumBlue,
                       ),
@@ -586,7 +586,7 @@ class _InvestorEliteInvestorConnectScreenState
                         tag.toUpperCase(),
                         style: GoogleFonts.ebGaramond(
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                           color: textPrimary,
                         ),
@@ -625,7 +625,7 @@ class _InvestorEliteInvestorConnectScreenState
                   'CONNECT',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: M4Theme.premiumBlue,
                   ),
@@ -712,7 +712,7 @@ class _InvestorEliteInvestorConnectScreenState
                           d.roi.toUpperCase(),
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                             color: Colors.black,
                           ),
@@ -731,7 +731,7 @@ class _InvestorEliteInvestorConnectScreenState
                       d.title.toUpperCase(),
                       style: GoogleFonts.gelasio(
                         fontSize: 18,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
                         height: 1.1,
                         color: textPrimary,
@@ -751,7 +751,7 @@ class _InvestorEliteInvestorConnectScreenState
                             d.syndicate.toUpperCase(),
                             style: GoogleFonts.gelasio(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 1.5,
                               color: muted,
                             ),
@@ -773,7 +773,7 @@ class _InvestorEliteInvestorConnectScreenState
                               'TICKET CLOSED',
                               style: GoogleFonts.gelasio(
                                 fontSize: 11,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                                 color: muted,
                               ),
@@ -783,7 +783,7 @@ class _InvestorEliteInvestorConnectScreenState
                               d.ticket.toUpperCase(),
                               style: GoogleFonts.gelasio(
                                 fontSize: 18,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: -0.5,
                                 height: 1,
                                 color: textPrimary,
@@ -803,7 +803,7 @@ class _InvestorEliteInvestorConnectScreenState
                               'FUNDED',
                               style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                                 color: Colors.green.shade500,
                               ),
@@ -829,7 +829,7 @@ class _InvestorEliteInvestorConnectScreenState
     return Container(
       decoration: BoxDecoration(
         color: panelBg,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.2),
@@ -839,7 +839,7 @@ class _InvestorEliteInvestorConnectScreenState
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
             Positioned.fill(
@@ -889,7 +889,7 @@ class _InvestorEliteInvestorConnectScreenState
                               'RELATIONSHIP DESK',
                               style: GoogleFonts.gelasio(
                                 fontSize: 18,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: -0.5,
                                 height: 1,
                                 color: onPanel,
@@ -900,7 +900,7 @@ class _InvestorEliteInvestorConnectScreenState
                               'CURATED INTRODUCTIONS',
                               style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 1.5,
                                 color: onPanel.withValues(alpha: 0.6),
                               ),
@@ -934,7 +934,7 @@ class _InvestorEliteInvestorConnectScreenState
                         'REQUEST AN INTRODUCTION',
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                           color: onPanel,
                         ),

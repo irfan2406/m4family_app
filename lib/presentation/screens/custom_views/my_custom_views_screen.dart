@@ -12,7 +12,7 @@ import 'package:m4_mobile/presentation/providers/my_custom_views_provider.dart';
 // active tab, section icons) instead of the neutral foreground colour.
 // Portfolio accent: M4 deep green (was coral, which read as off-brand orange
 // against the cream page and the bright hero photo).
-const Color _kPortfolioOrange = Color(0xFF0F2A20);
+const Color _kPortfolioOrange = Color(0xFF0C312B);
 
 class MyCustomViewsScreen extends ConsumerStatefulWidget {
   const MyCustomViewsScreen({super.key});
@@ -105,7 +105,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             'PORTFOLIO SUITE',
             style: GoogleFonts.ebGaramond(
               fontSize: 14,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: -0.5,
             ),
           ),
@@ -122,7 +122,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 'ASSET DASHBOARD',
                 style: GoogleFonts.gelasio(
                   fontSize: 8,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: _kPortfolioOrange,
                 ),
@@ -176,7 +176,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   TextSpan(
                     text: 'ELITE ',
                     style: GoogleFonts.gelasio(
-                      color: Color(0xFF0F2A20),
+                      color: Color(0xFF0C312B),
                       fontSize: 30,
                       fontWeight: FontWeight.w500,
                       letterSpacing: -0.5,
@@ -200,7 +200,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 // Web parity: orange `text-primary`, readable on the light fade.
                 color: _kPortfolioOrange,
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 3,
               ),
             ).animate().fadeIn(delay: 400.ms),
@@ -261,7 +261,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                     'SELECTION',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                       color: _activeTab == 0
                           ? Colors.white
@@ -288,7 +288,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                     'HISTORY',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                       color: _activeTab == 1
                           ? Colors.white
@@ -333,7 +333,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                     'ASSET CUSTOMIZATION STATUS',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                       color: foreground.withOpacity(0.6),
                     ),
@@ -345,8 +345,8 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
-                borderRadius: BorderRadius.circular(36),
+                color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: foreground.withOpacity(0.06)),
                 boxShadow: isDark
                     ? null
@@ -378,7 +378,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                     'NO UNITS FOUND',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 16,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: foreground,
                       letterSpacing: 0.5,
                     ),
@@ -420,7 +420,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   'ASSET CUSTOMIZATION STATUS',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: Theme.of(
                       context,
@@ -464,7 +464,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             padding: const EdgeInsets.symmetric(vertical: 60),
             decoration: BoxDecoration(
               color: foreground.withOpacity(0.02),
-              borderRadius: BorderRadius.circular(36),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: foreground.withOpacity(0.12),
                 style: BorderStyle.solid,
@@ -475,7 +475,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 'NO HISTORY FOUND',
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: foreground.withOpacity(0.68),
                 ),
@@ -509,7 +509,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   'SELECTION HISTORY',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: fg.withOpacity(0.6),
                   ),
@@ -531,7 +531,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
         Container(
           height: 52,
           decoration: BoxDecoration(
-            color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
+            color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: fg.withOpacity(0.08)),
           ),
@@ -584,8 +584,8 @@ class _UnitCard extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark
               ? Colors.white.withOpacity(0.1)
@@ -622,7 +622,7 @@ class _UnitCard extends ConsumerWidget {
                             'UNIT',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 7,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: foreground.withOpacity(0.68),
                           letterSpacing: 1,
                         ),
@@ -632,7 +632,7 @@ class _UnitCard extends ConsumerWidget {
                             'M4 PROJECT',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 13,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: foreground,
                         ),
                       ),
@@ -770,9 +770,9 @@ class _UnitCard extends ConsumerWidget {
                             ? 'START PERSONALISATION'
                             : 'MANAGE SELECTION',
                         style: GoogleFonts.ebGaramond(
-                          color: isDark ? Colors.black : Colors.white,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -780,7 +780,7 @@ class _UnitCard extends ConsumerWidget {
                       Icon(
                         LucideIcons.chevronRight,
                         size: 16,
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       ),
                     ],
                   ),
@@ -880,7 +880,7 @@ class _HistoryCard extends StatelessWidget {
                             'STANDARD UNIT',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 13,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: foreground,
                         ),
                       ),
@@ -996,7 +996,7 @@ class _DetailDialog {
             return Dialog(
               backgroundColor: Theme.of(context).colorScheme.surface,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(32),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Container(
                 // Medium-size, internally scrollable modal.
@@ -1044,7 +1044,7 @@ class _DetailDialog {
                                       'Standard Selection',
                                   style: GoogleFonts.gelasio(
                                     fontSize: 18,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w700,
                                     letterSpacing: -0.5,
                                   ),
                                 ),
@@ -1072,7 +1072,7 @@ class _DetailDialog {
                                             'FULL UNIT',
                                         style: GoogleFonts.ebGaramond(
                                           fontSize: 9,
-                                          fontWeight: FontWeight.w800,
+                                          fontWeight: FontWeight.w500,
                                           letterSpacing: 1.2,
                                           height: 1.4,
                                           color: Theme.of(context)
@@ -1148,7 +1148,7 @@ class _DetailDialog {
                                                       GoogleFonts.ebGaramond(
                                                         fontSize: 7,
                                                         fontWeight:
-                                                            FontWeight.w900,
+                                                            FontWeight.w600,
                                                         letterSpacing: 1.0,
                                                         color: scheme.onSurface
                                                             .withOpacity(0.68),
@@ -1164,7 +1164,7 @@ class _DetailDialog {
                                                       GoogleFonts.ebGaramond(
                                                         fontSize: 11,
                                                         fontWeight:
-                                                            FontWeight.w900,
+                                                            FontWeight.w600,
                                                         letterSpacing: 0.5,
                                                       ),
                                                 ),
@@ -1236,7 +1236,7 @@ class _DetailDialog {
                                   style: GoogleFonts.ebGaramond(
                                     color: Colors.redAccent,
                                     fontSize: 9,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w500,
                                     letterSpacing: 1.0,
                                   ),
                                 ),
@@ -1390,7 +1390,7 @@ class _DetailDialog {
                                             style: GoogleFonts.ebGaramond(
                                               color: Colors.white,
                                               fontSize: 10,
-                                              fontWeight: FontWeight.w900,
+                                              fontWeight: FontWeight.w600,
                                               letterSpacing: 1,
                                             ),
                                           ),
@@ -1435,7 +1435,7 @@ class _DetailDialog {
                                                 .onSurface
                                                 .withOpacity(0.68),
                                             fontSize: 9,
-                                            fontWeight: FontWeight.w800,
+                                            fontWeight: FontWeight.w500,
                                             letterSpacing: 1,
                                           ),
                                         ),
@@ -1496,7 +1496,7 @@ class _SectionTitle extends StatelessWidget {
       title,
       style: GoogleFonts.gelasio(
         fontSize: 8,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
         letterSpacing: 2,
         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
       ),
@@ -1530,7 +1530,7 @@ class _StatusBadge extends StatelessWidget {
         style: GoogleFonts.ebGaramond(
           color: color,
           fontSize: 8,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -1610,7 +1610,7 @@ class _DetailItem extends StatelessWidget {
           label,
           style: GoogleFonts.ebGaramond(
             fontSize: 8,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: foreground.withOpacity(0.68),
             letterSpacing: 1.2,
           ),
@@ -1620,7 +1620,7 @@ class _DetailItem extends StatelessWidget {
           value.toUpperCase(),
           style: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: isPrimary
                 ? Theme.of(context).colorScheme.primary
                 : foreground,

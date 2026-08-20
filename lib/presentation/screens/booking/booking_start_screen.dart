@@ -47,7 +47,7 @@ class BookingStartScreen extends ConsumerWidget {
     ];
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -73,6 +73,9 @@ class BookingStartScreen extends ConsumerWidget {
           ).animate().fadeIn(duration: 1000.ms),
 
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
               child: Column(
@@ -119,7 +122,7 @@ class BookingStartScreen extends ConsumerWidget {
                     'HOW CAN\nWE HELP?',
                     style: GoogleFonts.gelasio(
                       fontSize: 36,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: isDark ? Colors.white : Color(0xFF163A2C),
                       height: 0.9,
                       letterSpacing: -2,
@@ -135,7 +138,7 @@ class BookingStartScreen extends ConsumerWidget {
                       color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.6,
                       ),
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2.5,
                       height: 1.8,
                     ),
@@ -225,7 +228,7 @@ class BookingStartScreen extends ConsumerWidget {
                               ),
                               child: Icon(
                                 LucideIcons.info,
-                                color: isDark ? Colors.black : Colors.white,
+                                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                 size: 20,
                               ),
                             ),
@@ -238,7 +241,7 @@ class BookingStartScreen extends ConsumerWidget {
                                     'M4 FAMILY MEMBERS GET PRIORITY SITE VISITS AND EXCLUSIVE UNIT SELECTION WINDOWS.',
                                     style: GoogleFonts.ebGaramond(
                                       fontSize: 9,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w600,
                                       color:
                                           (isDark ? Colors.white : Color(0xFF163A2C))
                                               .withOpacity(0.7),
@@ -259,7 +262,7 @@ class BookingStartScreen extends ConsumerWidget {
                                       'LEARN MORE',
                                       style: GoogleFonts.ebGaramond(
                                         fontSize: 10,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w600,
                                         color: isDark
                                             ? Colors.white
                                             : Color(0xFF163A2C),
@@ -310,7 +313,7 @@ class _BookingOptionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+          color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark
@@ -351,7 +354,7 @@ class _BookingOptionCard extends StatelessWidget {
                     opt['title'],
                     style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: 0.5,
                     ),
