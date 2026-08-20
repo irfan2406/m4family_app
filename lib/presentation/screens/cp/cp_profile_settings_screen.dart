@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -25,8 +26,8 @@ class CpProfileSettingsScreen extends ConsumerStatefulWidget {
 
 class _CpProfileSettingsScreenState
     extends ConsumerState<CpProfileSettingsScreen> {
-  static const _purple = Color(0xFF9333EA);
-  static const _indigo = Color(0xFF4F46E5);
+  static const _purple = Color(0xFFC5A35B);
+  static const _indigo = Color(0xFF141B3A);
 
   final _first = TextEditingController();
   final _last = TextEditingController();
@@ -75,8 +76,10 @@ class _CpProfileSettingsScreenState
       }
       u ??= ref.read(authProvider).user;
       if (u != null) {
-        _first.text = (u['firstName']?.toString() ?? '').toUpperCase();
-        _last.text = (u['lastName']?.toString() ?? '').toUpperCase();
+        // Show the name exactly as stored (was force-uppercased on load, so a
+        // saved "Abuzar" came back as "ABUZAR").
+        _first.text = u['firstName']?.toString() ?? '';
+        _last.text = u['lastName']?.toString() ?? '';
         _email.text = u['email']?.toString() ?? '';
         _phone.text = u['phone']?.toString() ?? '';
         _company.text = u['companyName']?.toString() ?? '';
@@ -97,8 +100,10 @@ class _CpProfileSettingsScreenState
       debugPrint('CP settings load: $e');
       final u = ref.read(authProvider).user;
       if (u != null) {
-        _first.text = (u['firstName']?.toString() ?? '').toUpperCase();
-        _last.text = (u['lastName']?.toString() ?? '').toUpperCase();
+        // Show the name exactly as stored (was force-uppercased on load, so a
+        // saved "Abuzar" came back as "ABUZAR").
+        _first.text = u['firstName']?.toString() ?? '';
+        _last.text = u['lastName']?.toString() ?? '';
         _email.text = u['email']?.toString() ?? '';
         _phone.text = u['phone']?.toString() ?? '';
         _company.text = u['companyName']?.toString() ?? '';
@@ -131,7 +136,7 @@ class _CpProfileSettingsScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('File too large (max 2MB)'),
           ),
         );
@@ -151,7 +156,7 @@ class _CpProfileSettingsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFFE24B4A),
+              backgroundColor: Color(0xFFC65B46),
               content: Text('Upload failed'),
             ),
           );
@@ -168,7 +173,7 @@ class _CpProfileSettingsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFF10B981),
+              backgroundColor: Color(0xFF163A2C),
               content: Text('Profile photo updated'),
             ),
           );
@@ -180,7 +185,7 @@ class _CpProfileSettingsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: const Color(0xFFE24B4A),
+              backgroundColor: const Color(0xFFC65B46),
               content: Text(msg ?? 'Update failed'),
             ),
           );
@@ -193,7 +198,7 @@ class _CpProfileSettingsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(m ?? 'Upload failed'),
           ),
         );
@@ -210,6 +215,18 @@ class _CpProfileSettingsScreenState
   }
 
   Future<void> _save() async {
+    final vErr =
+        Validators.nameError(_first.text, field: 'first name') ??
+        Validators.nameError(_last.text, field: 'last name') ??
+        Validators.phoneError(_phone.text);
+    if (vErr != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(vErr), backgroundColor: Colors.red.shade700),
+        );
+      }
+      return;
+    }
     setState(() => _saving = true);
     try {
       final res = await ref.read(apiClientProvider).updateMe({
@@ -262,8 +279,8 @@ class _CpProfileSettingsScreenState
         SnackBar(
           content: Text(message),
           backgroundColor: success
-              ? const Color(0xFF10B981)
-              : const Color(0xFFE24B4A),
+              ? const Color(0xFF163A2C)
+              : const Color(0xFFC65B46),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -288,7 +305,7 @@ class _CpProfileSettingsScreenState
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -300,7 +317,7 @@ class _CpProfileSettingsScreenState
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.15,
                   ),
                   borderRadius: BorderRadius.circular(99),
@@ -312,11 +329,11 @@ class _CpProfileSettingsScreenState
               alignment: Alignment.centerLeft,
               child: Text(
                 'SELECT DATE',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 15,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                 ),
               ),
             ),
@@ -339,15 +356,15 @@ class _CpProfileSettingsScreenState
                         borderRadius: BorderRadius.circular(16),
                       ),
                       side: BorderSide(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withValues(alpha: 0.2),
                       ),
-                      foregroundColor: isDark ? Colors.white : Colors.black,
+                      foregroundColor: isDark ? Colors.white : Color(0xFF163A2C),
                     ),
                     child: Text(
                       'CANCEL',
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontWeight: FontWeight.w900,
+                      style: GoogleFonts.ebGaramond(
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
                     ),
@@ -358,8 +375,8 @@ class _CpProfileSettingsScreenState
                   child: FilledButton(
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Colors.black,
-                      foregroundColor: isDark ? Colors.black : Colors.white,
+                      backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                      foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -367,8 +384,8 @@ class _CpProfileSettingsScreenState
                     ),
                     child: Text(
                       'CONFIRM',
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontWeight: FontWeight.w900,
+                      style: GoogleFonts.ebGaramond(
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
                     ),
@@ -391,7 +408,7 @@ class _CpProfileSettingsScreenState
       builder: (ctx) => AlertDialog(
         title: Text(
           'Deactivate sessions?',
-          style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w800),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w500),
         ),
         content: const Text(
           'You will be logged out everywhere, including this device.',
@@ -428,7 +445,7 @@ class _CpProfileSettingsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? 'Failed'),
           ),
         );
@@ -437,7 +454,7 @@ class _CpProfileSettingsScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(e.message ?? 'Error'),
           ),
         );
@@ -453,7 +470,7 @@ class _CpProfileSettingsScreenState
       builder: (ctx) => AlertDialog(
         title: Text(
           'Permanent deactivation',
-          style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w800),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w500),
         ),
         content: const Text(
           'CRITICAL: This will remove your data from M4 Family. Continue?',
@@ -490,7 +507,7 @@ class _CpProfileSettingsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? 'Failed'),
           ),
         );
@@ -499,7 +516,7 @@ class _CpProfileSettingsScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(e.message ?? 'Error'),
           ),
         );
@@ -523,7 +540,7 @@ class _CpProfileSettingsScreenState
               if (_newPass.text.length < 4) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    backgroundColor: Color(0xFFE24B4A),
+                    backgroundColor: Color(0xFFC65B46),
                     content: Text('Passcode must be at least 4 digits'),
                   ),
                 );
@@ -532,7 +549,7 @@ class _CpProfileSettingsScreenState
               if (_newPass.text != _confPass.text) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    backgroundColor: Color(0xFFE24B4A),
+                    backgroundColor: Color(0xFFC65B46),
                     content: Text('New passcodes do not match'),
                   ),
                 );
@@ -557,7 +574,7 @@ class _CpProfileSettingsScreenState
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        backgroundColor: Color(0xFF10B981),
+                        backgroundColor: Color(0xFF163A2C),
                         content: Text('Passcode updated successfully'),
                       ),
                     );
@@ -569,7 +586,7 @@ class _CpProfileSettingsScreenState
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        backgroundColor: const Color(0xFFE24B4A),
+                        backgroundColor: const Color(0xFFC65B46),
                         content: Text(msg ?? 'Failed to update passcode'),
                       ),
                     );
@@ -582,7 +599,7 @@ class _CpProfileSettingsScreenState
                       : null;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      backgroundColor: const Color(0xFFE24B4A),
+                      backgroundColor: const Color(0xFFC65B46),
                       content: Text(m ?? 'Error updating passcode'),
                     ),
                   );
@@ -598,9 +615,9 @@ class _CpProfileSettingsScreenState
               ),
               title: Text(
                 'UPDATE SECURITY PASSCODE',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 12,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.2,
                 ),
               ),
@@ -611,7 +628,7 @@ class _CpProfileSettingsScreenState
                   children: [
                     Text(
                       'SET A NEW 4–6 DIGIT SECURE ACCESS CODE',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         color: Theme.of(ctx).colorScheme.onSurfaceVariant,
                         letterSpacing: 1,
@@ -631,9 +648,9 @@ class _CpProfileSettingsScreenState
                   onPressed: submitting ? null : () => Navigator.pop(ctx),
                   child: Text(
                     'CANCEL',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
@@ -656,9 +673,9 @@ class _CpProfileSettingsScreenState
                         )
                       : Text(
                           'CONFIRM',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                 ),
@@ -676,9 +693,9 @@ class _CpProfileSettingsScreenState
       children: [
         Text(
           label.toUpperCase(),
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 8,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
           ),
         ),
@@ -688,7 +705,7 @@ class _CpProfileSettingsScreenState
           obscureText: true,
           keyboardType: TextInputType.number,
           textAlign: TextAlign.center,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontWeight: FontWeight.w700,
             letterSpacing: 6,
           ),
@@ -729,9 +746,9 @@ class _CpProfileSettingsScreenState
                   const SizedBox(height: 16),
                   Text(
                     'ESTABLISHING SECURE CONNECTION...',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 3,
                       color: scheme.onSurface.withValues(alpha: 0.68),
                     ),
@@ -750,6 +767,9 @@ class _CpProfileSettingsScreenState
         children: [
           _ambient(),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -829,9 +849,9 @@ class _CpProfileSettingsScreenState
                 Flexible(
                   child: Text(
                     'CONFIGURATION',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 14,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: -0.5,
                       color: scheme.onSurface.withValues(alpha: 0.9),
                     ),
@@ -873,9 +893,9 @@ class _CpProfileSettingsScreenState
                         )
                       : Text(
                           'SAVE CHANGES',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                             color: Colors.white,
                           ),
@@ -909,9 +929,9 @@ class _CpProfileSettingsScreenState
         const SizedBox(width: 8),
         Text(
           title,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2.5,
             color: scheme.onSurface.withValues(alpha: 0.9),
           ),
@@ -924,13 +944,15 @@ class _CpProfileSettingsScreenState
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 20, 18, 20),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: scheme.outlineVariant.withValues(alpha: 0.45),
         ),
-        // Web parity: white card in light mode (translucent in dark).
+        // White card in light mode; solid neutral near-black in dark (matches
+        // the Performance Tracker / home cards) — the old translucent fill let
+        // the navy page show through and read as a muddy tint.
         color: Theme.of(context).brightness == Brightness.dark
-            ? scheme.surfaceContainerHighest.withValues(alpha: 0.35)
+            ? const Color(0xFF141B3A)
             : Colors.white,
         boxShadow: [
           BoxShadow(
@@ -1035,16 +1057,16 @@ class _CpProfileSettingsScreenState
                 const SizedBox(height: 10),
                 Text(
                   'ACCOUNT AVATAR',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Recommended: square PNG/JPG · max 2MB',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w600,
                     color: scheme.onSurface.withValues(alpha: 0.68),
@@ -1064,12 +1086,14 @@ class _CpProfileSettingsScreenState
                   'FIRST NAME',
                   TextField(
                     controller: _first,
-                    // Names type + display in uppercase (matches how the
-                    // profile renders them); bold and slightly larger.
-                    textCapitalization: TextCapitalization.characters,
-                    inputFormatters: [_UpperCaseTextFormatter()],
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontWeight: FontWeight.w800,
+                    // Type the name exactly as the user enters it — the field
+                    // used to force ALL CAPS (keyboard caps-lock + an
+                    // uppercase input formatter), so "Abuzar" became "ABUZAR".
+                    textCapitalization: TextCapitalization.words,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: Validators.nameFormatters,
+                    style: GoogleFonts.ebGaramond(
+                      fontWeight: FontWeight.w500,
                       fontSize: 16,
                       color: scheme.onSurface,
                     ),
@@ -1091,10 +1115,11 @@ class _CpProfileSettingsScreenState
                   'LAST NAME',
                   TextField(
                     controller: _last,
-                    textCapitalization: TextCapitalization.characters,
-                    inputFormatters: [_UpperCaseTextFormatter()],
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontWeight: FontWeight.w800,
+                    textCapitalization: TextCapitalization.words,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: Validators.nameFormatters,
+                    style: GoogleFonts.ebGaramond(
+                      fontWeight: FontWeight.w500,
                       fontSize: 16,
                       color: scheme.onSurface,
                     ),
@@ -1114,9 +1139,9 @@ class _CpProfileSettingsScreenState
                 TextField(
                   controller: _email,
                   readOnly: true,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                    fontSize: 15,
                     color: scheme.onSurface.withValues(alpha: 0.92),
                   ),
                   decoration:
@@ -1146,10 +1171,10 @@ class _CpProfileSettingsScreenState
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                      color: const Color(0xFF163A2C).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.25),
+                        color: const Color(0xFF163A2C).withValues(alpha: 0.25),
                       ),
                     ),
                     child: Row(
@@ -1158,15 +1183,15 @@ class _CpProfileSettingsScreenState
                         const Icon(
                           LucideIcons.check,
                           size: 12,
-                          color: Color(0xFF10B981),
+                          color: Color(0xFF163A2C),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           'VERIFIED',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 8,
-                            fontWeight: FontWeight.w900,
-                            color: const Color(0xFF10B981),
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF163A2C),
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -1184,9 +1209,10 @@ class _CpProfileSettingsScreenState
             TextField(
               controller: _phone,
               keyboardType: TextInputType.phone,
-              style: GoogleFonts.dmSerifDisplay(
+              inputFormatters: Validators.phoneFormatters,
+              style: GoogleFonts.ebGaramond(
                 fontWeight: FontWeight.w700,
-                fontSize: 14,
+                fontSize: 15,
                 color: scheme.onSurface.withValues(alpha: 0.92),
               ),
               decoration: _inputDec(
@@ -1209,9 +1235,9 @@ class _CpProfileSettingsScreenState
                   'FIRM NAME',
                   TextField(
                     controller: _company,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontWeight: FontWeight.w700,
-                      fontSize: 14,
+                      fontSize: 15,
                       color: scheme.onSurface.withValues(alpha: 0.92),
                     ),
                     decoration: _inputDec(scheme),
@@ -1225,9 +1251,9 @@ class _CpProfileSettingsScreenState
                   'RERA NUMBER',
                   TextField(
                     controller: _rera,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontWeight: FontWeight.w700,
-                      fontSize: 14,
+                      fontSize: 15,
                       color: scheme.onSurface.withValues(alpha: 0.92),
                     ),
                     decoration: _inputDec(scheme),
@@ -1273,7 +1299,7 @@ class _CpProfileSettingsScreenState
                               : DateFormat(
                                   'dd-MM-yyyy',
                                 ).format(DateTime.parse(_dobIso!)),
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
                             color: scheme.onSurface.withValues(
@@ -1340,9 +1366,9 @@ class _CpProfileSettingsScreenState
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: scheme.onSurface.withValues(alpha: 0.85),
             ),
@@ -1373,9 +1399,9 @@ class _CpProfileSettingsScreenState
             children: [
               Text(
                 'CHANGE ACCESS PASSCODE',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,
                   color: scheme.onSurface.withValues(alpha: 0.82),
                 ),
@@ -1418,9 +1444,9 @@ class _CpProfileSettingsScreenState
                 )
               : Text(
                   'SECURITY LOGOUT (ALL DEVICES)',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: scheme.error,
                   ),
@@ -1444,24 +1470,13 @@ class _CpProfileSettingsScreenState
             )
           : Text(
               'DELETE ACCOUNT PERMANENTLY',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2.5,
                 color: scheme.onSurface.withValues(alpha: 0.68),
               ),
             ),
     );
-  }
-}
-
-/// Forces field text to uppercase as the user types (name fields).
-class _UpperCaseTextFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    return newValue.copyWith(text: newValue.text.toUpperCase());
   }
 }

@@ -10,7 +10,9 @@ import 'package:m4_mobile/presentation/providers/my_custom_views_provider.dart';
 
 // Web parity: the Portfolio Suite uses an orange accent (title highlight,
 // active tab, section icons) instead of the neutral foreground colour.
-const Color _kPortfolioOrange = Color(0xFFF97316);
+// Portfolio accent: M4 deep green (was coral, which read as off-brand orange
+// against the cream page and the bright hero photo).
+const Color _kPortfolioOrange = Color(0xFF0C312B);
 
 class MyCustomViewsScreen extends ConsumerStatefulWidget {
   const MyCustomViewsScreen({super.key});
@@ -101,9 +103,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           // subtitle with a paint-bucket icon.
           Text(
             'PORTFOLIO SUITE',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 14,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: -0.5,
             ),
           ),
@@ -118,9 +120,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
               const SizedBox(width: 5),
               Text(
                 'ASSET DASHBOARD',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: _kPortfolioOrange,
                 ),
@@ -173,16 +175,16 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   // Web parity: dark `text-foreground`; MY (light) + PORTFOLIO (bold).
                   TextSpan(
                     text: 'ELITE ',
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: Colors.black,
+                    style: GoogleFonts.gelasio(
+                      color: Color(0xFF0C312B),
                       fontSize: 30,
-                      fontWeight: FontWeight.w300,
+                      fontWeight: FontWeight.w500,
                       letterSpacing: -0.5,
                     ),
                   ),
                   TextSpan(
                     text: 'PORTFOLIO',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       color: _kPortfolioOrange,
                       fontSize: 30,
                       fontWeight: FontWeight.w700,
@@ -194,11 +196,11 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.2, end: 0),
             Text(
               'PERSONALISATION SUITE',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 // Web parity: orange `text-primary`, readable on the light fade.
                 color: _kPortfolioOrange,
-                fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 3,
               ),
             ).animate().fadeIn(delay: 400.ms),
@@ -218,7 +220,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           const SizedBox(height: 12),
           Text(
             'Automatic reflection of your purchased units from the M4 Admin Panel. Select a unit below to start or manage your bespoke interior customizations.',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 13,
               height: 1.6,
               fontWeight: FontWeight.w500,
@@ -257,9 +259,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   alignment: Alignment.center,
                   child: Text(
                     'SELECTION',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                       color: _activeTab == 0
                           ? Colors.white
@@ -284,9 +286,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   alignment: Alignment.center,
                   child: Text(
                     'HISTORY',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                       color: _activeTab == 1
                           ? Colors.white
@@ -311,7 +313,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       );
     }
     if (state.units.isEmpty) {
-      final foreground = isDark ? Colors.white : Colors.black;
+      final foreground = isDark ? Colors.white : Color(0xFF163A2C);
       // Web parity: styled empty-state card (orange icon box + heading + copy)
       // under the "ASSET CUSTOMIZATION STATUS" header, not bare text.
       return SliverToBoxAdapter(
@@ -329,9 +331,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   const SizedBox(width: 12),
                   Text(
                     'ASSET CUSTOMIZATION STATUS',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                       color: foreground.withOpacity(0.6),
                     ),
@@ -343,8 +345,8 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
-                borderRadius: BorderRadius.circular(36),
+                color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: foreground.withOpacity(0.06)),
                 boxShadow: isDark
                     ? null
@@ -374,9 +376,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   const SizedBox(height: 24),
                   Text(
                     'NO UNITS FOUND',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 16,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: foreground,
                       letterSpacing: 0.5,
                     ),
@@ -385,7 +387,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   Text(
                     'You currently have no purchased units registered in your portfolio that support online customization.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       height: 1.6,
@@ -416,9 +418,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 const SizedBox(width: 12),
                 Text(
                   'ASSET CUSTOMIZATION STATUS',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: Theme.of(
                       context,
@@ -441,7 +443,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       );
     }
 
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
     final q = _historyQuery.trim().toLowerCase();
     // Web parity: filter by project title or log id.
     final filtered = state.history.where((req) {
@@ -462,7 +464,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             padding: const EdgeInsets.symmetric(vertical: 60),
             decoration: BoxDecoration(
               color: foreground.withOpacity(0.02),
-              borderRadius: BorderRadius.circular(36),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: foreground.withOpacity(0.12),
                 style: BorderStyle.solid,
@@ -471,9 +473,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             child: Center(
               child: Text(
                 'NO HISTORY FOUND',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: foreground.withOpacity(0.68),
                 ),
@@ -505,9 +507,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 const SizedBox(width: 12),
                 Text(
                   'SELECTION HISTORY',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: fg.withOpacity(0.6),
                   ),
@@ -516,7 +518,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             ),
             Text(
               '$count LOGS',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
@@ -529,14 +531,14 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
         Container(
           height: 52,
           decoration: BoxDecoration(
-            color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
+            color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: fg.withOpacity(0.08)),
           ),
           child: TextField(
             onChanged: (v) => setState(() => _historyQuery = v),
-            style: GoogleFonts.dmSerifDisplay(
-              fontSize: 10,
+            style: GoogleFonts.gelasio(
+              fontSize: 15,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: fg,
@@ -544,14 +546,17 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             decoration: InputDecoration(
               isCollapsed: true,
               contentPadding: const EdgeInsets.symmetric(vertical: 18),
+              filled: false,
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
               prefixIcon: Icon(
                 LucideIcons.search,
                 size: 16,
                 color: fg.withOpacity(0.4),
               ),
               hintText: 'SEARCH BY PROJECT OR ID...',
-              hintStyle: GoogleFonts.dmSerifDisplay(
+              hintStyle: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
@@ -574,13 +579,13 @@ class _UnitCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final status = unit['customizationStatus'] ?? 'NOT_STARTED';
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark
               ? Colors.white.withOpacity(0.1)
@@ -615,9 +620,9 @@ class _UnitCard extends ConsumerWidget {
                                 )
                                 .toUpperCase() ??
                             'UNIT',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 7,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: foreground.withOpacity(0.68),
                           letterSpacing: 1,
                         ),
@@ -625,9 +630,9 @@ class _UnitCard extends ConsumerWidget {
                       Text(
                         unit['projectName']?.toString().toUpperCase() ??
                             'M4 PROJECT',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 13,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: foreground,
                         ),
                       ),
@@ -764,10 +769,10 @@ class _UnitCard extends ConsumerWidget {
                         status == 'NOT_STARTED'
                             ? 'START PERSONALISATION'
                             : 'MANAGE SELECTION',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: isDark ? Colors.black : Colors.white,
+                        style: GoogleFonts.ebGaramond(
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -775,7 +780,7 @@ class _UnitCard extends ConsumerWidget {
                       Icon(
                         LucideIcons.chevronRight,
                         size: 16,
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       ),
                     ],
                   ),
@@ -811,7 +816,7 @@ class _HistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
     final id =
         req['_id']
             ?.toString()
@@ -829,7 +834,7 @@ class _HistoryCard extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: isDark
-              ? const Color(0xFF18181B).withOpacity(0.4)
+              ? const Color(0xFF141B3A).withOpacity(0.4)
               : Colors.white,
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
@@ -873,9 +878,9 @@ class _HistoryCard extends StatelessWidget {
                       Text(
                         req['project']?['title']?.toString().toUpperCase() ??
                             'STANDARD UNIT',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 13,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: foreground,
                         ),
                       ),
@@ -952,7 +957,7 @@ class _HistoryMeta extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 8,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
@@ -963,7 +968,7 @@ class _HistoryMeta extends StatelessWidget {
         Text(
           value,
           textAlign: alignEnd ? TextAlign.right : TextAlign.left,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 10,
             fontWeight: FontWeight.w700,
             color: foreground,
@@ -991,7 +996,7 @@ class _DetailDialog {
             return Dialog(
               backgroundColor: Theme.of(context).colorScheme.surface,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(32),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Container(
                 // Medium-size, internally scrollable modal.
@@ -1037,9 +1042,9 @@ class _DetailDialog {
                                 Text(
                                   req['project']?['title'] ??
                                       'Standard Selection',
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 18,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w700,
                                     letterSpacing: -0.5,
                                   ),
                                 ),
@@ -1065,9 +1070,9 @@ class _DetailDialog {
                                                 ?.toString()
                                                 .toUpperCase() ??
                                             'FULL UNIT',
-                                        style: GoogleFonts.dmSerifDisplay(
+                                        style: GoogleFonts.ebGaramond(
                                           fontSize: 9,
-                                          fontWeight: FontWeight.w800,
+                                          fontWeight: FontWeight.w500,
                                           letterSpacing: 1.2,
                                           height: 1.4,
                                           color: Theme.of(context)
@@ -1140,10 +1145,10 @@ class _DetailDialog {
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style:
-                                                      GoogleFonts.dmSerifDisplay(
+                                                      GoogleFonts.ebGaramond(
                                                         fontSize: 7,
                                                         fontWeight:
-                                                            FontWeight.w900,
+                                                            FontWeight.w600,
                                                         letterSpacing: 1.0,
                                                         color: scheme.onSurface
                                                             .withOpacity(0.68),
@@ -1156,10 +1161,10 @@ class _DetailDialog {
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style:
-                                                      GoogleFonts.dmSerifDisplay(
+                                                      GoogleFonts.ebGaramond(
                                                         fontSize: 11,
                                                         fontWeight:
-                                                            FontWeight.w900,
+                                                            FontWeight.w600,
                                                         letterSpacing: 0.5,
                                                       ),
                                                 ),
@@ -1228,10 +1233,10 @@ class _DetailDialog {
                                 child: Text(
                                   errorMessage!.toUpperCase(),
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.ebGaramond(
                                     color: Colors.redAccent,
                                     fontSize: 9,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w500,
                                     letterSpacing: 1.0,
                                   ),
                                 ),
@@ -1382,10 +1387,10 @@ class _DetailDialog {
                                           child: Text(
                                             'MODIFY SELECTIONS',
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.dmSerifDisplay(
+                                            style: GoogleFonts.ebGaramond(
                                               color: Colors.white,
                                               fontSize: 10,
-                                              fontWeight: FontWeight.w900,
+                                              fontWeight: FontWeight.w600,
                                               letterSpacing: 1,
                                             ),
                                           ),
@@ -1424,13 +1429,13 @@ class _DetailDialog {
                                         child: Text(
                                           'CLOSE VIEW',
                                           textAlign: TextAlign.center,
-                                          style: GoogleFonts.dmSerifDisplay(
+                                          style: GoogleFonts.ebGaramond(
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
                                                 .withOpacity(0.68),
                                             fontSize: 9,
-                                            fontWeight: FontWeight.w800,
+                                            fontWeight: FontWeight.w500,
                                             letterSpacing: 1,
                                           ),
                                         ),
@@ -1489,9 +1494,9 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: GoogleFonts.dmSerifDisplay(
+      style: GoogleFonts.gelasio(
         fontSize: 8,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w700,
         letterSpacing: 2,
         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
       ),
@@ -1522,10 +1527,10 @@ class _StatusBadge extends StatelessWidget {
       child: Text(
         // Web parity: "NOT STARTED" (space, not underscore).
         status.replaceAll('_', ' ').toUpperCase(),
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.ebGaramond(
           color: color,
           fontSize: 8,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -1538,17 +1543,17 @@ class _StatusBadge extends StatelessWidget {
     switch (status.toLowerCase()) {
       case 'approved':
       case 'closed':
-        return const Color(0xFF22C55E); // green-500
+        return const Color(0xFF163A2C); // green-500
       case 'completed':
       case 'reviewed':
       case 'contacted':
-        return const Color(0xFF3B82F6); // blue-500
+        return const Color(0xFFC5A35B); // blue-500
       case 'rejected':
-        return const Color(0xFFEF4444); // red-500
+        return const Color(0xFFC65B46); // red-500
       case 'requested':
       case 'pending':
       case 'submitted':
-        return const Color(0xFFF59E0B); // amber-500
+        return const Color(0xFFC5A35B); // amber-500
       default:
         return Colors.grey;
     }
@@ -1577,7 +1582,7 @@ class _IconBox extends StatelessWidget {
       child: Icon(
         icon,
         size: 20,
-        color: color ?? (isDark ? Colors.white : Colors.black),
+        color: color ?? (isDark ? Colors.white : Color(0xFF163A2C)),
       ),
     );
   }
@@ -1597,15 +1602,15 @@ class _DetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 8,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: foreground.withOpacity(0.68),
             letterSpacing: 1.2,
           ),
@@ -1613,9 +1618,9 @@ class _DetailItem extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           value.toUpperCase(),
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: isPrimary
                 ? Theme.of(context).colorScheme.primary
                 : foreground,

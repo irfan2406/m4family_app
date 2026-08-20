@@ -7,7 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
-const Color _gold = Color(0xFFFFD700);
+const Color _gold = Color(0xFFC5A35B);
 
 /// Web `/investor/elite/investor-connect` — "Investor Connect": the curated
 /// investor network / community. Surfaces network stats, active co-investors,
@@ -117,10 +117,10 @@ class _InvestorEliteInvestorConnectScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -146,17 +146,17 @@ class _InvestorEliteInvestorConnectScreenState
           children: [
             Text(
               'Investor Connect',
-              style: GoogleFonts.dmSerifDisplay(
-                fontWeight: FontWeight.w900,
+              style: GoogleFonts.ebGaramond(
+                fontWeight: FontWeight.w600,
                 fontSize: 16,
                 color: textPrimary,
               ),
             ),
             Text(
               'ELITE INVESTOR NETWORK',
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 8,
-                fontWeight: FontWeight.w900,
+              style: GoogleFonts.gelasio(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: M4Theme.premiumBlue,
               ),
@@ -179,9 +179,9 @@ class _InvestorEliteInvestorConnectScreenState
                   // ── Greeting ──────────────────────────────────────────
                   Text(
                     greeting,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 22,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: -1,
                       height: 1,
                       color: textPrimary,
@@ -190,7 +190,7 @@ class _InvestorEliteInvestorConnectScreenState
                   const SizedBox(height: 8),
                   Text(
                     'Connect with fellow investors and co-invest in proven deals.',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: muted,
@@ -204,9 +204,9 @@ class _InvestorEliteInvestorConnectScreenState
                     children: [
                       Text(
                         'NETWORK STATS',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 4,
                           color: muted,
                         ),
@@ -222,9 +222,9 @@ class _InvestorEliteInvestorConnectScreenState
                         ),
                         child: Text(
                           'LIVE',
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w900,
+                          style: GoogleFonts.gelasio(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                             color: M4Theme.premiumBlue,
                           ),
@@ -243,9 +243,9 @@ class _InvestorEliteInvestorConnectScreenState
                   // ── Active Co-Investors ──────────────────────────────
                   Text(
                     'ACTIVE CO-INVESTORS',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 4,
                       color: muted,
                     ),
@@ -270,9 +270,9 @@ class _InvestorEliteInvestorConnectScreenState
                   // ── Successful Deals ─────────────────────────────────
                   Text(
                     'SUCCESSFUL DEALS',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 4,
                       color: muted,
                     ),
@@ -318,7 +318,7 @@ class _InvestorEliteInvestorConnectScreenState
             Text(
               _error ?? 'Something went wrong',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: textPrimary,
@@ -334,9 +334,9 @@ class _InvestorEliteInvestorConnectScreenState
               ),
               child: Text(
                 'RETRY',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: M4Theme.premiumBlue,
                 ),
@@ -355,7 +355,7 @@ class _InvestorEliteInvestorConnectScreenState
       child: Center(
         child: Text(
           message,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             color: muted,
             fontWeight: FontWeight.w700,
           ),
@@ -379,7 +379,7 @@ class _InvestorEliteInvestorConnectScreenState
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: card,
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: border),
           boxShadow: [
             BoxShadow(
@@ -395,7 +395,7 @@ class _InvestorEliteInvestorConnectScreenState
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: isDark ? Colors.black : Colors.white,
+                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(color: border),
               ),
@@ -409,9 +409,9 @@ class _InvestorEliteInvestorConnectScreenState
                 children: [
                   Text(
                     s.label.toUpperCase(),
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                       color: muted,
                     ),
@@ -419,9 +419,9 @@ class _InvestorEliteInvestorConnectScreenState
                   const SizedBox(height: 6),
                   Text(
                     s.value.toUpperCase(),
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 26,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       height: 1,
                       letterSpacing: -1,
                       color: textPrimary,
@@ -430,9 +430,9 @@ class _InvestorEliteInvestorConnectScreenState
                   const SizedBox(height: 4),
                   Text(
                     s.growth,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: Colors.green.shade500,
                     ),
                   ),
@@ -460,7 +460,7 @@ class _InvestorEliteInvestorConnectScreenState
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: card,
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: border),
           boxShadow: [
             BoxShadow(
@@ -492,11 +492,11 @@ class _InvestorEliteInvestorConnectScreenState
                             .resolveUrl(p.avatar),
                         fit: BoxFit.cover,
                         placeholder: (_, __) => Container(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withValues(alpha: 0.06),
                         ),
                         errorWidget: (_, __, ___) => Container(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withValues(alpha: 0.06),
                           alignment: Alignment.center,
                           child: Icon(LucideIcons.user, color: muted, size: 24),
@@ -512,9 +512,9 @@ class _InvestorEliteInvestorConnectScreenState
                     children: [
                       Text(
                         p.name,
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 16,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.5,
                           color: textPrimary,
                         ),
@@ -527,7 +527,7 @@ class _InvestorEliteInvestorConnectScreenState
                           Flexible(
                             child: Text(
                               p.location,
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                                 color: muted,
@@ -544,9 +544,9 @@ class _InvestorEliteInvestorConnectScreenState
                   children: [
                     Text(
                       'PORTFOLIO',
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w900,
+                      style: GoogleFonts.gelasio(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: muted,
                       ),
@@ -554,9 +554,9 @@ class _InvestorEliteInvestorConnectScreenState
                     const SizedBox(height: 2),
                     Text(
                       p.portfolio,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 16,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: -0.5,
                         color: M4Theme.premiumBlue,
                       ),
@@ -577,16 +577,16 @@ class _InvestorEliteInvestorConnectScreenState
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withValues(alpha: 0.04),
                         borderRadius: BorderRadius.circular(999),
                         border: Border.all(color: border),
                       ),
                       child: Text(
                         tag.toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w900,
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                           color: textPrimary,
                         ),
@@ -603,7 +603,7 @@ class _InvestorEliteInvestorConnectScreenState
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      backgroundColor: const Color(0xFF10B981),
+                      backgroundColor: const Color(0xFF163A2C),
                       content: Text(
                         'Connection request sent to ${p.name} — demo',
                       ),
@@ -623,9 +623,9 @@ class _InvestorEliteInvestorConnectScreenState
                 ),
                 label: Text(
                   'CONNECT',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: M4Theme.premiumBlue,
                   ),
@@ -677,11 +677,11 @@ class _InvestorEliteInvestorConnectScreenState
                       imageUrl: ref.read(apiClientProvider).resolveUrl(d.image),
                       fit: BoxFit.cover,
                       placeholder: (_, __) => Container(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withValues(alpha: 0.06),
                       ),
                       errorWidget: (_, __, ___) => Container(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withValues(alpha: 0.06),
                         alignment: Alignment.center,
                         child: Icon(LucideIcons.image, color: muted),
@@ -710,9 +710,9 @@ class _InvestorEliteInvestorConnectScreenState
                         ),
                         child: Text(
                           d.roi.toUpperCase(),
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                             color: Colors.black,
                           ),
@@ -729,9 +729,9 @@ class _InvestorEliteInvestorConnectScreenState
                   children: [
                     Text(
                       d.title.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 18,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
                         height: 1.1,
                         color: textPrimary,
@@ -749,9 +749,9 @@ class _InvestorEliteInvestorConnectScreenState
                         Flexible(
                           child: Text(
                             d.syndicate.toUpperCase(),
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 1.5,
                               color: muted,
                             ),
@@ -771,9 +771,9 @@ class _InvestorEliteInvestorConnectScreenState
                           children: [
                             Text(
                               'TICKET CLOSED',
-                              style: GoogleFonts.dmSerifDisplay(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w900,
+                              style: GoogleFonts.gelasio(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                                 color: muted,
                               ),
@@ -781,9 +781,9 @@ class _InvestorEliteInvestorConnectScreenState
                             const SizedBox(height: 4),
                             Text(
                               d.ticket.toUpperCase(),
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 18,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: -0.5,
                                 height: 1,
                                 color: textPrimary,
@@ -801,9 +801,9 @@ class _InvestorEliteInvestorConnectScreenState
                             const SizedBox(width: 6),
                             Text(
                               'FUNDED',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                                 color: Colors.green.shade500,
                               ),
@@ -829,7 +829,7 @@ class _InvestorEliteInvestorConnectScreenState
     return Container(
       decoration: BoxDecoration(
         color: panelBg,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.2),
@@ -839,7 +839,7 @@ class _InvestorEliteInvestorConnectScreenState
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
             Positioned.fill(
@@ -887,9 +887,9 @@ class _InvestorEliteInvestorConnectScreenState
                           children: [
                             Text(
                               'RELATIONSHIP DESK',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 18,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: -0.5,
                                 height: 1,
                                 color: onPanel,
@@ -898,9 +898,9 @@ class _InvestorEliteInvestorConnectScreenState
                             const SizedBox(height: 6),
                             Text(
                               'CURATED INTRODUCTIONS',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 1.5,
                                 color: onPanel.withValues(alpha: 0.6),
                               ),
@@ -918,7 +918,7 @@ class _InvestorEliteInvestorConnectScreenState
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            backgroundColor: Color(0xFFE24B4A),
+                            backgroundColor: Color(0xFFC65B46),
                             content: Text('Requesting an introduction — demo'),
                           ),
                         );
@@ -932,9 +932,9 @@ class _InvestorEliteInvestorConnectScreenState
                       ),
                       child: Text(
                         'REQUEST AN INTRODUCTION',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                           color: onPanel,
                         ),

@@ -30,7 +30,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
     );
     final scheme = Theme.of(context).colorScheme;
     final isLight = scheme.brightness == Brightness.light;
-    const purple = Color(0xFFA855F7);
+    const purple = Color(0xFFC5A35B);
 
     return Scaffold(
       appBar: AppBar(
@@ -40,7 +40,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
         ),
         title: Text(
           'Calculator',
-          style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w900),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600),
         ),
       ),
       body: ListView(
@@ -65,9 +65,9 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
               children: [
                 Text(
                   'PROJECTED MATURITY VALUE',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: purple,
                   ),
@@ -76,9 +76,9 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
                 Text(
                   fmt.format(total),
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 28,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: -0.4,
                   ),
                 ),
@@ -101,16 +101,16 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
                       const Icon(
                         LucideIcons.trendingUp,
                         size: 14,
-                        color: Color(0xFF34D399),
+                        color: Color(0xFF163A2C),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         '+${fmt.format(profit)} PROFIT',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
-                          color: const Color(0xFF34D399),
+                          color: const Color(0xFF163A2C),
                         ),
                       ),
                     ],
@@ -183,7 +183,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
                 Expanded(
                   child: Text(
                     'Disclaimer: Calculations are estimates based on compounded annual growth rate. Actual returns may vary based on market conditions and project performance.',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       height: 1.5,
@@ -212,9 +212,9 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
           children: [
             Text(
               label.toUpperCase(),
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.6,
                 color: Theme.of(
                   context,
@@ -223,9 +223,9 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
             ),
             Text(
               valueText,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],

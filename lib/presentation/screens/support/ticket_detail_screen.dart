@@ -117,7 +117,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
       setState(() => _sending = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Failed to send message'),
         ),
       );
@@ -192,9 +192,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.68,
     );
     final border = isDark
@@ -238,7 +238,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black : Colors.white,
+        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
         border: Border(bottom: BorderSide(color: border)),
       ),
       child: Row(
@@ -257,7 +257,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.03)
-                    : Colors.white,
+                    : const Color(0xFFF4EFE3),
                 shape: BoxShape.circle,
                 border: Border.all(color: border),
               ),
@@ -277,9 +277,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   subject,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 14,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: textPrimary,
                     letterSpacing: 1,
                   ),
@@ -291,16 +291,16 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                       width: 6,
                       height: 6,
                       decoration: const BoxDecoration(
-                        color: Color(0xFF22C55E),
+                        color: Color(0xFF163A2C),
                         shape: BoxShape.circle,
                       ),
                     ),
                     const SizedBox(width: 6),
                     Text(
                       'SUPPORT AGENT ONLINE',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 8,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: muted,
                         letterSpacing: 2,
                       ),
@@ -314,17 +314,17 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: (_isOpen ? Colors.blue : const Color(0xFF22C55E))
+              color: (_isOpen ? const Color(0xFFC5A35B) : const Color(0xFF163A2C))
                   .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: border),
             ),
             child: Text(
               _statusLabel,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
-                color: _isOpen ? Colors.blue : const Color(0xFF22C55E),
+                fontWeight: FontWeight.w700,
+                color: _isOpen ? const Color(0xFFC5A35B) : const Color(0xFF163A2C),
                 letterSpacing: 2,
               ),
             ),
@@ -345,9 +345,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             const SizedBox(height: 20),
             Text(
               'UNABLE TO LOAD TICKET',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 13,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: textPrimary,
                 letterSpacing: 1,
               ),
@@ -372,9 +372,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: textPrimary == Colors.white
                         ? Colors.black
                         : Colors.white,
@@ -404,9 +404,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             const SizedBox(height: 20),
             Text(
               'NO MESSAGES YET',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: textPrimary,
                 letterSpacing: 1,
               ),
@@ -414,9 +414,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             const SizedBox(height: 8),
             Text(
               'START THE CONVERSATION BELOW',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: muted,
                 letterSpacing: 1,
               ),
@@ -438,15 +438,15 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.03)
-                  : Colors.white,
+                  : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(40),
               border: Border.all(color: border),
             ),
             child: Text(
               DateFormat('EEEE, MMM d').format(DateTime.now()).toUpperCase(),
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: muted,
                 letterSpacing: 2,
               ),
@@ -470,9 +470,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 const SizedBox(width: 8),
                 Text(
                   'SECURE CONSULTATION',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: muted,
                     letterSpacing: 2,
                   ),
@@ -505,7 +505,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     // User bubble: solid (foreground/background inversion). Support: card style.
     final bubbleColor = isUser
         ? textPrimary
-        : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white);
+        : (isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3));
     final bubbleTextColor = isUser
         ? (isDark ? Colors.black : Colors.white)
         : textPrimary;
@@ -539,7 +539,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   if (text.isNotEmpty)
                     Text(
                       text,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: bubbleTextColor,
@@ -567,9 +567,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               children: [
                 Text(
                   time,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: muted,
                     letterSpacing: 1.5,
                   ),
@@ -611,9 +611,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               const SizedBox(width: 6),
               Text(
                 'VIEW ATTACHMENT',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 9,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
               ),
@@ -636,9 +636,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
           const SizedBox(width: 6),
           Text(
             'VIEW ATTACHMENT',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: textColor,
               letterSpacing: 1,
             ),
@@ -654,7 +654,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     return Container(
       padding: EdgeInsets.fromLTRB(
         16,
@@ -663,7 +663,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
         12 + MediaQuery.of(context).viewPadding.bottom,
       ),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black : Colors.white,
+        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
         border: Border(top: BorderSide(color: border)),
       ),
       child: Row(
@@ -681,20 +681,23 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 maxLines: 4,
                 textInputAction: TextInputAction.send,
                 onSubmitted: (_) => _handleSend(),
-                style: GoogleFonts.dmSerifDisplay(
-                  fontSize: 13,
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
                 ),
                 decoration: InputDecoration(
                   hintText: 'TYPE MESSAGE...',
-                  hintStyle: GoogleFonts.dmSerifDisplay(
+                  hintStyle: GoogleFonts.ebGaramond(
                     fontSize: 11,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: muted.withValues(alpha: 0.6),
                     letterSpacing: 1,
                   ),
+                  filled: false,
                   border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 18,
                     vertical: 14,
@@ -718,13 +721,13 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                       padding: const EdgeInsets.all(14),
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       ),
                     )
                   : Icon(
                       LucideIcons.send,
                       size: 18,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     ),
             ),
           ),

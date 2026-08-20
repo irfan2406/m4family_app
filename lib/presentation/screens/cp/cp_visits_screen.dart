@@ -1,5 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,16 +40,36 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
   bool _bookingsLoading = false;
   List<dynamic> _bookings = [];
 
+  static const _visitsCacheKey = 'cp_visits_cache';
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Show the last-loaded visits instantly, then refresh in the background —
+      // so reopening the screen feels fast even when the backend is slow.
+      await _loadCachedVisits();
       _load();
       _loadBookings();
     });
   }
 
-  Future<void> _load({int page = 1}) async {
+  Future<void> _loadCachedVisits() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cached = prefs.getString(_visitsCacheKey);
+      if (cached == null || !mounted || _visits.isNotEmpty) return;
+      final list = jsonDecode(cached);
+      if (list is List && list.isNotEmpty) {
+        setState(() {
+          _visits = list;
+          _loading = false; // cache is shown; _load() still refreshes in bg
+        });
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _load({int page = 1, bool retried = false}) async {
     setState(() {
       _loading = true;
       _error = null;
@@ -53,7 +77,11 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     try {
       final res = await ref
           .read(apiClientProvider)
-          .getCpVisits(page: page, limit: 10);
+          .getCpVisits(page: page, limit: 10)
+          // The Dio client's receiveTimeout is 90s — far too long for a small
+          // paginated list. Cap this at 15s so a slow/hung backend shows the
+          // retry state fast instead of spinning "SYNCHRONIZING RECORDS...".
+          .timeout(const Duration(seconds: 15));
       final body = res.data;
       if (body is Map && body['status'] == true && body['data'] is Map) {
         final d = body['data'] as Map;
@@ -61,10 +89,24 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
         _visits = raw is List ? List<dynamic>.from(raw) : [];
         _page = (d['page'] as num?)?.toInt() ?? page;
         _totalPages = (d['totalPages'] as num?)?.toInt() ?? 1;
+        // Cache so the next open shows this list instantly.
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(_visitsCacheKey, jsonEncode(_visits));
+        } catch (_) {}
       } else {
         _error = 'Could not load visits';
         _visits = [];
       }
+    } on TimeoutException {
+      // The backend can cold-start: the first request often times out while it
+      // wakes up. Retry once automatically — it is usually warm + fast by now,
+      // so the user doesn't have to tap "Retry".
+      if (!retried) {
+        return _load(page: page, retried: true);
+      }
+      _error = 'Taking longer than usual — please retry.';
+      _visits = [];
     } on DioException catch (e) {
       _error = e.response?.data is Map
           ? (e.response!.data as Map)['message']?.toString()
@@ -80,7 +122,10 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
   Future<void> _loadBookings() async {
     setState(() => _bookingsLoading = true);
     try {
-      final res = await ref.read(apiClientProvider).getCpBookings();
+      final res = await ref
+          .read(apiClientProvider)
+          .getCpBookings()
+          .timeout(const Duration(seconds: 15));
       final body = res.data;
       if (body is Map && body['status'] == true && body['data'] is Map) {
         final raw = (body['data'] as Map)['bookings'];
@@ -100,7 +145,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(
               ok
                   ? 'Admin notified'
@@ -116,7 +161,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('Failed to send notification'),
           ),
         );
@@ -134,7 +179,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: const Color(0xFF10B981),
+              backgroundColor: const Color(0xFF163A2C),
               content: Text('Status updated to $status'),
             ),
           );
@@ -145,7 +190,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: const Color(0xFFE24B4A),
+              backgroundColor: const Color(0xFFC65B46),
               content: Text(msg ?? 'Update failed'),
             ),
           );
@@ -158,7 +203,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(m ?? 'Error'),
           ),
         );
@@ -244,6 +289,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
         },
       ),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
           children: [
@@ -303,8 +351,8 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             const SizedBox(width: 8),
             Text(
               'PERFORMANCE TRACKER',
-              style: GoogleFonts.dmSerifDisplay(
-                fontWeight: FontWeight.w900,
+              style: GoogleFonts.ebGaramond(
+                fontWeight: FontWeight.w600,
                 fontSize: 13,
                 letterSpacing: 1.2,
               ),
@@ -364,9 +412,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             ),
             child: Text(
               label,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
                 color: active ? scheme.onPrimary : scheme.onSurfaceVariant,
               ),
@@ -422,9 +470,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'SYNCHRONIZING RECORDS...',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                       color: scheme.onSurfaceVariant,
                     ),
@@ -477,15 +525,15 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             ),
             child: TextField(
               onChanged: (v) => setState(() => _searchQuery = v),
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 12,
+              style: GoogleFonts.ebGaramond(
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
               decoration: InputDecoration(
                 hintText: 'SEARCH CLIENT OR PROJECT...',
-                hintStyle: GoogleFonts.dmSerifDisplay(
+                hintStyle: GoogleFonts.ebGaramond(
                   fontSize: 9,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   color: scheme.onSurface.withValues(alpha: 0.62),
                   letterSpacing: 1.0,
                 ),
@@ -494,7 +542,10 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   size: 18,
                   color: scheme.onSurface.withValues(alpha: 0.5),
                 ),
+                filled: false,
                 border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
@@ -526,9 +577,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 size: 16,
                 color: scheme.onSurfaceVariant,
               ),
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
                 letterSpacing: 0.8,
               ),
@@ -609,9 +660,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   children: [
                     Text(
                       dateStr,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 11,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
                         color: scheme.onSurface,
                       ),
@@ -619,9 +670,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     const SizedBox(height: 2),
                     Text(
                       'VISIT ID: $shortId',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 8,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 0.8,
                         color: scheme.onSurfaceVariant.withValues(alpha: 0.6),
                       ),
@@ -652,9 +703,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                               .toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
                           ),
                         ),
@@ -663,7 +714,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                           phone ?? email ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             color: scheme.onSurfaceVariant.withValues(
@@ -685,9 +736,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.right,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 11,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
                     ),
@@ -717,9 +768,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                           _projectTitle(v).toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
                           ),
                         ),
@@ -736,9 +787,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   child: Text(
                     (v['configuration'] ?? 'N/A').toString().toUpperCase(),
                     textAlign: TextAlign.right,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 11,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: scheme.onSurface,
                     ),
                   ),
@@ -793,9 +844,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   ),
                   child: Text(
                     'VIEW BOOKING',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                     ),
                   ),
@@ -822,9 +873,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 7,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             letterSpacing: 1,
             color: scheme.onSurfaceVariant.withValues(alpha: 0.68),
           ),
@@ -849,7 +900,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       if (!ok && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text('No app found to open $scheme'),
           ),
         );
@@ -858,7 +909,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('Could not open'),
           ),
         );
@@ -898,9 +949,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     if (status == 'INTERESTED') {
       return Text(
         'AWAITING ADMIN CLOSURE',
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.ebGaramond(
           fontSize: 7,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           letterSpacing: 0.8,
           color: scheme.onSurfaceVariant.withValues(alpha: 0.68),
         ),
@@ -915,9 +966,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           value: 'INTERESTED',
           child: Text(
             'Interested',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 11,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: Colors.amber.shade800,
             ),
           ),
@@ -926,9 +977,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           value: 'NOT_INTERESTED',
           child: Text(
             'Not Interested',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 11,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: Colors.red,
             ),
           ),
@@ -948,9 +999,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           children: [
             Text(
               'UPDATE STATUS',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 1,
                 color: scheme.onSurface,
               ),
@@ -973,7 +1024,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 40),
       decoration: BoxDecoration(
         color: scheme.onSurface.withValues(alpha: 0.02),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.2)),
       ),
       child: Column(
@@ -987,9 +1038,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           Text(
             'NO RECORDS FOUND MATCHING YOUR SEARCH',
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: scheme.onSurfaceVariant.withValues(alpha: 0.68),
               letterSpacing: 1,
             ),
@@ -1018,9 +1069,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           const SizedBox(width: 12),
           Text(
             'PAGE $_page / $_totalPages',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
             ),
           ),
@@ -1048,19 +1099,19 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     String label;
     switch (status) {
       case 'NEW':
-        base = const Color(0xFF3B82F6); // blue
+        base = const Color(0xFFC5A35B); // blue
         label = 'NEW VISIT';
         break;
       case 'INTERESTED':
-        base = const Color(0xFFF59E0B); // amber
+        base = const Color(0xFFC5A35B); // amber
         label = 'INTERESTED';
         break;
       case 'NOT_INTERESTED':
-        base = const Color(0xFFEF4444); // red
+        base = const Color(0xFFC65B46); // red
         label = 'NOT INTERESTED';
         break;
       case 'CLOSED':
-        base = const Color(0xFF10B981); // green
+        base = const Color(0xFF163A2C); // green
         label = 'CLOSED / BOOKING';
         break;
       default:
@@ -1077,9 +1128,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       ),
       child: Text(
         label,
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.ebGaramond(
           fontSize: 7,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           color: fg,
           letterSpacing: 0.5,
         ),
@@ -1115,18 +1166,18 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 children: [
                   Text(
                     'PAYMENT TRACKER',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                       color: scheme.onSurfaceVariant,
                     ),
                   ),
                   Text(
                     'SETTLEMENT & COMMISSION STATUS',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 7,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: scheme.onSurfaceVariant.withValues(alpha: 0.6),
                       letterSpacing: 0.6,
                     ),
@@ -1149,9 +1200,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 ),
                 child: Text(
                   '${_bookings.length} TOTAL',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 0.8,
                     color: scheme.primary,
                   ),
@@ -1173,9 +1224,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'LOADING FINANCIAL LOGS...',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                       color: scheme.onSurfaceVariant,
                     ),
@@ -1189,7 +1240,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             padding: const EdgeInsets.symmetric(vertical: 50),
             decoration: BoxDecoration(
               color: scheme.onSurface.withValues(alpha: 0.02),
-              borderRadius: BorderRadius.circular(32),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: scheme.outlineVariant.withValues(alpha: 0.3),
                 style: BorderStyle.solid,
@@ -1216,9 +1267,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'ZERO FINANCIAL LOGS DETECTED',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1.2,
                     color: scheme.onSurfaceVariant.withValues(alpha: 0.62),
                   ),
@@ -1250,13 +1301,13 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       decoration: BoxDecoration(
         color: isReady
             ? (scheme.brightness == Brightness.dark
-                  ? const Color(0xFF10251E)
-                  : const Color(0xFFF1FBF6))
+                  ? const Color(0xFF141B3A)
+                  : const Color(0xFFF4EFE3))
             : scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
           color: isReady
-              ? const Color(0xFF10B981).withValues(alpha: 0.35)
+              ? const Color(0xFF163A2C).withValues(alpha: 0.35)
               : (scheme.brightness == Brightness.dark
                     ? Colors.white.withValues(alpha: 0.07)
                     : scheme.outlineVariant.withValues(alpha: 0.55)),
@@ -1297,9 +1348,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     Center(
                       child: Text(
                         '$progress%',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           fontStyle: FontStyle.italic,
                           color: accent,
                         ),
@@ -1320,9 +1371,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                             projectTitle.toUpperCase(),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 13,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: scheme.onSurface,
                             ),
                           ),
@@ -1338,7 +1389,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     const SizedBox(height: 2),
                     Text(
                       'Client: ${clientName.toString().toUpperCase()}',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w700,
                         color: scheme.onSurfaceVariant,
@@ -1362,9 +1413,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                       ),
                       child: Text(
                         sanctioned ? 'SANCTIONED' : 'PENDING SANCTION',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 7,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: sanctioned
                               ? Colors.green
                               : Colors.amber.shade800,
@@ -1438,9 +1489,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     child: Text(
                       '100% Payment achieved. Notify admin for commission settlement.'
                           .toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 7,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: Colors.amber.shade800,
                         letterSpacing: 0.4,
                       ),

@@ -17,8 +17,8 @@ class CpBookingStartScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
 
     final projectTitle =
         (project is Map ? project['title'] : null)?.toString() ?? 'Project';
@@ -29,7 +29,7 @@ class CpBookingStartScreen extends ConsumerWidget {
         'title': 'SEND INQUIRY',
         'desc': 'Get detailed brochure and pricing via email/WhatsApp.',
         'icon': LucideIcons.messageSquare,
-        'color': const Color(0xFF3B82F6),
+        'color': const Color(0xFFC5A35B),
         'route': '/cp/booking/inquiry',
       },
       {
@@ -37,7 +37,7 @@ class CpBookingStartScreen extends ConsumerWidget {
         'title': 'SCHEDULE SITE VISIT',
         'desc': 'Book a personalized tour with our project manager.',
         'icon': LucideIcons.calendar,
-        'color': const Color(0xFF10B981),
+        'color': const Color(0xFF163A2C),
         'route': '/cp/booking/site-visit',
       },
       {
@@ -45,7 +45,7 @@ class CpBookingStartScreen extends ConsumerWidget {
         'title': 'TOKEN BOOKING',
         'desc': 'Lock your preferred unit with a refundable token amount.',
         'icon': LucideIcons.creditCard,
-        'color': const Color(0xFF8B5CF6),
+        'color': const Color(0xFFC5A35B),
         'route': '/cp/booking/payment-plan',
       },
     ];
@@ -69,6 +69,9 @@ class CpBookingStartScreen extends ConsumerWidget {
           ).animate().fadeIn(duration: 1000.ms),
 
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
               child: Column(
@@ -119,9 +122,9 @@ class CpBookingStartScreen extends ConsumerWidget {
                   // Header
                   Text(
                     'HOW CAN\nWE HELP?',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 36,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: textPrimary,
                       height: 0.9,
                       letterSpacing: -2,
@@ -133,10 +136,10 @@ class CpBookingStartScreen extends ConsumerWidget {
                   // Subtitle
                   Text(
                     'INTERESTED IN ${projectTitle.toUpperCase()}?\nCHOOSE HOW YOU\'D LIKE TO PROCEED.',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
                       color: textPrimary.withValues(alpha: 0.68),
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2.5,
                       height: 1.8,
                     ),
@@ -205,9 +208,9 @@ class CpBookingStartScreen extends ConsumerWidget {
                                 children: [
                                   Text(
                                     'M4 FAMILY MEMBERS GET PRIORITY SITE VISITS AND EXCLUSIVE UNIT SELECTION WINDOWS.',
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.ebGaramond(
                                       fontSize: 9,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w600,
                                       color: textPrimary.withValues(
                                         alpha: isDark ? 0.6 : 0.68,
                                       ),
@@ -220,9 +223,9 @@ class CpBookingStartScreen extends ConsumerWidget {
                                     onTap: () => context.push('/about'),
                                     child: Text(
                                       'LEARN MORE',
-                                      style: GoogleFonts.dmSerifDisplay(
+                                      style: GoogleFonts.ebGaramond(
                                         fontSize: 10,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w600,
                                         color: M4Theme.premiumBlue,
                                         letterSpacing: 1,
                                         decoration: TextDecoration.underline,
@@ -272,7 +275,7 @@ class _BookingOptionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark
@@ -307,19 +310,19 @@ class _BookingOptionCard extends StatelessWidget {
                 children: [
                   Text(
                     opt['title'] as String,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w900,
-                      color: isDark ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: 0.5,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     opt['desc'] as String,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                         alpha: 0.68,
                       ),
                       fontWeight: FontWeight.bold,
@@ -334,14 +337,14 @@ class _BookingOptionCard extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.05,
                 ),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 LucideIcons.chevronRight,
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.5,
                 ),
                 size: 16,

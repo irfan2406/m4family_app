@@ -22,8 +22,8 @@ class InvestorReferralClosedScreen extends ConsumerStatefulWidget {
 
 class _InvestorReferralClosedScreenState
     extends ConsumerState<InvestorReferralClosedScreen> {
-  static const _gold = Color(0xFFFFD700);
-  static const _emerald = Color(0xFF10B981);
+  static const _gold = Color(0xFFC5A35B);
+  static const _emerald = Color(0xFF163A2C);
 
   // Statuses considered closed/credited (the only ones shown here).
   static const _closedStatuses = [
@@ -111,9 +111,9 @@ class _InvestorReferralClosedScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -121,6 +121,9 @@ class _InvestorReferralClosedScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(textPrimary, muted, border),
@@ -173,9 +176,9 @@ class _InvestorReferralClosedScreenState
                 Text(
                   'SUCCESS VAULT',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 13,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: textPrimary,
                   ),
@@ -184,9 +187,9 @@ class _InvestorReferralClosedScreenState
                 Text(
                   'CLOSED CONVERSIONS',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 3,
                     color: muted,
                   ),
@@ -202,7 +205,7 @@ class _InvestorReferralClosedScreenState
 
   // ─── List ────────────────────────────────────────────────────────────────
   Widget _buildList(bool isDark, Color textPrimary, Color muted, Color border) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
 
     return RefreshIndicator(
       onRefresh: _load,
@@ -218,9 +221,9 @@ class _InvestorReferralClosedScreenState
               const SizedBox(width: 8),
               Text(
                 '${_referrals.length} CONVERTED',
-                style: GoogleFonts.dmSerifDisplay(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w900,
+                style: GoogleFonts.gelasio(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: muted,
                 ),
@@ -272,9 +275,9 @@ class _InvestorReferralClosedScreenState
                         Flexible(
                           child: Text(
                             name,
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 15,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: textPrimary,
                             ),
                           ),
@@ -290,9 +293,9 @@ class _InvestorReferralClosedScreenState
                     const SizedBox(height: 4),
                     Text(
                       project.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w900,
+                      style: GoogleFonts.gelasio(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: muted,
                       ),
@@ -321,9 +324,9 @@ class _InvestorReferralClosedScreenState
                         const SizedBox(width: 5),
                         Text(
                           'UNIT CONFIG',
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 7,
-                            fontWeight: FontWeight.w900,
+                          style: GoogleFonts.gelasio(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                             color: muted,
                           ),
@@ -333,9 +336,9 @@ class _InvestorReferralClosedScreenState
                     const SizedBox(height: 6),
                     Text(
                       unitConfig.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: textPrimary,
                       ),
                     ),
@@ -349,9 +352,9 @@ class _InvestorReferralClosedScreenState
                 children: [
                   Text(
                     'REWARD EARNED',
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 7,
-                      fontWeight: FontWeight.w900,
+                    style: GoogleFonts.gelasio(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                       color: muted,
                     ),
@@ -359,9 +362,9 @@ class _InvestorReferralClosedScreenState
                   const SizedBox(height: 6),
                   Text(
                     '+${_formatNumber(points)} PTS',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: _emerald,
                     ),
                   ),
@@ -377,9 +380,9 @@ class _InvestorReferralClosedScreenState
                 const SizedBox(width: 6),
                 Text(
                   'CLOSED $date',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: muted,
                   ),
@@ -402,9 +405,9 @@ class _InvestorReferralClosedScreenState
       ),
       child: Text(
         'CONVERTED',
-        style: GoogleFonts.dmSerifDisplay(
-          fontSize: 8,
-          fontWeight: FontWeight.w900,
+        style: GoogleFonts.ebGaramond(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
           letterSpacing: 1,
           color: _emerald,
         ),
@@ -430,9 +433,9 @@ class _InvestorReferralClosedScreenState
           Text(
             'NO CLOSED REFERRALS YET',
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: muted,
             ),
@@ -452,9 +455,9 @@ class _InvestorReferralClosedScreenState
           const SizedBox(height: 16),
           Text(
             'COULD NOT LOAD SUCCESS VAULT',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: muted,
             ),
@@ -470,11 +473,11 @@ class _InvestorReferralClosedScreenState
               ),
               child: Text(
                 'RETRY',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
-                  color: Colors.white,
+                  color: const Color(0xFFF4EFE3),
                 ),
               ),
             ),

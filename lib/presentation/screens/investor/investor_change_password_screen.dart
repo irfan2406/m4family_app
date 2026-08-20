@@ -24,7 +24,7 @@ class InvestorChangePasswordScreen extends ConsumerStatefulWidget {
 
 class _InvestorChangePasswordScreenState
     extends ConsumerState<InvestorChangePasswordScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   final _current = TextEditingController();
   final _newPass = TextEditingController();
@@ -78,11 +78,11 @@ class _InvestorChangePasswordScreenState
     switch (_strength) {
       case 0:
       case 1:
-        return const Color(0xFFEF4444);
+        return const Color(0xFFC65B46);
       case 2:
-        return const Color(0xFFF59E0B);
+        return const Color(0xFFC5A35B);
       case 3:
-        return const Color(0xFF10B981);
+        return const Color(0xFF163A2C);
       default:
         return _gold;
     }
@@ -170,10 +170,10 @@ class _InvestorChangePasswordScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -185,6 +185,9 @@ class _InvestorChangePasswordScreenState
           // Ambient background glows (mirrors web WealthModeLayout).
           _ambient(),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -345,9 +348,9 @@ class _InvestorChangePasswordScreenState
               children: [
                 Text(
                   'SECURITY SETTINGS',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2.5,
                     color: _gold.withValues(alpha: 0.8),
                   ),
@@ -355,9 +358,9 @@ class _InvestorChangePasswordScreenState
                 const SizedBox(height: 4),
                 Text(
                   'Change Password',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 18,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: -0.3,
                     color: textPrimary,
                   ),
@@ -375,9 +378,9 @@ class _InvestorChangePasswordScreenState
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         label,
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.gelasio(
           fontSize: 10,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w700,
           letterSpacing: 2,
           color: muted,
         ),
@@ -404,16 +407,16 @@ class _InvestorChangePasswordScreenState
       controller: controller,
       obscureText: obscure,
       onChanged: onChanged,
-      style: GoogleFonts.dmSerifDisplay(
-        fontSize: 14,
+      style: GoogleFonts.ebGaramond(
+        fontSize: 15,
         fontWeight: FontWeight.w600,
         color: textPrimary,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.dmSerifDisplay(
+        hintStyle: GoogleFonts.ebGaramond(
           fontSize: 14,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           color: muted,
         ),
         filled: true,
@@ -478,9 +481,9 @@ class _InvestorChangePasswordScreenState
           const SizedBox(height: 6),
           Text(
             'STRENGTH: $_strengthLabel',
-            style: GoogleFonts.dmSerifDisplay(
-              fontSize: 9,
-              fontWeight: FontWeight.w800,
+            style: GoogleFonts.gelasio(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: color,
             ),
@@ -495,8 +498,8 @@ class _InvestorChangePasswordScreenState
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Widget _matchFeedback(Color muted) {
     final matches = _confirm.text == _newPass.text && _newPass.text.isNotEmpty;
-    const green = Color(0xFF10B981);
-    const red = Color(0xFFEF4444);
+    const green = Color(0xFF163A2C);
+    const red = Color(0xFFC65B46);
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: Row(
@@ -509,7 +512,7 @@ class _InvestorChangePasswordScreenState
           const SizedBox(width: 6),
           Text(
             matches ? 'Keys match' : 'Keys do not match',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: matches ? green : red,
@@ -551,9 +554,9 @@ class _InvestorChangePasswordScreenState
               const SizedBox(width: 8),
               Text(
                 'REQUIREMENTS',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,
                   color: _gold.withValues(alpha: 0.7),
                 ),
@@ -568,7 +571,7 @@ class _InvestorChangePasswordScreenState
   }
 
   Widget _requirementRow(String label, bool met, Color muted) {
-    const green = Color(0xFF10B981);
+    const green = Color(0xFF163A2C);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
@@ -591,7 +594,7 @@ class _InvestorChangePasswordScreenState
           const SizedBox(width: 8),
           Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: met ? green : muted,
@@ -636,9 +639,9 @@ class _InvestorChangePasswordScreenState
                 )
               : Text(
                   'UPDATE PASSWORD',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 12,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: Colors.black,
                   ),

@@ -19,8 +19,8 @@ class InvestorPaymentsScreen extends ConsumerStatefulWidget {
 
 class _InvestorPaymentsScreenState
     extends ConsumerState<InvestorPaymentsScreen> {
-  static const _gold = Color(0xFFFFD700);
-  static const _green = Color(0xFF22C55E);
+  static const _gold = Color(0xFFC5A35B);
+  static const _green = Color(0xFF163A2C);
 
   bool _loading = true;
   bool _error = false;
@@ -147,9 +147,9 @@ class _InvestorPaymentsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -169,18 +169,18 @@ class _InvestorPaymentsScreenState
           children: [
             Text(
               'Payment History',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 color: textPrimary,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 fontSize: 16,
               ),
             ),
             Text(
               'FINANCIAL LEDGER',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 color: muted,
-                fontWeight: FontWeight.w900,
-                fontSize: 8,
+                fontWeight: FontWeight.w700,
+                fontSize: 10,
                 letterSpacing: 3,
               ),
             ),
@@ -219,7 +219,7 @@ class _InvestorPaymentsScreenState
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 16),
       decoration: BoxDecoration(
@@ -259,20 +259,20 @@ class _InvestorPaymentsScreenState
         children: [
           Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               color: muted,
-              fontSize: 8,
-              fontWeight: FontWeight.w900,
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
             ),
           ),
           const SizedBox(height: 6),
           Text(
             value,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               color: valueColor,
               fontSize: 14,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -286,20 +286,20 @@ class _InvestorPaymentsScreenState
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     return TextField(
       onChanged: (v) => setState(() => _searchQuery = v),
-      style: GoogleFonts.dmSerifDisplay(
+      style: GoogleFonts.ebGaramond(
         color: textPrimary,
-        fontSize: 13,
-        fontWeight: FontWeight.w500,
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
       ),
       decoration: InputDecoration(
         hintText: 'Search transactions...',
-        hintStyle: GoogleFonts.dmSerifDisplay(
+        hintStyle: GoogleFonts.ebGaramond(
           color: muted,
           fontSize: 13,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
         ),
         prefixIcon: Icon(LucideIcons.search, size: 18, color: muted),
         filled: true,
@@ -326,7 +326,7 @@ class _InvestorPaymentsScreenState
   }
 
   Widget _buildFilters(bool isDark, Color muted, Color border) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -345,10 +345,10 @@ class _InvestorPaymentsScreenState
             ),
             child: Text(
               f.toUpperCase(),
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 color: selected ? _gold : muted,
-                fontSize: 9,
-                fontWeight: FontWeight.w800,
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 1,
               ),
             ),
@@ -380,7 +380,7 @@ class _InvestorPaymentsScreenState
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final isIn = t['direction'] == 'in';
     final status = (t['status'] ?? '').toString();
     final statusUpper = status.toUpperCase();
@@ -394,7 +394,7 @@ class _InvestorPaymentsScreenState
     if (statusUpper == 'PAID') {
       statusColor = _green;
     } else if (statusUpper == 'PENDING') {
-      statusColor = const Color(0xFFF59E0B);
+      statusColor = const Color(0xFFC5A35B);
     } else {
       statusColor = muted;
     }
@@ -438,7 +438,7 @@ class _InvestorPaymentsScreenState
                   (t['description'] ?? '').toString(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     color: textPrimary,
                     fontSize: 12.5,
                     fontWeight: FontWeight.w700,
@@ -452,9 +452,9 @@ class _InvestorPaymentsScreenState
                         _formatDate((t['date'] ?? '').toString()),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           color: muted,
-                          fontSize: 9,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                         ),
@@ -472,9 +472,9 @@ class _InvestorPaymentsScreenState
                       ),
                       Text(
                         shortId,
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           color: muted,
-                          fontSize: 9,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                         ),
@@ -491,10 +491,10 @@ class _InvestorPaymentsScreenState
             children: [
               Text(
                 '${isIn ? '+' : ''}AED ${_formatAmount(amount)}',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   color: isIn ? _green : textPrimary,
                   fontSize: 13,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: 4),
@@ -509,10 +509,10 @@ class _InvestorPaymentsScreenState
                 ),
                 child: Text(
                   statusUpper.isEmpty ? '—' : statusUpper,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     color: statusColor,
-                    fontSize: 8,
-                    fontWeight: FontWeight.w800,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -537,7 +537,7 @@ class _InvestorPaymentsScreenState
           const SizedBox(height: 16),
           Text(
             'No transactions found',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               color: textPrimary,
               fontSize: 13,
               fontWeight: FontWeight.w700,
@@ -546,10 +546,10 @@ class _InvestorPaymentsScreenState
           const SizedBox(height: 6),
           Text(
             'Your payment ledger is empty.',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               color: muted,
               fontSize: 11,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -568,7 +568,7 @@ class _InvestorPaymentsScreenState
             const SizedBox(height: 16),
             Text(
               'Unable to load payments',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 color: textPrimary,
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
@@ -578,10 +578,10 @@ class _InvestorPaymentsScreenState
             Text(
               'Please check your connection and try again.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 color: muted,
                 fontSize: 11,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 20),
@@ -596,9 +596,9 @@ class _InvestorPaymentsScreenState
               ),
               child: Text(
                 'RETRY',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 12,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 1,
                 ),
               ),

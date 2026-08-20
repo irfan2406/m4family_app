@@ -1,3 +1,5 @@
+import 'package:m4_mobile/presentation/widgets/mesh_overlay.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,7 +25,7 @@ import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 /// (CachedNetworkImage can only fetch network URLs). Used by the project cards.
 Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
   Widget errorBox() => Container(
-    color: const Color(0xFF1A1A1A),
+    color: const Color(0xFF141B3A),
     child: const Center(
       child: Icon(LucideIcons.building2, color: Colors.white24, size: 40),
     ),
@@ -84,11 +87,21 @@ class ProjectListScreen extends ConsumerWidget {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
+            // The refine sheet is always the cream surface, in both app
+            // themes. Running its subtree under the light theme flips the
+            // whole sheet together — surface, type, chips and button — so no
+            // white-on-cream text can slip through.
+            return Theme(
+              data: M4Theme.lightTheme,
+              child: Builder(
+                builder: (context) {
             final isDark = Theme.of(context).brightness == Brightness.dark;
             return Container(
-              height: MediaQuery.of(context).size.height * 0.85,
+              // Half-sheet popup: the filter list scrolls inside it rather than
+              // the sheet swallowing the screen.
+              height: MediaQuery.of(context).size.height * 0.55,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF111111) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(40),
                 ),
@@ -106,7 +119,7 @@ class ProjectListScreen extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
@@ -114,9 +127,9 @@ class ProjectListScreen extends ConsumerWidget {
                       children: [
                         Text(
                           'REFINE SEARCH',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 22,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: Theme.of(context).colorScheme.onSurface,
                             letterSpacing: -0.5,
                           ),
@@ -141,7 +154,7 @@ class ProjectListScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 20),
                   Expanded(
                     child: Consumer(
                       builder: (context, ref, child) {
@@ -155,7 +168,7 @@ class ProjectListScreen extends ConsumerWidget {
                         final selectedTypes = ref.watch(selectedTypesProvider);
 
                         return ListView(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
                           children: [
                             _FilterSection(
                               title: 'LOCATION',
@@ -230,31 +243,36 @@ class ProjectListScreen extends ConsumerWidget {
                                     current;
                               },
                             ),
-                            const SizedBox(height: 48),
+                            const SizedBox(height: 8),
                           ],
                         );
                       },
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
+                    padding: EdgeInsets.fromLTRB(
+                      24,
+                      12,
+                      24,
+                      12 + MediaQuery.of(context).padding.bottom,
+                    ),
                     child: SizedBox(
                       width: double.infinity,
                       height: 64,
                       child: ElevatedButton(
                         onPressed: () => Navigator.pop(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark ? Colors.white : Colors.black,
-                          foregroundColor: isDark ? Colors.black : Colors.white,
+                          backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                          foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
                         child: Text(
                           'APPLY SEARCH MATRIX',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 12,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -262,6 +280,9 @@ class ProjectListScreen extends ConsumerWidget {
                     ),
                   ),
                 ],
+              ),
+            );
+                },
               ),
             );
           },
@@ -283,416 +304,438 @@ class ProjectListScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: cpCatalogMode ? const CpSidebarMenu() : const ConditionalDrawer(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 🏷️ Custom Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            // Robust back: if a route was pushed, pop it;
-                            // otherwise this is a shell tab, so switch that
-                            // portal's shell back to its Home tab.
-                            if (context.canPop()) {
-                              context.pop();
-                              return;
-                            }
-                            if (cpCatalogMode) {
-                              ref
-                                      .read(cpNavigationIndexProvider.notifier)
-                                      .state =
-                                  0;
-                            } else {
-                              ref.read(navigationProvider.notifier).state = 0;
-                              ref.read(guestNavigationProvider.notifier).state =
-                                  0;
-                            }
-                          },
-                          borderRadius: BorderRadius.circular(12),
-                          // Web parity: contained back button (light rounded
-                          // square with a subtle border), not a bare icon.
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: (isDark ? Colors.white : Colors.black)
-                                  .withOpacity(0.05),
+      body: Stack(
+        children: [
+          // Figma parity: faint geometric mesh, behind content, on the green surface.
+          if (Theme.of(context).brightness == Brightness.dark) const MeshOverlay(),
+          SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
+            child: Column(
+              children: [
+                // 🏷️ Custom Header
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                // Robust back: if a route was pushed, pop it;
+                                // otherwise this is a shell tab, so switch that
+                                // portal's shell back to its Home tab.
+                                if (context.canPop()) {
+                                  context.pop();
+                                  return;
+                                }
+                                if (cpCatalogMode) {
+                                  ref
+                                          .read(cpNavigationIndexProvider.notifier)
+                                          .state =
+                                      0;
+                                } else {
+                                  // Reset whichever shell is actually active back to
+                                  // its Home tab. The inactive shells' providers are
+                                  // simply ignored, so setting all is safe — and the
+                                  // investor one was missing, which broke back on
+                                  // the investor Properties tab.
+                                  ref.read(navigationProvider.notifier).state = 0;
+                                  ref.read(guestNavigationProvider.notifier).state =
+                                      0;
+                                  ref
+                                      .read(
+                                        investorNavigationIndexProvider.notifier,
+                                      )
+                                      .state = 0;
+                                }
+                              },
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: (isDark ? Colors.white : Colors.black)
-                                    .withOpacity(0.08),
+                              // Web parity: contained back button (light rounded
+                              // square with a subtle border), not a bare icon.
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                      .withOpacity(0.05),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                        .withOpacity(0.08),
+                                  ),
+                                ),
+                                child: Icon(
+                                  LucideIcons.arrowLeft,
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                  size: 18,
+                                ),
                               ),
                             ),
-                            child: Icon(
-                              LucideIcons.arrowLeft,
-                              color: Theme.of(context).colorScheme.onSurface,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (cpCatalogMode) ...[
-                                Text(
-                                  'M4 PROPERTIES',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.dmSerifDisplay(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w900,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface,
-                                    letterSpacing: -0.5,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  'DISCOVER CURATED LUXURY',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.dmSerifDisplay(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.w700,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface.withOpacity(0.45),
-                                    letterSpacing: 1.5,
-                                  ),
-                                ),
-                              ] else ...[
-                                Text(
-                                  'DISCOVER',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.dmSerifDisplay(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.w700,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface.withOpacity(0.45),
-                                    letterSpacing: 2,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  'M4 PROPERTIES',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.dmSerifDisplay(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w800,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface,
-                                    letterSpacing: -0.3,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Web parity: filter icon (light rounded square) to the
-                      // left of the view toggle. Opens the REFINE SEARCH sheet.
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => _showFilterBottomSheet(context, ref),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black)
-                                .withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black)
-                                  .withOpacity(0.08),
-                            ),
-                          ),
-                          child: Icon(
-                            LucideIcons.slidersHorizontal,
-                            color: Theme.of(context).colorScheme.onSurface,
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      // Web parity: grid / list view segmented toggle
-                      // (active button filled black, matching projects/page.tsx).
-                      Container(
-                        padding: const EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          color: (isDark ? Colors.white : Colors.black)
-                              .withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: (isDark ? Colors.white : Colors.black)
-                                .withOpacity(0.08),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _ViewToggleButton(
-                              icon: LucideIcons.layoutGrid,
-                              active: isGridView,
-                              isDark: isDark,
-                              onTap: () =>
-                                  ref
-                                          .read(projectLayoutProvider.notifier)
-                                          .state =
-                                      true,
-                            ),
-                            const SizedBox(width: 3),
-                            _ViewToggleButton(
-                              icon: LucideIcons.list,
-                              active: !isGridView,
-                              isDark: isDark,
-                              onTap: () =>
-                                  ref
-                                          .read(projectLayoutProvider.notifier)
-                                          .state =
-                                      false,
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (cpCatalogMode) ...[
+                                    Text(
+                                      'M4 PROPERTIES',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.ebGaramond(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                        letterSpacing: -0.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'DISCOVER CURATED LUXURY',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.gelasio(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.w700,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface.withOpacity(0.72),
+                                        letterSpacing: 1.5,
+                                      ),
+                                    ),
+                                  ] else ...[
+                                    Text(
+                                      'DISCOVER',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.gelasio(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.w700,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface.withOpacity(0.72),
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'M4 PROPERTIES',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.ebGaramond(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                        letterSpacing: -0.3,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            // 🎛️ Pill Tabs
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 24),
-              height: 45,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withOpacity(0.08),
-                ),
-              ),
-              child: Row(
-                children: ['Ongoing', 'Upcoming', 'Completed'].map((filter) {
-                  final isSelected = currentFilter == filter;
-                  return Expanded(
-                    child: GestureDetector(
-                      onTap: () =>
-                          ref.read(projectFilterProvider.notifier).state =
-                              filter,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? (Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black)
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Text(
-                          filter.toUpperCase(),
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 10,
-                            fontWeight: isSelected
-                                ? FontWeight.w900
-                                : FontWeight.bold,
-                            color: isSelected
-                                ? (Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.black
-                                      : Colors.white)
-                                : Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface.withOpacity(0.55),
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // 🏙️ Project List
-            Expanded(
-              child: projectsAsync.when(
-                data: (projects) => ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(
-                    24,
-                    0,
-                    24,
-                    120,
-                  ), // Bottom padding for shell nav
-                  itemCount: filteredProjects.length,
-                  itemBuilder: (context, index) {
-                    final project = filteredProjects[index];
-                    final projectId = project['_id']?.toString() ?? '';
-                    final heroImages = project['heroImages'] as List?;
-                    // Web parity (projects/page.tsx): the card image is ONLY
-                    // heroImages[0], else the same stock fallback. The web list
-                    // does NOT fall back to the singular `heroImage`, which is
-                    // often a brand/palette graphic (why DING DONG showed the
-                    // green M4 render instead of a real photo).
-                    final rawHero =
-                        (heroImages != null && heroImages.isNotEmpty)
-                        ? heroImages[0].toString()
-                        : null;
-                    final imageUrl = (rawHero == null || rawHero.isEmpty)
-                        ? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'
-                        : apiClient.resolveUrl(rawHero);
-                    return GestureDetector(
-                      onTap: () {
-                        if (projectId.isEmpty) return;
-                        if (cpCatalogMode) {
-                          final map = project is Map<String, dynamic>
-                              ? project as Map<String, dynamic>
-                              : Map<String, dynamic>.from(project as Map);
-                          context.push('/cp/projects/$projectId', extra: map);
-                          return;
-                        }
-                        final authState = ref.read(authProvider);
-                        if (authState.status == AuthStatus.authenticated) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProjectDetailScreen(
-                                projectId: projectId,
-                                projectData: project,
-                              ),
-                            ),
-                          );
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => GuestProjectDetailScreen(
-                                projectId: projectId,
-                                projectData: project,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      child: isGridView
-                          ? _ProjectGridItem(
-                              project: project,
-                              imageUrl: imageUrl,
-                            )
-                          : _ProjectListRowItem(
-                              project: project,
-                              imageUrl: imageUrl,
-                            ),
-                    );
-                  },
-                ),
-                loading: () => Center(
-                  child: CircularProgressIndicator(color: M4Theme.premiumBlue),
-                ),
-                error: (e, s) {
-                  final isDark =
-                      Theme.of(context).brightness == Brightness.dark;
-                  final onSurface = isDark ? Colors.white : Colors.black;
-                  final msg = e.toString().toLowerCase();
-                  final isTimeout =
-                      msg.contains('timeout') || msg.contains('connection');
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(32),
-                      child: Column(
+                      const SizedBox(width: 8),
+                      Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            LucideIcons.wifiOff,
-                            size: 38,
-                            color: onSurface.withOpacity(0.3),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            isTimeout
-                                ? 'TAKING LONGER THAN USUAL'
-                                : "COULDN'T LOAD PROPERTIES",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w900,
-                              color: onSurface,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            isTimeout
-                                ? 'The server may be waking up. Please try again.'
-                                : 'Please check your connection and try again.',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: onSurface.withOpacity(0.5),
-                              height: 1.5,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
+                          // Web parity: filter icon (light rounded square) to the
+                          // left of the view toggle. Opens the REFINE SEARCH sheet.
                           GestureDetector(
-                            onTap: () => ref.invalidate(projectsProvider),
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () => _showFilterBottomSheet(context, ref),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 28,
-                                vertical: 12,
-                              ),
+                              width: 40,
+                              height: 40,
+                              alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: onSurface,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: Text(
-                                'RETRY',
-                                style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w900,
-                                  color: isDark ? Colors.black : Colors.white,
-                                  letterSpacing: 1.5,
+                                color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                    .withOpacity(0.05),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                      .withOpacity(0.08),
                                 ),
                               ),
+                              child: Icon(
+                                LucideIcons.slidersHorizontal,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                size: 18,
+                              ),
                             ),
                           ),
+                          const SizedBox(width: 6),
+                          // Web parity: grid / list view segmented toggle
+                          // (active button filled black, matching projects/page.tsx).
+                          Container(
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                  .withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                    .withOpacity(0.08),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _ViewToggleButton(
+                                  icon: LucideIcons.layoutGrid,
+                                  active: isGridView,
+                                  isDark: isDark,
+                                  onTap: () =>
+                                      ref
+                                              .read(projectLayoutProvider.notifier)
+                                              .state =
+                                          true,
+                                ),
+                                const SizedBox(width: 3),
+                                _ViewToggleButton(
+                                  icon: LucideIcons.list,
+                                  active: !isGridView,
+                                  isDark: isDark,
+                                  onTap: () =>
+                                      ref
+                                              .read(projectLayoutProvider.notifier)
+                                              .state =
+                                          false,
+                                ),
+                              ],
+                            ),
+                          ),
+                        const SizedBox(width: 8),
+                        // Figma parity: drawer button sits after the grid/list toggle.
+                        const SideMenuButton(),
                         ],
                       ),
+                    ],
+                  ),
+                ),
+    
+                // 🎛️ Pill Tabs
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 24),
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.08),
                     ),
-                  );
-                },
-              ),
+                  ),
+                  child: Row(
+                    children: ['Ongoing', 'Upcoming', 'Completed'].map((filter) {
+                      final isSelected = currentFilter == filter;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () =>
+                              ref.read(projectFilterProvider.notifier).state =
+                                  filter,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? (Theme.of(context).brightness == Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              filter.toUpperCase(),
+                              style: GoogleFonts.ebGaramond(
+                                fontSize: 10,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.bold,
+                                color: isSelected
+                                    ? (Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.black
+                                          : Colors.white)
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface.withOpacity(0.55),
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+    
+                const SizedBox(height: 24),
+    
+                // 🏙️ Project List
+                Expanded(
+                  child: projectsAsync.when(
+                    data: (projects) => ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(
+                        24,
+                        0,
+                        24,
+                        120,
+                      ), // Bottom padding for shell nav
+                      itemCount: filteredProjects.length,
+                      itemBuilder: (context, index) {
+                        final project = filteredProjects[index];
+                        final projectId = project['_id']?.toString() ?? '';
+                        final heroImages = project['heroImages'] as List?;
+                        // Web parity (projects/page.tsx): the card image is ONLY
+                        // heroImages[0], else the same stock fallback. The web list
+                        // does NOT fall back to the singular `heroImage`, which is
+                        // often a brand/palette graphic (why DING DONG showed the
+                        // green M4 render instead of a real photo).
+                        final rawHero =
+                            (heroImages != null && heroImages.isNotEmpty)
+                            ? heroImages[0].toString()
+                            : null;
+                        final imageUrl = (rawHero == null || rawHero.isEmpty)
+                            ? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'
+                            : apiClient.resolveUrl(rawHero);
+                        return GestureDetector(
+                          onTap: () {
+                            if (projectId.isEmpty) return;
+                            if (cpCatalogMode) {
+                              final map = project is Map<String, dynamic>
+                                  ? project as Map<String, dynamic>
+                                  : Map<String, dynamic>.from(project as Map);
+                              context.push('/cp/projects/$projectId', extra: map);
+                              return;
+                            }
+                            final authState = ref.read(authProvider);
+                            if (authState.status == AuthStatus.authenticated) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProjectDetailScreen(
+                                    projectId: projectId,
+                                    projectData: project,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GuestProjectDetailScreen(
+                                    projectId: projectId,
+                                    projectData: project,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          child: isGridView
+                              ? _ProjectGridItem(
+                                  project: project,
+                                  imageUrl: imageUrl,
+                                )
+                              : _ProjectListRowItem(
+                                  project: project,
+                                  imageUrl: imageUrl,
+                                ),
+                        );
+                      },
+                    ),
+                    loading: () => Center(
+                      child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+                    ),
+                    error: (e, s) {
+                      final isDark =
+                          Theme.of(context).brightness == Brightness.dark;
+                      final onSurface = isDark ? Colors.white : Color(0xFF163A2C);
+                      final msg = e.toString().toLowerCase();
+                      final isTimeout =
+                          msg.contains('timeout') || msg.contains('connection');
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(32),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                LucideIcons.wifiOff,
+                                size: 38,
+                                color: onSurface.withOpacity(0.3),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                isTimeout
+                                    ? 'TAKING LONGER THAN USUAL'
+                                    : "COULDN'T LOAD PROPERTIES",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.ebGaramond(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: onSurface,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                isTimeout
+                                    ? 'The server may be waking up. Please try again.'
+                                    : 'Please check your connection and try again.',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.ebGaramond(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: onSurface.withOpacity(0.5),
+                                  height: 1.5,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              GestureDetector(
+                                onTap: () => ref.invalidate(projectsProvider),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 28,
+                                    vertical: 12,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: onSurface,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    'RETRY',
+                                    style: GoogleFonts.gelasio(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -719,11 +762,11 @@ class _ProjectGridItem extends StatelessWidget {
       height:
           200, // Enforce 16:9 aspect ratio parity with web (approx for mobile width)
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.black : Colors.black).withOpacity(
+            color: (isDark ? Colors.transparent : Color(0xFF163A2C)).withOpacity(
               isDark ? 0.3 : 0.05,
             ),
             blurRadius: 20,
@@ -736,6 +779,8 @@ class _ProjectGridItem extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           _projListImage(imageUrl),
+          // Figma parity: faint network mesh over the photo ("picture ke upar").
+          const MeshOverlay(opacity: 0.22),
           // Subtle Gradient Overlay for text readability on images
           Container(
             decoration: BoxDecoration(
@@ -769,9 +814,9 @@ class _ProjectGridItem extends StatelessWidget {
                 ),
                 child: Text(
                   'ARTISTIC IMPRESSION',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 7,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: Colors.white.withOpacity(0.6),
                     letterSpacing: 1.5,
                   ),
@@ -797,9 +842,9 @@ class _ProjectGridItem extends StatelessWidget {
                         (project['title'] ?? 'M4 PROJECT')
                             .toString()
                             .toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 20,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
                           letterSpacing: -0.5,
                         ),
@@ -818,10 +863,10 @@ class _ProjectGridItem extends StatelessWidget {
                           Expanded(
                             child: Text(
                               locationLabel.toUpperCase(),
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 9,
                                 color: Colors.white70,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 1.5,
                               ),
                               maxLines: 1,
@@ -875,11 +920,11 @@ class _ProjectListRowItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.black : Colors.black).withOpacity(
+            color: (isDark ? Colors.transparent : Color(0xFF163A2C)).withOpacity(
               isDark ? 0.3 : 0.04,
             ),
             blurRadius: 20,
@@ -887,7 +932,7 @@ class _ProjectListRowItem extends StatelessWidget {
           ),
         ],
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
         ),
       ),
       child: Row(
@@ -913,10 +958,10 @@ class _ProjectListRowItem extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   (project['title'] ?? 'M4 PROJECT').toString().toUpperCase(),
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     letterSpacing: -0.5,
                   ),
                   maxLines: 1,
@@ -936,11 +981,11 @@ class _ProjectListRowItem extends StatelessWidget {
                     Expanded(
                       child: Text(
                         project['location']?['name'] ?? 'N/A',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.4),
+                          ).colorScheme.onSurface.withOpacity(0.72),
                           fontWeight: FontWeight.w600,
                         ),
                         maxLines: 1,
@@ -990,9 +1035,9 @@ class _Badge extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.ebGaramond(
           fontSize: 8,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           color: Theme.of(context).colorScheme.onSurface,
           letterSpacing: 1.0,
         ),
@@ -1021,9 +1066,9 @@ class _FilterSection extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
             letterSpacing: 2,
           ),
@@ -1052,7 +1097,7 @@ class _FilterSection extends StatelessWidget {
                       : (isDarkMode
                             ? Colors.white.withOpacity(0.06)
                             : Colors.white),
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: isSelected
                         ? (isDarkMode ? Colors.white : Colors.black)
@@ -1070,9 +1115,9 @@ class _FilterSection extends StatelessWidget {
                 ),
                 child: Text(
                   opt.toUpperCase(),
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: isSelected
                         ? (isDarkMode ? Colors.black : Colors.white)
                         : onSurface.withOpacity(0.85),
@@ -1103,25 +1148,68 @@ class _ViewToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color fg = active
+        ? (isDark ? Colors.black : Colors.white)
+        : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.4);
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 32,
-        height: 28,
+        width: 30,
+        height: 26,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: active
-              ? (isDark ? Colors.white : Colors.black)
+              ? (isDark ? Colors.white : Color(0xFF163A2C))
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(9),
+          borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(
-          icon,
-          size: 15,
-          color: active
-              ? (isDark ? Colors.black : Colors.white)
-              : (isDark ? Colors.white : Colors.black).withOpacity(0.4),
-        ),
+        // Figma parity: the grid glyph is a compact 2x2 of solid squares —
+        // smaller and much heavier than Lucide's thin-stroke layoutGrid.
+        child: icon == LucideIcons.layoutGrid
+            ? _BoldGridGlyph(color: fg, size: 11)
+            : Icon(icon, size: 15, color: fg),
+      ),
+    );
+  }
+}
+
+// Figma parity: bold 2x2 grid mark used by the properties view toggle.
+class _BoldGridGlyph extends StatelessWidget {
+  final Color color;
+  final double size;
+  const _BoldGridGlyph({required this.color, required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    // Gap between the four squares; the remainder is split evenly so the
+    // mark stays optically centred inside the 30x26 toggle button. 11/3 keeps
+    // each cell on a whole 4.0 logical pixels, so the mark stays crisp — and
+    // the wider gutter reads as a crisper cross between smaller squares.
+    const double gap = 3;
+    final double cell = (size - gap) / 2;
+    final BorderRadius radius = BorderRadius.circular(1);
+
+    Widget square() => Container(
+      width: cell,
+      height: cell,
+      decoration: BoxDecoration(color: color, borderRadius: radius),
+    );
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [square(), square()],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [square(), square()],
+          ),
+        ],
       ),
     );
   }

@@ -59,6 +59,9 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
           color: Theme.of(context).scaffoldBackgroundColor,
         ),
         child: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -78,7 +81,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                       const SizedBox(width: 8),
                       Text(
                         'Back to Home',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
@@ -99,22 +102,22 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                   children: [
                     Text(
                       'Pages',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 32,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: -1,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'DIRECT CONTENT ACCESS',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.4),
+                        ).colorScheme.onSurface.withOpacity(0.72),
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                       ),
                     ),
@@ -136,10 +139,10 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                     ? Center(
                         child: Text(
                           'No published pages available.',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.38),
+                            ).colorScheme.onSurface.withOpacity(0.72),
                             fontSize: 13,
                           ),
                         ),
@@ -184,12 +187,12 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.04,
                   ),
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.05,
                     ),
                   ),
@@ -200,13 +203,13 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.06),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Icon(
                         LucideIcons.fileText,
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.7),
                         size: 20,
                       ),
@@ -223,12 +226,12 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                                   (page['title'] ?? 'Untitled')
                                       .toString()
                                       .toUpperCase(),
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.ebGaramond(
                                     color: Theme.of(
                                       context,
                                     ).colorScheme.onSurface,
                                     fontSize: 14,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w500,
                                     letterSpacing: -0.5,
                                   ),
                                 ),
@@ -240,23 +243,23 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: (isDark ? Colors.white : Colors.black)
+                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
                                       .withOpacity(0.05),
                                   borderRadius: BorderRadius.circular(6),
                                   border: Border.all(
                                     color:
-                                        (isDark ? Colors.white : Colors.black)
+                                        (isDark ? Colors.white : Color(0xFF163A2C))
                                             .withOpacity(0.1),
                                   ),
                                 ),
                                 child: Text(
                                   portal,
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.ebGaramond(
                                     color:
-                                        (isDark ? Colors.white : Colors.black)
-                                            .withOpacity(0.4),
+                                        (isDark ? Colors.white : Color(0xFF163A2C))
+                                            .withOpacity(0.72),
                                     fontSize: 8,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w600,
                                     letterSpacing: 1,
                                   ),
                                 ),
@@ -268,11 +271,11 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                             children: [
                               Text(
                                 'DYNAMIC CONTENT',
-                                style: GoogleFonts.dmSerifDisplay(
-                                  color: (isDark ? Colors.white : Colors.black)
-                                      .withOpacity(0.3),
+                                style: GoogleFonts.ebGaramond(
+                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                      .withOpacity(0.72),
                                   fontSize: 9,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w500,
                                   letterSpacing: 1,
                                 ),
                               ),

@@ -1,7 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final apiClientProvider = Provider(
@@ -86,13 +89,39 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final response = await _apiClient.getCurrentUser();
       if (response.statusCode == 200 || response.statusCode == 201) {
-        state = state.copyWith(
-          status: AuthStatus.authenticated,
-          user: response.data['data'] ?? response.data,
+        final user = response.data['data'] ?? response.data;
+        state = state.copyWith(status: AuthStatus.authenticated, user: user);
+        // Cache the profile so a later network blip cannot cost the session.
+        unawaited(
+          _storage.write(key: 'cached_user', value: jsonEncode(user)),
         );
       }
+    } on DioException catch (e) {
+      // A 401 means the token really is dead - stay unauthenticated so the
+      // user signs in again. Anything else (timeout, no connection, 5xx) must
+      // NOT sign them out: restore the cached profile, otherwise the app falls
+      // through to the guest shell and looks like a spontaneous logout.
+      if (e.response?.statusCode == 401) return;
+      await _restoreCachedUser();
     } catch (_) {
-      // If fetchMe fails, might need to logout but for now just ignore
+      await _restoreCachedUser();
+    }
+  }
+
+  /// Re-authenticates from the cached profile when the network is unavailable
+  /// but a token is still stored.
+  Future<void> _restoreCachedUser() async {
+    if (!mounted || state.status == AuthStatus.authenticated) return;
+    try {
+      final token = await _storage.read(key: 'jwt_token');
+      if (token == null) return;
+      final raw = await _storage.read(key: 'cached_user');
+      if (raw == null) return;
+      final user = jsonDecode(raw) as Map<String, dynamic>;
+      if (!mounted) return;
+      state = state.copyWith(status: AuthStatus.authenticated, user: user);
+    } catch (_) {
+      // Cache unreadable - leave the state alone rather than guess.
     }
   }
 
@@ -117,7 +146,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(status: AuthStatus.error, error: e.toString());
+      // Was e.toString(), which dumped the raw DioException at the user.
+      state = state.copyWith(
+        status: AuthStatus.error,
+        error: friendlyApiError(
+          e,
+          fallback:
+              'Could not send the code. Please check the number and try again.',
+        ),
+      );
     }
   }
 
@@ -228,7 +265,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state.role ?? 'CUSTOMER',
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final token = response.data['data']['accessToken'];
+        // Null-safe: a 200 with an unexpected shape used to throw here and then
+        // surface as another raw exception instead of a readable message.
+        final data = response.data is Map ? response.data['data'] : null;
+        final token = (data is Map ? data['accessToken'] : null)?.toString();
+        if (token == null || token.isEmpty) {
+          state = state.copyWith(
+            status: AuthStatus.error,
+            error: 'Could not complete sign in. Please try again.',
+          );
+          return;
+        }
         await _storage.write(key: 'jwt_token', value: token);
 
         // Fetch user data FIRST
@@ -244,16 +291,30 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state = state.copyWith(status: AuthStatus.error, error: 'Invalid OTP');
       }
     } catch (e) {
-      state = state.copyWith(status: AuthStatus.error, error: e.toString());
+      // Was e.toString(), which dumped the raw DioException at the user. A 400
+      // here means a wrong/expired code; a 403 means the account isn't allowed
+      // in this portal.
+      state = state.copyWith(
+        status: AuthStatus.error,
+        error: friendlyApiError(
+          e,
+          fallback: 'That code is incorrect or has expired. Please try again.',
+        ),
+      );
     }
   }
 
   Future<void> logout() async {
-    await _storage.delete(key: 'jwt_token');
+    // Flip to the guest state FIRST so the UI switches to the guest shell
+    // instantly — the token is then cleared in the background. Awaiting the
+    // secure-storage (Android Keystore) delete before updating state stalls
+    // logout by 100ms+ on real devices, which is the lag users noticed.
+    //
     // Keep bootstrapped=true so `/home` resolves straight to the guest shell.
     // A fresh AuthState() defaults bootstrapped=false, which would trap
     // post-logout navigation on the cold-start SplashScreen.
     state = AuthState(status: AuthStatus.initial, bootstrapped: true);
+    unawaited(_storage.delete(key: 'jwt_token'));
   }
 
   void reset() {

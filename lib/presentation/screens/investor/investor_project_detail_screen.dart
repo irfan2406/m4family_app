@@ -3,15 +3,18 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 
@@ -57,6 +60,7 @@ class _InvestorProjectDetailScreenState
   bool _hasError = false;
   bool _submitting = false;
   bool _showFullProgress = false;
+  bool _isFavorited = false;
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -167,7 +171,7 @@ class _InvestorProjectDetailScreenState
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.bold,
           ),
@@ -177,6 +181,26 @@ class _InvestorProjectDetailScreenState
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
+  }
+
+  // Flip the wishlist heart + show an instant Saved/Removed toast (parity with
+  // the CP and customer detail screens). Clears any prior toast so rapid taps
+  // don't stack.
+  void _toggleFavorite() {
+    final next = !_isFavorited;
+    setState(() => _isFavorited = next);
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFF163A2C),
+          duration: const Duration(milliseconds: 1100),
+          behavior: SnackBarBehavior.fixed,
+          content: Text(
+            next ? 'Saved to favorites' : 'Removed from favorites',
+          ),
+        ),
+      );
   }
 
   Future<void> _openUrl(String? url) async {
@@ -229,8 +253,16 @@ class _InvestorProjectDetailScreenState
   }) async {
     final name = _nameController.text.trim();
     final phone = _phoneController.text.trim();
-    if (name.isEmpty || phone.isEmpty) {
-      _toast('Please enter your name and phone number');
+    // Format checks (was empty-only): valid name + phone; email only if given
+    // (it's optional in this modal).
+    final err =
+        Validators.nameError(name, field: 'name') ??
+        Validators.phoneError(phone) ??
+        (_emailController.text.trim().isEmpty
+            ? null
+            : Validators.emailError(_emailController.text));
+    if (err != null) {
+      _toast(err);
       return;
     }
     if ((type == 'VC' || type == 'Site Visit') &&
@@ -323,7 +355,7 @@ class _InvestorProjectDetailScreenState
               maxHeight: MediaQuery.of(sheetContext).size.height * 0.9,
             ),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0F1115) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(40),
               ),
@@ -347,7 +379,7 @@ class _InvestorProjectDetailScreenState
                       onPressed: () => Navigator.pop(sheetContext),
                       icon: Icon(
                         LucideIcons.x,
-                        color: isDark ? Colors.white38 : Colors.black38,
+                        color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                         size: 20,
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -360,10 +392,10 @@ class _InvestorProjectDetailScreenState
                       children: [
                         Text(
                           headerLabel,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 30,
-                            fontWeight: FontWeight.w900,
-                            color: isDark ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.w700,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             height: 1.1,
                             letterSpacing: -1.2,
                           ),
@@ -371,10 +403,10 @@ class _InvestorProjectDetailScreenState
                         const SizedBox(height: 14),
                         Text(
                           'A BESPOKE SHOWCASE OF LUXURY AT ${title.toUpperCase()}.',
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 9,
-                            color: isDark ? Colors.white38 : Colors.black38,
-                            fontWeight: FontWeight.w900,
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 11,
+                            color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                           ),
                         ),
@@ -383,18 +415,24 @@ class _InvestorProjectDetailScreenState
                           hint: 'FULL NAME *',
                           controller: _nameController,
                           icon: LucideIcons.user,
+                          keyboardType: TextInputType.name,
+                          inputFormatters: Validators.nameFormatters,
                         ),
                         const SizedBox(height: 14),
                         _InquiryField(
                           hint: 'EMAIL ADDRESS',
                           controller: _emailController,
                           icon: LucideIcons.mail,
+                          keyboardType: TextInputType.emailAddress,
+                          inputFormatters: Validators.emailFormatters,
                         ),
                         const SizedBox(height: 14),
                         _InquiryField(
                           hint: 'PHONE NUMBER *',
                           controller: _phoneController,
                           icon: LucideIcons.phone,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: Validators.phoneFormatters,
                         ),
 
                         // Plan select
@@ -402,10 +440,10 @@ class _InvestorProjectDetailScreenState
                           const SizedBox(height: 28),
                           Text(
                             'PREFERRED PLAN',
-                            style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 8,
-                              fontWeight: FontWeight.w900,
-                              color: isDark ? Colors.white38 : Colors.black38,
+                            style: GoogleFonts.ebGaramond(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                               letterSpacing: 1,
                             ),
                           ),
@@ -446,14 +484,14 @@ class _InvestorProjectDetailScreenState
                                   ),
                                   child: Text(
                                     n.toUpperCase(),
-                                    style: GoogleFonts.dmSerifDisplay(
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.w900,
+                                    style: GoogleFonts.ebGaramond(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
                                       color: isActive
                                           ? Colors.white
                                           : (isDark
                                                 ? Colors.white38
-                                                : Colors.black38),
+                                                : Color(0xFF5E6B60)),
                                     ),
                                   ),
                                 ),
@@ -467,10 +505,10 @@ class _InvestorProjectDetailScreenState
                           const SizedBox(height: 28),
                           Text(
                             'VISIT TYPE',
-                            style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 8,
-                              fontWeight: FontWeight.w900,
-                              color: isDark ? Colors.white38 : Colors.black38,
+                            style: GoogleFonts.ebGaramond(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                               letterSpacing: 1,
                             ),
                           ),
@@ -493,7 +531,7 @@ class _InvestorProjectDetailScreenState
                                         color: localType == t
                                             ? (isDark
                                                   ? Colors.white
-                                                  : Colors.black)
+                                                  : Color(0xFF163A2C))
                                             : Colors.transparent,
                                         borderRadius: BorderRadius.circular(10),
                                         border: Border.all(
@@ -511,16 +549,16 @@ class _InvestorProjectDetailScreenState
                                           t == 'VC'
                                               ? 'VIDEO CALL'
                                               : 'SITE VISIT',
-                                          style: GoogleFonts.dmSerifDisplay(
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w900,
+                                          style: GoogleFonts.ebGaramond(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
                                             color: localType == t
                                                 ? (isDark
                                                       ? Colors.black
                                                       : Colors.white)
                                                 : (isDark
                                                       ? Colors.white38
-                                                      : Colors.black38),
+                                                      : Color(0xFF5E6B60)),
                                             letterSpacing: 1,
                                           ),
                                         ),
@@ -568,7 +606,7 @@ class _InvestorProjectDetailScreenState
                               decoration: BoxDecoration(
                                 color: isDark
                                     ? Colors.white.withValues(alpha: 0.03)
-                                    : const Color(0xFFF8FAFC),
+                                    : const Color(0xFFF4EFE3),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: isDark
@@ -588,16 +626,16 @@ class _InvestorProjectDetailScreenState
                                     scheduledAt == null
                                         ? 'SELECT DATE & TIME'
                                         : _formatSchedule(scheduledAt!),
-                                    style: GoogleFonts.dmSerifDisplay(
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w900,
+                                    style: GoogleFonts.ebGaramond(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
                                       color: scheduledAt == null
                                           ? (isDark
                                                 ? Colors.white24
                                                 : Colors.black26)
                                           : (isDark
                                                 ? Colors.white
-                                                : Colors.black),
+                                                : Color(0xFF163A2C)),
                                       letterSpacing: 1,
                                     ),
                                   ),
@@ -611,10 +649,10 @@ class _InvestorProjectDetailScreenState
                         const SizedBox(height: 24),
                         Text(
                           'ADDITIONAL NOTES',
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w900,
-                            color: isDark ? Colors.white38 : Colors.black38,
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                             letterSpacing: 1,
                           ),
                         ),
@@ -627,7 +665,7 @@ class _InvestorProjectDetailScreenState
                           decoration: BoxDecoration(
                             color: isDark
                                 ? Colors.white.withValues(alpha: 0.03)
-                                : const Color(0xFFF8FAFC),
+                                : const Color(0xFFF4EFE3),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDark
@@ -638,18 +676,21 @@ class _InvestorProjectDetailScreenState
                           child: TextField(
                             controller: _notesController,
                             maxLines: 3,
-                            style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 11,
+                            style: GoogleFonts.ebGaramond(
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : Colors.black,
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                             ),
                             decoration: InputDecoration(
+                              filled: false,
                               border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
                               hintText:
                                   'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
-                              hintStyle: GoogleFonts.dmSerifDisplay(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w900,
+                              hintStyle: GoogleFonts.ebGaramond(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
                                 color: isDark ? Colors.white24 : Colors.black26,
                                 letterSpacing: 1,
                               ),
@@ -676,16 +717,16 @@ class _InvestorProjectDetailScreenState
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 20),
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.white : Colors.black,
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Center(
                               child: Text(
                                 _submitting ? 'SUBMITTING...' : ctaLabel,
-                                style: GoogleFonts.dmSerifDisplay(
-                                  color: isDark ? Colors.black : Colors.white,
+                                style: GoogleFonts.gelasio(
+                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                   fontSize: 11,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: 2,
                                 ),
                               ),
@@ -768,7 +809,7 @@ class _InvestorProjectDetailScreenState
                   ),
                   child: const Icon(
                     LucideIcons.x,
-                    color: Colors.white,
+                    color: const Color(0xFFF4EFE3),
                     size: 20,
                   ),
                 ),
@@ -784,7 +825,7 @@ class _InvestorProjectDetailScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
 
     if (_isLoading) {
       return Scaffold(
@@ -799,6 +840,9 @@ class _InvestorProjectDetailScreenState
       return Scaffold(
         backgroundColor: bg,
         body: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(32),
@@ -808,17 +852,17 @@ class _InvestorProjectDetailScreenState
                   Icon(
                     LucideIcons.building2,
                     size: 56,
-                    color: (isDark ? Colors.white : Colors.black).withValues(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                       alpha: 0.3,
                     ),
                   ),
                   const SizedBox(height: 20),
                   Text(
                     'PROJECT NOT FOUND',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 16,
-                      fontWeight: FontWeight.w900,
-                      color: isDark ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: 1,
                     ),
                   ),
@@ -826,10 +870,10 @@ class _InvestorProjectDetailScreenState
                   Text(
                     'The project you are looking for might have been moved or is no longer active.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                         alpha: 0.5,
                       ),
                     ),
@@ -849,15 +893,15 @@ class _InvestorProjectDetailScreenState
                         vertical: 14,
                       ),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Colors.black,
-                        borderRadius: BorderRadius.circular(30),
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         'GO BACK',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
-                          color: isDark ? Colors.black : Colors.white,
+                          fontWeight: FontWeight.w700,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -988,10 +1032,10 @@ class _InvestorProjectDetailScreenState
               ),
               child: Text(
                 (project['status']?.toString().toUpperCase() ?? 'ONGOING'),
-                style: GoogleFonts.dmSerifDisplay(
-                  color: Colors.white,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w900,
+                style: GoogleFonts.ebGaramond(
+                  color: const Color(0xFFF4EFE3),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1,
                 ),
               ),
@@ -1014,11 +1058,28 @@ class _InvestorProjectDetailScreenState
                     }
                   },
                 ),
-                _SquareAction(
-                  icon: LucideIcons.share2,
-                  onTap: () => Share.share(
-                    'Check out ${project['title']} on M4 Family!',
-                  ),
+                Row(
+                  children: [
+                    _SquareAction(
+                      icon: LucideIcons.share2,
+                      onTap: () => Share.share(
+                        'Check out ${project['title']} on M4 Family!',
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _SquareAction(
+                      icon: _isFavorited
+                          ? Icons.favorite
+                          : LucideIcons.heart,
+                      color: _isFavorited ? Colors.red : null,
+                      onTap: _toggleFavorite,
+                    ).animate(key: ValueKey(_isFavorited)).scaleXY(
+                      begin: 0.6,
+                      end: 1.0,
+                      duration: 320.ms,
+                      curve: Curves.elasticOut,
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -1039,11 +1100,11 @@ class _InvestorProjectDetailScreenState
         children: [
           Text(
             (project['title']?.toString() ?? 'Project Name').toUpperCase(),
-            style: GoogleFonts.dmSerifDisplay(
-              color: isDark ? Colors.white : Colors.black,
+            style: GoogleFonts.gelasio(
+              color: isDark ? Colors.white : Color(0xFF163A2C),
               fontSize: 32,
               height: 1.0,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: -1.5,
             ),
           ),
@@ -1055,10 +1116,10 @@ class _InvestorProjectDetailScreenState
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.06)
-                    : const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(30),
+                    : const Color(0xFFF4EFE3),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.12,
                   ),
                 ),
@@ -1068,14 +1129,14 @@ class _InvestorProjectDetailScreenState
                 children: [
                   Icon(
                     LucideIcons.mapPin,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     size: 13,
                   ),
                   const SizedBox(width: 6),
                   Text(
                     location,
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: isDark ? Colors.white : Colors.black,
+                    style: GoogleFonts.ebGaramond(
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.3,
@@ -1201,12 +1262,12 @@ class _InvestorProjectDetailScreenState
             // Web parity: overview copy is capped at 3 lines.
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               // Was the legacy gold accent (low contrast). High-contrast dark,
               // a touch larger, so the overview copy reads clearly.
               fontSize: 12.5,
-              color: isDark ? Colors.white : Colors.black,
-              fontWeight: FontWeight.w800,
+              color: isDark ? Colors.white : Color(0xFF163A2C),
+              fontWeight: FontWeight.w500,
               height: 1.65,
               letterSpacing: 0.5,
             ),
@@ -1220,25 +1281,25 @@ class _InvestorProjectDetailScreenState
                 Icon(
                   LucideIcons.indianRupee,
                   size: 16,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'STARTING PRICE',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                     letterSpacing: 1,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Text(
                   startingPrice,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 13,
-                    fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
               ],
@@ -1285,10 +1346,10 @@ class _InvestorProjectDetailScreenState
       const SizedBox(height: 24),
       Text(
         'DOCUMENTS',
-        style: GoogleFonts.dmSerifDisplay(
-          fontSize: 8,
-          fontWeight: FontWeight.w900,
-          color: isDark ? Colors.white38 : Colors.black38,
+        style: GoogleFonts.ebGaramond(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: isDark ? Colors.white38 : Color(0xFF5E6B60),
           letterSpacing: 1,
         ),
       ),
@@ -1355,7 +1416,7 @@ class _InvestorProjectDetailScreenState
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.03)
-                        : Colors.white,
+                        : const Color(0xFFF4EFE3),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: isDark
@@ -1386,11 +1447,11 @@ class _InvestorProjectDetailScreenState
                             : Container(
                                 color: isDark
                                     ? Colors.white.withValues(alpha: 0.04)
-                                    : const Color(0xFFF4F4F5),
+                                    : const Color(0xFFF4EFE3),
                                 child: Center(
                                   child: Icon(
                                     LucideIcons.layoutGrid,
-                                    color: isDark ? Colors.white : Colors.black,
+                                    color: isDark ? Colors.white : Color(0xFF163A2C),
                                     size: 28,
                                   ),
                                 ),
@@ -1405,10 +1466,10 @@ class _InvestorProjectDetailScreenState
                               title.toUpperCase(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
-                                color: isDark ? Colors.white : Colors.black,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.white : Color(0xFF163A2C),
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -1420,10 +1481,10 @@ class _InvestorProjectDetailScreenState
                                   .toUpperCase(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.dmSerifDisplay(
-                                fontSize: 8,
-                                fontWeight: FontWeight.w900,
-                                color: isDark ? Colors.white38 : Colors.black38,
+                              style: GoogleFonts.ebGaramond(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -1454,11 +1515,11 @@ class _InvestorProjectDetailScreenState
             Center(
               child: Text(
                 'COMING SOON',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 13,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 1,
-                  color: isDark ? Colors.white70 : Colors.black54,
+                  color: isDark ? Colors.white70 : Color(0xFF5E6B60),
                 ),
               ),
             )
@@ -1497,8 +1558,8 @@ class _InvestorProjectDetailScreenState
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.03)
-                        : const Color(0xFFF4F4F5),
-                    borderRadius: BorderRadius.circular(32),
+                        : const Color(0xFFF4EFE3),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.08)
@@ -1515,10 +1576,10 @@ class _InvestorProjectDetailScreenState
                         child: Text(
                           name,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w900,
-                            color: isDark ? Colors.white : Colors.black,
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             letterSpacing: 1,
                             height: 1.2,
                           ),
@@ -1556,11 +1617,13 @@ class _InvestorProjectDetailScreenState
           const SizedBox(height: 24),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 36),
+            // Less inner padding (was 28) so the phase image card fills the box
+            // width; the 16:10 image grows taller with the wider card too.
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 36),
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.03)
-                  : const Color(0xFFF8FAFC),
+                  : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(40),
               border: Border.all(
                 color: isDark
@@ -1579,10 +1642,10 @@ class _InvestorProjectDetailScreenState
                         children: [
                           Text(
                             'ESTIMATED\nCOMPLETION\nDATE',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              color: (isDark ? Colors.white : Colors.black)
+                              fontWeight: FontWeight.w600,
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withValues(alpha: 0.72),
                               letterSpacing: 1,
                               height: 1.35,
@@ -1591,12 +1654,12 @@ class _InvestorProjectDetailScreenState
                           const SizedBox(height: 10),
                           Text(
                             estimated.toUpperCase().replaceAll(' ', '\n'),
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               fontSize: 40,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               height: 1.0,
                               letterSpacing: -1,
-                              color: isDark ? Colors.white : Colors.black,
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -1606,13 +1669,13 @@ class _InvestorProjectDetailScreenState
                             overflow: _showFullProgress
                                 ? TextOverflow.visible
                                 : TextOverflow.ellipsis,
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               // Was 10 / 50% — too faint. Larger + darker.
-                              fontSize: 11,
+                              fontSize: 13,
                               fontWeight: FontWeight.w600,
                               height: 1.6,
-                              color: (isDark ? Colors.white : Colors.black)
-                                  .withValues(alpha: 0.7),
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                  .withValues(alpha: 0.9),
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -1622,10 +1685,10 @@ class _InvestorProjectDetailScreenState
                             ),
                             child: Text(
                               _showFullProgress ? 'Show less' : 'Read more',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 11,
-                                fontWeight: FontWeight.w900,
-                                color: isDark ? Colors.white : Colors.black,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.white : Color(0xFF163A2C),
                                 decoration: TextDecoration.underline,
                               ),
                             ),
@@ -1635,25 +1698,22 @@ class _InvestorProjectDetailScreenState
                     ),
                     const SizedBox(width: 16),
                     SizedBox(
-                      width: 104,
-                      height: 104,
+                      // Guest-parity OVERALL ring: same size (100) + dot size as
+                      // the guest project detail so every portal matches.
+                      width: 100,
+                      height: 100,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          // Web parity (matches the CP properties detail): a
-                          // dotted/dashed ring rather than a solid arc.
                           Positioned.fill(
                             child: CustomPaint(
-                              painter: _DottedProgressRingPainter(
+                              painter: _DashedCirclePainter(
                                 progress: overall.toDouble() / 100,
-                                color: isDark ? Colors.white : Colors.black,
-                                trackColor:
-                                    (isDark ? Colors.white : Colors.black)
+                                color: isDark ? Colors.white : Color(0xFF163A2C),
+                                backgroundColor:
+                                    (isDark ? Colors.white : Color(0xFF163A2C))
                                         .withValues(alpha: 0.22),
-                                dotCount: 46,
-                                dotRadius: 1.7,
-                                dashLength: 7,
-                                margin: 7,
+                                strokeWidth: 6,
                               ),
                             ),
                           ),
@@ -1662,19 +1722,19 @@ class _InvestorProjectDetailScreenState
                             children: [
                               Text(
                                 '${overall.toInt()}%',
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 22,
-                                  fontWeight: FontWeight.w900,
-                                  color: isDark ? Colors.white : Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                  color: isDark ? Colors.white : Color(0xFF163A2C),
                                 ),
                               ),
                               Text(
                                 'OVERALL',
-                                style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w900,
-                                  color: (isDark ? Colors.white : Colors.black)
-                                      .withValues(alpha: 0.6),
+                                style: GoogleFonts.ebGaramond(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                      .withValues(alpha: 0.85),
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -1693,10 +1753,10 @@ class _InvestorProjectDetailScreenState
                     children: [
                       Text(
                         '2026',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 20,
-                          fontWeight: FontWeight.w900,
-                          color: isDark ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.w700,
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                         ),
                       ),
                       const SizedBox(width: 14),
@@ -1706,7 +1766,7 @@ class _InvestorProjectDetailScreenState
                           children: [
                             Container(
                               height: 1,
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withValues(alpha: 0.25),
                             ),
                             Container(
@@ -1715,10 +1775,10 @@ class _InvestorProjectDetailScreenState
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: isDark
-                                    ? const Color(0xFF0A0E16)
-                                    : Colors.white,
+                                    ? const Color(0xFF0B1026)
+                                    : const Color(0xFFF4EFE3),
                                 border: Border.all(
-                                  color: isDark ? Colors.white : Colors.black,
+                                  color: isDark ? Colors.white : Color(0xFF163A2C),
                                   width: 2,
                                 ),
                               ),
@@ -1778,7 +1838,7 @@ class _InvestorProjectDetailScreenState
         : (int.tryParse('$pctRaw') ?? 0).clamp(0, 100);
     final phaseName = (phase['name'] ?? phase['phaseName'] ?? 'PHASE')
         .toString();
-    final fg = isDark ? Colors.white : Colors.black;
+    final fg = isDark ? Colors.white : Color(0xFF163A2C);
 
     return GestureDetector(
       onTap: () {
@@ -1789,29 +1849,30 @@ class _InvestorProjectDetailScreenState
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(24),
+          // Same card frame as the guest portal phase card (subtle in dark so
+          // it doesn't show as a bright edge behind the image).
           border: Border.all(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.08)
-                : Colors.black.withValues(alpha: 0.06),
+                : Colors.black.withValues(alpha: 0.10),
           ),
-          boxShadow: isDark
-              ? []
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 22,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.07),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AspectRatio(
-              aspectRatio: 16 / 10,
+            // Same image size as the guest portal phase card (fixed 220).
+            SizedBox(
+              height: 220,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -1855,10 +1916,10 @@ class _InvestorProjectDetailScreenState
                       ),
                       child: Text(
                         status,
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 8,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFFF4EFE3),
                           letterSpacing: 1,
                         ),
                       ),
@@ -1876,9 +1937,9 @@ class _InvestorProjectDetailScreenState
                     (project['title'] ?? '').toString().toUpperCase(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 13,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: fg,
                       letterSpacing: 1,
                     ),
@@ -1903,9 +1964,9 @@ class _InvestorProjectDetailScreenState
                               child: Center(
                                 child: Text(
                                   '$pct%',
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 10,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w600,
                                     color: fg,
                                   ),
                                 ),
@@ -1920,9 +1981,9 @@ class _InvestorProjectDetailScreenState
                           phaseName.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: fg.withValues(alpha: 0.75),
                             letterSpacing: 0.8,
                           ),
@@ -1962,21 +2023,21 @@ class _InvestorProjectDetailScreenState
               children: [
                 Text(
                   'PHASE TRACKING',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 13,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'REAL-TIME DEVELOPMENT STATUS',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                    color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                   ),
                 ),
               ],
@@ -1986,21 +2047,21 @@ class _InvestorProjectDetailScreenState
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.25,
                   ),
                 ),
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.06,
                 ),
               ),
               child: Text(
                 '${phases.length} MILESTONES',
-                style: GoogleFonts.dmSerifDisplay(
-                  fontSize: 8,
-                  fontWeight: FontWeight.w900,
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                 ),
               ),
             ),
@@ -2019,14 +2080,14 @@ class _InvestorProjectDetailScreenState
           final isCompleted = status.toUpperCase() == 'COMPLETED';
           final statusColor = isCompleted
               ? Colors.green
-              : (isDark ? Colors.white : Colors.black);
+              : (isDark ? Colors.white : Color(0xFF163A2C));
           return Container(
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.white,
+                  : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: isDark
@@ -2045,19 +2106,19 @@ class _InvestorProjectDetailScreenState
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withValues(alpha: 0.05),
                         border: Border.all(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withValues(alpha: 0.08),
                         ),
                       ),
                       child: Text(
                         (i + 1).toString().padLeft(2, '0'),
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
-                          color: isDark ? Colors.white54 : Colors.black54,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white54 : Color(0xFF5E6B60),
                         ),
                       ),
                     ),
@@ -2070,11 +2131,11 @@ class _InvestorProjectDetailScreenState
                             name.toUpperCase(),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 11,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 0.5,
-                              color: isDark ? Colors.white : Colors.black,
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                             ),
                           ),
                           const SizedBox(height: 3),
@@ -2091,9 +2152,9 @@ class _InvestorProjectDetailScreenState
                               const SizedBox(width: 6),
                               Text(
                                 status.toUpperCase(),
-                                style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w900,
+                                style: GoogleFonts.ebGaramond(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
                                   letterSpacing: 1,
                                   color: statusColor,
                                 ),
@@ -2105,10 +2166,10 @@ class _InvestorProjectDetailScreenState
                     ),
                     Text(
                       '$pct%',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                        color: isDark ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                       ),
                     ),
                   ],
@@ -2119,11 +2180,11 @@ class _InvestorProjectDetailScreenState
                   child: LinearProgressIndicator(
                     value: pct / 100,
                     minHeight: 6,
-                    backgroundColor: (isDark ? Colors.white : Colors.black)
+                    backgroundColor: (isDark ? Colors.white : Color(0xFF163A2C))
                         .withValues(alpha: 0.08),
                     // Bar is always black/white (was green when completed).
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      isDark ? Colors.white : Colors.black,
+                      isDark ? Colors.white : Color(0xFF163A2C),
                     ),
                   ),
                 ),
@@ -2234,8 +2295,8 @@ class _InvestorProjectDetailScreenState
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.03)
-                    : const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(32),
+                    : const Color(0xFFF4EFE3),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.08)
@@ -2251,17 +2312,17 @@ class _InvestorProjectDetailScreenState
                       Expanded(
                         child: Text(
                           name.toUpperCase(),
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
-                            color: isDark ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             letterSpacing: 0.5,
                           ),
                         ),
                       ),
                       Icon(
                         LucideIcons.wallet,
-                        color: isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         size: 16,
                       ),
                     ],
@@ -2276,17 +2337,17 @@ class _InvestorProjectDetailScreenState
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withValues(alpha: 0.08),
                               shape: BoxShape.circle,
                             ),
                             child: Center(
                               child: Text(
                                 '${item['percentage'] ?? 0}%',
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w900,
-                                  color: isDark ? Colors.white : Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark ? Colors.white : Color(0xFF163A2C),
                                 ),
                               ),
                             ),
@@ -2301,21 +2362,21 @@ class _InvestorProjectDetailScreenState
                                           ?.toString()
                                           .toUpperCase() ??
                                       'INSTALLMENT',
-                                  style: GoogleFonts.dmSerifDisplay(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w900,
-                                    color: isDark ? Colors.white : Colors.black,
+                                  style: GoogleFonts.ebGaramond(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark ? Colors.white : Color(0xFF163A2C),
                                     letterSpacing: 0.5,
                                   ),
                                 ),
                                 Text(
                                   'INSTALLMENT ${item['installmentNumber'] ?? ''}',
-                                  style: GoogleFonts.dmSerifDisplay(
-                                    fontSize: 8,
+                                  style: GoogleFonts.ebGaramond(
+                                    fontSize: 10,
                                     fontWeight: FontWeight.bold,
                                     color: isDark
                                         ? Colors.white38
-                                        : Colors.black38,
+                                        : Color(0xFF5E6B60),
                                   ),
                                 ),
                               ],
@@ -2332,17 +2393,17 @@ class _InvestorProjectDetailScreenState
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Center(
                         child: Text(
                           'INQUIRE ABOUT THIS PLAN',
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w900,
-                            color: isDark ? Colors.white : Colors.black,
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             letterSpacing: 1,
                           ),
                         ),
@@ -2371,7 +2432,7 @@ class _InvestorProjectDetailScreenState
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.03)
-                  : Colors.white,
+                  : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(28),
               border: Border.all(
                 color: isDark
@@ -2400,19 +2461,19 @@ class _InvestorProjectDetailScreenState
                         children: [
                           Text(
                             'READY TO INVEST?',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 12,
-                              fontWeight: FontWeight.w900,
-                              color: isDark ? Colors.white : Colors.black,
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'CONNECT WITH OUR WEALTH ADVISORS',
-                            style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 8,
-                              fontWeight: FontWeight.w900,
-                              color: isDark ? Colors.white38 : Colors.black38,
+                            style: GoogleFonts.ebGaramond(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                               letterSpacing: 1,
                             ),
                           ),
@@ -2439,16 +2500,16 @@ class _InvestorProjectDetailScreenState
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
                       child: Text(
                         'INVEST IN THIS PROJECT NOW',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
-                          color: isDark ? Colors.black : Colors.white,
+                          fontWeight: FontWeight.w700,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           letterSpacing: 2,
                         ),
                       ),
@@ -2482,8 +2543,8 @@ class _InvestorProjectDetailScreenState
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.03)
-                    : const Color(0xFFF4F4F5),
-                borderRadius: BorderRadius.circular(32),
+                    : const Color(0xFFF4EFE3),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.08)
@@ -2491,7 +2552,7 @@ class _InvestorProjectDetailScreenState
                 ),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(32),
+                borderRadius: BorderRadius.circular(20),
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
@@ -2519,25 +2580,25 @@ class _InvestorProjectDetailScreenState
                         ),
                         decoration: BoxDecoration(
                           color: isDark
-                              ? const Color(0xFF1E293B)
+                              ? const Color(0xFF141B3A)
                               : Colors.white.withValues(alpha: 0.9),
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
                               LucideIcons.mapPin,
-                              color: isDark ? Colors.white : Colors.black,
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                               size: 12,
                             ),
                             const SizedBox(width: 8),
                             Text(
                               'VIEW ON MAPS',
-                              style: GoogleFonts.dmSerifDisplay(
-                                fontSize: 8,
-                                fontWeight: FontWeight.w900,
-                                color: isDark ? Colors.white : Colors.black,
+                              style: GoogleFonts.ebGaramond(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.white : Color(0xFF163A2C),
                                 letterSpacing: 1,
                               ),
                             ),
@@ -2562,15 +2623,15 @@ class _InvestorProjectDetailScreenState
         Container(
           width: 40,
           height: 1.5,
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? Colors.white : Color(0xFF163A2C),
         ),
         const SizedBox(width: 16),
         Text(
           title.toUpperCase(),
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 12,
-            fontWeight: FontWeight.w900,
-            color: isDark ? Colors.white : Colors.black,
+            fontWeight: FontWeight.w700,
+            color: isDark ? Colors.white : Color(0xFF163A2C),
             letterSpacing: 4,
           ),
         ),
@@ -2590,7 +2651,8 @@ class _InvestorProjectDetailScreenState
 class _SquareAction extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
-  const _SquareAction({required this.icon, required this.onTap});
+  final Color? color;
+  const _SquareAction({required this.icon, required this.onTap, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -2601,10 +2663,10 @@ class _SquareAction extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
               alpha: 0.06,
             ),
           ),
@@ -2620,7 +2682,7 @@ class _SquareAction extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white : Colors.black,
+          color: color ?? (isDark ? Colors.white : Color(0xFF163A2C)),
           size: 20,
         ),
       ),
@@ -2645,7 +2707,7 @@ class _MediaThumb extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
               alpha: 0.08,
             ),
           ),
@@ -2694,10 +2756,10 @@ class _MediaThumb extends StatelessWidget {
                 child: Text(
                   label,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: Colors.white,
-                    fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.ebGaramond(
+                    color: const Color(0xFFF4EFE3),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -2728,7 +2790,7 @@ class _IconThumb extends StatelessWidget {
         width: 64,
         height: 64,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark
@@ -2774,10 +2836,10 @@ class _IconThumb extends StatelessWidget {
             const SizedBox(height: 5),
             Text(
               label,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 7.5,
-                fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: 0.5,
               ),
             ),
@@ -2811,8 +2873,8 @@ class _ActionCard extends StatelessWidget {
         height: 140,
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
-          borderRadius: BorderRadius.circular(32),
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.08)
@@ -2834,7 +2896,7 @@ class _ActionCard extends StatelessWidget {
             Icon(
               icon,
               // Darker so the icon reads clearly (was 38% — too faint).
-              color: isDark ? Colors.white60 : Colors.black54,
+              color: isDark ? Colors.white60 : Color(0xFF5E6B60),
               size: 24,
             ),
             Column(
@@ -2843,10 +2905,10 @@ class _ActionCard extends StatelessWidget {
                   label.toUpperCase(),
                   textAlign: TextAlign.center,
                   // Was 8px / 38% — too small & faint. Larger + darker.
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: isDark ? Colors.white70 : Colors.black54,
-                    fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.gelasio(
+                    color: isDark ? Colors.white70 : Color(0xFF5E6B60),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -2854,10 +2916,10 @@ class _ActionCard extends StatelessWidget {
                 Text(
                   value,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: isDark ? Colors.white : Colors.black,
+                  style: GoogleFonts.ebGaramond(
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     fontSize: 13,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: -0.2,
                   ),
                 ),
@@ -2891,7 +2953,7 @@ class _AssetCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -2914,14 +2976,14 @@ class _AssetCard extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               // Neutral tint + dark icon (was the legacy gold accent).
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                 alpha: 0.06,
               ),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
               icon,
-              color: isDark ? Colors.white : Colors.black,
+              color: isDark ? Colors.white : Color(0xFF163A2C),
               size: 18,
             ),
           ),
@@ -2934,10 +2996,10 @@ class _AssetCard extends StatelessWidget {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 11,
-                    fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -2945,10 +3007,10 @@ class _AssetCard extends StatelessWidget {
                 Text(
                   subtitle,
                   // Was fontSize 8 / 38% — too faint. Larger + darker.
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9.5,
-                    fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white60 : Colors.black54,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white60 : Color(0xFF5E6B60),
                     letterSpacing: 1,
                   ),
                 ),
@@ -2980,30 +3042,30 @@ class _AssetButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final fg = filled
-        ? (isDark ? Colors.black : Colors.white)
-        : (isDark ? Colors.white : Colors.black);
+        ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
+        : (isDark ? Colors.white : Color(0xFF163A2C));
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: filled
-              ? (isDark ? Colors.white : Colors.black)
+              ? (isDark ? Colors.white : Color(0xFF163A2C))
               : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: filled
               ? null
               : Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.25,
                   ),
                 ),
         ),
         child: Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 7.5,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: fg,
             letterSpacing: 1.0,
           ),
@@ -3025,7 +3087,7 @@ class _WalkthroughCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -3048,14 +3110,14 @@ class _WalkthroughCard extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               // Neutral tint + dark icon (was the legacy gold accent).
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                 alpha: 0.06,
               ),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
               LucideIcons.video,
-              color: isDark ? Colors.white : Colors.black,
+              color: isDark ? Colors.white : Color(0xFF163A2C),
               size: 18,
             ),
           ),
@@ -3068,10 +3130,10 @@ class _WalkthroughCard extends StatelessWidget {
                   'WALKTHROUGH',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 11,
-                    fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -3079,10 +3141,10 @@ class _WalkthroughCard extends StatelessWidget {
                 Text(
                   'CINEMATIC TOUR • 4K',
                   // Was fontSize 8 / 38% — too faint. Larger + darker.
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9.5,
-                    fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white60 : Colors.black54,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white60 : Color(0xFF5E6B60),
                     letterSpacing: 1,
                   ),
                 ),
@@ -3095,15 +3157,15 @@ class _WalkthroughCard extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 'WATCH STORY',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 7.5,
-                  fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.black : Colors.white,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   letterSpacing: 1.0,
                 ),
               ),
@@ -3135,7 +3197,7 @@ class _RoundIcon extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark
               ? Colors.white.withValues(alpha: 0.05)
-              : const Color(0xFFF4F4F5),
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isDark
@@ -3146,7 +3208,7 @@ class _RoundIcon extends StatelessWidget {
         child: Icon(
           icon,
           size: 18,
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? Colors.white : Color(0xFF163A2C),
         ),
       ),
     );
@@ -3157,10 +3219,14 @@ class _InquiryField extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
   final IconData icon;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
   const _InquiryField({
     required this.hint,
     required this.controller,
     required this.icon,
+    this.keyboardType,
+    this.inputFormatters,
   });
 
   @override
@@ -3171,7 +3237,7 @@ class _InquiryField extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.03)
-            : const Color(0xFFF8FAFC),
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDark
@@ -3181,17 +3247,22 @@ class _InquiryField extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
-        style: GoogleFonts.dmSerifDisplay(
-          fontSize: 12,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
+        style: GoogleFonts.ebGaramond(
+          fontSize: 15,
           fontWeight: FontWeight.bold,
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? Colors.white : Color(0xFF163A2C),
         ),
         decoration: InputDecoration(
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           hintText: hint,
-          hintStyle: GoogleFonts.dmSerifDisplay(
-            fontSize: 9,
-            fontWeight: FontWeight.w900,
+          hintStyle: GoogleFonts.ebGaramond(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
             color: isDark ? Colors.white24 : Colors.black26,
             letterSpacing: 1,
           ),
@@ -3200,6 +3271,70 @@ class _InquiryField extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Guest-parity OVERALL ring — fine tangential tick marks (a "watch bezel"),
+/// identical to the guest project detail so every portal's ring matches.
+class _DashedCirclePainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  final Color backgroundColor;
+  final double? strokeWidth;
+
+  _DashedCirclePainter({
+    required this.progress,
+    required this.color,
+    required this.backgroundColor,
+    this.strokeWidth,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    final actualStrokeWidth = strokeWidth ?? 4.0;
+    const dashCount = 56;
+    const gap = 0.5;
+
+    final bgPaint = Paint()
+      ..color = backgroundColor
+      ..strokeWidth = actualStrokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final progressPaint = Paint()
+      ..color = color
+      ..strokeWidth = actualStrokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.butt;
+
+    final dashAngle = (2 * 3.14159) / dashCount;
+
+    for (int i = 0; i < dashCount; i++) {
+      final startAngle = i * dashAngle;
+      final sweepAngle = dashAngle * (1 - gap);
+
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        false,
+        bgPaint,
+      );
+
+      if (i < dashCount * progress) {
+        canvas.drawArc(
+          Rect.fromCircle(center: center, radius: radius),
+          startAngle,
+          sweepAngle,
+          false,
+          progressPaint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
 // Web parity (shared with the CP properties detail): a ring of short radial

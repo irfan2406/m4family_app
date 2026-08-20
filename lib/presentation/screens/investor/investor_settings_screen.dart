@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 /// Investor settings — parity with web `app/investor/settings/page.tsx`
@@ -19,7 +21,9 @@ class InvestorSettingsScreen extends ConsumerStatefulWidget {
 
 class _InvestorSettingsScreenState
     extends ConsumerState<InvestorSettingsScreen> {
-  static const _gold = Color(0xFFFFD700);
+  // Accent for this screen: M4 deep green. Gold is an accent token, not a
+  // button/toggle fill - as a primary surface it read as off-brand tan.
+  static const _gold = Color(0xFF0C312B);
 
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -103,6 +107,15 @@ class _InvestorSettingsScreenState
 
   Future<void> _save() async {
     if (_saving) return;
+    final vErr =
+        Validators.nameError(_nameController.text, field: 'full name') ??
+        Validators.phoneError(_phoneController.text);
+    if (vErr != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(vErr), backgroundColor: const Color(0xFFC65B46)),
+      );
+      return;
+    }
     setState(() => _saving = true);
     final apiClient = ref.read(apiClientProvider);
     bool ok = true;
@@ -127,12 +140,12 @@ class _InvestorSettingsScreenState
     setState(() => _saving = false);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: ok ? _gold : Colors.red,
+        backgroundColor: ok ? _gold : const Color(0xFFC65B46),
         content: Text(
           ok
               ? 'Preferences updated securely'
               : 'Could not save changes. Try again.',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             color: Colors.black,
@@ -148,7 +161,7 @@ class _InvestorSettingsScreenState
       builder: (ctx) => AlertDialog(
         title: Text(
           'Sign out everywhere',
-          style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w700),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w700),
         ),
         content: const Text(
           'Sign out of your investor account on all devices?',
@@ -160,7 +173,7 @@ class _InvestorSettingsScreenState
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Sign out', style: TextStyle(color: Colors.red)),
+            child: const Text('Sign out', style: TextStyle(color: Color(0xFFC65B46))),
           ),
         ],
       ),
@@ -179,8 +192,8 @@ class _InvestorSettingsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = textPrimary.withValues(alpha: 0.5);
 
     if (_loading) {
@@ -196,6 +209,9 @@ class _InvestorSettingsScreenState
       return Scaffold(
         backgroundColor: bg,
         body: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(32),
@@ -207,7 +223,7 @@ class _InvestorSettingsScreenState
                   Text(
                     _error!,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: muted,
@@ -218,9 +234,9 @@ class _InvestorSettingsScreenState
                     onPressed: _fetchUser,
                     child: Text(
                       'RETRY',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 11,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         color: M4Theme.premiumBlue,
                         letterSpacing: 1.5,
                       ),
@@ -237,6 +253,9 @@ class _InvestorSettingsScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark, textPrimary, muted),
@@ -256,6 +275,8 @@ class _InvestorSettingsScreenState
                       label: 'FULL NAME',
                       icon: LucideIcons.user,
                       controller: _nameController,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: Validators.nameFormatters,
                     ),
                     const SizedBox(height: 16),
                     _field(
@@ -277,6 +298,7 @@ class _InvestorSettingsScreenState
                       icon: LucideIcons.phone,
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: Validators.phoneFormatters,
                     ),
                     const SizedBox(height: 28),
                     _sectionLabel('SECURITY & ACCESS', muted),
@@ -326,7 +348,7 @@ class _InvestorSettingsScreenState
   }
 
   Widget _buildHeader(bool isDark, Color textPrimary, Color muted) {
-    final border = (isDark ? Colors.white : Colors.black).withValues(
+    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.06,
     );
     return Container(
@@ -367,9 +389,9 @@ class _InvestorSettingsScreenState
               children: [
                 Text(
                   'CONFIGURATION',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 14,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: textPrimary,
                     letterSpacing: 2,
                   ),
@@ -377,9 +399,9 @@ class _InvestorSettingsScreenState
                 const SizedBox(height: 4),
                 Text(
                   'PRIVATE OFFICE SETTINGS',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w800,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
                     color: muted,
                     letterSpacing: 2,
                   ),
@@ -409,9 +431,9 @@ class _InvestorSettingsScreenState
                       ),
                       child: Text(
                         'SAVE',
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w800,
+                        style: GoogleFonts.gelasio(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
                           color: Colors.black,
                           letterSpacing: 1.5,
                         ),
@@ -427,9 +449,9 @@ class _InvestorSettingsScreenState
   Widget _sectionLabel(String text, Color muted) {
     return Text(
       text,
-      style: GoogleFonts.dmSerifDisplay(
-        fontSize: 9,
-        fontWeight: FontWeight.w900,
+      style: GoogleFonts.gelasio(
+        fontSize: 11,
+        fontWeight: FontWeight.w700,
         color: muted,
         letterSpacing: 2.5,
       ),
@@ -447,9 +469,10 @@ class _InvestorSettingsScreenState
     bool enabled = true,
     bool verified = false,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
-    final border = (isDark ? Colors.white : Colors.black).withValues(
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: isDark ? 0.08 : 0.06,
     );
     final fieldColor = enabled ? textPrimary : muted;
@@ -459,9 +482,9 @@ class _InvestorSettingsScreenState
       children: [
         Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
-            fontSize: 9,
-            fontWeight: FontWeight.w800,
+          style: GoogleFonts.gelasio(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
             color: muted,
             letterSpacing: 1.5,
           ),
@@ -484,13 +507,17 @@ class _InvestorSettingsScreenState
                         controller: controller,
                         enabled: enabled,
                         keyboardType: keyboardType,
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 14,
+                        inputFormatters: inputFormatters,
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: fieldColor,
                         ),
                         decoration: const InputDecoration(
+                          filled: false,
                           border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
                           isDense: true,
                           contentPadding: EdgeInsets.symmetric(vertical: 16),
                         ),
@@ -501,7 +528,7 @@ class _InvestorSettingsScreenState
                           value ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: fieldColor,
@@ -522,9 +549,9 @@ class _InvestorSettingsScreenState
                   ),
                   child: Text(
                     'VERIFIED',
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w800,
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
                       color: _gold,
                       letterSpacing: 1,
                     ),
@@ -548,8 +575,8 @@ class _InvestorSettingsScreenState
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
-    final border = (isDark ? Colors.white : Colors.black).withValues(
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: isDark ? 0.08 : 0.06,
     );
 
@@ -580,7 +607,7 @@ class _InvestorSettingsScreenState
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: textPrimary,
@@ -589,9 +616,9 @@ class _InvestorSettingsScreenState
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w800,
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
                     color: muted,
                     letterSpacing: 1,
                   ),
@@ -621,20 +648,20 @@ class _InvestorSettingsScreenState
           alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
-            color: Colors.red.withValues(alpha: 0.05),
+            border: Border.all(color: const Color(0xFFC65B46).withValues(alpha: 0.2)),
+            color: const Color(0xFFC65B46).withValues(alpha: 0.05),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(LucideIcons.logOut, size: 16, color: Colors.red),
+              const Icon(LucideIcons.logOut, size: 16, color: Color(0xFFC65B46)),
               const SizedBox(width: 8),
               Text(
                 'SIGN OUT ON ALL DEVICES',
-                style: GoogleFonts.dmSerifDisplay(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.red,
+                style: GoogleFonts.gelasio(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFFC65B46),
                   letterSpacing: 2,
                 ),
               ),

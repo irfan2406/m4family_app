@@ -88,18 +88,18 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
       SnackBar(
         behavior: SnackBarBehavior.floating,
         backgroundColor: isError
-            ? const Color(0xFFEF4444)
-            : const Color(0xFF10B981),
+            ? const Color(0xFFC65B46)
+            : const Color(0xFF163A2C),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.all(16),
         content: Text(
           message,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             color: isError
-                ? Colors.white
-                : (isDark ? Colors.black : Colors.white),
+                ? const Color(0xFFF4EFE3)
+                : (isDark ? Colors.black : const Color(0xFFF4EFE3)),
             letterSpacing: 0.5,
           ),
         ),
@@ -117,10 +117,10 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
         child: Container(
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF09090B) : Colors.white,
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFEDE5D6),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
                 alpha: 0.08,
               ),
             ),
@@ -138,20 +138,20 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
             children: [
               Text(
                 'REMOVE MEMBER',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 13,
-                  fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C),
                   letterSpacing: 1.5,
                 ),
               ),
               const SizedBox(height: 12),
               Text(
                 'Are you sure you want to remove this family member?',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
                     alpha: 0.55,
                   ),
                   height: 1.4,
@@ -259,10 +259,10 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF09090B) : Colors.white,
+                    color: isDark ? const Color(0xFF141B3A) : const Color(0xFFEDE5D6),
                     borderRadius: BorderRadius.circular(40),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
                         alpha: 0.08,
                       ),
                     ),
@@ -282,10 +282,10 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                     children: [
                       Text(
                         isEdit ? 'EDIT FAMILY MEMBER' : 'ADD FAMILY MEMBER',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 13,
-                          fontWeight: FontWeight.w900,
-                          color: isDark ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.w700,
+                          color: isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C),
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -336,11 +336,11 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: isDark
-                                ? Colors.white.withValues(alpha: 0.03)
-                                : Colors.white,
+                                ? const Color(0xFFF4EFE3).withValues(alpha: 0.03)
+                                : const Color(0xFFF4EFE3),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C))
                                   .withValues(alpha: 0.08),
                             ),
                           ),
@@ -351,22 +351,22 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                                   dobDisplay.isEmpty
                                       ? 'SELECT DATE'
                                       : dobDisplay,
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 12,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w500,
                                     color: dobDisplay.isEmpty
-                                        ? (isDark ? Colors.white : Colors.black)
-                                              .withValues(alpha: 0.35)
+                                        ? (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C))
+                                              .withValues(alpha: 0.72)
                                         : (isDark
-                                              ? Colors.white
-                                              : Colors.black),
+                                              ? const Color(0xFFF4EFE3)
+                                              : Color(0xFF163A2C)),
                                   ),
                                 ),
                               ),
                               Icon(
                                 LucideIcons.calendar,
                                 size: 16,
-                                color: (isDark ? Colors.white : Colors.black)
+                                color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C))
                                     .withValues(alpha: 0.4),
                               ),
                             ],
@@ -447,8 +447,10 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black;
+    final bg = isDark
+        ? Colors.black
+        : Theme.of(context).scaffoldBackgroundColor;
+    final textColor = isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C);
 
     final filtered = _familyMembers.where((m) {
       final q = _searchQuery.toLowerCase();
@@ -460,6 +462,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark, textColor),
@@ -508,7 +513,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
               alpha: 0.06,
             ),
           ),
@@ -531,9 +536,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
           Expanded(
             child: Text(
               'FAMILY MEMBERS',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 22,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: textColor,
                 letterSpacing: -0.5,
               ),
@@ -552,10 +557,10 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
   Widget _buildSearchBar(bool isDark, Color textColor) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? const Color(0xFFF4EFE3).withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+          color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(alpha: 0.08),
         ),
         boxShadow: isDark
             ? []
@@ -574,7 +579,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
             child: Icon(
               LucideIcons.search,
               size: 16,
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
                 alpha: 0.4,
               ),
             ),
@@ -583,21 +588,24 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
             child: TextField(
               controller: _searchController,
               onChanged: (val) => setState(() => _searchQuery = val),
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 11,
-                fontWeight: FontWeight.w900,
+              style: GoogleFonts.gelasio(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
                 color: textColor,
                 letterSpacing: 1.5,
               ),
               decoration: InputDecoration(
                 isCollapsed: true,
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                filled: false,
                 border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
                 hintText: 'SEARCH MEMBERS...',
-                hintStyle: GoogleFonts.dmSerifDisplay(
+                hintStyle: GoogleFonts.gelasio(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  fontWeight: FontWeight.w700,
+                  color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
                     alpha: 0.3,
                   ),
                   letterSpacing: 1.5,
@@ -612,17 +620,17 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
   }
 
   Widget _buildEmptyState(bool isDark) {
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final muted = (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(alpha: 0.5);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 56, horizontal: 24),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.white.withValues(alpha: 0.02)
+            ? const Color(0xFFF4EFE3).withValues(alpha: 0.02)
             : Colors.black.withValues(alpha: 0.01),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+          color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(alpha: 0.1),
           style: BorderStyle.solid,
         ),
       ),
@@ -637,9 +645,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
           Text(
             'NO FAMILY MEMBERS FOUND',
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 11,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: muted,
               letterSpacing: 1.5,
             ),
@@ -650,7 +658,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
   }
 
   Widget _buildMemberCard(Map<String, dynamic> member, int index, bool isDark) {
-    final textColor = isDark ? Colors.white : Colors.black;
+    final textColor = isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C);
     final String name = (member['name'] ?? '').toString();
     final String relation = (member['relation'] ?? '').toString();
     final String dob = (member['dob'] ?? '').toString();
@@ -667,10 +675,10 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        color: isDark ? const Color(0xFFF4EFE3).withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+          color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(alpha: 0.08),
         ),
         boxShadow: isDark
             ? []
@@ -689,7 +697,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
                 alpha: 0.05,
               ),
               borderRadius: BorderRadius.circular(16),
@@ -697,7 +705,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
             child: Icon(
               LucideIcons.users,
               size: 20,
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
                 alpha: 0.55,
               ),
             ),
@@ -713,9 +721,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                       child: Text(
                         name.toUpperCase(),
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 13,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: textColor,
                           letterSpacing: -0.3,
                         ),
@@ -730,20 +738,20 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                         ),
                         decoration: BoxDecoration(
                           // Web parity: neutral grey badge (not gold).
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C))
                               .withValues(alpha: 0.06),
                           borderRadius: BorderRadius.circular(100),
                           border: Border.all(
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C))
                                 .withValues(alpha: 0.12),
                           ),
                         ),
                         child: Text(
                           relation.toUpperCase(),
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 7,
-                            fontWeight: FontWeight.w900,
-                            color: (isDark ? Colors.white : Colors.black)
+                            fontWeight: FontWeight.w600,
+                            color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C))
                                 .withValues(alpha: 0.6),
                             letterSpacing: 0.5,
                           ),
@@ -759,16 +767,16 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                       Icon(
                         LucideIcons.calendar,
                         size: 11,
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C))
                             .withValues(alpha: 0.45),
                       ),
                       const SizedBox(width: 6),
                       Text(
                         dobDisplay.toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C))
                               .withValues(alpha: 0.5),
                           letterSpacing: 1,
                         ),
@@ -855,10 +863,10 @@ class _HeaderIconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(11),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
               alpha: 0.08,
             ),
           ),
@@ -874,7 +882,7 @@ class _HeaderIconButton extends StatelessWidget {
         child: Icon(
           icon,
           size: 20,
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C),
         ),
       ),
     );
@@ -901,11 +909,11 @@ class _CardActionButton extends StatelessWidget {
         height: 36,
         decoration: BoxDecoration(
           color: isDark
-              ? Colors.white.withValues(alpha: 0.04)
+              ? const Color(0xFFF4EFE3).withValues(alpha: 0.04)
               : Colors.black.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
               alpha: 0.06,
             ),
           ),
@@ -913,7 +921,7 @@ class _CardActionButton extends StatelessWidget {
         child: Icon(
           icon,
           size: 16,
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
+          color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(alpha: 0.6),
         ),
       ),
     );
@@ -931,10 +939,10 @@ class _DialogLabel extends StatelessWidget {
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         label,
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.ebGaramond(
           fontSize: 8,
-          fontWeight: FontWeight.w900,
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.45),
+          fontWeight: FontWeight.w600,
+          color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(alpha: 0.72),
           letterSpacing: 1,
         ),
       ),
@@ -958,19 +966,19 @@ class _DialogInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? const Color(0xFFF4EFE3).withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+          color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(alpha: 0.08),
         ),
       ),
       child: TextField(
         controller: controller,
         onChanged: onChanged,
-        style: GoogleFonts.dmSerifDisplay(
-          fontSize: 12,
-          fontWeight: FontWeight.w800,
-          color: isDark ? Colors.white : Colors.black,
+        style: GoogleFonts.ebGaramond(
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+          color: isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C),
         ),
         decoration: InputDecoration(
           isCollapsed: true,
@@ -978,12 +986,15 @@ class _DialogInput extends StatelessWidget {
             horizontal: 16,
             vertical: 16,
           ),
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           hintText: hint,
-          hintStyle: GoogleFonts.dmSerifDisplay(
+          hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
               alpha: 0.3,
             ),
           ),
@@ -1015,10 +1026,10 @@ class _RelationDropdown extends StatelessWidget {
       height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? const Color(0xFFF4EFE3).withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+          color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(alpha: 0.08),
         ),
       ),
       child: DropdownButtonHideUnderline(
@@ -1027,10 +1038,10 @@ class _RelationDropdown extends StatelessWidget {
           value: selected,
           hint: Text(
             'Select Relation',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
                 alpha: 0.3,
               ),
             ),
@@ -1038,16 +1049,16 @@ class _RelationDropdown extends StatelessWidget {
           icon: Icon(
             LucideIcons.chevronDown,
             size: 16,
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
               alpha: 0.4,
             ),
           ),
-          dropdownColor: isDark ? const Color(0xFF18181B) : Colors.white,
+          dropdownColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(16),
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
-            fontWeight: FontWeight.w800,
-            color: isDark ? Colors.white : Colors.black,
+            fontWeight: FontWeight.w500,
+            color: isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C),
           ),
           items: [
             ...predefined.map(
@@ -1093,12 +1104,12 @@ class _DialogButton extends StatelessWidget {
     final Color fg;
     if (filled) {
       bg = destructive
-          ? const Color(0xFFEF4444)
-          : (isDark ? Colors.white : Colors.black);
-      fg = destructive ? Colors.white : (isDark ? Colors.black : Colors.white);
+          ? const Color(0xFFC65B46)
+          : (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C));
+      fg = destructive ? const Color(0xFFF4EFE3) : (isDark ? Colors.black : const Color(0xFFF4EFE3));
     } else {
       bg = Colors.transparent;
-      fg = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6);
+      fg = (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(alpha: 0.6);
     }
 
     return _ScaleTap(
@@ -1115,16 +1126,16 @@ class _DialogButton extends StatelessWidget {
             border: filled
                 ? null
                 : Border.all(
-                    color: (isDark ? Colors.white : Colors.black).withValues(
+                    color: (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
                       alpha: 0.12,
                     ),
                   ),
           ),
           child: Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: fg,
               letterSpacing: 1,
             ),

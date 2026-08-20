@@ -25,7 +25,7 @@ class InvestorDocumentsScreen extends ConsumerStatefulWidget {
 
 class _InvestorDocumentsScreenState
     extends ConsumerState<InvestorDocumentsScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
   static const _filters = [
     'All',
     'Agreement',
@@ -151,7 +151,7 @@ class _InvestorDocumentsScreenState
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('Secure link not available for this document'),
           ),
         );
@@ -167,12 +167,15 @@ class _InvestorDocumentsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
 
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark, textPrimary),
@@ -197,7 +200,7 @@ class _InvestorDocumentsScreenState
   }
 
   Widget _buildHeader(bool isDark, Color textPrimary) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -223,7 +226,7 @@ class _InvestorDocumentsScreenState
               child: Icon(
                 LucideIcons.arrowLeft,
                 size: 20,
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.5,
                 ),
               ),
@@ -236,9 +239,9 @@ class _InvestorDocumentsScreenState
               children: [
                 Text(
                   'LEGAL VAULT',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 18,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: textPrimary,
                     letterSpacing: -0.3,
                   ),
@@ -250,10 +253,10 @@ class _InvestorDocumentsScreenState
                     const SizedBox(width: 5),
                     Text(
                       'SECURE REPOSITORY',
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 8,
+                      style: GoogleFonts.gelasio(
+                        fontSize: 10,
                         fontWeight: FontWeight.w700,
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withValues(alpha: 0.5),
                         letterSpacing: 2,
                       ),
@@ -274,7 +277,7 @@ class _InvestorDocumentsScreenState
             child: Icon(
               LucideIcons.shield,
               size: 18,
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                 alpha: 0.5,
               ),
             ),
@@ -313,13 +316,13 @@ class _InvestorDocumentsScreenState
                 ),
                 child: Text(
                   f.toUpperCase(),
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w800,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: selected
-                        ? (isDark ? Colors.black : Colors.white)
-                        : (isDark ? Colors.white : Colors.black).withValues(
+                        ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
+                        : (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                             alpha: 0.5,
                           ),
                   ),
@@ -363,11 +366,11 @@ class _InvestorDocumentsScreenState
     bool isDark,
     Color textPrimary,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -395,7 +398,7 @@ class _InvestorDocumentsScreenState
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.05,
                 ),
                 borderRadius: BorderRadius.circular(16),
@@ -412,9 +415,9 @@ class _InvestorDocumentsScreenState
                     (doc['title'] ?? 'DOCUMENT').toString().toUpperCase(),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 13,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: textPrimary,
                       letterSpacing: -0.2,
                     ),
@@ -424,8 +427,8 @@ class _InvestorDocumentsScreenState
                     children: [
                       Text(
                         _formatDate(doc['createdAt']).toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 8,
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 10,
                           fontWeight: FontWeight.w700,
                           color: muted,
                           letterSpacing: 1,
@@ -445,8 +448,8 @@ class _InvestorDocumentsScreenState
                         child: Text(
                           (doc['size'] ?? '').toString().toUpperCase(),
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 8,
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 10,
                             fontWeight: FontWeight.w700,
                             color: _gold.withValues(alpha: 0.7),
                             letterSpacing: 1,
@@ -517,14 +520,14 @@ class _InvestorDocumentsScreenState
   }
 
   Widget _buildEmptyState(bool isDark) {
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     return Column(
       children: [
         Container(
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
               alpha: 0.04,
             ),
             shape: BoxShape.circle,
@@ -538,9 +541,9 @@ class _InvestorDocumentsScreenState
         const SizedBox(height: 24),
         Text(
           'NO DOCUMENTS FOUND',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             color: muted,
             letterSpacing: 3,
           ),
@@ -550,7 +553,7 @@ class _InvestorDocumentsScreenState
   }
 
   Widget _buildErrorState(bool isDark, Color textPrimary) {
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -566,7 +569,7 @@ class _InvestorDocumentsScreenState
             Text(
               _error ?? 'Something went wrong',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: textPrimary,
@@ -586,11 +589,11 @@ class _InvestorDocumentsScreenState
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   ),
                 ),
               ),
@@ -623,14 +626,14 @@ class _SquareIconButton extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: border),
         ),
         child: Icon(
           icon,
           size: 16,
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5),
         ),
       ),
     );
@@ -651,13 +654,13 @@ class _DocumentDetail extends StatelessWidget {
     required this.rounded,
   });
 
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   @override
   Widget build(BuildContext context) {
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -667,13 +670,13 @@ class _DocumentDetail extends StatelessWidget {
       decoration: BoxDecoration(
         color: bg,
         borderRadius: rounded
-            ? BorderRadius.circular(36)
+            ? BorderRadius.circular(20)
             : const BorderRadius.vertical(top: Radius.circular(36)),
         border: rounded ? Border.all(color: border) : null,
       ),
       child: ClipRRect(
         borderRadius: rounded
-            ? BorderRadius.circular(36)
+            ? BorderRadius.circular(20)
             : const BorderRadius.vertical(top: Radius.circular(36)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -688,7 +691,7 @@ class _DocumentDetail extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [
                     _gold.withValues(alpha: 0.18),
-                    (isDark ? Colors.white : Colors.black).withValues(
+                    (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                       alpha: 0.03,
                     ),
                   ],
@@ -715,9 +718,9 @@ class _DocumentDetail extends StatelessWidget {
                     ),
                     child: Text(
                       'SECURED ${type.toUpperCase()}',
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w800,
+                      style: GoogleFonts.gelasio(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
                         color: _gold,
                         letterSpacing: 1.5,
                       ),
@@ -726,9 +729,9 @@ class _DocumentDetail extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(
                     (doc['title'] ?? 'DOCUMENT').toString().toUpperCase(),
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 20,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       color: textPrimary,
                       letterSpacing: -0.3,
                       height: 1.2,
@@ -759,9 +762,9 @@ class _DocumentDetail extends StatelessWidget {
                   const SizedBox(height: 20),
                   Text(
                     'VERIFICATION STATUS',
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w800,
+                    style: GoogleFonts.gelasio(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
                       color: muted,
                       letterSpacing: 2,
                     ),
@@ -773,10 +776,10 @@ class _DocumentDetail extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF22C55E).withValues(alpha: 0.1),
+                      color: const Color(0xFF163A2C).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Color(0xFF22C55E).withValues(alpha: 0.25),
+                        color: const Color(0xFF163A2C).withValues(alpha: 0.25),
                       ),
                     ),
                     child: Row(
@@ -785,15 +788,15 @@ class _DocumentDetail extends StatelessWidget {
                         const Icon(
                           LucideIcons.shieldCheck,
                           size: 14,
-                          color: Color(0xFF22C55E),
+                          color: Color(0xFF163A2C),
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'ENCRYPTED & VERIFIED',
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w800,
-                            color: const Color(0xFF22C55E),
+                          style: GoogleFonts.gelasio(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF163A2C),
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -805,9 +808,9 @@ class _DocumentDetail extends StatelessWidget {
                     const SizedBox(height: 20),
                     Text(
                       'DOCUMENT OVERVIEW',
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w800,
+                      style: GoogleFonts.gelasio(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
                         color: muted,
                         letterSpacing: 2,
                       ),
@@ -815,7 +818,7 @@ class _DocumentDetail extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       '"${doc['description']}"',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         fontStyle: FontStyle.italic,
@@ -836,15 +839,15 @@ class _DocumentDetail extends StatelessWidget {
                       icon: const Icon(LucideIcons.eye, size: 18),
                       label: Text(
                         'OPEN SECURE LINK',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: textPrimary,
-                        foregroundColor: isDark ? Colors.black : Colors.white,
+                        foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
@@ -876,13 +879,13 @@ class _MetaTile extends StatelessWidget {
     required this.isDark,
   });
 
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   @override
   Widget build(BuildContext context) {
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -905,9 +908,9 @@ class _MetaTile extends StatelessWidget {
                 child: Text(
                   label,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 7,
-                    fontWeight: FontWeight.w800,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w700,
                     color: muted,
                     letterSpacing: 1.5,
                   ),
@@ -920,9 +923,9 @@ class _MetaTile extends StatelessWidget {
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               color: textPrimary,
             ),
           ),

@@ -21,9 +21,9 @@ class InvestorSecurityScreen extends ConsumerStatefulWidget {
 
 class _InvestorSecurityScreenState
     extends ConsumerState<InvestorSecurityScreen> {
-  static const _green = Color(0xFF22C55E);
-  static const _blue = Color(0xFF3B82F6);
-  static const _amber = Color(0xFFF59E0B);
+  static const _green = Color(0xFF163A2C);
+  static const _blue = Color(0xFFC5A35B);
+  static const _amber = Color(0xFFC5A35B);
 
   bool _biometricEnabled = true;
   bool _twoFactorEnabled = true;
@@ -117,8 +117,8 @@ class _InvestorSecurityScreenState
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
-        content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12)),
+        backgroundColor: const Color(0xFFC65B46),
+        content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12)),
       ),
     );
   }
@@ -136,10 +136,10 @@ class _InvestorSecurityScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -166,14 +166,14 @@ class _InvestorSecurityScreenState
                   height: 6,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Color(0xFFFFD700),
+                    color: Color(0xFFC5A35B),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'Security & Privacy',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontWeight: FontWeight.w800,
+                  style: GoogleFonts.ebGaramond(
+                    fontWeight: FontWeight.w500,
                     fontSize: 16,
                     color: textPrimary,
                   ),
@@ -184,8 +184,8 @@ class _InvestorSecurityScreenState
               padding: const EdgeInsets.only(left: 14, top: 1),
               child: Text(
                 'ACCOUNT PROTECTION',
-                style: GoogleFonts.dmSerifDisplay(
-                  fontSize: 9,
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 11,
                   letterSpacing: 1.5,
                   fontWeight: FontWeight.w600,
                   color: muted,
@@ -297,14 +297,14 @@ class _InvestorSecurityScreenState
                       shape: BoxShape.circle,
                       color: _green,
                       border: Border.all(
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                         width: 4,
                       ),
                     ),
                     child: Icon(
                       LucideIcons.check,
                       size: 12,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     ),
                   ),
                 ),
@@ -314,7 +314,7 @@ class _InvestorSecurityScreenState
           const SizedBox(height: 16),
           Text(
             'Account Protected',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: textPrimary,
@@ -326,9 +326,9 @@ class _InvestorSecurityScreenState
             child: Text(
               'Your account is secured with military-grade encryption and 2FA.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 height: 1.4,
                 color: muted,
               ),
@@ -342,7 +342,7 @@ class _InvestorSecurityScreenState
   Widget _sectionLabel(String label, Color muted) {
     return Text(
       label,
-      style: GoogleFonts.dmSerifDisplay(
+      style: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.bold,
         letterSpacing: 2,
@@ -391,7 +391,7 @@ class _InvestorSecurityScreenState
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: textPrimary,
@@ -400,9 +400,9 @@ class _InvestorSecurityScreenState
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       color: muted,
                     ),
                   ),
@@ -521,9 +521,9 @@ class _InvestorSecurityScreenState
               children: [
                 Text(
                   login['device'] ?? '',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     color: textPrimary,
                   ),
                 ),
@@ -531,9 +531,9 @@ class _InvestorSecurityScreenState
                   const SizedBox(height: 2),
                   Text(
                     meta,
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w500,
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
                       color: muted,
                     ),
                   ),
@@ -553,8 +553,8 @@ class _InvestorSecurityScreenState
             ),
             child: Text(
               status.toUpperCase(),
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 8,
+              style: GoogleFonts.ebGaramond(
+                fontSize: 10,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1,
                 color: isActive ? _green : muted,
@@ -583,7 +583,7 @@ class _InvestorSecurityScreenState
           const SizedBox(height: 12),
           Text(
             title,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 13,
               fontWeight: FontWeight.w700,
               color: textPrimary,
@@ -593,9 +593,9 @@ class _InvestorSecurityScreenState
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 11,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               color: muted,
             ),
           ),
@@ -605,7 +605,7 @@ class _InvestorSecurityScreenState
               onPressed: onAction,
               child: Text(
                 actionLabel,
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2,
@@ -631,7 +631,7 @@ class _InvestorSecurityScreenState
           ),
           child: Text(
             'SIGN OUT OF ALL DEVICES',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.bold,
               letterSpacing: 2,

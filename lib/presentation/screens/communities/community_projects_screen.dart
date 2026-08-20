@@ -95,9 +95,9 @@ class _CommunityProjectsListScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final apiClient = ref.watch(apiClientProvider);
 
     return Scaffold(
@@ -132,7 +132,7 @@ class _CommunityProjectsListScreenState
                         decoration: BoxDecoration(
                           border: Border(
                             left: BorderSide(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withValues(alpha: isDark ? 0.3 : 0.2),
                               width: 4,
                             ),
@@ -145,9 +145,9 @@ class _CommunityProjectsListScreenState
                               (_community?['title'] ?? '')
                                   .toString()
                                   .toUpperCase(),
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 30,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 color: textPrimary,
                                 letterSpacing: -1,
                                 height: 1.0,
@@ -156,7 +156,7 @@ class _CommunityProjectsListScreenState
                             const SizedBox(height: 10),
                             Text(
                               'DISCOVER ALL PROJECTS IN THIS COMMUNITY',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                                 color: muted,
@@ -241,7 +241,7 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final bg = isDark ? Colors.black : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
@@ -251,7 +251,7 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
             color: bg.withValues(alpha: 0.8),
             border: Border(
               bottom: BorderSide(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.08,
                 ),
               ),
@@ -269,9 +269,9 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
                     const SizedBox(width: 8),
                     Text(
                       'BACK',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: muted,
                         letterSpacing: 2,
                       ),
@@ -286,9 +286,9 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
                 children: [
                   Text(
                     'M4 FAMILY',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 18,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: textPrimary,
                       letterSpacing: -1,
                       height: 1.0,
@@ -297,7 +297,7 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
                   const SizedBox(height: 4),
                   Text(
                     'COMMUNITY PORTFOLIO',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w700,
                       color: muted,
@@ -383,7 +383,7 @@ class _ProjectCard extends StatelessWidget {
               placeholder: (context, url) => Container(color: Colors.black12),
               errorWidget: (context, url, error) => Container(
                 color: Colors.black26,
-                child: const Icon(Icons.error, color: Colors.white24),
+                child: const Icon(LucideIcons.alertCircle, color: Colors.white38),
               ),
             ),
 
@@ -428,16 +428,16 @@ class _ProjectCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: Colors.white.withValues(alpha: 0.1),
                     ),
                   ),
                   child: Text(
                     status.toUpperCase(),
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: Colors.white,
                       letterSpacing: 2,
                     ),
@@ -455,9 +455,9 @@ class _ProjectCard extends StatelessWidget {
                 children: [
                   Text(
                     (project['title'] ?? '').toString().toUpperCase(),
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 24,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: Colors.white,
                       letterSpacing: -1,
                       height: 1.0,
@@ -477,7 +477,7 @@ class _ProjectCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           location.toUpperCase(),
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             color: Colors.white.withValues(alpha: 0.6),
@@ -500,9 +500,9 @@ class _ProjectCard extends StatelessWidget {
                     const SizedBox(height: 14),
                     Text(
                       'STARTING FROM',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 7,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: Colors.white.withValues(alpha: 0.68),
                         letterSpacing: 2,
                       ),
@@ -510,10 +510,10 @@ class _ProjectCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       startingPrice!,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                        color: const Color(0xFFC4A484),
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFFF4EFE3),
                         letterSpacing: -0.2,
                       ),
                     ),
@@ -529,10 +529,10 @@ class _ProjectCard extends StatelessWidget {
                 left: 28,
                 child: Text(
                   '* ARTISTIC IMPRESSION',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 6,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white.withValues(alpha: 0.3),
+                    color: Colors.white.withValues(alpha: 0.72),
                     letterSpacing: 2,
                   ),
                 ),
@@ -599,9 +599,9 @@ class _EmptyState extends StatelessWidget {
           Text(
             'NO PROJECTS FOUND IN THIS COMMUNITY',
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 12,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: muted,
               letterSpacing: 2,
             ),
@@ -612,7 +612,7 @@ class _EmptyState extends StatelessWidget {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
               side: BorderSide(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.2,
                 ),
               ),
@@ -622,10 +622,10 @@ class _EmptyState extends StatelessWidget {
             ),
             child: Text(
               'RETURN',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: 2,
               ),
             ),
@@ -651,7 +651,7 @@ class _ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -667,10 +667,10 @@ class _ErrorState extends StatelessWidget {
             Text(
               'UNABLE TO LOAD PROJECTS',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: 2,
               ),
             ),
@@ -680,7 +680,7 @@ class _ErrorState extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 color: muted,
                 fontWeight: FontWeight.w500,
@@ -695,7 +695,7 @@ class _ErrorState extends StatelessWidget {
                   vertical: 18,
                 ),
                 side: BorderSide(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.2,
                   ),
                 ),
@@ -705,10 +705,10 @@ class _ErrorState extends StatelessWidget {
               ),
               child: Text(
                 'GO BACK',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 2,
                 ),
               ),

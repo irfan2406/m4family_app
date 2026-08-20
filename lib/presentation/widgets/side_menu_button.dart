@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
-/// The single, canonical "..." side-menu button used across EVERY portal
+/// The single, canonical hamburger side-menu button used across EVERY portal
 /// (Guest, Customer, CP, Investor) and every screen.
 ///
-/// It is an exact copy of the original Guest/Investor/CP/Customer home-header
-/// button so the size, colour and behaviour are identical everywhere and in
+/// One shared button so size, colour and behaviour are identical everywhere in
 /// both light and dark mode:
-///   • 56 × 36 rounded (radius 14) pill
-///   • black fill + white icon in LIGHT mode
-///   • white fill + black icon in DARK mode
-///   • centred [LucideIcons.moreHorizontal] icon, size 24
+///   • 56 × 36 tap target, no filled pill (transparent — no white/black box)
+///   • centred [LucideIcons.menu] hamburger, size 24
+///   • icon colour follows the surface via `colorScheme.onSurface`, so it is
+///     white on the deep-green showcase screens and forest-green on cream
 ///
 /// By default it opens the nearest [Scaffold]'s drawer. Pass [onTap] to
 /// override (e.g. to open an end-drawer or a custom menu).
@@ -38,12 +37,14 @@ class SideMenuButton extends StatelessWidget {
         height: 36,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white : Colors.black,
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Icon(
-          LucideIcons.moreHorizontal,
-          color: isDark ? Colors.black : Colors.white,
+          LucideIcons.menu,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : Theme.of(context).colorScheme.onSurface,
           size: 24,
         ),
       ),

@@ -20,7 +20,7 @@ class InvestorTaxReportsScreen extends ConsumerStatefulWidget {
 
 class _InvestorTaxReportsScreenState
     extends ConsumerState<InvestorTaxReportsScreen> {
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
 
   List<dynamic> _rows = [];
   bool _loading = true;
@@ -101,8 +101,8 @@ class _InvestorTaxReportsScreenState
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
-        content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12)),
+        backgroundColor: const Color(0xFFC65B46),
+        content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12)),
       ),
     );
   }
@@ -110,10 +110,10 @@ class _InvestorTaxReportsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -134,16 +134,16 @@ class _InvestorTaxReportsScreenState
           children: [
             Text(
               'Tax Reports',
-              style: GoogleFonts.dmSerifDisplay(
-                fontWeight: FontWeight.w800,
+              style: GoogleFonts.ebGaramond(
+                fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: textPrimary,
               ),
             ),
             Text(
               'FISCAL COMPLIANCE',
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 9,
+              style: GoogleFonts.ebGaramond(
+                fontSize: 11,
                 letterSpacing: 1.5,
                 fontWeight: FontWeight.w600,
                 color: muted,
@@ -188,7 +188,7 @@ class _InvestorTaxReportsScreenState
             Text(
               'Unable to load tax reports.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
@@ -207,7 +207,7 @@ class _InvestorTaxReportsScreenState
               ),
               label: Text(
                 'RETRY',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1,
@@ -264,7 +264,7 @@ class _InvestorTaxReportsScreenState
                   ),
                   child: Text(
                     year.toUpperCase(),
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
@@ -304,7 +304,7 @@ class _InvestorTaxReportsScreenState
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+              (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.05),
               Colors.transparent,
             ],
           ),
@@ -327,8 +327,8 @@ class _InvestorTaxReportsScreenState
               children: [
                 Text(
                   'TOTAL TAX DEDUCTED',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 9,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2,
                     color: muted,
@@ -340,9 +340,9 @@ class _InvestorTaxReportsScreenState
                   children: [
                     Text(
                       fmt.format(total),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 36,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         height: 1,
                         letterSpacing: -0.5,
                         color: textPrimary,
@@ -350,9 +350,9 @@ class _InvestorTaxReportsScreenState
                     ),
                     Text(
                       '.00',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 18,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w600,
                         color: muted,
                       ),
                     ),
@@ -376,8 +376,8 @@ class _InvestorTaxReportsScreenState
                   ),
                   label: Text(
                     'DOWNLOAD SUMMARY',
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 9,
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                     ),
@@ -409,7 +409,7 @@ class _InvestorTaxReportsScreenState
             padding: const EdgeInsets.fromLTRB(4, 8, 4, 12),
             child: Text(
               'AVAILABLE DOCUMENTS',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 2,
@@ -423,7 +423,7 @@ class _InvestorTaxReportsScreenState
               child: Center(
                 child: Text(
                   'No reports found for this year.',
-                  style: GoogleFonts.dmSerifDisplay(fontSize: 10, color: muted),
+                  style: GoogleFonts.ebGaramond(fontSize: 10, color: muted),
                 ),
               ),
             )
@@ -453,7 +453,7 @@ class _InvestorTaxReportsScreenState
     Color card,
     Color border,
   ) {
-    const red = Color(0xFFEF4444);
+    const red = Color(0xFFC65B46);
     final id = m['id']?.toString() ?? '';
     final name = m['name']?.toString() ?? 'Statement';
     final date = m['date']?.toString() ?? '';
@@ -514,7 +514,7 @@ class _InvestorTaxReportsScreenState
                           name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: textPrimary,
@@ -528,9 +528,9 @@ class _InvestorTaxReportsScreenState
                                 date.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w500,
+                                style: GoogleFonts.ebGaramond(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
                                   letterSpacing: 1,
                                   color: muted,
                                 ),
@@ -552,9 +552,9 @@ class _InvestorTaxReportsScreenState
                               ),
                               Text(
                                 size.toUpperCase(),
-                                style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w500,
+                                style: GoogleFonts.ebGaramond(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
                                   letterSpacing: 1,
                                   color: muted,
                                 ),

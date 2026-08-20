@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
@@ -26,7 +28,7 @@ class InvestorProfileDetailsScreen extends ConsumerStatefulWidget {
 
 class _InvestorProfileDetailsScreenState
     extends ConsumerState<InvestorProfileDetailsScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   final _name = TextEditingController();
   final _email = TextEditingController();
@@ -120,6 +122,17 @@ class _InvestorProfileDetailsScreenState
   }
 
   Future<void> _save() async {
+    final vErr =
+        Validators.nameError(_name.text, field: 'full name') ??
+        Validators.phoneError(_phone.text);
+    if (vErr != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(vErr), backgroundColor: Colors.red.shade700),
+        );
+      }
+      return;
+    }
     setState(() => _saving = true);
     try {
       final trimmed = _name.text.trim();
@@ -146,7 +159,7 @@ class _InvestorProfileDetailsScreenState
           setState(() => _editing = false);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFF10B981),
+              backgroundColor: Color(0xFF163A2C),
               content: Text('Profile updated successfully'),
             ),
           );
@@ -157,7 +170,7 @@ class _InvestorProfileDetailsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? 'Update failed'),
           ),
         );
@@ -169,7 +182,7 @@ class _InvestorProfileDetailsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(m ?? e.message ?? 'Network error'),
           ),
         );
@@ -193,7 +206,7 @@ class _InvestorProfileDetailsScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('File too large (max 2MB)'),
           ),
         );
@@ -213,7 +226,7 @@ class _InvestorProfileDetailsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFFE24B4A),
+              backgroundColor: Color(0xFFC65B46),
               content: Text('Upload failed'),
             ),
           );
@@ -230,7 +243,7 @@ class _InvestorProfileDetailsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFF10B981),
+              backgroundColor: Color(0xFF163A2C),
               content: Text('Profile photo updated'),
             ),
           );
@@ -242,7 +255,7 @@ class _InvestorProfileDetailsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: const Color(0xFFE24B4A),
+              backgroundColor: const Color(0xFFC65B46),
               content: Text(msg ?? 'Update failed'),
             ),
           );
@@ -255,7 +268,7 @@ class _InvestorProfileDetailsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(m ?? 'Upload failed'),
           ),
         );
@@ -268,10 +281,10 @@ class _InvestorProfileDetailsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -288,6 +301,9 @@ class _InvestorProfileDetailsScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -304,6 +320,8 @@ class _InvestorProfileDetailsScreenState
                       label: 'FULL NAME',
                       controller: _name,
                       icon: LucideIcons.user,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: Validators.nameFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -315,6 +333,7 @@ class _InvestorProfileDetailsScreenState
                       controller: _email,
                       icon: LucideIcons.mail,
                       keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -326,6 +345,7 @@ class _InvestorProfileDetailsScreenState
                       controller: _phone,
                       icon: LucideIcons.phone,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: Validators.phoneFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -408,9 +428,9 @@ class _InvestorProfileDetailsScreenState
               children: [
                 Text(
                   'MY PROFILE',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 15,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: -0.3,
                     color: textPrimary,
                   ),
@@ -418,8 +438,8 @@ class _InvestorProfileDetailsScreenState
                 const SizedBox(height: 2),
                 Text(
                   'MANAGE YOUR PERSONAL DETAILS',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: muted,
@@ -517,7 +537,7 @@ class _InvestorProfileDetailsScreenState
                         height: 26,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: const Color(0xFFF4EFE3),
                         ),
                       ),
                     ),
@@ -557,9 +577,9 @@ class _InvestorProfileDetailsScreenState
             ),
             child: Text(
               'PLATINUM MEMBER',
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 9,
-                fontWeight: FontWeight.w800,
+              style: GoogleFonts.gelasio(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: _gold,
               ),
@@ -579,6 +599,7 @@ class _InvestorProfileDetailsScreenState
     required bool isDark,
     required Color border,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     int maxLines = 1,
   }) {
     final enabled = _editing;
@@ -594,9 +615,9 @@ class _InvestorProfileDetailsScreenState
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
-              fontSize: 9,
-              fontWeight: FontWeight.w800,
+            style: GoogleFonts.gelasio(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: muted,
             ),
@@ -606,9 +627,10 @@ class _InvestorProfileDetailsScreenState
           controller: controller,
           enabled: enabled,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           maxLines: maxLines,
-          style: GoogleFonts.dmSerifDisplay(
-            fontSize: 14,
+          style: GoogleFonts.ebGaramond(
+            fontSize: 15,
             fontWeight: FontWeight.w600,
             color: enabled ? textPrimary : textPrimary.withValues(alpha: 0.8),
           ),
@@ -674,9 +696,9 @@ class _InvestorProfileDetailsScreenState
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             'DATE OF BIRTH',
-            style: GoogleFonts.dmSerifDisplay(
-              fontSize: 9,
-              fontWeight: FontWeight.w800,
+            style: GoogleFonts.gelasio(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: muted,
             ),
@@ -698,7 +720,7 @@ class _InvestorProfileDetailsScreenState
                 const SizedBox(width: 12),
                 Text(
                   display,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: _dob.isEmpty
@@ -747,7 +769,7 @@ class _InvestorProfileDetailsScreenState
                 ),
                 child: Text(
                   'CANCEL',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -780,9 +802,9 @@ class _InvestorProfileDetailsScreenState
                       )
                     : Text(
                         'SAVE CHANGES',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 11,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
                           color: Colors.black,
                         ),

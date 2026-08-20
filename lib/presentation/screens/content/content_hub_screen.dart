@@ -147,11 +147,14 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
             center: Alignment.topLeft,
             radius: 1.5,
             colors: isDark
-                ? [const Color(0xFF1A1A1A), const Color(0xFF0A0A0A)]
+                ? [const Color(0xFF141B3A), const Color(0xFF141B3A)]
                 : [scheme.surface, scheme.surfaceContainerLowest],
           ),
         ),
         child: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: Column(
             children: [
               // 🏷️ STANDARDIZED HEADER (Web Parity)
@@ -173,16 +176,16 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                       children: [
                         Text(
                           'M4 FAMILY',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 14,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2.5,
                             color: scheme.onSurface,
                           ),
                         ),
                         Text(
                           'DEVELOPMENTS',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 3.5,
@@ -230,9 +233,9 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                         const SizedBox(width: 15),
                         Text(
                           'CONTENT HUB',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 3,
                             color: scheme.onSurface,
                           ),
@@ -242,9 +245,9 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                     const SizedBox(height: 20),
                     Text(
                       _getTitle(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 32,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: scheme.onSurface,
                         letterSpacing: -1,
                         height: 0.9,
@@ -253,7 +256,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                     const SizedBox(height: 15),
                     Text(
                       _getSubtitle(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 14,
                         color: scheme.onSurface.withOpacity(0.68),
                         fontWeight: FontWeight.w500,
@@ -328,16 +331,16 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
               color: scheme.onSurface.withOpacity(0.06),
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Icon(_getIcon(), size: 40, color: scheme.onSurface),
           ),
           const SizedBox(height: 25),
           Text(
             'NO ${widget.type.toUpperCase()} POSTS FOUND',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 16,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               color: scheme.onSurface,
             ),
           ),
@@ -347,7 +350,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
             child: Text(
               "We're working on something amazing. Check back soon for fresh updates from our content hub.",
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 13,
                 color: scheme.onSurface.withOpacity(0.68),
                 height: 1.5,
@@ -438,9 +441,9 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                           ),
                           child: Text(
                             item['type'].toString().toUpperCase(),
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 7,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: scheme.onSurface.withOpacity(0.6),
                               letterSpacing: 1,
                             ),
@@ -448,7 +451,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                         ),
                         Text(
                           formattedDate,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
                             color: scheme.onSurface.withOpacity(0.62),
@@ -461,9 +464,9 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                       item['title'].toString().toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 14,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                         letterSpacing: -0.5,
                       ),
@@ -473,7 +476,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                       item['description'] ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 10,
                         color: scheme.onSurface.withOpacity(0.68),
                         fontWeight: FontWeight.w500,
@@ -485,9 +488,9 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                       children: [
                         Text(
                           'READ ARTICLE',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
                             letterSpacing: 1,
                           ),

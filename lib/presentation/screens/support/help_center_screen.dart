@@ -138,7 +138,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
           children: [
             Text(
               'SUPPORT INDEX',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: scheme.onSurface,
@@ -148,7 +148,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
             const SizedBox(height: 2),
             Text(
               'FAQ & GOVERNANCE',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 9,
                 fontWeight: FontWeight.w700,
                 color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
@@ -170,10 +170,10 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
       decoration: BoxDecoration(
         color: isDark
             ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
-            : Colors.white,
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.1),
         ),
         boxShadow: isDark
             ? null
@@ -189,17 +189,17 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
         controller: _searchController,
         onChanged: (value) =>
             setState(() => _searchQuery = value.toLowerCase()),
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.ebGaramond(
           color: scheme.onSurface,
-          fontSize: 12,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
           hintText: 'SEARCH FOR HELP...',
-          hintStyle: GoogleFonts.dmSerifDisplay(
+          hintStyle: GoogleFonts.ebGaramond(
             color: scheme.onSurface.withValues(alpha: 0.68),
             fontSize: 12,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.5,
           ),
           prefixIcon: Icon(
@@ -220,7 +220,10 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
                   },
                 )
               : null,
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
         ),
       ),
@@ -244,7 +247,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
       children: [
         Text(
           'FREQUENTLY ASKED QUESTIONS',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 9,
             fontWeight: FontWeight.w700,
             color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
@@ -276,10 +279,10 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
       decoration: BoxDecoration(
         color: isDark
             ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
-            : Colors.white,
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.1),
         ),
         boxShadow: isDark
             ? null
@@ -312,9 +315,9 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
           const SizedBox(height: 24),
           Text(
             'STILL NEED HELP?',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 20,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: scheme.onSurface,
               letterSpacing: 0.5,
             ),
@@ -322,7 +325,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
           const SizedBox(height: 6),
           Text(
             'OUR TEAM IS AVAILABLE 24/7',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.w700,
               color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
@@ -343,8 +346,8 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? Colors.white : Colors.black,
-                foregroundColor: isDark ? Colors.black : Colors.white,
+                backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -352,8 +355,8 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
               ),
               child: Text(
                 'CONTACT SUPPORT',
-                style: GoogleFonts.dmSerifDisplay(
-                  fontWeight: FontWeight.w900,
+                style: GoogleFonts.gelasio(
+                  fontWeight: FontWeight.w700,
                   fontSize: 11,
                   letterSpacing: 1.5,
                 ),
@@ -394,7 +397,7 @@ class _FaqCategory extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               title,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 9,
                 fontWeight: FontWeight.w700,
                 color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
@@ -408,12 +411,12 @@ class _FaqCategory extends StatelessWidget {
           decoration: BoxDecoration(
             color: isDark
                 ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
-                : Colors.white,
+                : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(24),
             // Web parity: a clean, visible thin outline border — the FAQ groups
             // read as outlined cards, not soft-shadow "floating" cards.
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                 alpha: 0.1,
               ),
             ),
@@ -435,7 +438,7 @@ class _FaqCategory extends StatelessWidget {
                   Divider(
                     height: 1,
                     thickness: 1,
-                    color: (isDark ? Colors.white : Colors.black).withValues(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                       alpha: 0.07,
                     ),
                   ),
@@ -485,9 +488,9 @@ class _FaqRowState extends State<_FaqRow> {
                       widget.question.toUpperCase(),
                       // Web parity: text-xs (12px) font-bold text-foreground —
                       // full-strength dark, heavier than the previous 11px/700.
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         color: scheme.onSurface,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         fontSize: 12,
                         letterSpacing: 0.2,
                         height: 1.3,
@@ -508,7 +511,7 @@ class _FaqRowState extends State<_FaqRow> {
                   padding: const EdgeInsets.only(top: 12),
                   child: Text(
                     widget.answer,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       color: scheme.onSurfaceVariant,
                       fontSize: 11,
                       fontWeight: FontWeight.w700,

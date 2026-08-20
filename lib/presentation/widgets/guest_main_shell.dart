@@ -1,4 +1,8 @@
+import 'package:m4_mobile/presentation/widgets/nav_swipe.dart';
+import 'package:m4_mobile/presentation/widgets/nav_style.dart';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/screens/home/guest_dashboard_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
@@ -25,29 +29,63 @@ class GuestMainShell extends ConsumerWidget {
     final currentIndex = ref.watch(guestNavigationProvider);
     final isDrawerOpen = ref.watch(drawerOpenProvider);
 
+    final bool appIsDark = Theme.of(context).brightness == Brightness.dark;
+
+    // LIGHT mode: Home (0) & Properties (1) are the deep-green "showcase"
+    // screens (white typography); the info tabs stay cream with green
+    // typography. DARK mode: everything inherits the navy theme.
+    Widget showcase(Widget child) => appIsDark
+        ? child
+        : Theme(data: M4Theme.darkTheme, child: child);
+
     final List<Widget> screens = [
-      const GuestDashboardScreen(), // 0: Home
-      const ProjectListScreen(), // 1: Projects
-      const AboutScreen(), // 2: About
-      const CareersScreen(), // 3: Careers
-      const ContactScreen(), // 4: Contact
+      showcase(const GuestDashboardScreen()), // 0: Home     — green
+      showcase(const ProjectListScreen()), // 1: Projects — green
+      const AboutScreen(), // 2: About    — cream
+      const CareersScreen(), // 3: Careers  — cream
+      const ContactScreen(), // 4: Contact  — cream
     ];
 
+    // Nav pill follows the active tab's surface: green on the showcase tabs,
+    // cream on the info tabs, navy in dark mode.
+    final ThemeData navTheme = appIsDark
+        ? M4Theme.darkThemeNavy
+        : (currentIndex <= 1 ? M4Theme.darkTheme : M4Theme.lightTheme);
+
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: navTheme.scaffoldBackgroundColor,
       drawer: const ConditionalDrawer(),
       onDrawerChanged: (isOpen) =>
           ref.read(drawerOpenProvider.notifier).state = isOpen,
       body: Stack(
         children: [
-          IndexedStack(index: currentIndex, children: screens),
+          // The pill floats above the content, so tell the screens how much
+          // room it takes: their scroll views add this as bottom inset and the
+          // last card can scroll clear of the nav instead of hiding under it.
+          MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              padding: MediaQuery.of(context).padding.copyWith(
+                bottom: MediaQuery.of(context).padding.bottom + _navFootprint,
+              ),
+            ),
+            child: NavSwipe(
+              index: currentIndex,
+              count: screens.length,
+              onIndexChanged: (i) =>
+                  ref.read(guestNavigationProvider.notifier).state = i,
+              child: IndexedStack(index: currentIndex, children: screens),
+            ),
+          ),
           if (!isDrawerOpen)
             Align(
               alignment: Alignment.bottomCenter,
-              child: _GuestNavigationPill(
-                currentIndex: currentIndex,
-                onTap: (index) =>
-                    ref.read(guestNavigationProvider.notifier).state = index,
+              child: Theme(
+                data: navTheme,
+                child: _GuestNavigationPill(
+                  currentIndex: currentIndex,
+                  onTap: (index) =>
+                      ref.read(guestNavigationProvider.notifier).state = index,
+                ),
               ),
             ),
         ],
@@ -55,6 +93,17 @@ class GuestMainShell extends ConsumerWidget {
     );
   }
 }
+
+// Guest pill runs one size up from the shared M4Nav metrics so it matches the
+// web reference. Kept local to this shell: M4Nav still drives the customer, CP
+// and investor bars unchanged.
+const double _guestNavHeight = 74;
+const double _guestNavDisc = 50;
+const double _guestNavIcon = 24;
+const double _guestNavInnerPadding = 10;
+
+/// Height the floating pill occupies: 74px bar + 14px bottom margin.
+const double _navFootprint = 92;
 
 class _GuestNavigationPill extends StatelessWidget {
   final int currentIndex;
@@ -65,25 +114,42 @@ class _GuestNavigationPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Frosted-glass pill: the surface follows the screen behind it (deep-green
+    // on the showcase tabs, cream on the info tabs, navy in dark), with a
+    // hairline border and a soft shadow — no heavy dark halo.
     return Container(
-      margin: const EdgeInsets.only(bottom: 48),
-      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(bottom: M4Nav.bottomInset),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.black.withOpacity(0.9)
-            : Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(100),
-        border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+        borderRadius: BorderRadius.circular(M4Nav.radius),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(M4Nav.radius),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: M4Nav.blur, sigmaY: M4Nav.blur),
+          child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: _guestNavInnerPadding, vertical: (_guestNavHeight - _guestNavDisc) / 2),
+      decoration: BoxDecoration(
+        // Frosted glass: a translucent tint over the 30px blur, with a top-down
+        // reflection so the bar reads as glass rather than a flat panel.
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: isDark
+              ? [
+                  Colors.white.withValues(alpha: 0.05),
+                  Colors.white.withValues(alpha: 0.01),
+                ]
+              : [
+                  Colors.white.withValues(alpha: 0.72),
+                  Colors.white.withValues(alpha: 0.38),
+                ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: (isDark ? Colors.black : Colors.grey).withValues(alpha: 0.4),
-            blurRadius: 40,
-            spreadRadius: 4,
-            offset: const Offset(0, 15),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(M4Nav.radius),
+        border: Border.all(
+          color: (isDark ? M4Theme.cream : Colors.white)
+              .withValues(alpha: isDark ? 0.16 : 0.65),
+          width: 1.2,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -119,6 +185,9 @@ class _GuestNavigationPill extends StatelessWidget {
           ),
         ],
       ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -139,18 +208,20 @@ class _NavIcon extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return _ScaleButton(
       onTap: onTap,
-      child: Container(
-        width: 56,
-        height: 56,
+      child: AnimatedContainer(
+        duration: M4Nav.animation,
+        curve: M4Nav.curve,
+        width: _guestNavDisc,
+        height: _guestNavDisc,
         decoration: BoxDecoration(
           color: isActive
-              ? (isDark ? Colors.white : Colors.black)
+              ? (isDark ? Colors.white : Color(0xFF163A2C))
               : Colors.transparent,
           shape: BoxShape.circle,
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.1,
                     ),
                     blurRadius: 10,
@@ -163,8 +234,8 @@ class _NavIcon extends StatelessWidget {
             icon,
             color: isActive
                 ? (isDark ? Colors.black : Colors.white)
-                : (isDark ? Colors.white70 : Colors.black54),
-            size: 24,
+                : (isDark ? Colors.white70 : Color(0xFF5E6B60)),
+            size: _guestNavIcon,
           ),
         ),
       ),

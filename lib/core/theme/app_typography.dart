@@ -27,7 +27,7 @@ class M4Type {
     double? letterSpacing,
     double? height,
     Color? color,
-  }) => GoogleFonts.dmSerifDisplay(
+  }) => GoogleFonts.ebGaramond(
     fontSize: fontSize,
     fontWeight: fontWeight,
     letterSpacing: letterSpacing,
@@ -42,7 +42,7 @@ class M4Type {
     double? letterSpacing,
     double? height,
     Color? color,
-  }) => GoogleFonts.dmSerifDisplay(
+  }) => GoogleFonts.ebGaramond(
     fontSize: fontSize,
     fontWeight: fontWeight,
     letterSpacing: letterSpacing,

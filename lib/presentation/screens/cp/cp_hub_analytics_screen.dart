@@ -63,7 +63,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
     final scheme = Theme.of(context).colorScheme;
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
-    const purple = Color(0xFFA855F7); // web hue
+    const purple = Color(0xFFC5A35B); // web hue
 
     final totalLeads = _asDouble(_data?['totalLeads']);
     final totalConv = _asDouble(_data?['totalConversions']);
@@ -88,7 +88,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
         ),
         title: Text(
           'Analytics',
-          style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w900),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600),
         ),
       ),
       body: _loading
@@ -98,9 +98,9 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
               children: [
                 Text(
                   'PORTFOLIO PERFORMANCE',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2.4,
                     color: scheme.onSurface.withValues(alpha: 0.68),
                   ),
@@ -157,9 +157,9 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                     const SizedBox(width: 8),
                     Text(
                       'Asset Allocation',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 12,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -175,7 +175,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   scheme,
                   label: 'Residential Luxury',
                   value: 25,
-                  color: const Color(0xFF60A5FA),
+                  color: const Color(0xFFC5A35B),
                 ),
                 _allocRow(
                   scheme,
@@ -202,9 +202,9 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                       children: [
                         Text(
                           'BACKEND (CP PERFORMANCE)',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2,
                             color: scheme.onSurface.withValues(alpha: 0.68),
                           ),
@@ -271,15 +271,15 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: selected == r
-                        ? const Color(0xFFA855F7)
+                        ? const Color(0xFFC5A35B)
                         : Colors.transparent,
                   ),
                   child: Text(
                     r,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1.4,
                       color: selected == r
                           ? Colors.white
@@ -314,9 +314,9 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: 1.1,
               color: scheme.onSurface.withValues(alpha: 0.68),
             ),
@@ -324,9 +324,9 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
           const SizedBox(height: 8),
           Text(
             value,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 12,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 6),
@@ -338,18 +338,18 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   trendUp ? LucideIcons.trendingUp : LucideIcons.activity,
                   size: 12,
                   color: trendUp
-                      ? const Color(0xFF34D399)
-                      : const Color(0xFFF87171),
+                      ? const Color(0xFF163A2C)
+                      : const Color(0xFFC65B46),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   change,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: trendUp
-                        ? const Color(0xFF34D399)
-                        : const Color(0xFFF87171),
+                        ? const Color(0xFF163A2C)
+                        : const Color(0xFFC65B46),
                   ),
                 ),
               ],
@@ -399,15 +399,15 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                 children: [
                   Text(
                     'Growth Trajectory',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     'Portfolio valuation over time',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurface.withValues(alpha: 0.68),
@@ -468,9 +468,9 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   child: Text(
                     _monthShort((m['_id'] ?? '').toString()),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.8,
                       color: scheme.onSurface.withValues(alpha: 0.68),
                     ),
@@ -499,18 +499,18 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
               Expanded(
                 child: Text(
                   label,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: scheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ),
               Text(
                 '$value%',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: scheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
@@ -554,7 +554,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
         Expanded(
           child: Text(
             k,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: scheme.onSurface.withValues(alpha: 0.65),
@@ -563,9 +563,9 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
         ),
         Text(
           v,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 11,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],

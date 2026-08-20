@@ -37,8 +37,8 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
     // not white — a hardcoded white active state is invisible on the light
     // glass sidebar.
     final accentColor = isInvestor
-        ? const Color(0xFFC5A358)
-        : Theme.of(context).colorScheme.onSurface;
+        ? const Color(0xFFC5A35B)
+        : const Color(0xFFF4EFE3);
 
     void navigateTo(int index) {
       final currentIndex = ref.read(navigationProvider);
@@ -71,7 +71,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.black.withOpacity(0.4)
-                    : Colors.white.withOpacity(0.4),
+                    : const Color(0xFF0C312B).withValues(alpha: 0.72),
                 border: Border(
                   right: BorderSide(
                     color:
@@ -97,10 +97,10 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                     children: [
                       Text(
                         isInvestor ? 'INVESTOR MENU' : 'MENU',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: Theme.of(context).colorScheme.onSurface,
+                        style: GoogleFonts.gelasio(
+                          color: Colors.white,
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 4,
                         ),
                       ),
@@ -271,12 +271,12 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         ),
                         child: Text(
                           'QUICK ACTIONS',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.68),
                             fontSize: 10,
-                            fontWeight: FontWeight.w900, // 👈 Match web bold
+                            fontWeight: FontWeight.w700, // 👈 Match web bold
                             letterSpacing: 4,
                           ),
                         ),
@@ -342,10 +342,10 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                           children: [
                             Text(
                               'THEME MODE',
-                              style: GoogleFonts.dmSerifDisplay(
-                                color: isDark ? Colors.white70 : Colors.black87,
+                              style: GoogleFonts.gelasio(
+                                color: isDark ? Colors.white70 : const Color(0xFFF4EFE3),
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                               ),
                             ),
@@ -360,20 +360,20 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                               child: Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: (isDark ? Colors.white : Colors.black)
+                                  color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                       .withOpacity(0.08),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color:
-                                        (isDark ? Colors.white : Colors.black)
+                                        (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                             .withOpacity(0.1),
                                   ),
                                 ),
                                 child: Icon(
                                   isDark
                                       ? LucideIcons.moon
-                                      : LucideIcons.sparkles,
-                                  color: isDark ? Colors.white : Colors.black,
+                                      : LucideIcons.sun,
+                                  color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                                   size: 18,
                                 ),
                               ),
@@ -418,13 +418,15 @@ class _SidebarExitButton extends ConsumerWidget {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: const Color(0xFF18181B),
+            backgroundColor: Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFF141B3A)
+                : const Color(0xFFF4EFE3),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
             title: Text(
               'Logout',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
@@ -432,7 +434,7 @@ class _SidebarExitButton extends ConsumerWidget {
             ),
             content: Text(
               'Are you sure you want to logout?',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 color: Colors.white70,
                 fontSize: 14,
               ),
@@ -442,7 +444,7 @@ class _SidebarExitButton extends ConsumerWidget {
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'CANCEL',
-                  style: GoogleFonts.dmSerifDisplay(color: Colors.blueAccent),
+                  style: GoogleFonts.ebGaramond(color: const Color(0xFFC5A35B)),
                 ),
               ),
               TextButton(
@@ -455,8 +457,8 @@ class _SidebarExitButton extends ConsumerWidget {
                 },
                 child: Text(
                   'LOGOUT',
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: Colors.redAccent,
+                  style: GoogleFonts.ebGaramond(
+                    color: const Color(0xFFC65B46),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -469,12 +471,12 @@ class _SidebarExitButton extends ConsumerWidget {
         width: double.infinity,
         height: 56, // 👈 Match web h-14 (14 * 4 = 56)
         decoration: BoxDecoration(
-          color: Colors.red.withOpacity(0.08),
+          color: const Color(0xFFC65B46).withOpacity(0.08),
           borderRadius: BorderRadius.circular(16), // 👈 Web rounded-2xl
-          border: Border.all(color: Colors.red.withOpacity(0.2), width: 1),
+          border: Border.all(color: const Color(0xFFC65B46).withOpacity(0.2), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.red.withOpacity(0.05),
+              color: const Color(0xFFC65B46).withOpacity(0.05),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -483,14 +485,14 @@ class _SidebarExitButton extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(LucideIcons.logOut, color: Color(0xFFEF4444), size: 16),
+            const Icon(LucideIcons.logOut, color: Color(0xFFC65B46), size: 16),
             const SizedBox(width: 12),
             Text(
               'LOG OUT',
-              style: GoogleFonts.dmSerifDisplay(
-                color: const Color(0xFFEF4444),
+              style: GoogleFonts.gelasio(
+                color: const Color(0xFFC65B46),
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 4,
               ),
             ),
@@ -573,16 +575,16 @@ class _SidebarItem extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                color: isActive ? activeColor : onSurface.withOpacity(0.4),
+                color: isActive ? activeColor : const Color(0xFFF4EFE3).withValues(alpha: 0.85),
                 size: 18,
               ),
             ),
             title: Text(
               label,
-              style: GoogleFonts.dmSerifDisplay(
-                color: isActive ? activeColor : onSurface.withOpacity(0.65),
+              style: GoogleFonts.ebGaramond(
+                color: isActive ? activeColor : const Color(0xFFF4EFE3),
                 fontSize: 14,
-                fontWeight: isActive ? FontWeight.w900 : FontWeight.w700,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                 letterSpacing: -0.2,
               ),
             ),
@@ -624,11 +626,11 @@ class _SidebarDropdown extends StatelessWidget {
           isActive: isOpen,
           // Theme-aware active colour: black in light mode, white in dark
           // (was hardcoded white → invisible/wrong on the light sidebar).
-          activeColor: Theme.of(context).colorScheme.onSurface,
+          activeColor: Colors.white,
           onTap: onToggle,
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+            color: const Color(0xFFF4EFE3).withValues(alpha: 0.85),
             size: 16,
           ),
         ),
@@ -664,17 +666,17 @@ class _SidebarSubItem extends StatelessWidget {
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          color: onSurface.withOpacity(0.06),
+          color: Colors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(icon, color: onSurface.withOpacity(0.6), size: 15),
+        child: Icon(icon, color: const Color(0xFFF4EFE3).withValues(alpha: 0.9), size: 15),
       ),
       title: Text(
         label,
-        style: GoogleFonts.dmSerifDisplay(
-          color: onSurface.withOpacity(0.85),
-          fontSize: 12.5,
-          fontWeight: FontWeight.w700,
+        style: GoogleFonts.ebGaramond(
+          color: const Color(0xFFF4EFE3),
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

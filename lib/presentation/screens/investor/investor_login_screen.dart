@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 /// Mirrors web `app/investor/login/page.tsx`: premium gold landing → credentials,
@@ -16,8 +18,9 @@ class InvestorLoginScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
-  static const _gold = Color(0xFFFFD700);
-  static const _amber = Color(0xFFF59E0B);
+  static const _gold = Colors.white;
+  static const _amber = Colors.white;
+  static const _deepGreen = Color(0xFF0C312B);
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -37,8 +40,18 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
     if (email.isEmpty || pw.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Please provide your Email and Password'),
+        ),
+      );
+      return;
+    }
+    final emailErr = Validators.emailError(email);
+    if (emailErr != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFC65B46),
+          content: Text(emailErr),
         ),
       );
       return;
@@ -49,7 +62,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
     if (!mounted) return;
     if (err != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(backgroundColor: const Color(0xFFE24B4A), content: Text(err)),
+        SnackBar(backgroundColor: const Color(0xFFC65B46), content: Text(err)),
       );
     }
   }
@@ -67,8 +80,11 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0C312B),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Column(
@@ -88,7 +104,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                   icon: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
+                      color: const Color(0xFFF4EFE3).withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: Colors.white.withValues(alpha: 0.1),
@@ -139,10 +155,10 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
         Text(
           'INVESTOR',
           textAlign: TextAlign.center,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 38,
-            fontWeight: FontWeight.w900,
-            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFFF4EFE3),
             height: 1.0,
             letterSpacing: -1,
           ),
@@ -150,9 +166,9 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
         Text(
           'PORTAL',
           textAlign: TextAlign.center,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 38,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: _gold,
             height: 1.0,
             letterSpacing: -1,
@@ -162,10 +178,10 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
         Text(
           'PREMIUM ACCESS • ELITE DASHBOARD',
           textAlign: TextAlign.center,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
             fontWeight: FontWeight.w700,
-            color: Colors.white54,
+            color: Colors.white70,
             letterSpacing: 3,
           ),
         ),
@@ -188,7 +204,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             onPressed: () => setState(() => _step = 1),
             style: FilledButton.styleFrom(
               backgroundColor: _amber,
-              foregroundColor: Colors.black,
+              foregroundColor: _deepGreen,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -198,8 +214,8 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
               children: [
                 Text(
                   'ACCESS INVESTOR HUB',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.gelasio(
+                    fontWeight: FontWeight.w700,
                     fontSize: 12,
                     letterSpacing: 1.5,
                   ),
@@ -207,7 +223,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: _deepGreen.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(LucideIcons.arrowRight, size: 18),
@@ -228,10 +244,10 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             const SizedBox(width: 8),
             Text(
               'INSTITUTIONAL GRADE SECURITY',
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 9,
-                fontWeight: FontWeight.w800,
-                color: Colors.white38,
+              style: GoogleFonts.gelasio(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: Colors.white70,
                 letterSpacing: 2.5,
               ),
             ),
@@ -269,18 +285,18 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                 children: [
                   Text(
                     'INVESTOR',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 22,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFFF4EFE3),
                       height: 1.0,
                     ),
                   ),
                   Text(
                     'CREDENTIALS',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 18,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: _gold,
                       height: 1.1,
                     ),
@@ -293,10 +309,10 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
         const SizedBox(height: 8),
         Text(
           'SECURE INSTITUTIONAL ACCESS GATEWAY',
-          style: GoogleFonts.dmSerifDisplay(
-            fontSize: 9,
+          style: GoogleFonts.gelasio(
+            fontSize: 11,
             fontWeight: FontWeight.w700,
-            color: Colors.white54,
+            color: Colors.white70,
             letterSpacing: 2.5,
           ),
         ),
@@ -307,6 +323,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
           icon: LucideIcons.mail,
           hint: 'investor@institution.com',
           keyboardType: TextInputType.emailAddress,
+          inputFormatters: Validators.emailFormatters,
         ),
         const SizedBox(height: 24),
         _Field(
@@ -331,7 +348,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             onPressed: loading ? null : _submit,
             style: FilledButton.styleFrom(
               backgroundColor: _amber,
-              foregroundColor: Colors.black,
+              foregroundColor: _deepGreen,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -343,16 +360,13 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                       const SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.black,
-                        ),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: _deepGreen),
                       ),
                       const SizedBox(width: 12),
                       Text(
                         'AUTHENTICATING',
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontWeight: FontWeight.w900,
+                        style: GoogleFonts.gelasio(
+                          fontWeight: FontWeight.w700,
                           fontSize: 12,
                           letterSpacing: 1.5,
                         ),
@@ -364,8 +378,8 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                     children: [
                       Text(
                         'LOGIN',
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontWeight: FontWeight.w900,
+                        style: GoogleFonts.gelasio(
+                          fontWeight: FontWeight.w700,
                           fontSize: 13,
                           letterSpacing: 1.5,
                         ),
@@ -373,7 +387,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: _deepGreen.withValues(alpha: 0.12),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(LucideIcons.arrowRight, size: 18),
@@ -387,10 +401,10 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
           child: Text(
             'INVESTOR PORTAL v3.0\nPOWERED BY M4 FAMILY CAPITAL',
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
-              fontSize: 9,
-              fontWeight: FontWeight.w800,
-              color: Colors.white38,
+            style: GoogleFonts.gelasio(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: Colors.white70,
               letterSpacing: 2,
               height: 1.6,
             ),
@@ -419,14 +433,14 @@ class _FeaturePill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: const Color(0xFFF59E0B)),
+          Icon(icon, size: 14, color: Colors.white),
           const SizedBox(width: 8),
           Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
-              fontSize: 9,
+            style: GoogleFonts.gelasio(
+              fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: const Color(0xFFF4EFE3),
               letterSpacing: 1.5,
             ),
           ),
@@ -443,6 +457,7 @@ class _Field extends StatelessWidget {
   final String? hint;
   final bool obscure;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
   final Widget? suffix;
 
   const _Field({
@@ -452,6 +467,7 @@ class _Field extends StatelessWidget {
     this.hint,
     this.obscure = false,
     this.keyboardType,
+    this.inputFormatters,
     this.suffix,
   });
 
@@ -462,10 +478,10 @@ class _Field extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
-            fontSize: 9,
+          style: GoogleFonts.gelasio(
+            fontSize: 11,
             fontWeight: FontWeight.bold,
-            color: Colors.white54,
+            color: Colors.white70,
             letterSpacing: 2,
           ),
         ),
@@ -474,18 +490,19 @@ class _Field extends StatelessWidget {
           controller: controller,
           obscureText: obscure,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           // Field sits on a black background — force a visible amber cursor
           // (default cursor inherits the light-theme primary and is invisible).
-          cursorColor: const Color(0xFFF59E0B),
+          cursorColor: Colors.white,
           cursorWidth: 2,
           cursorRadius: const Radius.circular(2),
           style: const TextStyle(
-            color: Colors.white,
+            color: const Color(0xFFF4EFE3),
             fontWeight: FontWeight.w600,
           ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.35)),
+            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.72)),
             prefixIcon: Icon(icon, color: Colors.white54),
             suffixIcon: suffix,
             filled: true,
@@ -505,7 +522,7 @@ class _Field extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(
-                color: Color(0xFFF59E0B),
+                color: const Color(0xFFF4EFE3),
                 width: 1.2,
               ),
             ),

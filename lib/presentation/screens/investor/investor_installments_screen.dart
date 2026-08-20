@@ -22,7 +22,7 @@ class InvestorInstallmentsScreen extends ConsumerStatefulWidget {
 
 class _InvestorInstallmentsScreenState
     extends ConsumerState<InvestorInstallmentsScreen> {
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
 
   bool _loading = true;
   bool _error = false;
@@ -153,11 +153,11 @@ class _InvestorInstallmentsScreenState
   Color _statusColor(String status) {
     switch (status) {
       case 'PAID':
-        return const Color(0xFF34D399); // green
+        return const Color(0xFF163A2C); // green
       case 'OVERDUE':
-        return const Color(0xFFF87171); // red
+        return const Color(0xFFC65B46); // red
       default:
-        return const Color(0xFFFBBF24); // amber
+        return const Color(0xFFC65B46); // amber
     }
   }
 
@@ -188,9 +188,9 @@ class _InvestorInstallmentsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -209,6 +209,9 @@ class _InvestorInstallmentsScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             // ─── Header ─────────────────────────────────
@@ -224,7 +227,7 @@ class _InvestorInstallmentsScreenState
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withValues(alpha: 0.04),
                         shape: BoxShape.circle,
                         border: Border.all(color: border),
@@ -243,9 +246,9 @@ class _InvestorInstallmentsScreenState
                       children: [
                         Text(
                           'INSTALLMENT SCHEDULE',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 20,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: -0.5,
                             color: textPrimary,
                           ),
@@ -253,9 +256,9 @@ class _InvestorInstallmentsScreenState
                         const SizedBox(height: 2),
                         Text(
                           'PAYMENT PLAN',
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w900,
+                          style: GoogleFonts.gelasio(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2,
                             color: muted,
                           ),
@@ -360,7 +363,7 @@ class _InvestorInstallmentsScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.02),
+        color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.02),
         border: Border(bottom: BorderSide(color: border)),
       ),
       child: Row(
@@ -369,7 +372,7 @@ class _InvestorInstallmentsScreenState
             child: _statTile(
               label: 'PAID',
               value: _formatAmount(totalPaid),
-              color: const Color(0xFF34D399),
+              color: const Color(0xFF163A2C),
               muted: muted,
             ),
           ),
@@ -379,7 +382,7 @@ class _InvestorInstallmentsScreenState
             child: _statTile(
               label: 'DUE / REMAINING',
               value: _formatAmount(totalDue),
-              color: const Color(0xFFFBBF24),
+              color: const Color(0xFFC65B46),
               muted: muted,
             ),
           ),
@@ -399,9 +402,9 @@ class _InvestorInstallmentsScreenState
       children: [
         Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
-            fontSize: 8,
-            fontWeight: FontWeight.w900,
+          style: GoogleFonts.gelasio(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
             color: muted,
           ),
@@ -409,9 +412,9 @@ class _InvestorInstallmentsScreenState
         const SizedBox(height: 6),
         Text(
           value,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 15,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: color,
           ),
         ),
@@ -435,7 +438,7 @@ class _InvestorInstallmentsScreenState
         runSpacing: 8,
         children: _filters.map((f) {
           final active = _activeFilter == f;
-          const activeColor = Color(0xFFFBBF24);
+          const activeColor = Color(0xFFC65B46);
           return GestureDetector(
             onTap: () => setState(() => _activeFilter = f),
             child: Container(
@@ -443,7 +446,7 @@ class _InvestorInstallmentsScreenState
               decoration: BoxDecoration(
                 color: active
                     ? activeColor.withValues(alpha: 0.1)
-                    : (isDark ? Colors.white : Colors.black).withValues(
+                    : (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                         alpha: 0.03,
                       ),
                 borderRadius: BorderRadius.circular(8),
@@ -453,9 +456,9 @@ class _InvestorInstallmentsScreenState
               ),
               child: Text(
                 (f == 'All' ? 'All' : _statusLabel(f)).toUpperCase(),
-                style: GoogleFonts.dmSerifDisplay(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w800,
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 1,
                   color: active ? activeColor : muted,
                 ),
@@ -476,7 +479,7 @@ class _InvestorInstallmentsScreenState
     required Color muted,
   }) {
     final color = _statusColor(item.status);
-    final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -518,7 +521,7 @@ class _InvestorInstallmentsScreenState
                   item.milestoneName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: textPrimary,
@@ -529,9 +532,9 @@ class _InvestorInstallmentsScreenState
                   item.projectTitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w500,
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
                     color: muted,
                   ),
                 ),
@@ -546,9 +549,9 @@ class _InvestorInstallmentsScreenState
                     const SizedBox(width: 4),
                     Text(
                       item.dueDate,
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w500,
+                      style: GoogleFonts.ebGaramond(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
                         color: muted,
                       ),
                     ),
@@ -564,9 +567,9 @@ class _InvestorInstallmentsScreenState
             children: [
               Text(
                 _formatAmount(item.amount),
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 14,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: textPrimary,
                 ),
               ),
@@ -580,9 +583,9 @@ class _InvestorInstallmentsScreenState
                 ),
                 child: Text(
                   _statusLabel(item.status).toUpperCase(),
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 0.8,
                     color: color,
                   ),
@@ -612,9 +615,9 @@ class _InvestorInstallmentsScreenState
             Text(
               'NO INSTALLMENTS FOUND',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
                 color: muted,
               ),
@@ -623,9 +626,9 @@ class _InvestorInstallmentsScreenState
             Text(
               'Your payment schedule will appear here once an investment is confirmed.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 height: 1.5,
                 color: muted,
               ),
@@ -653,9 +656,9 @@ class _InvestorInstallmentsScreenState
             Text(
               'COULD NOT LOAD SCHEDULE',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
                 color: textPrimary,
               ),
@@ -664,9 +667,9 @@ class _InvestorInstallmentsScreenState
             Text(
               'Please check your connection and try again.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: muted,
               ),
             ),
@@ -684,11 +687,11 @@ class _InvestorInstallmentsScreenState
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
-                    color: Colors.white,
+                    color: const Color(0xFFF4EFE3),
                   ),
                 ),
               ),

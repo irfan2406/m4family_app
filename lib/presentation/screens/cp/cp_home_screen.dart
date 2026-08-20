@@ -10,7 +10,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/project_highlights.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
@@ -144,23 +147,13 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
   /// Validates in place: every problem is shown ON the field it belongs to
   /// (red border + message) rather than as a toast over the page.
   bool _validateInterest() {
-    final name = _nameController.text.trim();
-    final email = _emailController.text.trim();
-    final phone = _phoneController.text.trim();
-    final phoneDigits = phone.replaceAll(RegExp(r'\D'), '');
-    final emailValid = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$').hasMatch(email);
-
-    final nameErr = name.isEmpty
-        ? 'Please enter your full name'
-        : (name.length < 2 ? 'Please enter a valid name' : null);
-    final emailErr = email.isEmpty
-        ? 'Please enter your email address'
-        : (!emailValid ? 'Please enter a valid email address' : null);
-    final phoneErr = phone.isEmpty
-        ? 'Please enter your phone number'
-        : (phoneDigits.length < 10
-              ? 'Please enter a valid 10-digit phone number'
-              : null);
+    // Shared rules: name = letters only, email = proper format, phone = 10-digit.
+    final nameErr = Validators.nameError(
+      _nameController.text,
+      field: 'full name',
+    );
+    final emailErr = Validators.emailError(_emailController.text);
+    final phoneErr = Validators.phoneError(_phoneController.text);
 
     setState(() {
       _nameError = nameErr;
@@ -234,7 +227,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(msg),
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -314,16 +307,12 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         width: 56,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black,
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
-                          LucideIcons.moreHorizontal,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.black
-                              : Colors.white,
+                          LucideIcons.menu,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
                           size: 24,
                         ),
                       ),
@@ -340,55 +329,20 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Tagline (Living the M4 Life) — script image, not text.
-                Transform.translate(
-                  offset: const Offset(0, -50),
-                  child: ColorFiltered(
-                    colorFilter: ColorFilter.matrix(
-                      Theme.of(context).brightness == Brightness.dark
-                          ? const [
-                              // Dark Mode: Invert and boost to white
-                              -5.0, 0, 0, 0, 255,
-                              0, -5.0, 0, 0, 255,
-                              0, -5.0, 0, 0, 255,
-                              0, 0, 0, 1, 0,
-                            ]
-                          : const [
-                              // Light Mode: Crush to black
-                              5.0, 0, 0, 0, -150,
-                              0, 5.0, 0, 0, -150,
-                              0, 0, 5.0, 0, -150,
-                              0, 0, 0, 1, 0,
-                            ],
-                    ),
-                    child: Image.asset(
-                      'assets/living_m4_life.png',
-                      width: MediaQuery.of(context).size.width,
-                      height: 200,
-                      fit: BoxFit.fitWidth,
-                    ),
-                  ),
+                // Guest parity: natural flow with a small top gap (no -50
+                // translate), so it never touches the logo or the hero.
+                Padding(
+                  padding: const EdgeInsets.only(top: 12, bottom: 8),
+                  child: M4Theme.taglineWordmark(context, height: 120),
                 ),
 
-                // Hero carousel (4:3, auto-cycle, badge, dots).
-                // The hero is painted 110px up (Transform), leaving dead space at
-                // the bottom of its box. We shrink the box by 60px so the tabs
-                // below can drop their own upward Transform (which made their
-                // buttons un-tappable) while keeping the exact same layout.
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final heroH = (constraints.maxWidth - 48) * 3 / 4;
-                    return SizedBox(
-                      height: heroH > 60 ? heroH - 60 : heroH,
-                      child: OverflowBox(
-                        minHeight: 0,
-                        maxHeight: double.infinity,
-                        alignment: Alignment.topCenter,
-                        child: Transform.translate(
-                          offset: const Offset(0, -110),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            child: Builder(
-                              builder: (context) {
+                // Hero carousel (4:3, auto-cycle, badge, dots). Guest parity:
+                // natural flow (no OverflowBox / -110 translate / box shrink) so
+                // spacing above (tagline) and below (tabs) matches the guest home.
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Builder(
+                    builder: (context) {
                                 // Web parity: the hero cycles the FEATURED
                                 // project's 3 media slides, not different projects.
                                 final featured = _projects.isNotEmpty
@@ -502,10 +456,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                         ),
                                         child: Text(
                                           'ARTISTIC IMPRESSION',
-                                          style: GoogleFonts.dmSerifDisplay(
+                                          style: GoogleFonts.gelasio(
                                             color: Colors.white,
                                             fontSize: 7,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.w700,
                                             letterSpacing: 1.5,
                                           ),
                                         ),
@@ -550,22 +504,20 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                               },
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
               ],
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.only(bottom: 32),
+            padding: const EdgeInsets.only(bottom: 96),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  // Guest parity: 40px top gap so the tabs sit below the hero
+                  // with breathing room (was flush against the image).
+                  padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
                   child: _buildTabsSection(),
                 ),
+                const SizedBox(height: 48),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildPhilosophy(),
@@ -582,7 +534,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildInterestForm(),
                 ),
-                const SizedBox(height: 120),
+                const SizedBox(height: 96),
               ]),
             ),
           ),
@@ -633,7 +585,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     double errorIconSize = 64,
   }) {
     Widget errorBox() => Container(
-      color: const Color(0xFF1A1A1A),
+      color: const Color(0xFF141B3A),
       child: Center(
         child: Icon(errorIcon, color: Colors.white24, size: errorIconSize),
       ),
@@ -683,7 +635,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
       children: [
         Text(
           'OUR PHILOSOPHY',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 32,
             fontWeight: FontWeight.w400,
             color: Theme.of(context).colorScheme.onSurface,
@@ -693,7 +645,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         const SizedBox(height: 24),
         RichText(
           text: TextSpan(
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               color: Theme.of(
                 context,
               ).colorScheme.onSurface.withValues(alpha: 0.6),
@@ -710,8 +662,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   onTap: () => context.push('/cp/about'),
                   child: Text(
                     'Who We Are',
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: isDark ? Colors.white : Colors.black,
+                    style: GoogleFonts.ebGaramond(
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
                     ),
@@ -753,13 +705,13 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           children: [
                             Text(
                               tab.toUpperCase(),
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 color: isSelected
-                                    ? (isDark ? Colors.white : Colors.black)
-                                    : (isDark ? Colors.white : Colors.black)
+                                    ? (isDark ? Colors.white : Color(0xFF163A2C))
+                                    : (isDark ? Colors.white : Color(0xFF163A2C))
                                           .withValues(alpha: 0.68),
                                 fontSize: 12,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                               ),
                             ),
@@ -769,7 +721,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                 width: 24,
                                 height: 2,
                                 decoration: BoxDecoration(
-                                  color: isDark ? Colors.white : Colors.black,
+                                  color: isDark ? Colors.white : Color(0xFF163A2C),
                                   borderRadius: BorderRadius.circular(1),
                                 ),
                               ),
@@ -922,7 +874,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           ? 'MEDIA'
                           : (item['status']?.toString() ?? 'ONGOING')
                                 .toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         color: Colors.white,
                         fontSize: 8,
                         fontWeight: FontWeight.w400,
@@ -945,7 +897,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       (item['title'] ?? item['name'] ?? '')
                           .toString()
                           .toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         color: Colors.white,
                         fontSize: 22,
                         fontWeight: FontWeight.w400,
@@ -963,10 +915,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           .toUpperCase(),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         letterSpacing: 0.5,
                         height: 1.4,
                       ),
@@ -979,7 +931,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           isCommunity
                               ? 'EXPLORE COMMUNITY'
                               : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w400,
@@ -1040,10 +992,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         width: 288,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF15171C) : Colors.white,
-          borderRadius: BorderRadius.circular(32),
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
               alpha: 0.08,
             ),
           ),
@@ -1056,7 +1008,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -1083,7 +1035,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         ),
                         child: Text(
                           status,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             color: Colors.white,
                             fontSize: 8,
                             fontWeight: FontWeight.w400,
@@ -1109,10 +1061,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         ),
                         child: Text(
                           'ARTISTIC IMPRESSION',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             color: Colors.white,
                             fontSize: 6,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                           ),
                         ),
@@ -1132,9 +1084,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 18,
-                        color: isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -1144,7 +1096,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         Icon(
                           LucideIcons.mapPin,
                           size: 12,
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withValues(alpha: 0.5),
                         ),
                         const SizedBox(width: 6),
@@ -1153,11 +1105,11 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                             location,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.5,
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withValues(alpha: 0.68),
                             ),
                           ),
@@ -1168,7 +1120,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     Container(
                       height: 44,
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -1176,10 +1128,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         children: [
                           Text(
                             'READ MORE',
-                            style: GoogleFonts.dmSerifDisplay(
-                              color: isDark ? Colors.black : Colors.white,
+                            style: GoogleFonts.gelasio(
+                              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 2,
                             ),
                           ),
@@ -1187,7 +1139,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           Icon(
                             LucideIcons.chevronRight,
                             size: 14,
-                            color: isDark ? Colors.black : Colors.white,
+                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           ),
                         ],
                       ),
@@ -1215,7 +1167,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
             'FEATURED PROPERTY',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 32,
               fontWeight: FontWeight.w400,
               color: Theme.of(context).colorScheme.onSurface,
@@ -1286,10 +1238,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       ),
                       child: Text(
                         'ARTISTIC IMPRESSION',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           color: Colors.white,
                           fontSize: 7,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -1305,8 +1257,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       children: [
                         Text(
                           'FEATURED PROPERTY',
-                          style: GoogleFonts.dmSerifDisplay(
-                            color: const Color(0xFFC4A484),
+                          style: GoogleFonts.gelasio(
+                            color: const Color(0xFFF4EFE3),
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 1.8,
@@ -1318,10 +1270,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         // weight, text-4xl, tracking-tight.
                         Text(
                           (project['title'] ?? '').toString(),
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 36,
-                            fontWeight: FontWeight.w300,
+                            fontWeight: FontWeight.w500,
                             height: 1,
                             letterSpacing: -0.5,
                           ),
@@ -1333,7 +1285,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                               .toUpperCase(),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             color: Colors.white.withValues(alpha: 0.8),
                             fontSize: 10,
                             height: 1.5,
@@ -1356,14 +1308,14 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Web parity: USPs come from the featured project's backend
+            // `highlights` (e.g. ["Prime Location", "20 min from Airport"]),
+            // not a hardcoded pair. Each is Expanded so its label wraps.
             children: [
-              _buildFeatureIcon(LucideIcons.building2, 'FULLY\nFURNISHED'),
-              _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
-              _buildFeatureIcon(
-                LucideIcons.smartphone,
-                '20 MIN FROM\nSHEIKH ZAYED RD',
-              ),
+              for (final h in projectHighlights(project).take(3))
+                Expanded(
+                  child: _buildFeatureIcon(highlightIcon(h), h.toUpperCase()),
+                ),
             ],
           ),
         ),
@@ -1389,14 +1341,14 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                         alpha: 0.1,
                       ),
                     ),
                   ),
                   child: Icon(
                     LucideIcons.arrowLeft,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     size: 20,
                   ),
                 ),
@@ -1411,7 +1363,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   child: Container(
                     height: 56,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
@@ -1424,9 +1376,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     child: Center(
                       child: Text(
                         'READ MORE',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: isDark ? Colors.black : Colors.white,
-                          fontWeight: FontWeight.w900,
+                        style: GoogleFonts.gelasio(
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          fontWeight: FontWeight.w700,
                           fontSize: 12,
                           letterSpacing: 3,
                         ),
@@ -1448,14 +1400,14 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                         alpha: 0.1,
                       ),
                     ),
                   ),
                   child: Icon(
                     LucideIcons.arrowRight,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     size: 20,
                   ),
                 ),
@@ -1471,15 +1423,15 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
-        Icon(icon, color: isDark ? Colors.white : Colors.black, size: 24),
+        Icon(icon, color: isDark ? Colors.white : Color(0xFF163A2C), size: 24),
         const SizedBox(height: 8),
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.dmSerifDisplay(
-            color: isDark ? Colors.white : Colors.black,
+          style: GoogleFonts.gelasio(
+            color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 9,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
           ),
         ),
@@ -1495,7 +1447,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         // Header (Matched with Register Interest)
         Text(
           'EXPLORE, CONNECT\nAND ENGAGE WITH US',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 32,
             fontWeight: FontWeight.w400,
             color: Theme.of(context).colorScheme.onSurface,
@@ -1511,9 +1463,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             color: isDark
                 ? Colors.white.withValues(alpha: 0.03)
                 : Colors.black.withValues(alpha: 0.02),
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                 alpha: 0.08,
               ),
             ),
@@ -1526,7 +1478,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             child: GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -1591,19 +1543,19 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.05,
                 ),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.1,
                   ),
                 ),
               ),
               child: Icon(
                 icon,
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 size: 20,
               ),
             ),
@@ -1611,10 +1563,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
-                color: isDark ? Colors.white : Colors.black,
-                fontWeight: FontWeight.w900,
-                fontSize: 10,
+              style: GoogleFonts.ebGaramond(
+                color: isDark ? Colors.white : Color(0xFF163A2C),
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
                 letterSpacing: 1,
               ),
             ),
@@ -1622,11 +1574,11 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             Text(
               desc,
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+              style: GoogleFonts.ebGaramond(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.68,
                 ),
-                fontSize: 8,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
               ),
@@ -1645,8 +1597,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
       children: [
         Text(
           'REGISTER YOUR\nINTEREST',
-          style: GoogleFonts.dmSerifDisplay(
-            color: isDark ? Colors.white : Colors.black,
+          style: GoogleFonts.gelasio(
+            color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 32,
             fontWeight: FontWeight.w400,
             letterSpacing: -1,
@@ -1657,6 +1609,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         _buildLuxuryInput(
           'Full Name *',
           _nameController,
+          keyboardType: TextInputType.name,
+          inputFormatters: Validators.nameFormatters,
           errorText: _nameError,
           // Clear the red state as soon as they start typing.
           onChanged: (v) {
@@ -1667,6 +1621,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         _buildLuxuryInput(
           'Email *',
           _emailController,
+          keyboardType: TextInputType.emailAddress,
+          inputFormatters: Validators.emailFormatters,
           errorText: _emailError,
           onChanged: (v) {
             if (_emailError != null) setState(() => _emailError = null);
@@ -1677,6 +1633,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           'Phone Number *',
           _phoneController,
           keyboardType: TextInputType.phone,
+          inputFormatters: Validators.phoneFormatters,
           hint: '+91',
           errorText: _phoneError,
           onChanged: (v) {
@@ -1695,11 +1652,11 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 _agreedToTerms = val ?? false;
                 if (_agreedToTerms) _termsError = false;
               }),
-              activeColor: isDark ? Colors.white : Colors.black,
-              checkColor: isDark ? Colors.black : Colors.white,
+              activeColor: isDark ? Colors.white : Color(0xFF163A2C),
+              checkColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
               side: BorderSide(
                 color: _termsError
-                    ? const Color(0xFFE24B4A)
+                    ? const Color(0xFFC65B46)
                     : (isDark ? Colors.white24 : Colors.black26),
                 width: _termsError ? 1.8 : 1,
               ),
@@ -1707,10 +1664,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             Expanded(
               child: Text(
                 "I've read and agree to the Privacy Policy",
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   color: _termsError
-                      ? const Color(0xFFE24B4A)
-                      : (isDark ? Colors.white54 : Colors.black54),
+                      ? const Color(0xFFC65B46)
+                      : (isDark ? Colors.white54 : Color(0xFF5E6B60)),
                   fontSize: 11,
                   letterSpacing: 1,
                 ),
@@ -1726,18 +1683,18 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             onTap: _submitting ? () {} : _submitInterest,
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
                 child: _submitting
                     ? CircularProgressIndicator(
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       )
                     : Text(
                         'SUBMIT INTEREST',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: isDark ? Colors.black : Colors.white,
+                        style: GoogleFonts.ebGaramond(
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w400,
                           letterSpacing: 2,
                         ),
@@ -1755,6 +1712,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     TextEditingController controller, {
     bool isLong = false,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     String? hint,
     // When set, the field turns red and shows the message underneath — keeps
     // validation on the field instead of a toast over the page.
@@ -1763,18 +1721,22 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasError = errorText != null;
-    const errorColor = Color(0xFFE24B4A);
+    const errorColor = Color(0xFFC65B46);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           decoration: BoxDecoration(
-            color: isDark ? Colors.black : Colors.white,
+            // Frosted field: translucent white on the green/navy surfaces, cream on
+            // the light ones - never a solid black box.
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: hasError
                   ? errorColor
-                  : (isDark ? Colors.white : Colors.black).withValues(
+                  : (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                       alpha: 0.12,
                     ),
               width: hasError ? 1.5 : 1,
@@ -1790,14 +1752,16 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   ],
           ),
           child: TextField(
+            cursorColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
             controller: controller,
             keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             onChanged: onChanged,
-            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+            style: TextStyle(color: isDark ? Colors.white : Color(0xFF163A2C)),
             maxLines: isLong ? 5 : 1,
             decoration: InputDecoration(
               hintText: hint ?? label,
-              hintStyle: GoogleFonts.dmSerifDisplay(
+              hintStyle: GoogleFonts.ebGaramond(
                 color: hasError
                     ? errorColor.withValues(alpha: 0.75)
                     : (isDark ? Colors.white54 : Colors.black45),
@@ -1807,7 +1771,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 horizontal: 24,
                 vertical: 20,
               ),
+              filled: false,
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
             ),
           ),
         ),
@@ -1816,7 +1783,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             padding: const EdgeInsets.only(left: 10, top: 6),
             child: Text(
               errorText,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 color: errorColor,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
@@ -70,6 +71,9 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(),
@@ -149,10 +153,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           ),
           Text(
             'REWARDS HUB',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               color: foreground,
               fontSize: 14,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
             ),
           ),
@@ -164,7 +168,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
   Widget _buildPremiumRewardsCard() {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final cardBg = isDark ? theme.cardColor : const Color(0xFF09090B);
+    final cardBg = isDark ? theme.cardColor : const Color(0xFF0C312B);
     final cardFg = Colors.white;
 
     return Container(
@@ -197,10 +201,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               children: [
                 Text(
                   'M4 REWARD POINTS',
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: cardFg.withOpacity(0.4),
+                  style: GoogleFonts.gelasio(
+                    color: cardFg.withOpacity(0.72),
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -210,10 +214,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   children: [
                     Text(
                       NumberFormat('#,###').format(_walletBalance),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         color: cardFg,
                         fontSize: 48,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         height: 1,
                         fontStyle: FontStyle.italic,
                       ),
@@ -223,10 +227,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                       padding: const EdgeInsets.only(bottom: 6),
                       child: Text(
                         'PTS',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: cardFg.withOpacity(0.4),
+                        style: GoogleFonts.ebGaramond(
+                          color: cardFg.withOpacity(0.72),
                           fontSize: 14,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -242,7 +246,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     const Spacer(),
                     _buildPill(
                       'CASH: ₹${NumberFormat('#,###').format(_cashBalance)}',
-                      const Color(0xFF10B981),
+                      const Color(0xFF163A2C),
                     ),
                   ],
                 ),
@@ -259,7 +263,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     height: 64,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: const Color(0xFFF4EFE3),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
@@ -275,10 +279,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                       children: [
                         Text(
                           'REDEEM POINTS',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             color: Colors.black,
                             fontSize: 12,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                           ),
                         ),
@@ -309,10 +313,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       ),
       child: Text(
         label,
-        style: GoogleFonts.dmSerifDisplay(
-          color: Colors.white,
+        style: GoogleFonts.ebGaramond(
+          color: const Color(0xFFF4EFE3),
           fontSize: 8,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
         ),
       ),
@@ -335,7 +339,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             Clipboard.setData(ClipboardData(text: _referralCode));
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                backgroundColor: Color(0xFF10B981),
+                backgroundColor: Color(0xFF163A2C),
                 content: Text('App link & code copied!'),
               ),
             );
@@ -354,7 +358,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
         height: 120,
         decoration: BoxDecoration(
           color: theme.cardColor.withOpacity(0.4),
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: foreground.withOpacity(0.05)),
         ),
         child: Column(
@@ -364,10 +368,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             const SizedBox(height: 12),
             Text(
               label,
-              style: GoogleFonts.dmSerifDisplay(
-                color: foreground.withOpacity(0.4),
+              style: GoogleFonts.ebGaramond(
+                color: foreground.withOpacity(0.72),
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
               ),
             ),
@@ -383,10 +387,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       children: [
         Text(
           title,
-          style: GoogleFonts.dmSerifDisplay(
-            color: foreground.withOpacity(0.3),
+          style: GoogleFonts.gelasio(
+            color: foreground.withOpacity(0.72),
             fontSize: 10,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
           ),
         ),
@@ -403,10 +407,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           padding: const EdgeInsets.symmetric(vertical: 40),
           child: Text(
             'NO ACTIVE LEADS',
-            style: GoogleFonts.dmSerifDisplay(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+            style: GoogleFonts.gelasio(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.72),
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
             ),
           ),
@@ -447,20 +451,20 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     children: [
                       Text(
                         name.toString().toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           color: foreground,
                           fontSize: 12,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.5,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         project.toString().toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: foreground.withOpacity(0.3),
+                        style: GoogleFonts.ebGaramond(
+                          color: foreground.withOpacity(0.72),
                           fontSize: 8,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -481,10 +485,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   ),
                   child: Text(
                     status,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       color: theme.colorScheme.primary,
                       fontSize: 7,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -501,19 +505,19 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               children: [
                 Text(
                   'EST. REWARD',
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: foreground.withOpacity(0.3),
+                  style: GoogleFonts.ebGaramond(
+                    color: foreground.withOpacity(0.72),
                     fontSize: 7,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1,
                   ),
                 ),
                 Text(
                   '${NumberFormat('#,###').format(points)} PTS',
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: const Color(0xFFF59E0B),
+                  style: GoogleFonts.ebGaramond(
+                    color: const Color(0xFFC5A35B),
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -532,10 +536,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           padding: const EdgeInsets.symmetric(vertical: 40),
           child: Text(
             'NO RECENT HISTORY',
-            style: GoogleFonts.dmSerifDisplay(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+            style: GoogleFonts.gelasio(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.72),
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
             ),
           ),
@@ -576,19 +580,19 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             children: [
               Text(
                 type,
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   color: foreground,
                   fontSize: 9,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 DateFormat('dd/MM/yyyy').format(date),
-                style: GoogleFonts.dmSerifDisplay(
-                  color: foreground.withOpacity(0.3),
+                style: GoogleFonts.ebGaramond(
+                  color: foreground.withOpacity(0.72),
                   fontSize: 7,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
@@ -598,21 +602,21 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             children: [
               Text(
                 '${isRedemption ? '-' : '+'}$amount',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   color: isRedemption
                       ? Colors.redAccent
-                      : const Color(0xFF10B981),
+                      : const Color(0xFF163A2C),
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   fontStyle: FontStyle.italic,
                 ),
               ),
               Text(
                 'STATUS: $status',
-                style: GoogleFonts.dmSerifDisplay(
-                  color: foreground.withOpacity(0.2),
+                style: GoogleFonts.ebGaramond(
+                  color: foreground.withOpacity(0.72),
                   fontSize: 6,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -659,19 +663,19 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 children: [
                   Text(
                     'REFER FRIEND',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       color: foreground,
                       fontSize: 24,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'ADD TO YOUR SUCCESS MATRIX',
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: foreground.withOpacity(0.3),
+                    style: GoogleFonts.gelasio(
+                      color: foreground.withOpacity(0.72),
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 3,
                     ),
                   ),
@@ -682,10 +686,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     children: [
                       Text(
                         'SELECT PROJECT',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: foreground.withOpacity(0.4),
+                        style: GoogleFonts.ebGaramond(
+                          color: foreground.withOpacity(0.72),
                           fontSize: 8,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                         ),
                       ),
@@ -710,12 +714,12 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                 selectedProjectName.isEmpty
                                     ? 'CHOOSE OPPORTUNITY'
                                     : selectedProjectName.toUpperCase(),
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.ebGaramond(
                                   color: selectedProjectName.isEmpty
-                                      ? foreground.withOpacity(0.4)
+                                      ? foreground.withOpacity(0.72)
                                       : foreground,
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                               const Spacer(),
@@ -753,7 +757,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                         child: Text(
                                           'No projects available',
                                           style: TextStyle(
-                                            color: foreground.withOpacity(0.38),
+                                            color: foreground.withOpacity(0.72),
                                           ),
                                         ),
                                       ),
@@ -790,14 +794,14 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                             ),
                                             child: Text(
                                               name.toString().toUpperCase(),
-                                              style: GoogleFonts.dmSerifDisplay(
+                                              style: GoogleFonts.ebGaramond(
                                                 color: isSelected
                                                     ? theme.colorScheme.primary
                                                     : foreground.withOpacity(
                                                         0.6,
                                                       ),
                                                 fontSize: 10,
-                                                fontWeight: FontWeight.w900,
+                                                fontWeight: FontWeight.w600,
                                               ),
                                             ),
                                           ),
@@ -846,14 +850,28 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     onTap: isLoading
                         ? null
                         : () async {
-                            if (nameController.text.isEmpty ||
-                                phoneController.text.isEmpty ||
-                                selectedProjectName.isEmpty) {
+                            final vErr =
+                                Validators.nameError(
+                                  nameController.text,
+                                  field: 'friend name',
+                                ) ??
+                                Validators.phoneError(phoneController.text);
+                            if (selectedProjectName.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('All fields are required.'),
+                                  content: Text('Please select a project.'),
                                   backgroundColor: Colors.redAccent,
                                   duration: Duration(seconds: 2),
+                                ),
+                              );
+                              return;
+                            }
+                            if (vErr != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(vErr),
+                                  backgroundColor: Colors.redAccent,
+                                  duration: const Duration(seconds: 2),
                                 ),
                               );
                               return;
@@ -886,7 +904,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      backgroundColor: const Color(0xFFE24B4A),
+                                      backgroundColor: const Color(0xFFC65B46),
                                       content: Text(
                                         response.data['message'] ??
                                             'Submission failed.',
@@ -899,7 +917,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                               if (mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    backgroundColor: Color(0xFFE24B4A),
+                                    backgroundColor: Color(0xFFC65B46),
                                     content: Text(
                                       'Submission error. Check your connection.',
                                     ),
@@ -933,10 +951,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                             )
                           : Text(
                               'SUBMIT',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 color: theme.colorScheme.surface,
                                 fontSize: 12,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                               ),
                             ),
@@ -964,10 +982,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
-            color: foreground.withOpacity(0.4),
+          style: GoogleFonts.ebGaramond(
+            color: foreground.withOpacity(0.72),
             fontSize: 8,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             letterSpacing: 1,
           ),
         ),
@@ -986,7 +1004,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   padding: const EdgeInsets.only(left: 20, right: 10),
                   child: Text(
                     '+91',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       color: foreground,
                       fontWeight: FontWeight.bold,
                     ),
@@ -1002,19 +1020,32 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 child: TextField(
                   controller: controller,
                   readOnly: isDropdown,
-                  style: GoogleFonts.dmSerifDisplay(
+                  keyboardType: isDropdown
+                      ? null
+                      : isPhone
+                      ? TextInputType.phone
+                      : TextInputType.name,
+                  inputFormatters: isDropdown
+                      ? null
+                      : isPhone
+                      ? Validators.phoneFormatters
+                      : Validators.nameFormatters,
+                  style: GoogleFonts.ebGaramond(
                     color: foreground,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
                   ),
                   decoration: InputDecoration(
                     hintText: hint,
-                    hintStyle: GoogleFonts.dmSerifDisplay(
-                      color: foreground.withOpacity(0.2),
+                    hintStyle: GoogleFonts.ebGaramond(
+                      color: foreground.withOpacity(0.72),
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                     ),
+                    filled: false,
                     border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                     suffixIcon: isDropdown
                         ? Icon(

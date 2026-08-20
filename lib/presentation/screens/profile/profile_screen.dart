@@ -29,10 +29,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
 
     return Material(
-      color: isDark ? const Color(0xFF09090B) : const Color(0xFFF8FAFC),
+      color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
       child: Stack(
         children: [
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: Column(
               children: [
                 _buildHeader(context, isDark),
@@ -86,10 +89,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: [
           Text(
             'MY PROFILE',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 22,
-              fontWeight: FontWeight.w900,
-              color: isDark ? Colors.white : Colors.black,
+              fontWeight: FontWeight.w700,
+              color: isDark ? Colors.white : Color(0xFF163A2C),
               letterSpacing: -0.5,
             ),
           ),
@@ -124,7 +127,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
@@ -148,7 +151,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white10
-                        : Colors.black.withOpacity(0.05),
+                        : Color(0xFF163A2C).withOpacity(0.05),
                     borderRadius: BorderRadius.circular(24),
                     image: avatarUrl != null
                         ? DecorationImage(
@@ -162,7 +165,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: avatarUrl == null
                       ? Icon(
                           LucideIcons.user,
-                          color: isDark ? Colors.white38 : Colors.black38,
+                          color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                           size: 32,
                         )
                       : null,
@@ -174,17 +177,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     children: [
                       Text(
                         fullName.toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 20,
-                          fontWeight: FontWeight.w900,
-                          color: isDark ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.w700,
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                           letterSpacing: -0.5,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         email,
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: isDark ? Colors.white38 : Colors.black45,
@@ -192,7 +195,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       Text(
                         phone,
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: isDark ? Colors.white38 : Colors.black45,
@@ -217,7 +220,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             Icon(
                               LucideIcons.mapPin,
                               size: 12,
-                              color: isDark ? Colors.white54 : Colors.black54,
+                              color: isDark ? Colors.white54 : Color(0xFF5E6B60),
                             ),
                             const SizedBox(width: 6),
                             ConstrainedBox(
@@ -226,12 +229,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 address.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 9,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w500,
                                   color: isDark
                                       ? Colors.white70
-                                      : Colors.black87,
+                                      : Color(0xFF163A2C),
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -246,12 +249,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           Icon(
                             LucideIcons.calendar,
                             size: 12,
-                            color: isDark ? Colors.white38 : Colors.black38,
+                            color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                           ),
                           const SizedBox(width: 6),
                           Text(
                             'BORN: ${born.toUpperCase()}',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
                               color: isDark ? Colors.white38 : Colors.black45,
@@ -283,19 +286,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               children: [
                 Text(
                   'POINTS',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 12,
-                    fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     letterSpacing: 1.5,
                   ),
                 ),
                 Text(
                   points,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 22,
-                    fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
               ],
@@ -367,7 +370,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(100),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: const Color(0xFFF4EFE3),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -376,9 +379,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             const SizedBox(width: 12),
             Text(
               'LOG OUT',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: Colors.redAccent,
                 letterSpacing: 1,
               ),
@@ -410,12 +413,12 @@ class _SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.only(left: 8, bottom: 4),
       child: Text(
         title,
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.gelasio(
           fontSize: 11,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w700,
           color: isDark
-              ? Colors.white.withOpacity(0.25)
-              : Colors.black.withOpacity(0.4),
+              ? Colors.white.withOpacity(0.72)
+              : Colors.black.withOpacity(0.72),
           letterSpacing: 2,
         ),
       ),
@@ -441,12 +444,12 @@ class _SupportTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(32),
+      borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B) : Colors.white,
-          borderRadius: BorderRadius.circular(32),
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
@@ -479,16 +482,16 @@ class _SupportTile extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w800,
-                      color: isDark ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 8,
                       fontWeight: FontWeight.w700,
                       color: isDark ? Colors.white24 : Colors.black45,
@@ -529,7 +532,7 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+          color: isDark ? Colors.white.withOpacity(0.05) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark
@@ -548,7 +551,7 @@ class _IconButton extends StatelessWidget {
         child: Icon(
           icon,
           size: 20,
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? Colors.white : Color(0xFF163A2C),
         ),
       ),
     );

@@ -65,7 +65,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    const purple = Color(0xFFA855F7);
+    const purple = Color(0xFFC5A35B);
 
     const events = [
       {
@@ -94,7 +94,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
         ),
         title: Text(
           'Network',
-          style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w800),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w500),
         ),
       ),
       body: _loading
@@ -123,7 +123,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           icon: LucideIcons.wallet,
                           label: 'COMMISSION',
                           value: 'AED ${_formatNumber(_balance())}',
-                          accent: const Color(0xFFFFD700),
+                          accent: const Color(0xFFC5A35B),
                         ),
                       ),
                     ],
@@ -142,9 +142,9 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           const SizedBox(width: 8),
                           Text(
                             'Upcoming Events',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 12,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 0.2,
                             ),
                           ),
@@ -154,15 +154,15 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                         onPressed: () =>
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                backgroundColor: Color(0xFFE24B4A),
+                                backgroundColor: Color(0xFFC65B46),
                                 content: Text('Events coming soon'),
                               ),
                             ),
                         child: Text(
                           'VIEW ALL',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.6,
                             color: purple,
                           ),
@@ -184,83 +184,77 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           alpha: 0.18,
                         ),
                       ),
-                      child: Stack(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Positioned(
-                            top: -14,
-                            right: -14,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 6,
-                              ),
-                              decoration: const BoxDecoration(
-                                color: purple,
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(12),
-                                  topRight: Radius.circular(16),
-                                ),
-                              ),
-                              child: Text(
-                                (e['type'] ?? '').toString().toUpperCase(),
-                                style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 1.2,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Column(
+                          Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                e['title']!.toString(),
-                                style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                '${e['date']} • ${e['location']}',
-                                style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: scheme.onSurface.withValues(
-                                    alpha: 0.68,
+                              Expanded(
+                                child: Text(
+                                  e['title']!.toString(),
+                                  style: GoogleFonts.ebGaramond(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 10),
-                              FilledButton(
-                                onPressed: () =>
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        backgroundColor: Color(0xFF10B981),
-                                        content: Text('RSVP received'),
-                                      ),
-                                    ),
-                                style: FilledButton.styleFrom(
-                                  backgroundColor:
-                                      scheme.surfaceContainerHighest,
-                                  foregroundColor: scheme.onSurface,
-                                  minimumSize: const Size.fromHeight(36),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: purple,
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  'RSVP NOW',
-                                  style: GoogleFonts.dmSerifDisplay(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: 2,
+                                  (e['type'] ?? '').toString().toUpperCase(),
+                                  style: GoogleFonts.ebGaramond(
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 1.2,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
                             ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            '${e['date']} • ${e['location']}',
+                            style: GoogleFonts.ebGaramond(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: scheme.onSurface.withValues(alpha: 0.68),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          FilledButton(
+                            onPressed: () =>
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    backgroundColor: Color(0xFF163A2C),
+                                    content: Text('RSVP received'),
+                                  ),
+                                ),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: scheme.surfaceContainerHighest,
+                              foregroundColor: scheme.onSurface,
+                              minimumSize: const Size.fromHeight(36),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: Text(
+                              'RSVP NOW',
+                              style: GoogleFonts.gelasio(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 2,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -280,9 +274,9 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           const SizedBox(width: 8),
                           Text(
                             'Member Spotlight',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 12,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 0.2,
                             ),
                           ),
@@ -292,9 +286,9 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                         onPressed: () => context.push('/cp/referral'),
                         child: Text(
                           'VIEW ALL REFERRALS',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.6,
                             color: purple,
                           ),
@@ -306,7 +300,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                   if (members.isEmpty)
                     Text(
                       'No referrals in your network yet',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         color: scheme.onSurfaceVariant,
                       ),
                     )
@@ -360,17 +354,17 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                   shape: BoxShape.circle,
                                   gradient: LinearGradient(
                                     colors: [
-                                      Color(0xFFA855F7),
-                                      Color(0xFF6D28D9),
+                                      Color(0xFFC5A35B),
+                                      Color(0xFF141B3A),
                                     ],
                                   ),
                                 ),
                                 child: Center(
                                   child: Text(
                                     initial,
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.ebGaramond(
                                       color: Colors.white,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
@@ -380,9 +374,9 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                 name.isEmpty ? 'Partner' : name,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -390,9 +384,9 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                 industry.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 8,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w500,
                                   letterSpacing: 1.2,
                                   color: scheme.onSurface.withValues(
                                     alpha: 0.68,
@@ -420,15 +414,15 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                             children: [
                               Text(
                                 'Private Forum',
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 12,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'Discuss trends with verified Partners',
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                   color: scheme.onSurface.withValues(
@@ -443,7 +437,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           onPressed: () =>
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  backgroundColor: Color(0xFFE24B4A),
+                                  backgroundColor: Color(0xFFC65B46),
                                   content: Text('Forum coming soon'),
                                 ),
                               ),
@@ -488,17 +482,17 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 18,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 8,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
               color: scheme.onSurface.withValues(alpha: 0.68),
             ),

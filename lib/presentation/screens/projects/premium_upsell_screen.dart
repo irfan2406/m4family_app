@@ -19,7 +19,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
     this.featureTitle = 'Immersive VR Tour',
   });
 
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   void _back(BuildContext context) {
     if (Navigator.of(context).canPop()) {
@@ -34,7 +34,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
       SnackBar(
         content: Text(
           'Checkout coming soon',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.bold,
           ),
@@ -49,11 +49,11 @@ class PremiumUpsellScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    const subtle = Color(0xFF666666);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    const subtle = Color(0xFFF4EFE3);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -82,6 +82,9 @@ class PremiumUpsellScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.only(bottom: 40),
@@ -134,7 +137,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                             Text(
                                   'UNLOCK ${featureTitle.toUpperCase()}',
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: textPrimary,
@@ -158,7 +161,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                   Text(
                                         'EXPERIENCE YOUR FUTURE HOME LIKE NEVER BEFORE. EXCLUSIVE ACCESS FOR M4 ELITE MEMBERS ONLY.',
                                         textAlign: TextAlign.center,
-                                        style: GoogleFonts.dmSerifDisplay(
+                                        style: GoogleFonts.ebGaramond(
                                           fontSize: 11,
                                           fontWeight: FontWeight.bold,
                                           color: subtle,
@@ -184,7 +187,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                         Text(
                           'ELITE MEMBERSHIP BENEFITS',
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
                             color: muted,
@@ -228,7 +231,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                           children: [
                                             Text(
                                               b.title.toUpperCase(),
-                                              style: GoogleFonts.dmSerifDisplay(
+                                              style: GoogleFonts.ebGaramond(
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.bold,
                                                 color: textPrimary,
@@ -238,7 +241,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                             const SizedBox(height: 2),
                                             Text(
                                               b.desc.toUpperCase(),
-                                              style: GoogleFonts.dmSerifDisplay(
+                                              style: GoogleFonts.ebGaramond(
                                                 fontSize: 9,
                                                 fontWeight: FontWeight.bold,
                                                 color: subtle,
@@ -289,7 +292,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                   decoration: BoxDecoration(
                                     color:
                                         textPrimary, // foreground container (inverted)
-                                    borderRadius: BorderRadius.circular(32),
+                                    borderRadius: BorderRadius.circular(20),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withValues(
@@ -304,7 +307,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                     children: [
                                       Text(
                                         'LIFETIME PASS',
-                                        style: GoogleFonts.dmSerifDisplay(
+                                        style: GoogleFonts.gelasio(
                                           fontSize: 9,
                                           fontWeight: FontWeight.bold,
                                           color: subtle,
@@ -320,7 +323,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                         children: [
                                           Text(
                                             '₹4,999',
-                                            style: GoogleFonts.dmSerifDisplay(
+                                            style: GoogleFonts.gelasio(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold,
                                               color:
@@ -334,7 +337,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                             ),
                                             child: Text(
                                               '/one-time',
-                                              style: GoogleFonts.dmSerifDisplay(
+                                              style: GoogleFonts.ebGaramond(
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.bold,
                                                 color: subtle,
@@ -367,7 +370,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                           ),
                                           child: Text(
                                             'UPGRADE TO ELITE',
-                                            style: GoogleFonts.dmSerifDisplay(
+                                            style: GoogleFonts.gelasio(
                                               fontSize: 10,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white,
@@ -380,7 +383,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                       Text(
                                         '*GET INSTANT ACCESS TO ALL PREMIUM FEATURES AND PROPERTY TOURS',
                                         textAlign: TextAlign.center,
-                                        style: GoogleFonts.dmSerifDisplay(
+                                        style: GoogleFonts.ebGaramond(
                                           fontSize: 8,
                                           fontWeight: FontWeight.bold,
                                           fontStyle: FontStyle.italic,
@@ -398,7 +401,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                   child: Text(
                                     'MAYBE LATER',
                                     textAlign: TextAlign.center,
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
                                       color: subtle,
@@ -481,7 +484,7 @@ class _CircleAction extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFF4EFE3),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
@@ -499,7 +502,7 @@ class _CircleAction extends StatelessWidget {
         child: Icon(
           icon,
           size: 20,
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? Colors.white : Color(0xFF163A2C),
         ),
       ),
     );

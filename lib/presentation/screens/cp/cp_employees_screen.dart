@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -22,7 +23,7 @@ class CpEmployeesScreen extends ConsumerStatefulWidget {
 class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   // Web parity: the CP accent is purple (only the header dot uses it); the
   // icons/buttons are neutral grey, not gold.
-  static const Color _purple = Color(0xFF9333EA);
+  static const Color _purple = Color(0xFFC5A35B);
 
   bool _loading = true;
   String? _error;
@@ -79,10 +80,14 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
 
   void _toast(String msg) {
     if (!mounted) return;
+    // Success messages get a green background; errors stay red.
+    final isSuccess = msg.toLowerCase().contains('successful');
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
-        content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12)),
+        backgroundColor: isSuccess
+            ? const Color(0xFF163A2C)
+            : const Color(0xFFC65B46),
+        content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12)),
       ),
     );
   }
@@ -181,9 +186,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.62,
     );
     final border = isDark
@@ -203,6 +208,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
         },
       ),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark, textPrimary, muted, border),
@@ -252,7 +260,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       child: Row(
@@ -286,9 +294,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                   const SizedBox(width: 8),
                   Text(
                     'TEAM MANAGEMENT',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 13,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: textPrimary,
                       letterSpacing: 1.2,
                     ),
@@ -298,9 +306,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               const SizedBox(height: 2),
               Text(
                 'MANAGE YOUR PORTAL EMPLOYEES',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: muted,
                   letterSpacing: 1.5,
                 ),
@@ -329,7 +337,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     return Container(
       height: 50,
       decoration: BoxDecoration(
@@ -345,21 +353,24 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
           Expanded(
             child: TextField(
               onChanged: (v) => setState(() => _search = v),
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 12,
+              style: GoogleFonts.ebGaramond(
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: textPrimary,
               ),
               decoration: InputDecoration(
                 isCollapsed: true,
                 hintText: 'SEARCH BY NAME OR PHONE...',
-                hintStyle: GoogleFonts.dmSerifDisplay(
+                hintStyle: GoogleFonts.ebGaramond(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: muted.withValues(alpha: 0.6),
                   letterSpacing: 1.2,
                 ),
+                filled: false,
                 border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
               ),
             ),
           ),
@@ -375,7 +386,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFF4EFE3);
     final id = emp['_id']?.toString() ?? '';
     final name = (emp['name'] ?? '').toString();
     final phone = (emp['phone'] ?? '').toString();
@@ -386,9 +397,25 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: card,
+        gradient: isDark
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF141B3A), Color(0xFF141B3A)],
+              )
+            : null,
+        color: isDark ? null : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: border),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.08) : border,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -417,9 +444,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                       child: Text(
                         name.toUpperCase(),
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: textPrimary,
                           letterSpacing: 0.3,
                         ),
@@ -441,9 +468,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     const SizedBox(width: 7),
                     Text(
                       phone,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 11,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         color: textPrimary.withValues(alpha: 0.78),
                         letterSpacing: 0.3,
                       ),
@@ -464,7 +491,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                         child: Text(
                           email,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10.5,
                             fontWeight: FontWeight.w600,
                             color: textPrimary.withValues(alpha: 0.65),
@@ -531,9 +558,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
       ),
       child: Text(
         isActive ? 'ACTIVE' : 'INACTIVE',
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.ebGaramond(
           fontSize: 7,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
           color: color,
           letterSpacing: 0.5,
         ),
@@ -560,9 +587,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
           Text(
             'NO MATCHING TEAM MEMBERS',
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: muted,
               letterSpacing: 1.5,
             ),
@@ -584,7 +611,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             Text(
               _error ?? 'Something went wrong',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
@@ -595,9 +622,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               onPressed: _load,
               child: Text(
                 'RETRY',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -610,7 +637,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   void _confirmDelete(String id, String name, Color textPrimary, Color muted) {
     if (id.isEmpty) return;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF111111) : Colors.white;
+    final dialogBg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -618,16 +645,16 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           'DELETE EMPLOYEE',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 13,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: textPrimary,
             letterSpacing: 0.5,
           ),
         ),
         content: Text(
           'Are you sure you want to delete ${name.isEmpty ? 'this employee' : name}?',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: muted,
@@ -638,9 +665,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
               'CANCEL',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: muted,
               ),
             ),
@@ -653,9 +680,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             },
             child: Text(
               'DELETE',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -667,15 +694,15 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   /// Add (existing == null) or edit employee dialog.
   void _openEmployeeDialog({dynamic existing}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF111111) : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final dialogBg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.62,
     );
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
 
     final isEdit = existing != null;
     final nameCtrl = TextEditingController(
@@ -700,6 +727,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               TextEditingController c,
               String hint, {
               bool phone = false,
+              bool email = false,
             }) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -708,9 +736,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     padding: const EdgeInsets.only(left: 4, bottom: 6),
                     child: Text(
                       label,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: textPrimary.withValues(alpha: 0.8),
                         letterSpacing: 0.5,
                       ),
@@ -720,21 +748,25 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     controller: c,
                     keyboardType: phone
                         ? TextInputType.phone
-                        : TextInputType.text,
+                        : email
+                        ? TextInputType.emailAddress
+                        : TextInputType.name,
                     inputFormatters: phone
                         ? [
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(10),
                           ]
-                        : null,
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 12,
+                        : email
+                        ? Validators.emailFormatters
+                        : Validators.nameFormatters,
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
                       color: textPrimary,
                     ),
                     decoration: InputDecoration(
                       hintText: hint,
-                      hintStyle: GoogleFonts.dmSerifDisplay(
+                      hintStyle: GoogleFonts.ebGaramond(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: muted.withValues(alpha: 0.7),
@@ -767,9 +799,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
               title: Text(
                 isEdit ? 'EDIT TEAM MEMBER' : 'ADD NEW EMPLOYEE',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 13,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: textPrimary,
                   letterSpacing: 1.0,
                 ),
@@ -787,7 +819,12 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                       phone: true,
                     ),
                     const SizedBox(height: 14),
-                    field('EMAIL ADDRESS', emailCtrl, 'john@example.com'),
+                    field(
+                      'EMAIL ADDRESS',
+                      emailCtrl,
+                      'john@example.com',
+                      email: true,
+                    ),
                   ],
                 ),
               ),
@@ -797,9 +834,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                   onPressed: saving ? null : () => Navigator.of(ctx).pop(),
                   child: Text(
                     'CANCEL',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 11,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: muted,
                     ),
                   ),
@@ -807,8 +844,8 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                 FilledButton(
                   // Web parity: black save button (white in dark mode).
                   style: FilledButton.styleFrom(
-                    backgroundColor: isDark ? Colors.white : Colors.black,
-                    foregroundColor: isDark ? Colors.black : Colors.white,
+                    backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                    foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   ),
                   onPressed: saving
                       ? null
@@ -816,8 +853,14 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                           final name = nameCtrl.text.trim();
                           final phone = phoneCtrl.text.trim();
                           final email = emailCtrl.text.trim();
-                          if (name.isEmpty || phone.isEmpty) {
-                            _toast('Name and Phone are required');
+                          final vErr =
+                              Validators.nameError(name, field: 'full name') ??
+                              Validators.phoneError(phone) ??
+                              (email.isEmpty
+                                  ? null
+                                  : Validators.emailError(email));
+                          if (vErr != null) {
+                            _toast(vErr);
                             return;
                           }
                           setLocal(() => saving = true);
@@ -837,9 +880,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     saving
                         ? 'SAVING...'
                         : (isEdit ? 'SAVE CHANGES' : 'ADD EMPLOYEE'),
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 11,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),

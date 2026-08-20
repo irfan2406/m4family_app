@@ -20,7 +20,7 @@ class InvestorEliteScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   bool _loading = true;
   List<Map<String, dynamic>> _documents = [];
@@ -136,19 +136,22 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(backgroundColor: const Color(0xFFE24B4A), content: Text(msg)),
+      SnackBar(backgroundColor: const Color(0xFFC65B46), content: Text(msg)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
 
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(textPrimary),
@@ -216,9 +219,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
             child: Text(
               'MEMBER DASHBOARD',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 16,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: textPrimary,
                 letterSpacing: 1.5,
               ),
@@ -240,9 +243,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF27272A), Color(0xFF18181B), Colors.black],
+          colors: [Color(0xFF141B3A), Color(0xFF141B3A), Colors.black],
         ),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.4),
@@ -252,7 +255,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
             // Abstract glow shape (bottom-right)
@@ -290,9 +293,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   'PLATINUM MEMBER',
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 10,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w700,
                                     letterSpacing: 2,
                                     color: Colors.white.withValues(alpha: 0.85),
                                   ),
@@ -302,10 +305,10 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                             const SizedBox(height: 6),
                             Text(
                               'Active Membership',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 22,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFFF4EFE3),
                               ),
                             ),
                           ],
@@ -326,9 +329,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                         ),
                         child: Text(
                           'PRO',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                             color: _gold,
                           ),
@@ -366,7 +369,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.08),
+            color: const Color(0xFFF4EFE3).withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
           ),
@@ -375,9 +378,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
             children: [
               Text(
                 label.toUpperCase(),
-                style: GoogleFonts.dmSerifDisplay(
-                  fontSize: 8,
-                  fontWeight: FontWeight.w800,
+                style: GoogleFonts.gelasio(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,
                   color: Colors.white.withValues(alpha: 0.7),
                 ),
@@ -385,10 +388,10 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
               const SizedBox(height: 6),
               Text(
                 value,
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFFF4EFE3),
                 ),
               ),
             ],
@@ -407,9 +410,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
       children: [
         Text(
           'DOCUMENT REPOSITORY',
-          style: GoogleFonts.dmSerifDisplay(
-            fontSize: 9,
-            fontWeight: FontWeight.w900,
+          style: GoogleFonts.gelasio(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2,
             color: textPrimary.withValues(alpha: 0.5),
           ),
@@ -422,9 +425,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
           ),
           child: Text(
             'M4 SECURE',
-            style: GoogleFonts.dmSerifDisplay(
-              fontSize: 8,
-              fontWeight: FontWeight.w900,
+            style: GoogleFonts.gelasio(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: textPrimary.withValues(alpha: 0.5),
             ),
@@ -440,7 +443,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 40),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: textPrimary.withValues(alpha: 0.06)),
         ),
@@ -454,11 +457,11 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
             const SizedBox(height: 16),
             Text(
               'NO DOCUMENTS YET',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
-                color: textPrimary.withValues(alpha: 0.2),
+                color: textPrimary.withValues(alpha: 0.72),
               ),
             ),
           ],
@@ -491,7 +494,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: textPrimary.withValues(alpha: 0.06)),
         boxShadow: isDark
@@ -527,9 +530,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 13,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: textPrimary,
                   ),
                 ),
@@ -551,9 +554,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                       ],
                       Text(
                         meta[i].toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 8,
-                          fontWeight: FontWeight.w800,
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 0.8,
                           color: muted,
                         ),
@@ -614,9 +617,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                       maxLines: 1,
                       softWrap: false,
                       overflow: TextOverflow.visible,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 28,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: textPrimary,
                       ),
                     ),
@@ -649,9 +652,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                     children: [
                       Text(
                         'SECURE ACCESS ONLY',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                           color: textPrimary,
                         ),
@@ -659,9 +662,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                       const SizedBox(height: 4),
                       Text(
                         'All documents downloaded contain a unique user watermark for security. Unauthorized sharing is strictly prohibited.',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                           height: 1.4,
                           color: textPrimary.withValues(alpha: 0.5),
                         ),
@@ -697,9 +700,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
             const SizedBox(width: 12),
             Text(
               'UPGRADE MEMBERSHIP TIER',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
                 color: textPrimary,
               ),

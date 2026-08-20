@@ -60,9 +60,12 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF09090B)
-          : const Color(0xFFF8FAFC),
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFF4EFE3),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Stack(
           children: [
             Column(
@@ -74,7 +77,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                   child: state.isLoading && state.tickets.isEmpty
                       ? Center(
                           child: CircularProgressIndicator(
-                            color: isDark ? Colors.white : Colors.black,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             strokeWidth: 2,
                           ),
                         )
@@ -122,17 +125,17 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.1,
                   ),
                 ),
               ),
               child: Icon(
                 LucideIcons.chevronLeft,
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 size: 16,
               ),
             ),
@@ -142,19 +145,19 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
               children: [
                 Text(
                   'TICKET LOGS',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     letterSpacing: 0,
                   ),
                 ),
                 Text(
                   'CONCIERGE HISTORY',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                    color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                     letterSpacing: 1,
                   ),
                 ),
@@ -177,10 +180,10 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
               height: 48,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.03),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.05,
                   ),
                 ),
@@ -198,20 +201,23 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                       controller: _searchController,
                       onChanged: (value) =>
                           setState(() => _searchQuery = value),
-                      style: GoogleFonts.dmSerifDisplay(
-                        color: isDark ? Colors.white : Colors.black,
-                        fontSize: 13,
+                      style: GoogleFonts.ebGaramond(
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        fontSize: 15,
                         fontWeight: FontWeight.w700,
                       ),
                       decoration: InputDecoration(
                         hintText: 'SEARCH BY ID OR SUBJECT...',
-                        hintStyle: GoogleFonts.dmSerifDisplay(
+                        hintStyle: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.white12 : Colors.black12,
                           fontSize: 11,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 0.5,
                         ),
+                        filled: false,
                         border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 12,
                         ),
@@ -231,12 +237,12 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
               height: 48,
               width: 48,
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 LucideIcons.sliders,
-                color: isDark ? Colors.black : Colors.white,
+                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                 size: 18,
               ),
             ),
@@ -248,12 +254,12 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
               height: 48,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.03),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: _showOnlyPending
-                      ? (isDark ? Colors.white : Colors.black).withOpacity(0.2)
-                      : (isDark ? Colors.white : Colors.black).withOpacity(
+                      ? (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.2)
+                      : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                           0.05,
                         ),
                 ),
@@ -261,10 +267,10 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
               child: Center(
                 child: Text(
                   _showOnlyPending ? 'PENDING' : 'ALL',
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: isDark ? Colors.white : Colors.black,
+                  style: GoogleFonts.ebGaramond(
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     fontSize: 9,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1,
                   ),
                 ),
@@ -279,7 +285,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
   void _showCategoryFilter(bool isDark) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? const Color(0xFF111111) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -291,10 +297,10 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
           children: [
             Text(
               'FILTER BY CATEGORY',
-              style: GoogleFonts.dmSerifDisplay(
-                color: isDark ? Colors.white38 : Colors.black38,
+              style: GoogleFonts.ebGaramond(
+                color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                 fontSize: 10,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 1,
               ),
             ),
@@ -327,18 +333,18 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? (isDark ? Colors.white : Colors.black)
-              : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              ? (isDark ? Colors.white : Color(0xFF163A2C))
+              : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             color: isSelected
                 ? (isDark ? Colors.black : Colors.white)
-                : (isDark ? Colors.white : Colors.black),
+                : (isDark ? Colors.white : Color(0xFF163A2C)),
             fontSize: 10,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),
@@ -362,17 +368,17 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
         children: [
           Text(
             'SERVICE AUDIT',
-            style: GoogleFonts.dmSerifDisplay(
-              color: isDark ? Colors.white38 : Colors.black38,
+            style: GoogleFonts.ebGaramond(
+              color: isDark ? Colors.white38 : Color(0xFF5E6B60),
               fontSize: 10,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               letterSpacing: 1,
             ),
           ),
           Text(
             '$count LOGS RETRIEVED',
-            style: GoogleFonts.dmSerifDisplay(
-              color: isDark ? Colors.white38 : Colors.black38,
+            style: GoogleFonts.ebGaramond(
+              color: isDark ? Colors.white38 : Color(0xFF5E6B60),
               fontSize: 9,
               fontWeight: FontWeight.w600,
             ),
@@ -387,7 +393,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
       width: double.infinity,
       height: 56,
       decoration: BoxDecoration(
-        color: isDark ? Colors.white : Colors.black,
+        color: isDark ? Colors.white : Color(0xFF163A2C),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -410,17 +416,17 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
             children: [
               Text(
                 'INITIATE NEW SERVICE TICKET',
-                style: GoogleFonts.dmSerifDisplay(
-                  color: isDark ? Colors.black : Colors.white,
+                style: GoogleFonts.ebGaramond(
+                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
                 ),
               ),
               const SizedBox(width: 12),
               Icon(
                 LucideIcons.messageSquare,
-                color: isDark ? Colors.black : Colors.white,
+                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                 size: 16,
               ),
             ],
@@ -434,10 +440,10 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
     return Center(
       child: Text(
         'NO LOGS FOUND',
-        style: GoogleFonts.dmSerifDisplay(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.62),
+        style: GoogleFonts.gelasio(
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.62),
           fontSize: 10,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w700,
           letterSpacing: 2,
         ),
       ),
@@ -465,10 +471,10 @@ class _TicketCard extends StatelessWidget {
     final isHighPriority = ticket.priority.toLowerCase() == 'high';
 
     final statusColor = isResolved
-        ? const Color(0xFF22C55E)
+        ? const Color(0xFF163A2C)
         : isPending
-        ? const Color(0xFFF59E0B)
-        : const Color(0xFF3B82F6);
+        ? const Color(0xFFC5A35B)
+        : const Color(0xFFC5A35B);
 
     return GestureDetector(
       onTap: onTap,
@@ -476,10 +482,10 @@ class _TicketCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.03),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.04),
           ),
         ),
         child: Stack(
@@ -495,16 +501,16 @@ class _TicketCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.05),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         ticket.displayId,
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: isDark ? Colors.white38 : Colors.black38,
+                        style: GoogleFonts.ebGaramond(
+                          color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                           fontSize: 8,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
@@ -524,10 +530,10 @@ class _TicketCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             ticket.status.toUpperCase(),
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               color: statusColor,
                               fontSize: 8,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
@@ -538,10 +544,10 @@ class _TicketCard extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   ticket.subject.toUpperCase(),
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: isDark ? Colors.white : Colors.black,
+                  style: GoogleFonts.ebGaramond(
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     fontSize: 16,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -569,7 +575,7 @@ class _TicketCard extends StatelessWidget {
               top: 60,
               child: Icon(
                 LucideIcons.chevronRight,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.1),
                 size: 20,
               ),
             ),
@@ -594,7 +600,7 @@ class _TicketDetailSheet extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF111111) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
       ),
       padding: const EdgeInsets.all(32),
@@ -607,7 +613,7 @@ class _TicketDetailSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -622,17 +628,17 @@ class _TicketDetailSheet extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.05,
                   ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   ticket.displayId,
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: isDark ? Colors.white38 : Colors.black38,
+                  style: GoogleFonts.ebGaramond(
+                    color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -642,17 +648,17 @@ class _TicketDetailSheet extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: (isResolved ? Colors.green : Colors.blue).withOpacity(
+                  color: (isResolved ? Colors.green : const Color(0xFFC5A35B)).withOpacity(
                     0.1,
                   ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   ticket.status.toUpperCase(),
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: isResolved ? Colors.green : Colors.blue,
+                  style: GoogleFonts.ebGaramond(
+                    color: isResolved ? Colors.green : const Color(0xFFC5A35B),
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -661,10 +667,10 @@ class _TicketDetailSheet extends StatelessWidget {
           const SizedBox(height: 24),
           Text(
             ticket.subject.toUpperCase(),
-            style: GoogleFonts.dmSerifDisplay(
-              color: isDark ? Colors.white : Colors.black,
+            style: GoogleFonts.gelasio(
+              color: isDark ? Colors.white : Color(0xFF163A2C),
               fontSize: 20,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 32),
@@ -689,18 +695,18 @@ class _TicketDetailSheet extends StatelessWidget {
           const SizedBox(height: 32),
           Text(
             'DESCRIPTION',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               color: isDark ? Colors.white24 : Colors.black26,
               fontSize: 10,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               letterSpacing: 1,
             ),
           ),
           const SizedBox(height: 12),
           Text(
             ticket.message ?? 'No description provided.',
-            style: GoogleFonts.dmSerifDisplay(
-              color: isDark ? Colors.white70 : Colors.black87,
+            style: GoogleFonts.ebGaramond(
+              color: isDark ? Colors.white70 : Color(0xFF163A2C),
               fontSize: 13,
               height: 1.6,
             ),
@@ -712,16 +718,16 @@ class _TicketDetailSheet extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? Colors.white : Colors.black,
-                foregroundColor: isDark ? Colors.black : Colors.white,
+                backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
               child: Text(
                 'DISMISS AUDIT',
-                style: GoogleFonts.dmSerifDisplay(
-                  fontWeight: FontWeight.w900,
+                style: GoogleFonts.ebGaramond(
+                  fontWeight: FontWeight.w600,
                   fontSize: 12,
                 ),
               ),
@@ -744,19 +750,19 @@ class _TicketDetailSheet extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             color: isDark ? Colors.white24 : Colors.black26,
             fontSize: 10,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.5,
           ),
         ),
         Text(
           value,
-          style: GoogleFonts.dmSerifDisplay(
-            color: valueColor ?? (isDark ? Colors.white : Colors.black),
+          style: GoogleFonts.ebGaramond(
+            color: valueColor ?? (isDark ? Colors.white : Color(0xFF163A2C)),
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],
@@ -785,20 +791,20 @@ class _DetailItem extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               color: isDark ? Colors.white24 : Colors.black26,
               fontSize: 8,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               letterSpacing: 0.5,
             ),
           ),
           const SizedBox(height: 6),
           Text(
             value,
-            style: GoogleFonts.dmSerifDisplay(
-              color: valueColor ?? (isDark ? Colors.white70 : Colors.black87),
+            style: GoogleFonts.ebGaramond(
+              color: valueColor ?? (isDark ? Colors.white70 : Color(0xFF163A2C)),
               fontSize: 10,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

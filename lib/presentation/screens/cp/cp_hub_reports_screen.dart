@@ -21,7 +21,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
   List<dynamic> _reports = const [];
   bool _loading = true;
 
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
   static const years = ['2024', '2023', '2022'];
 
   @override
@@ -136,13 +136,13 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
     switch (type) {
       case 'XLSX':
       case 'CSV':
-        return const Color(0xFF34D399); // green — spreadsheets
+        return const Color(0xFF163A2C); // green — spreadsheets
       case 'DOC':
-        return const Color(0xFF818CF8); // indigo — docs
+        return const Color(0xFFC5A35B); // indigo — docs
       case 'IMG':
-        return const Color(0xFFF59E0B); // amber — images
+        return const Color(0xFFC5A35B); // amber — images
       default:
-        return const Color(0xFF60A5FA); // blue — pdf
+        return const Color(0xFFC5A35B); // blue — pdf
     }
   }
 
@@ -163,9 +163,9 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
     final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final accent = isDark ? scheme.primary : Colors.black;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -181,7 +181,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
         ),
         title: Text(
           'Reports',
-          style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w900),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600),
         ),
       ),
       body: Column(
@@ -270,22 +270,12 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
             color: selected ? accent : Colors.transparent,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: selected ? accent : border),
-            boxShadow: selected
-                ? [
-                    BoxShadow(
-                      color: _gold.withValues(alpha: 0.30),
-                      blurRadius: 16,
-                      spreadRadius: 0,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                : null,
           ),
           child: Text(
             'FY $y',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.6,
               color: selected ? (isDark ? Colors.black : Colors.white) : muted,
             ),
@@ -338,9 +328,9 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
             children: [
               Text(
                 'TOTAL TAX DEDUCTED',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 9,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.6,
                   color: muted,
                 ),
@@ -348,9 +338,9 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
               const SizedBox(height: 10),
               Text(
                 _formatAed(total),
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 26,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: -0.5,
                   color: textPrimary,
                 ),
@@ -358,7 +348,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
               const SizedBox(height: 4),
               Text(
                 'FY $_year • ${_reports.length} ${_reports.length == 1 ? 'DOCUMENT' : 'DOCUMENTS'}',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 9,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.2,
@@ -373,9 +363,9 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                   icon: const Icon(LucideIcons.download, size: 14),
                   label: Text(
                     'DOWNLOAD SUMMARY',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1.4,
                     ),
                   ),
@@ -409,10 +399,10 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text(
             'Summary will be available soon',
-            style: GoogleFonts.dmSerifDisplay(fontSize: 12),
+            style: GoogleFonts.ebGaramond(fontSize: 12),
           ),
         ),
       );
@@ -478,9 +468,9 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                     ),
                     child: Text(
                       type,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 7,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 0.6,
                         color: Colors.white,
                       ),
@@ -498,9 +488,9 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: textPrimary,
                     ),
                   ),
@@ -510,7 +500,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                         .where((x) => x.trim().isNotEmpty)
                         .join(' • ')
                         .toUpperCase(),
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.2,
@@ -550,15 +540,18 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
 
   void _showMoreActions(String title, String url) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? const Color(0xFF111111) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) => SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -580,7 +573,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
               ),
               title: Text(
                 'Open / Print PDF',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
@@ -595,7 +588,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
               leading: Icon(LucideIcons.share2, color: textPrimary, size: 20),
               title: Text(
                 'Share document',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
@@ -626,9 +619,9 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
           child: Text(
             'No documents available for FY $_year',
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 13,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               color: textPrimary,
             ),
           ),
@@ -638,7 +631,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
           child: Text(
             'Check back soon or select another year',
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: muted,

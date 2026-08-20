@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
@@ -43,13 +45,15 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
   }
 
   Future<void> _submitInquiry() async {
-    if (_nameController.text.isEmpty ||
-        _phoneController.text.isEmpty ||
-        _emailController.text.isEmpty) {
+    final validationError =
+        Validators.nameError(_nameController.text, field: 'full name') ??
+        Validators.emailError(_emailController.text) ??
+        Validators.phoneError(_phoneController.text);
+    if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
-          content: Text('Please fill in all required fields'),
+        SnackBar(
+          backgroundColor: const Color(0xFFC65B46),
+          content: Text(validationError),
         ),
       );
       return;
@@ -75,7 +79,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(res.data['message'] ?? 'Failed to send inquiry'),
           ),
         );
@@ -83,7 +87,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Error sending inquiry. Please try again.'),
         ),
       );
@@ -98,7 +102,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
 
     if (_isSuccess) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(40),
@@ -109,21 +113,21 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white : Colors.black,
-                    borderRadius: BorderRadius.circular(30),
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Icon(
                     LucideIcons.check,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     size: 50,
                   ),
                 ).animate().scale(duration: 500.ms, curve: Curves.elasticOut),
                 const SizedBox(height: 40),
                 Text(
                   'REQUEST REGISTERED',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 24,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: -1,
                   ),
                 ).animate().fadeIn(delay: 200.ms),
@@ -131,10 +135,10 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                 Text(
                   'Your inquiry has been secured. Our premium sales associate will contact you shortly with the institutional brochure.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    color: isDark ? Colors.white38 : Colors.black38,
-                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     height: 1.8,
                   ),
@@ -146,11 +150,11 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                     width: double.infinity,
                     height: 64,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
-                      borderRadius: BorderRadius.circular(32),
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
@@ -160,9 +164,9 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                     child: Center(
                       child: Text(
                         'RETURN TO PROJECT',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: isDark ? Colors.black : Colors.white,
-                          fontWeight: FontWeight.w900,
+                        style: GoogleFonts.gelasio(
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          fontWeight: FontWeight.w700,
                           fontSize: 10,
                           letterSpacing: 2,
                         ),
@@ -178,7 +182,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -193,7 +197,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
         leading: IconButton(
           icon: Icon(
             LucideIcons.chevronLeft,
-            color: isDark ? Colors.white : Colors.black,
+            color: isDark ? Colors.white : Color(0xFF163A2C),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -202,18 +206,18 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
           children: [
             Text(
               'SEND INQUIRY',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 14,
-                fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
               ),
             ),
             Text(
               'INSTITUTIONAL PROTOCOL',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
-                fontWeight: FontWeight.w900,
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
+                fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
               ),
             ),
@@ -230,7 +234,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
               width: 300,
               height: 300,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.02),
                 shape: BoxShape.circle,
               ),
             ),
@@ -248,7 +252,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                     color: isDark
                         ? Colors.white.withOpacity(0.02)
                         : Colors.white,
-                    borderRadius: BorderRadius.circular(32),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isDark
                           ? Colors.white.withOpacity(0.05)
@@ -270,7 +274,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white : Colors.black,
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
@@ -282,7 +286,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                         ),
                         child: Icon(
                           LucideIcons.sparkles,
-                          color: isDark ? Colors.black : Colors.white,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           size: 28,
                         ),
                       ),
@@ -293,19 +297,19 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                           children: [
                             Text(
                               'PRIORITY INTEREST',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 1.5,
-                                color: isDark ? Colors.white : Colors.black,
+                                color: isDark ? Colors.white : Color(0xFF163A2C),
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'COMPLETE THE PROTOCOL TO UNLOCK THE DETAILED ASSET INVENTORY.',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 9,
-                                color: (isDark ? Colors.white : Colors.black)
+                                color: (isDark ? Colors.white : Color(0xFF163A2C))
                                     .withOpacity(0.68),
                                 fontWeight: FontWeight.bold,
                                 height: 1.4,
@@ -325,6 +329,8 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                   _nameController,
                   LucideIcons.user,
                   'ENTER FULL NAME',
+                  keyboardType: TextInputType.name,
+                  inputFormatters: Validators.nameFormatters,
                 ),
                 const SizedBox(height: 32),
 
@@ -333,6 +339,8 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                   _emailController,
                   LucideIcons.mail,
                   'EMAIL@M4FAMILY.COM',
+                  keyboardType: TextInputType.emailAddress,
+                  inputFormatters: Validators.emailFormatters,
                 ),
                 const SizedBox(height: 32),
 
@@ -341,6 +349,8 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                   _phoneController,
                   LucideIcons.phone,
                   '+91 XXXXX XXXXX',
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: Validators.phoneFormatters,
                 ),
                 const SizedBox(height: 32),
 
@@ -360,11 +370,11 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                     width: double.infinity,
                     height: 72,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
-                      borderRadius: BorderRadius.circular(36),
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.2),
                           blurRadius: 30,
                           offset: const Offset(0, 15),
@@ -377,7 +387,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                               width: 24,
                               height: 24,
                               child: CircularProgressIndicator(
-                                color: isDark ? Colors.black : Colors.white,
+                                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                 strokeWidth: 3,
                               ),
                             )
@@ -386,9 +396,9 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                               children: [
                                 Text(
                                   'AUTHORIZE INQUIRY',
-                                  style: GoogleFonts.dmSerifDisplay(
-                                    color: isDark ? Colors.black : Colors.white,
-                                    fontWeight: FontWeight.w900,
+                                  style: GoogleFonts.gelasio(
+                                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                    fontWeight: FontWeight.w700,
                                     fontSize: 11,
                                     letterSpacing: 3,
                                   ),
@@ -396,7 +406,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                                 const SizedBox(width: 16),
                                 Icon(
                                   LucideIcons.send,
-                                  color: isDark ? Colors.black : Colors.white,
+                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                   size: 18,
                                 ),
                               ],
@@ -412,9 +422,9 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                     child: Text(
                       '* BY SUBMITTING, YOU AGREE TO RECEIVE INSTITUTIONAL COMMUNICATIONS REGARDING M4 FAMILY ASSETS.',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 8,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: isDark ? Colors.white24 : Colors.black26,
                         letterSpacing: 0.5,
                         height: 1.6,
@@ -437,10 +447,10 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
       padding: const EdgeInsets.only(left: 6, bottom: 12),
       child: Text(
         label,
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.gelasio(
           fontSize: 9,
-          fontWeight: FontWeight.w900,
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+          fontWeight: FontWeight.w700,
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
           letterSpacing: 2,
         ),
       ),
@@ -452,6 +462,8 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
     IconData icon,
     String hint, {
     int maxLines = 1,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
@@ -470,24 +482,29 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
       child: TextField(
         controller: controller,
         maxLines: maxLines,
-        style: GoogleFonts.dmSerifDisplay(
-          fontSize: 12,
-          fontWeight: FontWeight.w900,
-          color: isDark ? Colors.white : Colors.black,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
+        style: GoogleFonts.ebGaramond(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          color: isDark ? Colors.white : Color(0xFF163A2C),
           letterSpacing: 0.5,
         ),
         decoration: InputDecoration(
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           hintText: hint,
-          hintStyle: GoogleFonts.dmSerifDisplay(
+          hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
-            fontWeight: FontWeight.w900,
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
+            fontWeight: FontWeight.w600,
           ),
           icon: maxLines == 1
               ? Icon(
                   icon,
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.4,
                   ),
                   size: 20,

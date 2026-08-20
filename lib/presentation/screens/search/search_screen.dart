@@ -228,10 +228,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -292,9 +292,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           children: [
                             Text(
                               'SEARCH RESULTS',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 22,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 color: textPrimary,
                                 letterSpacing: -0.5,
                               ),
@@ -302,9 +302,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             const SizedBox(height: 4),
                             Text(
                               'FOUND $count PROPERTIES',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 color: muted,
                                 letterSpacing: 4,
                               ),
@@ -341,9 +341,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         if (_query.status.isNotEmpty)
                           _FilterBadge(
                             text: _query.status,
-                            background: const Color(0xFFF59E0B),
+                            background: const Color(0xFFC5A35B),
                             foreground: Colors.black,
-                            border: const Color(0xFFF59E0B),
+                            border: const Color(0xFFC5A35B),
                           ),
                         ...summaryTags.map(
                           (tag) => _FilterBadge(
@@ -440,9 +440,9 @@ class _FilterBadge extends StatelessWidget {
       ),
       child: Text(
         text.toUpperCase(),
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.gelasio(
           fontSize: 10,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w700,
           color: foreground,
           letterSpacing: 1.5,
         ),
@@ -474,7 +474,7 @@ class _LoadingSkeletons extends StatelessWidget {
                         accent.withValues(alpha: 0.02),
                         card,
                       ),
-                      borderRadius: BorderRadius.circular(32),
+                      borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: border),
                     ),
                   )
@@ -538,7 +538,7 @@ class _ResultCard extends StatelessWidget {
         height: 280,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: border),
           boxShadow: [
             BoxShadow(
@@ -600,9 +600,9 @@ class _ResultCard extends StatelessWidget {
                       ),
                       child: Text(
                         status.toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 9,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
                           letterSpacing: 1.5,
                         ),
@@ -627,9 +627,9 @@ class _ResultCard extends StatelessWidget {
                       title.toUpperCase(),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 20,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: Colors.white,
                         letterSpacing: -0.5,
                       ),
@@ -652,9 +652,9 @@ class _ResultCard extends StatelessWidget {
                                   locationShort.toUpperCase(),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 9,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w700,
                                     color: Colors.white.withValues(alpha: 0.7),
                                     letterSpacing: 1.5,
                                   ),
@@ -683,9 +683,9 @@ class _ResultCard extends StatelessWidget {
                                 ),
                                 child: Text(
                                   startingPrice,
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 18,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w700,
                                     fontStyle: FontStyle.italic,
                                     color: Colors.white,
                                     letterSpacing: -0.5,
@@ -729,7 +729,7 @@ class _EmptyState extends StatelessWidget {
       child: Column(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
               child: Container(
@@ -737,7 +737,7 @@ class _EmptyState extends StatelessWidget {
                 height: 128,
                 decoration: BoxDecoration(
                   color: textPrimary.withValues(alpha: 0.03),
-                  borderRadius: BorderRadius.circular(32),
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: border),
                 ),
                 child: Icon(
@@ -751,9 +751,9 @@ class _EmptyState extends StatelessWidget {
           const SizedBox(height: 32),
           Text(
             'NO MATCHES',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 22,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: textPrimary,
               letterSpacing: -0.5,
             ),
@@ -764,9 +764,9 @@ class _EmptyState extends StatelessWidget {
             child: Text(
               'TRY ADJUSTING YOUR FILTERS TO FIND MORE PROPERTIES.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: muted,
                 letterSpacing: 3.6,
                 height: 1.8,
@@ -787,9 +787,9 @@ class _EmptyState extends StatelessWidget {
               ),
               child: Text(
                 'CHANGE FILTERS',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: textPrimary,
                   letterSpacing: 1.5,
                 ),

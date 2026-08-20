@@ -81,10 +81,10 @@ class _InvestorTaxReportDetailScreenState
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
+        backgroundColor: const Color(0xFFC65B46),
         content: Text(
           'Opening $_name...',
-          style: GoogleFonts.dmSerifDisplay(fontSize: 12),
+          style: GoogleFonts.ebGaramond(fontSize: 12),
         ),
       ),
     );
@@ -94,10 +94,10 @@ class _InvestorTaxReportDetailScreenState
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
+        backgroundColor: const Color(0xFFC65B46),
         content: Text(
           'Downloading $_name...',
-          style: GoogleFonts.dmSerifDisplay(fontSize: 12),
+          style: GoogleFonts.ebGaramond(fontSize: 12),
         ),
       ),
     );
@@ -120,13 +120,16 @@ class _InvestorTaxReportDetailScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
 
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _header(textPrimary, muted, isDark),
@@ -163,8 +166,8 @@ class _InvestorTaxReportDetailScreenState
               children: [
                 Text(
                   'Report Details',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.ebGaramond(
+                    fontWeight: FontWeight.w600,
                     fontSize: 16,
                     color: textPrimary,
                   ),
@@ -174,8 +177,8 @@ class _InvestorTaxReportDetailScreenState
                   _id.toUpperCase(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 9,
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 11,
                     letterSpacing: 1.5,
                     fontWeight: FontWeight.w600,
                     color: muted,
@@ -190,12 +193,12 @@ class _InvestorTaxReportDetailScreenState
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.04,
                 ),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.08,
                   ),
                 ),
@@ -219,9 +222,9 @@ class _InvestorTaxReportDetailScreenState
             const SizedBox(height: 16),
             Text(
               'Report not found',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 15,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 color: textPrimary,
               ),
             ),
@@ -230,7 +233,7 @@ class _InvestorTaxReportDetailScreenState
               'The requested tax report could not be found or you do not '
               'have access to it.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(fontSize: 12, color: muted),
+              style: GoogleFonts.ebGaramond(fontSize: 12, color: muted),
             ),
           ],
         ),
@@ -239,7 +242,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _content(bool isDark, Color textPrimary, Color muted) {
-    const red = Color(0xFFEF4444);
+    const red = Color(0xFFC65B46);
 
     return RefreshIndicator(
       color: M4Theme.premiumBlue,
@@ -267,7 +270,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _overviewCard(bool isDark, Color textPrimary, Color muted, Color red) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -304,9 +307,9 @@ class _InvestorTaxReportDetailScreenState
               children: [
                 Text(
                   _name,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 17,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     height: 1.25,
                     letterSpacing: -0.2,
                     color: textPrimary,
@@ -337,13 +340,13 @@ class _InvestorTaxReportDetailScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.03),
+        color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(7),
         border: Border.all(color: border),
       ),
       child: Text(
         label.toUpperCase(),
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.ebGaramond(
           fontSize: 10,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,
@@ -354,8 +357,8 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _badgesRow() {
-    const green = Color(0xFF10B981);
-    const gold = Color(0xFFFFD700);
+    const green = Color(0xFF163A2C);
+    const gold = Color(0xFFC5A35B);
     return Wrap(
       spacing: 10,
       runSpacing: 10,
@@ -381,8 +384,8 @@ class _InvestorTaxReportDetailScreenState
           const SizedBox(width: 6),
           Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
-              fontSize: 9,
+            style: GoogleFonts.ebGaramond(
+              fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
               color: color,
@@ -394,8 +397,8 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _statusGrid(bool isDark, Color textPrimary, Color muted) {
-    const green = Color(0xFF10B981);
-    const amber = Color(0xFFF59E0B);
+    const green = Color(0xFF163A2C);
+    const amber = Color(0xFFC5A35B);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -438,7 +441,7 @@ class _InvestorTaxReportDetailScreenState
     required IconData icon,
     required Color iconColor,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -454,8 +457,8 @@ class _InvestorTaxReportDetailScreenState
         children: [
           Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
-              fontSize: 9,
+            style: GoogleFonts.ebGaramond(
+              fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
               color: muted,
@@ -471,7 +474,7 @@ class _InvestorTaxReportDetailScreenState
                   value,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: valueColor,
@@ -486,7 +489,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _descriptionCard(bool isDark, Color textPrimary, Color muted) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -507,7 +510,7 @@ class _InvestorTaxReportDetailScreenState
               const SizedBox(width: 8),
               Text(
                 'DESCRIPTION',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.2,
@@ -519,10 +522,10 @@ class _InvestorTaxReportDetailScreenState
           const SizedBox(height: 10),
           Text(
             _description,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 13,
               height: 1.55,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w600,
               color: textPrimary.withValues(alpha: 0.85),
             ),
           ),
@@ -532,7 +535,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _secureNote(bool isDark, Color muted) {
-    const gold = Color(0xFFFFD700);
+    const gold = Color(0xFFC5A35B);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -550,10 +553,10 @@ class _InvestorTaxReportDetailScreenState
               'This document contains sensitive financial information. Please '
               'ensure you are in a secure environment before opening, '
               'downloading or sharing it.',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 height: 1.5,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: muted,
               ),
             ),
@@ -582,7 +585,7 @@ class _InvestorTaxReportDetailScreenState
         ),
         label: Text(
           'VIEW DOCUMENT',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -593,7 +596,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _downloadButton() {
-    const gold = Color(0xFFFFD700);
+    const gold = Color(0xFFC5A35B);
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
@@ -610,7 +613,7 @@ class _InvestorTaxReportDetailScreenState
         ),
         label: Text(
           'DOWNLOAD DOCUMENT',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,

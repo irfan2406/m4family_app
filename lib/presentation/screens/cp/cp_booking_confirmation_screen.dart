@@ -106,7 +106,7 @@ class _CpBookingConfirmationScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: Color(0xFF163A2C),
             content: Text('Receipt copied to clipboard'),
           ),
         );
@@ -126,7 +126,7 @@ class _CpBookingConfirmationScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: Color(0xFF163A2C),
             content: Text('Booking details copied to clipboard'),
           ),
         );
@@ -137,14 +137,14 @@ class _CpBookingConfirmationScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.68,
     );
 
     if (_loading) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         body: const Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
@@ -152,7 +152,7 @@ class _CpBookingConfirmationScreenState
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
       body: Stack(
         children: [
           // Decorative background circles
@@ -182,6 +182,9 @@ class _CpBookingConfirmationScreenState
           ).animate().fadeIn(duration: 1200.ms),
 
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
               child: Column(
@@ -234,7 +237,7 @@ class _CpBookingConfirmationScreenState
                           color: isDark
                               ? Colors.white.withValues(alpha: 0.05)
                               : Colors.white,
-                          borderRadius: BorderRadius.circular(32),
+                          borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: isDark
                                 ? Colors.white.withValues(alpha: 0.1)
@@ -272,9 +275,9 @@ class _CpBookingConfirmationScreenState
                   Text(
                     'BOOKING\nCONFIRMED!',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 30,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: textPrimary,
                       height: 0.9,
                       letterSpacing: -2,
@@ -286,9 +289,9 @@ class _CpBookingConfirmationScreenState
                   // Subtitle with highlighted project title
                   Text.rich(
                     TextSpan(
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: muted,
                         letterSpacing: 2.5,
                         height: 1.8,
@@ -300,9 +303,9 @@ class _CpBookingConfirmationScreenState
                         ),
                         TextSpan(
                           text: _projectTitle.toUpperCase(),
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: M4Theme.premiumBlue,
                             letterSpacing: 2.5,
                             height: 1.8,
@@ -365,23 +368,23 @@ class _CpBookingConfirmationScreenState
                       width: double.infinity,
                       height: 64,
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Colors.black,
-                        borderRadius: BorderRadius.circular(32),
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
                             LucideIcons.home,
-                            color: isDark ? Colors.black : Colors.white,
+                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                             size: 18,
                           ),
                           const SizedBox(width: 14),
                           Text(
                             'BACK TO DASHBOARD',
-                            style: GoogleFonts.dmSerifDisplay(
-                              color: isDark ? Colors.black : Colors.white,
-                              fontWeight: FontWeight.w900,
+                            style: GoogleFonts.gelasio(
+                              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                              fontWeight: FontWeight.w700,
                               fontSize: 12,
                               letterSpacing: 2,
                             ),
@@ -402,9 +405,9 @@ class _CpBookingConfirmationScreenState
                     },
                     child: Text(
                       'NEED HELP WITH YOUR BOOKING?',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: muted,
                         letterSpacing: 2,
                         decoration: TextDecoration.underline,
@@ -432,7 +435,7 @@ class _CpBookingConfirmationScreenState
       width: double.infinity,
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.02) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.02) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: isDark
@@ -460,9 +463,9 @@ class _CpBookingConfirmationScreenState
               children: [
                 Text(
                   'RECEIPT ID',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: muted,
                     letterSpacing: 2,
                   ),
@@ -470,9 +473,9 @@ class _CpBookingConfirmationScreenState
                 const SizedBox(height: 6),
                 Text(
                   '#${(_receiptId.isNotEmpty ? _receiptId : _fallbackReceipt).toUpperCase()}',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 14,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: textPrimary,
                     letterSpacing: -0.5,
                   ),
@@ -489,9 +492,9 @@ class _CpBookingConfirmationScreenState
             muted: muted,
             child: Text(
               _projectTitle.toUpperCase(),
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 14,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: textPrimary,
                 letterSpacing: -0.5,
               ),
@@ -510,9 +513,9 @@ class _CpBookingConfirmationScreenState
                   muted: muted,
                   child: Text(
                     '₹$_amount',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 14,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: M4Theme.premiumBlue,
                       letterSpacing: -0.5,
                     ),
@@ -526,9 +529,9 @@ class _CpBookingConfirmationScreenState
                   children: [
                     Text(
                       'STATUS',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: muted,
                         letterSpacing: 2,
                       ),
@@ -540,7 +543,7 @@ class _CpBookingConfirmationScreenState
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                        color: const Color(0xFF163A2C).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Row(
@@ -548,16 +551,16 @@ class _CpBookingConfirmationScreenState
                         children: [
                           const Icon(
                             LucideIcons.checkCircle2,
-                            color: Color(0xFF10B981),
+                            color: Color(0xFF163A2C),
                             size: 12,
                           ),
                           const SizedBox(width: 6),
                           Text(
                             'VERIFIED',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               fontSize: 8,
-                              fontWeight: FontWeight.w900,
-                              color: const Color(0xFF10B981),
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF163A2C),
                               letterSpacing: 2,
                             ),
                           ),
@@ -593,9 +596,9 @@ class _DetailRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 9,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: muted,
             letterSpacing: 2,
           ),
@@ -627,7 +630,7 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         height: 56,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark
@@ -653,10 +656,10 @@ class _ActionButton extends StatelessWidget {
               child: Text(
                 label,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
-                  fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 1.5,
                 ),
               ),

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:m4_mobile/presentation/widgets/m4_image.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/project_highlights.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -174,13 +177,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       return Center(
         child: Text(
           'NO MEDIA FOUND',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             // Was Colors.white10 — invisible on the light background.
             color: Theme.of(
               context,
-            ).colorScheme.onSurface.withValues(alpha: 0.4),
+            ).colorScheme.onSurface.withValues(alpha: 0.72),
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
           ),
         ),
@@ -280,15 +283,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   /// which could never pass: the project dropdown isn't part of this form, so
   /// nothing ever set it and every submit failed even when fully filled.)
   bool _validateInquiry() {
-    final nameErr = _nameController.text.trim().isEmpty
-        ? 'Please enter your full name'
-        : null;
-    final emailErr = _emailController.text.trim().isEmpty
-        ? 'Please enter your email address'
-        : null;
-    final phoneErr = _phoneController.text.trim().isEmpty
-        ? 'Please enter your phone number'
-        : null;
+    // Full validation (was empty-check only): name = letters, email = proper
+    // format, phone = 10-digit. Errors show in red on each field.
+    final nameErr = Validators.nameError(
+      _nameController.text,
+      field: 'full name',
+    );
+    final emailErr = Validators.emailError(_emailController.text);
+    final phoneErr = Validators.phoneError(_phoneController.text);
     setState(() {
       _nameError = nameErr;
       _emailError = emailErr;
@@ -364,10 +366,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.dmSerifDisplay(
-            color: foreground.withOpacity(0.6),
-            fontSize: 8,
-            fontWeight: FontWeight.w900,
+          // Was 8px / 60% — far too small and faint to read. Bigger + darker.
+          style: GoogleFonts.ebGaramond(
+            color: foreground.withOpacity(0.85),
+            fontSize: 10.5,
+            fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
             height: 1.4,
           ),
@@ -441,17 +444,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         height: 36,
                         decoration: BoxDecoration(
                           // Toggle button background: White in Dark Mode, Black in Light Mode
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black,
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
-                          LucideIcons.moreHorizontal,
-                          // Toggle icon color: Black in Dark Mode, White in Light Mode
+                          LucideIcons.menu,
+                          // White on the dark navy surfaces, theme ink on cream.
                           color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.black
-                              : Colors.white,
+                              ? Colors.white
+                              : Theme.of(context).colorScheme.onSurface,
                           size: 24,
                         ),
                       ),
@@ -480,31 +481,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   // before the hero. Same in light and dark mode.
                   Padding(
                     padding: const EdgeInsets.only(top: 12, bottom: 8),
-                    child: ColorFiltered(
-                      colorFilter: ColorFilter.matrix(
-                        Theme.of(context).brightness == Brightness.dark
-                            ? const [
-                                // Dark Mode: Invert and boost to white
-                                -5.0, 0, 0, 0, 255,
-                                0, -5.0, 0, 0, 255,
-                                0, -5.0, 0, 0, 255,
-                                0, 0, 0, 1, 0,
-                              ]
-                            : const [
-                                // Light Mode: Crush to black
-                                5.0, 0, 0, 0, -150,
-                                0, 5.0, 0, 0, -150,
-                                0, 0, 5.0, 0, -150,
-                                0, 0, 0, 1, 0,
-                              ],
-                      ),
-                      child: Image.asset(
-                        'assets/living_m4_life.png',
-                        width: MediaQuery.of(context).size.width,
-                        height: 120,
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
+                    child: M4Theme.taglineWordmark(context, height: 120),
                   ),
 
                   // Hero Image Container
@@ -591,10 +568,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 ),
                                 child: Text(
                                   'ARTISTIC IMPRESSION',
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.gelasio(
                                     color: Colors.white,
                                     fontSize: 7,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w700,
                                     letterSpacing: 1.5,
                                   ),
                                 ),
@@ -679,7 +656,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         : _topTabCategory == 'MEDIA'
                         ? 'M4 MEDIA'
                         : 'M4 PROPERTIES',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 32,
                       fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.onSurface,
@@ -731,12 +708,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           return Center(
                             child: Text(
                               'NO ITEMS FOUND',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 color: Theme.of(
                                   context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.4),
+                                ).colorScheme.onSurface.withValues(alpha: 0.72),
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 1.5,
                               ),
                             ),
@@ -845,7 +822,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: <Widget>[
                   Text(
                     'OUR PHILOSOPHY',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 32,
                       fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.onSurface,
@@ -856,7 +833,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Text(
                     'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner.',
                     textAlign: TextAlign.justify,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       color: Theme.of(
                         context,
                       ).colorScheme.onSurface.withOpacity(0.6),
@@ -875,7 +852,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
               child: Text(
                 'FEATURED PROPERTY',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 32,
                   fontWeight: FontWeight.w400,
                   color: Theme.of(context).colorScheme.onSurface,
@@ -1001,17 +978,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       children: [
                                         Text(
                                           'FEATURED PROPERTY',
-                                          style: GoogleFonts.dmSerifDisplay(
-                                            color: const Color(0xFFC5A358),
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w900,
+                                          // Was 9px — too small to read.
+                                          style: GoogleFonts.gelasio(
+                                            color: const Color(0xFFC5A35B),
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w700,
                                             letterSpacing: 2,
                                           ),
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
                                           title,
-                                          style: GoogleFonts.dmSerifDisplay(
+                                          style: GoogleFonts.gelasio(
                                             color: Colors.white,
                                             fontSize: 34,
                                             height: 1,
@@ -1023,14 +1001,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           tagline.toUpperCase(),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.dmSerifDisplay(
+                                          // Was 10px / 80% — faint on the photo.
+                                          // Bigger, bolder, near-solid white.
+                                          style: GoogleFonts.ebGaramond(
                                             color: Colors.white.withOpacity(
-                                              0.8,
+                                              0.95,
                                             ),
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w600,
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w700,
                                             height: 1.5,
-                                            letterSpacing: 1,
+                                            letterSpacing: 0.8,
                                           ),
                                         ),
                                       ],
@@ -1054,10 +1034,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       ),
                                       child: Text(
                                         'ARTISTIC IMPRESSION',
-                                        style: GoogleFonts.dmSerifDisplay(
+                                        style: GoogleFonts.gelasio(
                                           color: Colors.white,
                                           fontSize: 8,
-                                          fontWeight: FontWeight.w900,
+                                          fontWeight: FontWeight.w700,
                                           letterSpacing: 1.5,
                                         ),
                                       ),
@@ -1081,23 +1061,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      // Web parity: USPs come from the featured project's
+                      // backend `highlights` (e.g. ["Prime Location", "20 min
+                      // from Airport"]), not a hardcoded pair. Each is Expanded
+                      // so its label wraps.
                       children: [
-                        _buildWebUSP(
-                          context,
-                          LucideIcons.building2,
-                          'FULLY\nFURNISHED',
-                        ),
-                        _buildWebUSP(
-                          context,
-                          LucideIcons.mapPin,
-                          'PRIME\nLOCATION',
-                        ),
-                        _buildWebUSP(
-                          context,
-                          LucideIcons.smartphone,
-                          '20 MIN FROM\nSHEIKH ZAYED RD',
-                        ),
+                        for (final h in projectHighlights(
+                          _projects.isNotEmpty ? _projects.first : null,
+                        ).take(3))
+                          Expanded(
+                            child: _buildWebUSP(
+                              context,
+                              highlightIcon(h),
+                              h.toUpperCase(),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -1163,18 +1141,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 Theme.of(context).brightness == Brightness.dark
                                 ? Colors.white
                                 : Colors.black,
-                            borderRadius: BorderRadius.circular(35),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             'READ MORE',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               color:
                                   Theme.of(context).brightness ==
                                       Brightness.dark
                                   ? Colors.black
                                   : Colors.white,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
                               letterSpacing: 1.5,
                             ),
                           ),
@@ -1219,7 +1197,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: <Widget>[
                   Text(
                     'EXPLORE,\nCONNECT AND ENGAGE\nWITH US',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 30,
                       fontWeight: FontWeight.w400,
                       height: 1.15,
@@ -1328,7 +1306,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: <Widget>[
                   Text(
                     'REGISTER YOUR\nINTEREST',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 32,
                       fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.onSurface,
@@ -1339,11 +1317,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'OFFICIAL INQUIRY FORM',
+                    // Was 10px / 68% — small and washed out.
                     style: TextStyle(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.68),
-                      fontSize: 10,
+                      ).colorScheme.onSurface.withOpacity(0.85),
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
                     ),
@@ -1353,6 +1332,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     label: 'Full Name *',
                     controller: _nameController,
                     errorText: _nameError,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: Validators.nameFormatters,
                     // Clear the red state as soon as they start typing.
                     onChanged: (v) {
                       if (_nameError != null) setState(() => _nameError = null);
@@ -1362,6 +1343,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     label: 'Email Address *',
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
+                    inputFormatters: Validators.emailFormatters,
                     errorText: _emailError,
                     onChanged: (v) {
                       if (_emailError != null) {
@@ -1373,6 +1355,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     label: 'Phone Number *',
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
+                    inputFormatters: Validators.phoneFormatters,
                     errorText: _phoneError,
                     onChanged: (v) {
                       if (_phoneError != null) {
@@ -1411,7 +1394,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             )
                           : Text(
                               'SUBMIT INTEREST',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 3,
                                 fontSize: 12,
@@ -1424,7 +1407,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
           ),
 
-          SliverToBoxAdapter(child: SizedBox(height: 120)),
+          SliverToBoxAdapter(child: SizedBox(height: 96)),
         ],
       ),
     );
@@ -1446,21 +1429,21 @@ class _CategoryChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
         decoration: BoxDecoration(
           color: isActive
-              ? (isDark ? Colors.white : Colors.black)
+              ? (isDark ? Colors.white : Color(0xFF163A2C))
               : (isDark
                     ? Colors.white.withOpacity(0.05)
                     : Colors.black.withOpacity(0.05)),
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.1),
           ),
         ),
         child: Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             color: isActive
                 ? (isDark ? Colors.black : Colors.white)
-                : (isDark ? Colors.white38 : Colors.black38),
+                : (isDark ? Colors.white38 : Color(0xFF5E6B60)),
             fontSize: 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 2,
@@ -1487,165 +1470,181 @@ class _ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    // Web parity: light "info card" — image on top (with ONGOING + ARTISTIC
+    // IMPRESSION badges), then title / location / a full-width READ MORE
+    // button below. (Was a full-bleed image-overlay card with VIEW PROPERTY.)
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 280,
-        margin: const EdgeInsets.only(right: 20),
+        margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(35),
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(35),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              imageUrl.isNotEmpty
-                  ? M4Image(
-                      imageUrl: imageUrl,
-                      height: double.infinity,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      placeholder: Container(color: Colors.black12),
-                      errorWidget: Container(color: Colors.white10),
-                    )
-                  : Container(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withOpacity(0.05),
-                      height: double.infinity,
-                      width: double.infinity,
-                      child: Center(
-                        child: Icon(
-                          LucideIcons.building,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withOpacity(0.2),
-                          size: 40,
-                        ),
-                      ),
-                    ),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
-                    stops: const [0.5, 1.0],
-                  ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image on top with badges — fills the space above the footer.
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
                 ),
-              ),
-              // Status pill (top-right)
-              if (status.isNotEmpty)
-                Positioned(
-                  top: 16,
-                  right: 16,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white.withOpacity(0.15)),
-                    ),
-                    child: Text(
-                      status.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
-                        color: Colors.white,
-                        fontSize: 7,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-              // Content at the bottom
-              Positioned(
-                bottom: 25,
-                left: 25,
-                right: 25,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Text(
-                      title.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: -0.5,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (location.isNotEmpty) ...[
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Icon(
-                            LucideIcons.mapPin,
-                            color: Colors.white.withOpacity(0.6),
-                            size: 10,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              location.toUpperCase(),
-                              style: GoogleFonts.dmSerifDisplay(
-                                color: Colors.white.withOpacity(0.6),
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.5,
+                    imageUrl.isNotEmpty
+                        ? M4Image(
+                            imageUrl: imageUrl,
+                            height: double.infinity,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            placeholder: Container(color: Colors.black12),
+                            errorWidget: Container(color: Colors.white10),
+                          )
+                        : Container(
+                            color: scheme.onSurface.withOpacity(0.05),
+                            child: Center(
+                              child: Icon(
+                                LucideIcons.building,
+                                color: scheme.onSurface.withOpacity(0.2),
+                                size: 40,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        ],
-                      ),
-                    ],
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'VIEW PROPERTY',
-                          style: GoogleFonts.dmSerifDisplay(
-                            color: Colors.white.withOpacity(0.8),
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.5,
+                    if (status.isNotEmpty)
+                      Positioned(
+                        top: 12,
+                        right: 12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
                           ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
+                            color: Colors.black.withOpacity(0.75),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          child: const Icon(
-                            LucideIcons.arrowRight,
-                            color: Colors.black,
-                            size: 18,
+                          child: Text(
+                            status.toUpperCase(),
+                            style: GoogleFonts.ebGaramond(
+                              color: Colors.white,
+                              fontSize: 8,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 1,
+                            ),
                           ),
                         ),
-                      ],
+                      ),
+                    Positioned(
+                      bottom: 10,
+                      right: 10,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.55),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'ARTISTIC IMPRESSION',
+                          style: GoogleFonts.ebGaramond(
+                            color: Colors.white,
+                            fontSize: 6.5,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+            // Info section: title, location, full-width READ MORE button.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.gelasio(
+                      color: scheme.onSurface,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        LucideIcons.mapPin,
+                        size: 12,
+                        color: scheme.onSurface.withOpacity(0.55),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          location.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.ebGaramond(
+                            color: scheme.onSurface.withOpacity(0.55),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    width: double.infinity,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: scheme.onSurface,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'READ MORE',
+                          style: GoogleFonts.ebGaramond(
+                            color: scheme.surface,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(
+                          LucideIcons.chevronRight,
+                          size: 14,
+                          color: scheme.surface,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -1678,12 +1677,12 @@ class _QuickAction extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.05,
                   ),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.08,
                     ),
                   ),
@@ -1699,7 +1698,7 @@ class _QuickAction extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 8,
               fontWeight: FontWeight.w700,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
@@ -1749,23 +1748,25 @@ class _EngageCell extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 12,
-                fontWeight: FontWeight.w900,
+              style: GoogleFonts.ebGaramond(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
-                letterSpacing: 1,
+                letterSpacing: 0.8,
                 height: 1.2,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               desc,
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 10.5,
-                fontWeight: FontWeight.w500,
-                color: scheme.onSurface.withOpacity(0.65),
-                height: 1.35,
+              // Was 10.5px / 65% (then 12 / 82%) — still read as faint grey.
+              // Now near-solid foreground at a proper body size.
+              style: GoogleFonts.ebGaramond(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: scheme.onSurface.withOpacity(0.95),
+                height: 1.4,
               ),
             ),
           ],
@@ -1781,7 +1782,7 @@ class _QuickFilterSheet extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF070708) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(35),
           topRight: Radius.circular(35),
@@ -1808,9 +1809,9 @@ class _QuickFilterSheet extends StatelessWidget {
             children: [
               Text(
                 'QUICK FILTERS',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 18,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: Theme.of(context).colorScheme.onSurface,
                   letterSpacing: 1,
                 ),
@@ -1821,7 +1822,7 @@ class _QuickFilterSheet extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.1,
                     ),
                   ),
@@ -1851,15 +1852,15 @@ class _QuickFilterSheet extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 20),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : Colors.black,
-                borderRadius: BorderRadius.circular(35),
+                color: isDark ? Colors.white : Color(0xFF163A2C),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Center(
                 child: Text(
                   'SHOW RESULTS',
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: isDark ? Colors.black : Colors.white,
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.gelasio(
+                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    fontWeight: FontWeight.w700,
                     fontSize: 12,
                     letterSpacing: 1.5,
                   ),
@@ -1887,9 +1888,9 @@ class _FilterSection extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
             letterSpacing: 1.5,
           ),
@@ -1906,22 +1907,22 @@ class _FilterSection extends StatelessWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.05,
                     ),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.05,
                       ),
                     ),
                   ),
                   child: Text(
                     opt,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 9,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                     ),
                   ),
@@ -1942,7 +1943,7 @@ class _SliderNavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
 
     return GestureDetector(
       onTap: onTap,
@@ -1971,6 +1972,9 @@ class _PremiumInputField extends StatelessWidget {
   final String? errorText;
   final ValueChanged<String>? onChanged;
 
+  /// Blocks invalid characters as the user types (e.g. digits in a name).
+  final List<TextInputFormatter>? inputFormatters;
+
   const _PremiumInputField({
     required this.label,
     required this.controller,
@@ -1978,9 +1982,10 @@ class _PremiumInputField extends StatelessWidget {
     this.maxLines = 1,
     this.errorText,
     this.onChanged,
+    this.inputFormatters,
   });
 
-  static const _errorColor = Color(0xFFE24B4A);
+  static const _errorColor = Color(0xFFC65B46);
 
   @override
   Widget build(BuildContext context) {
@@ -1998,16 +2003,16 @@ class _PremiumInputField extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 22,
-                  vertical: 16,
+                  vertical: 9,
                 ),
                 decoration: BoxDecoration(
                   // Web parity: white field with a soft shadow.
-                  color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+                  color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: hasError
                         ? _errorColor
-                        : (isDark ? Colors.white : Colors.black).withOpacity(
+                        : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                             0.08,
                           ),
                     width: hasError ? 1.5 : 1,
@@ -2027,27 +2032,32 @@ class _PremiumInputField extends StatelessWidget {
                   keyboardType: keyboardType,
                   maxLines: maxLines,
                   onChanged: onChanged,
+                  inputFormatters: inputFormatters,
                   cursorColor: Theme.of(context).colorScheme.onSurface,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     color: Theme.of(context).colorScheme.onSurface,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w700,
                   ),
                   // Web parity: a placeholder that disappears on typing (not a
                   // floating label that sits above the typed text).
                   decoration: InputDecoration(
                     isCollapsed: true,
                     hintText: label,
-                    hintStyle: GoogleFonts.dmSerifDisplay(
+                    // Was 14px / 68% — the placeholder read as washed out.
+                    hintStyle: GoogleFonts.ebGaramond(
                       color: hasError
-                          ? _errorColor.withOpacity(0.75)
+                          ? _errorColor.withOpacity(0.85)
                           : Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.68),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                            ).colorScheme.onSurface.withOpacity(0.82),
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w600,
                     ),
+                    filled: false,
                     border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
                   ),
                 ),
               ),
@@ -2058,7 +2068,7 @@ class _PremiumInputField extends StatelessWidget {
               padding: const EdgeInsets.only(left: 10, top: 6),
               child: Text(
                 errorText!,
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   color: _errorColor,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -2096,17 +2106,17 @@ class _PremiumDropdownField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
               ),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButtonFormField<String>(
                 value: value,
-                dropdownColor: isDark ? const Color(0xFF0F0F11) : Colors.white,
-                style: GoogleFonts.dmSerifDisplay(
+                dropdownColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                style: GoogleFonts.ebGaramond(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 13,
                 ),
@@ -2119,13 +2129,16 @@ class _PremiumDropdownField extends StatelessWidget {
                 ),
                 decoration: InputDecoration(
                   labelText: label,
-                  labelStyle: GoogleFonts.dmSerifDisplay(
+                  labelStyle: GoogleFonts.ebGaramond(
                     color: Theme.of(
                       context,
                     ).colorScheme.onSurface.withOpacity(0.68),
                     fontSize: 13,
                   ),
+                  filled: false,
                   border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
                 ),
                 items: options
@@ -2162,10 +2175,10 @@ class _PremiumFormField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
               ),
             ),
             child: Row(
@@ -2173,7 +2186,7 @@ class _PremiumFormField extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     color: Theme.of(
                       context,
                     ).colorScheme.onSurface.withOpacity(0.68),
@@ -2222,18 +2235,22 @@ class _GlassSearchField extends StatelessWidget {
               const SizedBox(width: 15),
               Expanded(
                 child: TextField(
+                  cursorColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
                   onChanged: onChanged,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     color: Colors.black,
-                    fontSize: 14,
+                    fontSize: 15,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Search residences...',
-                    hintStyle: GoogleFonts.dmSerifDisplay(
+                    hintStyle: GoogleFonts.ebGaramond(
                       color: Colors.black45,
                       fontSize: 13,
                     ),
+                    filled: false,
                     border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
                   ),
                 ),
               ),
@@ -2304,7 +2321,7 @@ class _WebTab extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             color: isActive ? onSurface : onSurface.withOpacity(0.55),
             fontSize: 12,
             fontWeight: FontWeight.w600,
@@ -2342,10 +2359,10 @@ class _UpdateCard extends StatelessWidget {
         width: 280,
         margin: const EdgeInsets.only(left: 20, right: 10),
         decoration: BoxDecoration(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
-          borderRadius: BorderRadius.circular(35),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.04),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
           ),
         ),
         padding: const EdgeInsets.all(16),
@@ -2381,9 +2398,9 @@ class _UpdateCard extends StatelessWidget {
                   ),
                   child: Text(
                     type,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 7,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: Theme.of(
                         context,
                       ).colorScheme.onSurface.withOpacity(0.5),
@@ -2392,12 +2409,12 @@ class _UpdateCard extends StatelessWidget {
                 ),
                 Text(
                   date,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.3),
+                    ).colorScheme.onSurface.withOpacity(0.72),
                   ),
                 ),
               ],
@@ -2405,9 +2422,9 @@ class _UpdateCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               title,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: -0.5,
               ),
@@ -2417,7 +2434,7 @@ class _UpdateCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               snippet,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                 height: 1.4,
@@ -2451,7 +2468,7 @@ class _MediaCard extends StatelessWidget {
         width: 280,
         margin: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -2461,7 +2478,7 @@ class _MediaCard extends StatelessWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(20),
           child: Stack(
             children: [
               M4Image(
@@ -2500,10 +2517,10 @@ class _MediaCard extends StatelessWidget {
                   ),
                   child: Text(
                     'ARTISTIC IMPRESSION',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       color: Colors.white,
                       fontSize: 7,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                     ),
                   ),
@@ -2517,7 +2534,7 @@ class _MediaCard extends StatelessWidget {
                   title.toUpperCase(),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
@@ -2599,20 +2616,20 @@ class _CommunityCard extends StatelessWidget {
                   children: [
                     Text(
                       title.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         color: Colors.white,
                         fontSize: 22,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 10),
                     Text(
                       description,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         color: Colors.white.withOpacity(0.7),
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         letterSpacing: 0.5,
                         height: 1.4,
                       ),
@@ -2625,7 +2642,7 @@ class _CommunityCard extends StatelessWidget {
                       children: [
                         Text(
                           'EXPLORE COMMUNITY',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w400,

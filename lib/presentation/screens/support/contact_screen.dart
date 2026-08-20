@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -52,13 +54,15 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
   }
 
   Future<void> _submitForm() async {
-    if (_nameController.text.trim().isEmpty ||
-        _emailController.text.trim().isEmpty ||
-        _phoneController.text.trim().isEmpty) {
+    final validationError =
+        Validators.nameError(_nameController.text, field: 'full name') ??
+        Validators.emailError(_emailController.text) ??
+        Validators.phoneError(_phoneController.text);
+    if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
-          content: Text('Please fill in your name, email and phone'),
+        SnackBar(
+          backgroundColor: const Color(0xFFC65B46),
+          content: Text(validationError),
         ),
       );
       return;
@@ -66,7 +70,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     if (!_agreedToPrivacy) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Please agree to the Privacy Policy'),
         ),
       );
@@ -87,7 +91,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Thank you! We will get in touch with you shortly.'),
-          backgroundColor: Color(0xFF10B981),
+          backgroundColor: Color(0xFF163A2C),
         ),
       );
       _nameController.clear();
@@ -99,7 +103,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text('Error: $e'),
         ),
       );
@@ -183,13 +187,18 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBody: true,
       drawer: const ConditionalDrawer(),
-      bottomNavigationBar: NavigationPill(
-        currentIndex: -1,
-        onTap: (i) {
-          ref.read(navigationProvider.notifier).state = i;
-          Navigator.of(context).popUntil((r) => r.isFirst);
-        },
-      ),
+      // Own nav pill ONLY when pushed standalone (from the menu). As a tab
+      // inside GuestMainShell the shell already draws one — rendering both
+      // stacked two navigation bars on top of each other.
+      bottomNavigationBar: Navigator.of(context).canPop()
+          ? NavigationPill(
+              currentIndex: -1,
+              onTap: (i) {
+                ref.read(navigationProvider.notifier).state = i;
+                Navigator.of(context).popUntil((r) => r.isFirst);
+              },
+            )
+          : null,
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
@@ -199,7 +208,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           : SafeArea(
               bottom: false,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 120),
+                padding: const EdgeInsets.fromLTRB(40, 8, 40, 120),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -213,8 +222,8 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     // CONTACT INFORMATION — plain black heading (no gradient).
                     Text(
                       'CONTACT INFORMATION',
-                      style: GoogleFonts.dmSerifDisplay(
-                        color: isDark ? Colors.white : Colors.black,
+                      style: GoogleFonts.gelasio(
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
@@ -232,8 +241,8 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     // OUR HEAD OFFICE — plain black heading (no gradient).
                     Text(
                       'OUR HEAD OFFICE',
-                      style: GoogleFonts.dmSerifDisplay(
-                        color: isDark ? Colors.white : Colors.black,
+                      style: GoogleFonts.gelasio(
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
@@ -248,59 +257,29 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     );
   }
 
-  // Web parity: rounded back button + "M4 FAMILY" / "DEVELOPMENTS".
+  // Web parity: "M4 FAMILY" / "DEVELOPMENTS" title with the drawer button.
   Widget _buildHeader(bool isDark) {
     return Row(
       children: [
-        GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Container(
-            width: 44,
-            height: 44,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
-              ),
-              boxShadow: isDark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 16,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-            ),
-            child: Icon(
-              LucideIcons.arrowLeft,
-              size: 18,
-              color: isDark ? Colors.white : Colors.black,
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'M4 FAMILY',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: -0.3,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               'DEVELOPMENTS',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 9,
-                fontWeight: FontWeight.w800,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
+                fontWeight: FontWeight.w700,
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
                 letterSpacing: 3.5,
               ),
             ),
@@ -319,9 +298,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       children: [
         _introText(
           'GET IN TOUCH WITH US',
-          GoogleFonts.dmSerifDisplay(
+          GoogleFonts.gelasio(
             fontSize: 26,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
             height: 1.15,
           ),
@@ -334,7 +313,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           "hello we're here to help. Please feel free to get in touch with us "
           "using the contact information below or by filling out the contact "
           "form. We strive to respond to all inquiries promptly.",
-          GoogleFonts.dmSerifDisplay(
+          GoogleFonts.ebGaramond(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             height: 1.7,
@@ -360,18 +339,25 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _formField(_nameController, 'Full Name *'),
+        _formField(
+          _nameController,
+          'Full Name *',
+          keyboardType: TextInputType.name,
+          inputFormatters: Validators.nameFormatters,
+        ),
         const SizedBox(height: 16),
         _formField(
           _emailController,
           'Email *',
           keyboardType: TextInputType.emailAddress,
+          inputFormatters: Validators.emailFormatters,
         ),
         const SizedBox(height: 16),
         _formField(
           _phoneController,
           '+91 98653 21250 *',
           keyboardType: TextInputType.phone,
+          inputFormatters: Validators.phoneFormatters,
         ),
         const SizedBox(height: 16),
         _formField(_messageController, 'Message', maxLines: 4),
@@ -383,8 +369,8 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           child: ElevatedButton(
             onPressed: _isSubmitting ? null : _submitForm,
             style: ElevatedButton.styleFrom(
-              backgroundColor: isDark ? Colors.white : Colors.black,
-              foregroundColor: isDark ? Colors.black : Colors.white,
+              backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+              foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
@@ -396,7 +382,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                     ),
                   )
                 : Row(
@@ -404,9 +390,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     children: [
                       Text(
                         'SUBMIT INQUIRY',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 12,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -425,27 +411,29 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     String hint, {
     int maxLines = 1,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextField(
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
-      style: GoogleFonts.dmSerifDisplay(
-        color: isDark ? Colors.white : Colors.black,
-        fontSize: 14,
+      inputFormatters: inputFormatters,
+      style: GoogleFonts.ebGaramond(
+        color: isDark ? Colors.white : Color(0xFF163A2C),
+        fontSize: 15,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.dmSerifDisplay(
+        hintStyle: GoogleFonts.ebGaramond(
           // Was 0.4 — too faint to read on the white field.
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
         filled: true,
-        fillColor: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
+        fillColor: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20,
           vertical: 18,
@@ -453,12 +441,12 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.1),
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFFC5A358), width: 1.6),
+          borderSide: BorderSide(color: isDark ? const Color(0xFFF4EFE3) : const Color(0xFF163A2C), width: 1.6),
         ),
       ),
     );
@@ -476,11 +464,11 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: _agreedToPrivacy
-                  ? (isDark ? Colors.white : Colors.black)
+                  ? (isDark ? Colors.white : Color(0xFF163A2C))
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.3),
                 width: 1.5,
               ),
             ),
@@ -488,7 +476,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                 ? Icon(
                     LucideIcons.check,
                     size: 14,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: Theme.of(context).scaffoldBackgroundColor,
                   )
                 : null,
           ),
@@ -496,10 +484,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           Expanded(
             child: RichText(
               text: TextSpan(
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.7,
                   ),
                 ),
@@ -507,10 +495,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   const TextSpan(text: "I've read and agree to the "),
                   TextSpan(
                     text: 'Privacy Policy',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w800,
-                      color: isDark ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -586,7 +574,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
             height: 52,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: isDark ? Colors.white : Colors.black,
+              color: isDark ? Colors.white : Color(0xFF163A2C),
               shape: BoxShape.circle,
               boxShadow: isDark
                   ? null
@@ -600,7 +588,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
             ),
             child: Icon(
               icon,
-              color: isDark ? Colors.black : Colors.white,
+              color: Theme.of(context).scaffoldBackgroundColor,
               size: 20,
             ),
           ),
@@ -611,22 +599,22 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
               children: [
                 Text(
                   label,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     color: isDark
                         ? Colors.white.withOpacity(0.7)
-                        : const Color(0xFF3E5C86),
+                        : const Color(0xFF141B3A),
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                   ),
                 ),
                 const SizedBox(height: 5),
                 Text(
                   value,
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: isDark ? Colors.white : Colors.black,
+                  style: GoogleFonts.ebGaramond(
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     fontSize: valueSize,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: -0.2,
                     height: 1.4,
                   ),
@@ -635,8 +623,8 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   const SizedBox(height: 4),
                   Text(
                     sub,
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    style: GoogleFonts.ebGaramond(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.5,
                       ),
                       fontSize: 10,
@@ -659,10 +647,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       padding: const EdgeInsets.only(left: 8),
       child: Text(
         text,
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.gelasio(
           fontSize: 9,
-          fontWeight: FontWeight.w800,
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
+          fontWeight: FontWeight.w700,
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
           letterSpacing: 2,
         ),
       ),
@@ -682,10 +670,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
-        borderRadius: BorderRadius.circular(36),
+        color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
         ),
         boxShadow: isDark
             ? null
@@ -708,10 +696,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                 height: 48,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+                  color: isDark ? Colors.white.withOpacity(0.05) : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.08,
                     ),
                   ),
@@ -727,7 +715,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                 ),
                 child: Icon(
                   LucideIcons.mapPin,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   size: 20,
                 ),
               ),
@@ -738,10 +726,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   children: [
                     Text(
                       title.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 17,
-                        fontWeight: FontWeight.w800,
-                        color: isDark ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.w500,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         letterSpacing: -0.2,
                         height: 1.15,
                       ),
@@ -749,10 +737,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     const SizedBox(height: 12),
                     Text(
                       address,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.6),
                         height: 1.6,
                       ),
@@ -775,10 +763,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withOpacity(0.03)
-                          : Colors.white,
+                          : const Color(0xFFF4EFE3),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.12),
                       ),
                     ),
@@ -788,16 +776,16 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                         Icon(
                           LucideIcons.externalLink,
                           size: 15,
-                          color: isDark ? Colors.white : Colors.black,
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'DIRECTIONS',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
-                            color: isDark ? Colors.white : Colors.black,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                           ),
                         ),
                       ],
@@ -814,7 +802,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     height: 48,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Row(
@@ -823,16 +811,16 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                         Icon(
                           LucideIcons.phone,
                           size: 15,
-                          color: isDark ? Colors.black : Colors.white,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'CALL NOW',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
-                            color: isDark ? Colors.black : Colors.white,
+                            color: Theme.of(context).scaffoldBackgroundColor,
                           ),
                         ),
                       ],
@@ -854,10 +842,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     return Container(
       height: 300,
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
-        borderRadius: BorderRadius.circular(36),
+        color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.03),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
         ),
         boxShadow: isDark
             ? null
@@ -896,8 +884,8 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   children: [
                     Text(
                       'Open in Maps',
-                      style: GoogleFonts.dmSerifDisplay(
-                        color: isDark ? Colors.white : Colors.black,
+                      style: GoogleFonts.ebGaramond(
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                       ),
@@ -906,7 +894,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     Icon(
                       LucideIcons.externalLink,
                       size: 12,
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                     ),
                   ],
                 ),
@@ -930,9 +918,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     color: (isDark ? Colors.black : Colors.white).withOpacity(
                       0.92,
                     ),
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.1,
                       ),
                     ),
@@ -942,16 +930,16 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     children: [
                       Icon(
                         LucideIcons.mapPin,
-                        color: isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         size: 14,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         'OPEN MAP',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: isDark ? Colors.white : Colors.black,
+                        style: GoogleFonts.gelasio(
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                         ),
                       ),
@@ -972,10 +960,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
   Widget _buildDirectContact(String email, String phone, bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
+        color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
         ),
         boxShadow: isDark
             ? null
@@ -1000,7 +988,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           Divider(
             height: 1,
             thickness: 1,
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
           ),
           _contactRow(
             icon: LucideIcons.phone,
@@ -1035,10 +1023,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                 height: 48,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+                  color: isDark ? Colors.white.withOpacity(0.05) : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.08,
                     ),
                   ),
@@ -1054,7 +1042,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                 ),
                 child: Icon(
                   icon,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   size: 18,
                 ),
               ),
@@ -1065,20 +1053,20 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   children: [
                     Text(
                       value,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 15,
-                        fontWeight: FontWeight.w800,
-                        color: isDark ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.w500,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         letterSpacing: -0.2,
                       ),
                     ),
                     const SizedBox(height: 3),
                     Text(
                       label,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
-                        fontWeight: FontWeight.w800,
-                        color: (isDark ? Colors.white : Colors.black)
+                        fontWeight: FontWeight.w700,
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.68),
                         letterSpacing: 2,
                       ),

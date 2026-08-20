@@ -36,12 +36,15 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
     });
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0C312B),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const Positioned.fill(child: ColoredBox(color: Colors.black)),
+          const Positioned.fill(child: ColoredBox(color: Color(0xFF0C312B))),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Column(
@@ -69,68 +72,92 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                           ),
                         ),
                       ),
+                      // Web parity: purple lock badge in the top-right corner.
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFC5A35B).withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: const Color(0xFFC5A35B).withValues(alpha: 0.35),
+                          ),
+                        ),
+                        child: const Icon(
+                          LucideIcons.lock,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 24),
                   if (fromGuest) ...[
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: GestureDetector(
-                        onTap: () => context.go('/home'),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 14,
+                    GestureDetector(
+                      onTap: () => context.go('/home'),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.12),
                           ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.15),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              LucideIcons.chevronLeft,
+                              color: Colors.white.withOpacity(0.6),
+                              size: 15,
                             ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                LucideIcons.chevronLeft,
-                                color: Colors.white,
-                                size: 16,
+                            const SizedBox(width: 10),
+                            Text(
+                              'BACK TO GUEST PORTAL',
+                              style: GoogleFonts.ebGaramond(
+                                color: Colors.white.withValues(alpha: 0.6),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 11,
+                                letterSpacing: 2,
                               ),
-                              const SizedBox(width: 12),
-                              Text(
-                                'BACK TO GUEST PORTAL',
-                                style: GoogleFonts.dmSerifDisplay(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 11,
-                                  letterSpacing: 2,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 40),
                   ],
                   Text(
                     'CHANNEL\nPARTNER',
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 48,
-                      fontWeight: FontWeight.w900,
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 46,
+                      fontWeight: FontWeight.w500,
                       color: Colors.white,
-                      height: 1.1,
-                      letterSpacing: -1,
+                      height: 1.05,
+                      letterSpacing: -1.5,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Text(
-                    'AUTHORIZED PARTNER ACCESS PORTAL',
-                    style: GoogleFonts.dmSerifDisplay(
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        const TextSpan(text: 'AUTHORIZED '),
+                        TextSpan(
+                          text: 'PARTNER',
+                          style: GoogleFonts.ebGaramond(
+                            color: const Color(0xFFF4EFE3),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 10,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                        const TextSpan(text: ' ACCESS PORTAL'),
+                      ],
+                    ),
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white54,
+                      color: Colors.white70,
                       letterSpacing: 2,
                     ),
                   ),
@@ -138,14 +165,12 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                   _Field(
                     label: 'CHANNEL PARTNER ID',
                     controller: _cpIdController,
-                    icon: LucideIcons.user,
                     hint: 'CP-XXXXX',
                   ),
                   const SizedBox(height: 24),
                   _Field(
                     label: 'PRIVATE PASSWORD',
                     controller: _passwordController,
-                    icon: LucideIcons.lock,
                     obscure: true,
                     hint: '••••••••',
                   ),
@@ -159,10 +184,10 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         ),
                         child: Text(
                           'FORGOT PASSWORD?',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white54,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white70,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -173,10 +198,10 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         ),
                         child: Text(
                           'REGISTER NOW',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.purpleAccent,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFFF4EFE3),
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -193,112 +218,114 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                       );
                       return SizedBox(
                         height: 64,
-                        child: FilledButton(
-                          onPressed: loading
-                              ? null
-                              : () async {
-                                  final id = _cpIdController.text.trim();
-                                  final pw = _passwordController.text;
-                                  if (id.isEmpty || pw.isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        backgroundColor: Color(0xFFE24B4A),
-                                        content: Text(
-                                          'Please enter both CP ID and password',
+                        child: Material(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(20),
+                            onTap: loading
+                                ? null
+                                : () async {
+                                    final id = _cpIdController.text.trim();
+                                    final pw = _passwordController.text;
+                                    if (id.isEmpty || pw.isEmpty) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          backgroundColor: Color(0xFFC65B46),
+                                          content: Text(
+                                            'Please enter both CP ID and password',
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                    return;
-                                  }
-                                  final err = await ref
-                                      .read(authProvider.notifier)
-                                      .loginCpWithPassword(id, pw);
-                                  if (!context.mounted) return;
-                                  if (err != null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: const Color(
-                                          0xFFE24B4A,
+                                      );
+                                      return;
+                                    }
+                                    final err = await ref
+                                        .read(authProvider.notifier)
+                                        .loginCpWithPassword(id, pw);
+                                    if (!context.mounted) return;
+                                    if (err != null) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          backgroundColor: const Color(
+                                            0xFFC65B46,
+                                          ),
+                                          content: Text(err),
                                         ),
-                                        content: Text(err),
-                                      ),
-                                    );
-                                  }
-                                },
-                          style: FilledButton.styleFrom(
-                            backgroundColor: Colors.purple.shade600,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(32),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                          ),
-                          child: loading
-                              ? const SizedBox(
-                                  width: 22,
-                                  height: 22,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'AUTHORIZE ACCESS',
-                                      style: GoogleFonts.dmSerifDisplay(
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 13,
-                                        letterSpacing: 1.5,
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.all(6),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        LucideIcons.arrowRight,
-                                        size: 18,
-                                      ),
-                                    ),
-                                  ],
+                                      );
+                                    }
+                                  },
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [Color(0xFFF4EFE3), Color(0xFFF4EFE3)],
                                 ),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                ),
+                                child: Center(
+                                  child: loading
+                                      ? const SizedBox(
+                                          width: 22,
+                                          height: 22,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'AUTHORIZE ACCESS',
+                                              style: GoogleFonts.ebGaramond(
+                                                color: const Color(0xFF0C312B),
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 13,
+                                                letterSpacing: 1.5,
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFF0C312B).withOpacity(
+                                                  0.2,
+                                                ),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(
+                                                LucideIcons.arrowRight,
+                                                color: Colors.white,
+                                                size: 18,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       );
                     },
                   ),
-                  const SizedBox(height: 20),
-                  // Return to the guest (public) portal.
-                  Center(
-                    child: TextButton.icon(
-                      onPressed: () => context.go('/home'),
-                      icon: const Icon(
-                        LucideIcons.chevronLeft,
-                        color: Colors.white70,
-                        size: 16,
-                      ),
-                      label: Text(
-                        'BACK TO GUEST',
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white70,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 32),
                   Text(
                     'M4 FAMILY PARTNER NETWORK\nSECURE • VERIFIED • TRUSTED',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white38,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white70,
                       letterSpacing: 2,
                       height: 1.6,
                     ),
@@ -314,39 +341,46 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
   }
 }
 
-class _Field extends StatelessWidget {
+class _Field extends StatefulWidget {
   final String label;
   final TextEditingController controller;
-  final IconData icon;
   final String? hint;
   final bool obscure;
 
   const _Field({
     required this.label,
     required this.controller,
-    required this.icon,
     this.hint,
     this.obscure = false,
   });
 
   @override
+  State<_Field> createState() => _FieldState();
+}
+
+class _FieldState extends State<_Field> {
+  late bool _hidden = widget.obscure;
+
+  @override
   Widget build(BuildContext context) {
+    // Web parity: no left icon; password field carries an eye toggle on the
+    // right; pill-rounded dark field.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
-          style: GoogleFonts.dmSerifDisplay(
+          widget.label,
+          style: GoogleFonts.ebGaramond(
             fontSize: 9,
             fontWeight: FontWeight.bold,
-            color: Colors.white54,
+            color: Colors.white70,
             letterSpacing: 2,
           ),
         ),
         const SizedBox(height: 8),
         TextField(
-          controller: controller,
-          obscureText: obscure,
+          controller: widget.controller,
+          obscureText: _hidden,
           // White cursor so it's visible on the dark field (default cursor is
           // the theme primary, which is near-black here = invisible).
           cursorColor: Colors.white,
@@ -355,27 +389,40 @@ class _Field extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
           decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.68)),
-            prefixIcon: Icon(icon, color: Colors.white54),
+            hintText: widget.hint,
+            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 24,
+              vertical: 20,
+            ),
+            suffixIcon: widget.obscure
+                ? IconButton(
+                    onPressed: () => setState(() => _hidden = !_hidden),
+                    icon: Icon(
+                      _hidden ? LucideIcons.eye : LucideIcons.eyeOff,
+                      color: Colors.white54,
+                      size: 20,
+                    ),
+                  )
+                : null,
             filled: true,
-            fillColor: Colors.black.withValues(alpha: 0.4),
+            fillColor: Colors.white.withValues(alpha: 0.03),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(24),
               borderSide: BorderSide(
                 color: Colors.white.withValues(alpha: 0.12),
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(24),
               borderSide: BorderSide(
                 color: Colors.white.withValues(alpha: 0.12),
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(24),
               borderSide: BorderSide(
-                color: Colors.purpleAccent.withValues(alpha: 0.6),
+                color: Colors.white.withValues(alpha: 0.85),
               ),
             ),
           ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/custom_views_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
@@ -96,6 +98,9 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: const ConditionalDrawer(),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             // Header
@@ -141,18 +146,18 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                       children: [
                         Text(
                           'M4 CUSTOM VIEWS',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 16,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: Theme.of(context).colorScheme.onSurface,
                             letterSpacing: 1.5,
                           ),
                         ),
                         Text(
                           'PERSONALISATION SUITE',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 8,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withValues(alpha: 0.68),
@@ -215,7 +220,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                 children: [
                                   Text(
                                     'PERSONALISE',
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 22,
                                       fontWeight: FontWeight.w400,
                                       color: Theme.of(
@@ -237,9 +242,9 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                   ),
                                   Text(
                                     'YOUR LEGACY',
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 28,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w700,
                                       color: Theme.of(
                                         context,
                                       ).colorScheme.onSurface,
@@ -280,9 +285,9 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                         children: [
                           Text(
                             'OVERVIEW',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 3,
                               color: Theme.of(context).colorScheme.onSurface,
                             ),
@@ -290,7 +295,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                           const SizedBox(height: 16),
                           Text(
                             'Your home is a reflection of your soul. Experience total creative freedom in our Personalisation Suite. From master suites to bespoke kitchens, curate every detail of your future residence with real-time visualisation and elite material selections.',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 14,
                               height: 1.7,
                               fontWeight: FontWeight.w500,
@@ -343,7 +348,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                       padding: const EdgeInsets.all(28),
                       decoration: BoxDecoration(
                         color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color(0xFF18181B)
+                            ? const Color(0xFF141B3A)
                             : Colors.white.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(40),
                         border: Border.all(
@@ -405,9 +410,9 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                           : null,
                                       child: Text(
                                         'BACK',
-                                        style: GoogleFonts.dmSerifDisplay(
+                                        style: GoogleFonts.gelasio(
                                           fontSize: 10,
-                                          fontWeight: FontWeight.w900,
+                                          fontWeight: FontWeight.w700,
                                           color: activeStep > 0
                                               ? Theme.of(context)
                                                     .colorScheme
@@ -528,9 +533,9 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                           activeStep < 3
                                               ? 'NEXT STEP'
                                               : 'CONFIRM SELECTIONS',
-                                          style: GoogleFonts.dmSerifDisplay(
+                                          style: GoogleFonts.gelasio(
                                             fontSize: 9,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.w700,
                                             color: Theme.of(
                                               context,
                                             ).colorScheme.surface,
@@ -641,9 +646,9 @@ class _StepIconIndicator extends ConsumerWidget {
             Text(
               isAllotted ? 'ALLOTTED' : title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 0.8,
                 color: isFilled ? foreground : foreground.withOpacity(0.68),
               ),
@@ -671,9 +676,9 @@ class _ProjectSelectionStep extends ConsumerWidget {
       children: [
         Text(
           'PROJECT &\nUNIT',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 28,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
             height: 1.1,
           ),
@@ -681,7 +686,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
         const SizedBox(height: 12),
         Text(
           'Select your project and unit\nconfiguration',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
             height: 1.5,
@@ -707,9 +712,9 @@ class _ProjectSelectionStep extends ConsumerWidget {
                     children: [
                       Text(
                         'UNIT ALLOTTED',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: Colors.green,
                           letterSpacing: 1,
                         ),
@@ -717,7 +722,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
                       const SizedBox(height: 4),
                       Text(
                         'Your project and unit configuration are locked for this booking.',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           color: scheme.onSurface.withOpacity(0.68),
                         ),
@@ -742,9 +747,9 @@ class _ProjectSelectionStep extends ConsumerWidget {
             const SizedBox(width: 8),
             Text(
               'PROJECT SELECTION',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -793,9 +798,9 @@ class _ProjectSelectionStep extends ConsumerWidget {
                         children: [
                           Text(
                             p['title']?.toUpperCase() ?? 'PROJECT',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 14,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: isSelected
                                   ? scheme.surface
                                   : scheme.onSurface,
@@ -805,7 +810,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
                           const SizedBox(height: 4),
                           Text(
                             p['location']?['name']?.toUpperCase() ?? 'LOCATION',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               fontSize: 8,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 2,
@@ -845,9 +850,9 @@ class _ProjectSelectionStep extends ConsumerWidget {
             const SizedBox(width: 8),
             Text(
               'UNIT CONFIGURATION',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -872,23 +877,23 @@ class _ProjectSelectionStep extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? Theme.of(context).colorScheme.onBackground
-                      : (isDark ? Colors.white : Colors.black).withOpacity(
+                      : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                           0.04,
                         ),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
                         ? Theme.of(context).colorScheme.onBackground
-                        : (isDark ? Colors.white : Colors.black).withOpacity(
+                        : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                             0.1,
                           ),
                   ),
                 ),
                 child: Text(
                   unit,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1,
                     color: isSelected
                         ? Theme.of(context).colorScheme.background
@@ -1005,9 +1010,9 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
               child: Text(
                 widget.label,
                 maxLines: 1,
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 9,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.2,
                   color: scheme.onSurface.withValues(alpha: 0.65),
                 ),
@@ -1019,7 +1024,7 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
         Container(
           height: 44,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
               alpha: 0.03,
             ),
             borderRadius: BorderRadius.circular(12),
@@ -1029,17 +1034,20 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
           child: TextField(
             controller: _controller,
             onChanged: (v) => ref.read(_provider.notifier).state = v,
-            style: GoogleFonts.dmSerifDisplay(
-              fontSize: 12,
+            style: GoogleFonts.ebGaramond(
+              fontSize: 15,
               fontWeight: FontWeight.w600,
               color: scheme.onSurface,
             ),
             decoration: InputDecoration(
               isCollapsed: true,
               contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              filled: false,
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
               hintText: widget.hint,
-              hintStyle: GoogleFonts.dmSerifDisplay(
+              hintStyle: GoogleFonts.ebGaramond(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: scheme.onSurface.withValues(alpha: 0.68),
@@ -1095,9 +1103,9 @@ class _SpaceSelectionStep extends ConsumerWidget {
             child: Text(
               'SELECT SPACE',
               maxLines: 1,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 28,
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.w500,
                 color: scheme.onSurface,
                 height: 1.1,
               ),
@@ -1107,7 +1115,7 @@ class _SpaceSelectionStep extends ConsumerWidget {
         const SizedBox(height: 12),
         Text(
           'Choose the area you want to personalise',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             color: scheme.onSurface.withOpacity(0.54),
           ),
@@ -1157,7 +1165,7 @@ class _SpaceSelectionStep extends ConsumerWidget {
                     border: Border.all(
                       color: isSelected
                           ? scheme.onSurface
-                          : (isDark ? Colors.white : Colors.black).withOpacity(
+                          : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                               0.1,
                             ),
                     ),
@@ -1178,9 +1186,9 @@ class _SpaceSelectionStep extends ConsumerWidget {
                         child: Text(
                           space.toUpperCase(),
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 13,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
                             height: 1.15,
                             color: isSelected
@@ -1314,9 +1322,9 @@ class _MaterialsSelectionStep extends ConsumerWidget {
       children: [
         Text(
           'CHOOSE\nMATERIALS',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 28,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w500,
             color: scheme.onSurface,
             height: 1.1,
           ),
@@ -1324,7 +1332,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
         const SizedBox(height: 12),
         Text(
           'Select from our curated collection',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             color: scheme.onSurface.withOpacity(0.54),
           ),
@@ -1393,9 +1401,9 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                 children: [
                                   Text(
                                     room.toUpperCase(),
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.ebGaramond(
                                       fontSize: 10,
-                                      fontWeight: FontWeight.w800,
+                                      fontWeight: FontWeight.w500,
                                       letterSpacing: 1.2,
                                       color: isActive
                                           ? scheme.surface
@@ -1416,9 +1424,9 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                     ),
                                     child: Text(
                                       '$selected/$total',
-                                      style: GoogleFonts.dmSerifDisplay(
+                                      style: GoogleFonts.ebGaramond(
                                         fontSize: 9,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w600,
                                         color: isActive
                                             ? scheme.surface
                                             : scheme.onSurface,
@@ -1442,7 +1450,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                   child: Center(
                     child: Text(
                       'No materials available for this space.',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 12,
                         color: scheme.onSurface.withOpacity(0.68),
                       ),
@@ -1485,9 +1493,9 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                               children: [
                                 Text(
                                   (cat['title']?.toUpperCase() ?? 'CATEGORY'),
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 12,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w700,
                                     letterSpacing: 2,
                                     color: scheme.onSurface,
                                   ),
@@ -1495,7 +1503,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                 const SizedBox(height: 3),
                                 Text(
                                   'SELECT MATERIALS FOR ${activeSpace.toUpperCase()}',
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 8,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 1.2,
@@ -1635,9 +1643,9 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                     opt['name']?.toUpperCase() ?? '',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.ebGaramond(
                                       fontSize: 10,
-                                      fontWeight: FontWeight.w800,
+                                      fontWeight: FontWeight.w500,
                                       letterSpacing: 0.3,
                                       color: scheme.onSurface,
                                     ),
@@ -1661,7 +1669,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                       children: [
                                         Text(
                                           opt['materialCode'] ?? 'M4-STD',
-                                          style: GoogleFonts.dmSerifDisplay(
+                                          style: GoogleFonts.ebGaramond(
                                             fontSize: 8,
                                             fontWeight: FontWeight.w700,
                                             letterSpacing: 1,
@@ -1672,7 +1680,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                         ),
                                         Text(
                                           opt['materialType'] ?? 'MATTE',
-                                          style: GoogleFonts.dmSerifDisplay(
+                                          style: GoogleFonts.ebGaramond(
                                             fontSize: 8,
                                             fontWeight: FontWeight.w700,
                                             letterSpacing: 1,
@@ -1702,9 +1710,9 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                   children: [
                     Text(
                       'READY TO PROCEED?',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 3,
                         color: scheme.onSurface.withOpacity(0.68),
                       ),
@@ -1712,7 +1720,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                     const SizedBox(height: 8),
                     Text(
                       'Review your choices in the final step',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 11,
                         fontStyle: FontStyle.italic,
                         color: scheme.onSurface.withOpacity(0.68),
@@ -1734,9 +1742,9 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                           children: [
                             Text(
                               'FINALISE SELECTIONS',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 11,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                                 color: scheme.surface,
                               ),
@@ -1782,16 +1790,16 @@ class _FinaliseStep extends ConsumerWidget {
       children: [
         Text(
           'FINALISE',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 28,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 12),
         Text(
           'Confirm your selections',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
           ),
@@ -1821,9 +1829,9 @@ class _FinaliseStep extends ConsumerWidget {
                   children: [
                     Text(
                       'ITEM',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                         color: Theme.of(
                           context,
@@ -1832,9 +1840,9 @@ class _FinaliseStep extends ConsumerWidget {
                     ),
                     Text(
                       'SELECTION',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                         color: Theme.of(
                           context,
@@ -1940,7 +1948,7 @@ class _SummaryRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.09),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.09),
           ),
         ),
       ),
@@ -1950,7 +1958,7 @@ class _SummaryRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.9),
@@ -1962,7 +1970,7 @@ class _SummaryRow extends StatelessWidget {
             children: [
               Text(
                 value.toUpperCase(),
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.onSurface,
@@ -1972,7 +1980,7 @@ class _SummaryRow extends StatelessWidget {
               if (subValue != null)
                 Text(
                   subValue!,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.tertiary,
@@ -2018,9 +2026,9 @@ class _PremiumMaterialsSection extends StatelessWidget {
       children: [
         Text(
           'THE COLLECTION',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 4,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.54),
           ),
@@ -2029,9 +2037,9 @@ class _PremiumMaterialsSection extends StatelessWidget {
         Text(
           'PREMIUM\nMATERIALS',
           textAlign: TextAlign.center,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 32,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
             height: 1.1,
           ),
@@ -2094,7 +2102,7 @@ class _PremiumMaterialsSection extends StatelessWidget {
                           Text(
                             mat['title']!,
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).colorScheme.background,
@@ -2103,7 +2111,7 @@ class _PremiumMaterialsSection extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             mat['count']!,
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               fontSize: 7,
                               fontWeight: FontWeight.bold,
                               color: Theme.of(
@@ -2146,7 +2154,7 @@ class _ConsultationSection extends ConsumerWidget {
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(32),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
               ),
@@ -2160,7 +2168,7 @@ class _ConsultationSection extends ConsumerWidget {
                   children: [
                     Text(
                       'Book a Consultation',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.onSurface,
@@ -2181,7 +2189,7 @@ class _ConsultationSection extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Text(
                   'Leave your details with us and our elite interior design team will be in touch shortly.',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     color: Theme.of(
                       context,
@@ -2195,6 +2203,8 @@ class _ConsultationSection extends ConsumerWidget {
                   'FULL NAME',
                   LucideIcons.user,
                   nameController,
+                  keyboardType: TextInputType.name,
+                  inputFormatters: Validators.nameFormatters,
                 ),
                 _buildField(
                   context,
@@ -2202,6 +2212,7 @@ class _ConsultationSection extends ConsumerWidget {
                   LucideIcons.phone,
                   phoneController,
                   keyboardType: TextInputType.phone,
+                  inputFormatters: Validators.phoneFormatters,
                 ),
                 _buildField(
                   context,
@@ -2209,18 +2220,29 @@ class _ConsultationSection extends ConsumerWidget {
                   LucideIcons.mail,
                   emailController,
                   keyboardType: TextInputType.emailAddress,
+                  inputFormatters: Validators.emailFormatters,
                 ),
                 const SizedBox(height: 32),
                 GestureDetector(
                   onTap: isLoading
                       ? null
                       : () async {
-                          if (nameController.text.isEmpty ||
-                              phoneController.text.isEmpty) {
+                          final vErr =
+                              Validators.nameError(
+                                nameController.text,
+                                field: 'full name',
+                              ) ??
+                              Validators.phoneError(phoneController.text) ??
+                              (emailController.text.trim().isEmpty
+                                  ? null
+                                  : Validators.emailError(
+                                      emailController.text,
+                                    ));
+                          if (vErr != null) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                backgroundColor: Color(0xFFE24B4A),
-                                content: Text('Name and Phone are required'),
+                              SnackBar(
+                                backgroundColor: const Color(0xFFC65B46),
+                                content: Text(vErr),
                               ),
                             );
                             return;
@@ -2244,7 +2266,7 @@ class _ConsultationSection extends ConsumerWidget {
                                 SnackBar(
                                   content: Text(
                                     'Consultation request sent successfully!',
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.ebGaramond(
                                       color: Theme.of(
                                         context,
                                       ).colorScheme.background,
@@ -2262,7 +2284,7 @@ class _ConsultationSection extends ConsumerWidget {
                                 SnackBar(
                                   content: Text(
                                     'Failed to submit request. Please try again.',
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.ebGaramond(
                                       color: Theme.of(
                                         context,
                                       ).colorScheme.onError,
@@ -2298,9 +2320,9 @@ class _ConsultationSection extends ConsumerWidget {
                           )
                         : Text(
                             'SEND REQUEST',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               fontSize: 12,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               color: Theme.of(context).colorScheme.surface,
                               letterSpacing: 2,
                             ),
@@ -2321,6 +2343,7 @@ class _ConsultationSection extends ConsumerWidget {
     IconData icon,
     TextEditingController controller, {
     TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -2334,13 +2357,14 @@ class _ConsultationSection extends ConsumerWidget {
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
-        style: GoogleFonts.dmSerifDisplay(
+        inputFormatters: inputFormatters,
+        style: GoogleFonts.ebGaramond(
           color: Theme.of(context).colorScheme.onSurface,
-          fontSize: 13,
+          fontSize: 15,
         ),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: GoogleFonts.dmSerifDisplay(
+          labelStyle: GoogleFonts.ebGaramond(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
             fontSize: 11,
           ),
@@ -2349,7 +2373,10 @@ class _ConsultationSection extends ConsumerWidget {
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.24),
             size: 18,
           ),
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 12,
@@ -2372,9 +2399,9 @@ class _ConsultationSection extends ConsumerWidget {
         children: [
           Text(
             'GET IN TOUCH',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 4,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
             ),
@@ -2383,9 +2410,9 @@ class _ConsultationSection extends ConsumerWidget {
           Text(
             'READY TO\nSTART\nYOUR\nJOURNEY?',
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 32,
-              fontWeight: FontWeight.w300,
+              fontWeight: FontWeight.w500,
               color: Theme.of(context).colorScheme.onSurface,
               height: 1.1,
             ),
@@ -2394,7 +2421,7 @@ class _ConsultationSection extends ConsumerWidget {
           Text(
             'Schedule a private session with our interior consultants at our Experience Centre in South Mumbai.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 12,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.54),
               height: 1.5,
@@ -2422,9 +2449,9 @@ class _ConsultationSection extends ConsumerWidget {
                   const SizedBox(width: 8),
                   Text(
                     'BOOK A CONSULTATION',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 11,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.surface,
                       letterSpacing: 1,
                     ),

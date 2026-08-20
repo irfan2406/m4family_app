@@ -26,9 +26,9 @@ class InvestorPurgeCacheScreen extends ConsumerStatefulWidget {
 
 class _InvestorPurgeCacheScreenState
     extends ConsumerState<InvestorPurgeCacheScreen> {
-  static const _red = Color(0xFFEF4444);
-  static const _green = Color(0xFF10B981);
-  static const _gold = Color(0xFFFFD700);
+  static const _red = Color(0xFFC65B46);
+  static const _green = Color(0xFF163A2C);
+  static const _gold = Color(0xFFC5A35B);
 
   bool _purging = false;
   bool _done = false;
@@ -143,10 +143,10 @@ class _InvestorPurgeCacheScreenState
           backgroundColor: _green,
           content: Text(
             'Cache purged successfully! The app cache has been rebuilt.',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: const Color(0xFFF4EFE3),
             ),
           ),
         ),
@@ -155,10 +155,10 @@ class _InvestorPurgeCacheScreenState
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text(
             'Failed to purge cache: $e',
-            style: GoogleFonts.dmSerifDisplay(fontSize: 12),
+            style: GoogleFonts.ebGaramond(fontSize: 12),
           ),
         ),
       );
@@ -176,10 +176,10 @@ class _InvestorPurgeCacheScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -200,16 +200,16 @@ class _InvestorPurgeCacheScreenState
           children: [
             Text(
               'Purge Data',
-              style: GoogleFonts.dmSerifDisplay(
-                fontWeight: FontWeight.w800,
+              style: GoogleFonts.ebGaramond(
+                fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: textPrimary,
               ),
             ),
             Text(
               'RESET PLATFORM STATE',
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 9,
+              style: GoogleFonts.ebGaramond(
+                fontSize: 11,
                 letterSpacing: 1.5,
                 fontWeight: FontWeight.w600,
                 color: muted,
@@ -244,11 +244,11 @@ class _InvestorPurgeCacheScreenState
           Center(
             child: Text(
               'M4 FAMILY PRIVATE OFFICE',
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 8,
-                fontWeight: FontWeight.w900,
+              style: GoogleFonts.gelasio(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 4,
-                color: textPrimary.withValues(alpha: 0.2),
+                color: textPrimary.withValues(alpha: 0.72),
               ),
             ),
           ),
@@ -290,9 +290,9 @@ class _InvestorPurgeCacheScreenState
               children: [
                 Text(
                   'NOTICE',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 11,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: _red,
                   ),
@@ -303,10 +303,10 @@ class _InvestorPurgeCacheScreenState
                   'cached media, transient session artifacts and offline render '
                   'buffers. Your account and saved data are not affected, but the '
                   'platform will rebuild its caches on next load.',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 11,
                     height: 1.5,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     color: textPrimary.withValues(alpha: 0.7),
                   ),
                 ),
@@ -355,9 +355,9 @@ class _InvestorPurgeCacheScreenState
               children: [
                 Text(
                   'ESTIMATED CACHE SIZE',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w800,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: muted,
                   ),
@@ -365,9 +365,9 @@ class _InvestorPurgeCacheScreenState
                 const SizedBox(height: 4),
                 Text(
                   _formatBytes(_cacheBytes),
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 22,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: -0.5,
                     color: textPrimary,
                   ),
@@ -375,7 +375,7 @@ class _InvestorPurgeCacheScreenState
                 const SizedBox(height: 2),
                 Text(
                   '$_cacheCount cached item${_cacheCount == 1 ? '' : 's'}',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: muted,
@@ -430,7 +430,7 @@ class _InvestorPurgeCacheScreenState
                 children: [
                   Text(
                     s.title,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: textPrimary,
@@ -439,9 +439,9 @@ class _InvestorPurgeCacheScreenState
                   const SizedBox(height: 2),
                   Text(
                     s.subtitle,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       height: 1.4,
                       color: muted,
                     ),
@@ -492,7 +492,7 @@ class _InvestorPurgeCacheScreenState
                 Expanded(
                   child: Text(
                     item,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: textPrimary.withValues(alpha: 0.8),
@@ -559,7 +559,7 @@ class _InvestorPurgeCacheScreenState
                 Expanded(
                   child: Text(
                     e.key,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: checked
@@ -599,7 +599,7 @@ class _InvestorPurgeCacheScreenState
                 height: 22,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Colors.white,
+                  color: const Color(0xFFF4EFE3),
                 ),
               )
             : Row(
@@ -608,16 +608,16 @@ class _InvestorPurgeCacheScreenState
                   Icon(
                     allDone ? LucideIcons.checkCircle : LucideIcons.trash2,
                     size: 18,
-                    color: Colors.white,
+                    color: const Color(0xFFF4EFE3),
                   ),
                   const SizedBox(width: 10),
                   Text(
                     allDone ? 'CORE PURGE COMPLETE' : 'INITIATE FULL RESET',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 12,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
-                      color: Colors.white,
+                      color: const Color(0xFFF4EFE3),
                     ),
                   ),
                 ],
@@ -640,9 +640,9 @@ class _InvestorPurgeCacheScreenState
         const SizedBox(width: 8),
         Text(
           text,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 2,
             color: muted,
           ),

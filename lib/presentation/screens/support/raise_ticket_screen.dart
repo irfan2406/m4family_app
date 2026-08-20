@@ -74,7 +74,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('Please fill in subject, category and message'),
             behavior: SnackBarBehavior.floating,
             duration: Duration(milliseconds: 1800),
@@ -96,7 +96,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFF10B981),
+            backgroundColor: const Color(0xFF163A2C),
             content: Text(
               ok ? 'Ticket raised successfully!' : 'Failed to raise ticket',
             ),
@@ -111,7 +111,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('Failed to raise ticket'),
             behavior: SnackBarBehavior.floating,
             duration: Duration(milliseconds: 1800),
@@ -125,11 +125,11 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final onSurface = isDark ? Colors.white : Colors.black;
-    const amber = Color(0xFFF59E0B);
+    final onSurface = isDark ? Colors.white : Color(0xFF163A2C);
+    const amber = Color(0xFFC5A35B);
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
       extendBody: true,
       // Web parity: persistent bottom nav (this screen is pushed over the shell,
       // so a tab tap returns to the shell and selects that tab).
@@ -141,6 +141,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         },
       ),
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             // Header
@@ -157,7 +160,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                         shape: BoxShape.circle,
                         color: isDark
                             ? Colors.white.withOpacity(0.05)
-                            : Colors.white,
+                            : const Color(0xFFF4EFE3),
                         border: Border.all(color: onSurface.withOpacity(0.1)),
                       ),
                       child: Icon(
@@ -171,9 +174,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                     child: Text(
                       'RAISE TICKET',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 17,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         color: onSurface,
                         letterSpacing: 1,
                       ),
@@ -216,9 +219,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                           Expanded(
                             child: Text(
                               'MOST TICKETS ARE RESOLVED WITHIN 4-6 WORKING HOURS. PLEASE PROVIDE DETAIL.',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 9,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w500,
                                 color: amber.withOpacity(0.75),
                                 letterSpacing: 1,
                                 height: 1.6,
@@ -238,9 +241,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                         controller: _subjectController,
                         textCapitalization: TextCapitalization.characters,
                         cursorColor: onSurface,
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w800,
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
                           color: onSurface,
                         ),
                         decoration: _inputDecoration(
@@ -261,9 +264,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                           isExpanded: true,
                           hint: Text(
                             'SELECT CATEGORY',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 11,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w500,
                               color: onSurface.withOpacity(0.68),
                               letterSpacing: 1,
                             ),
@@ -274,7 +277,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                             size: 18,
                           ),
                           dropdownColor: isDark
-                              ? const Color(0xFF1A1A1A)
+                              ? const Color(0xFF141B3A)
                               : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           items: _categories.entries
@@ -283,9 +286,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                                   value: e.key,
                                   child: Text(
                                     e.value,
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.ebGaramond(
                                       fontSize: 11,
-                                      fontWeight: FontWeight.w800,
+                                      fontWeight: FontWeight.w500,
                                       color: onSurface,
                                       letterSpacing: 1,
                                     ),
@@ -307,8 +310,8 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                         controller: _messageController,
                         maxLines: 6,
                         cursorColor: onSurface,
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 13,
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: onSurface,
                         ),
@@ -344,9 +347,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                                 _attachments.isEmpty
                                     ? 'ADD FILES (PDF, JPG)'
                                     : '${_attachments.length} FILE(S) ATTACHED',
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w500,
                                   color: onSurface.withOpacity(0.68),
                                   letterSpacing: 1,
                                 ),
@@ -364,7 +367,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                         onPressed: _submitting ? null : _submit,
                         style: FilledButton.styleFrom(
                           backgroundColor: onSurface,
-                          foregroundColor: isDark ? Colors.black : Colors.white,
+                          foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -375,7 +378,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: isDark ? Colors.black : Colors.white,
+                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                 ),
                               )
                             : Row(
@@ -383,9 +386,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                                 children: [
                                   Text(
                                     'RAISE TICKET',
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 12,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w700,
                                       letterSpacing: 1.5,
                                     ),
                                   ),
@@ -409,9 +412,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
     padding: const EdgeInsets.only(left: 4),
     child: Text(
       text,
-      style: GoogleFonts.dmSerifDisplay(
+      style: GoogleFonts.gelasio(
         fontSize: 9,
-        fontWeight: FontWeight.w800,
+        fontWeight: FontWeight.w700,
         color: onSurface.withOpacity(0.68),
         letterSpacing: 1.5,
       ),
@@ -435,12 +438,15 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
   InputDecoration _inputDecoration(String hint, Color onSurface) =>
       InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.dmSerifDisplay(
+        hintStyle: GoogleFonts.ebGaramond(
           fontSize: 12,
           fontWeight: FontWeight.w700,
           color: onSurface.withOpacity(0.68),
         ),
+        filled: false,
         border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
         isDense: true,
         contentPadding: const EdgeInsets.symmetric(vertical: 14),
       );

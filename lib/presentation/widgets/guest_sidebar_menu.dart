@@ -21,6 +21,128 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
   bool _isContentOpen = false;
   bool _isConnectOpen = false;
 
+  // Confirm before leaving — a Yes/No popup so a stray tap can't exit the app.
+  Future<void> _confirmExit() async {
+    final isDark = ref.read(themeProvider) == ThemeMode.dark;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogCtx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFF0C312B).withValues(alpha: 0.72),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.08)
+                  : Colors.black.withOpacity(0.06),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFC65B46).withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  LucideIcons.logOut,
+                  color: const Color(0xFFC65B46),
+                  size: 24,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Exit App',
+                style: GoogleFonts.gelasio(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white : const Color(0xFFF4EFE3),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Are you sure you want to exit the app?',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 13,
+                  color: isDark ? Colors.white60 : Colors.grey[600],
+                ),
+              ),
+              const SizedBox(height: 22),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(dialogCtx).pop(false),
+                      child: Container(
+                        height: 48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withOpacity(0.06)
+                              : Colors.white.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.08)
+                                : Colors.black.withOpacity(0.06),
+                          ),
+                        ),
+                        child: Text(
+                          'NO',
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.2,
+                            color: isDark ? Colors.white70 : Colors.grey[800],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(dialogCtx).pop(true),
+                      child: Container(
+                        height: 48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFC65B46),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Text(
+                          'YES',
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.2,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (confirmed != true) return;
+    if (!mounted) return;
+    context.go('/onboarding');
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeProvider);
@@ -36,11 +158,11 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
             child: Container(
               decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.black.withOpacity(0.8)
-                    : Colors.white.withOpacity(0.8),
+                    ? const Color(0xFF0B1026).withValues(alpha: 0.82)
+                    : const Color(0xFF0C312B).withValues(alpha: 0.72),
                 border: Border(
                   right: BorderSide(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(
                       0.05,
                     ),
                   ),
@@ -56,12 +178,12 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
                   child: Text(
                     'MENU',
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    style: GoogleFonts.gelasio(
+                      color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(
                         0.68,
                       ),
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 4,
                     ),
                   ),
@@ -204,11 +326,11 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         child: Text(
                           'QUICK ACTIONS',
-                          style: GoogleFonts.dmSerifDisplay(
-                            color: (isDark ? Colors.white : Colors.black)
+                          style: GoogleFonts.gelasio(
+                            color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                 .withOpacity(0.6),
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 3,
                           ),
                         ),
@@ -258,10 +380,10 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                     children: [
                       Text(
                         'THEME MODE',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: isDark ? Colors.white70 : Colors.black87,
+                        style: GoogleFonts.ebGaramond(
+                          color: isDark ? Colors.white70 : const Color(0xFFF4EFE3),
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                         ),
                       ),
@@ -276,17 +398,17 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                 .withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                   .withOpacity(0.1),
                             ),
                           ),
                           child: Icon(
-                            isDark ? LucideIcons.sparkles : LucideIcons.moon,
-                            color: isDark ? Colors.white : Colors.black,
+                            isDark ? LucideIcons.moon : LucideIcons.sun,
+                            color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                             size: 18,
                           ),
                         ),
@@ -300,27 +422,27 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                     width: double.infinity,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.12),
+                      color: const Color(0xFFC65B46).withOpacity(0.12),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.red.withOpacity(0.1)),
+                      border: Border.all(color: const Color(0xFFC65B46).withOpacity(0.1)),
                     ),
                     child: InkWell(
-                      onTap: () => context.go('/onboarding'),
+                      onTap: _confirmExit,
                       borderRadius: BorderRadius.circular(20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(
                             LucideIcons.logOut,
-                            color: Colors.red,
+                            color: const Color(0xFFC65B46),
                             size: 20,
                           ),
                           const SizedBox(width: 12),
                           Text(
                             'EXIT APP',
-                            style: GoogleFonts.dmSerifDisplay(
-                              color: Colors.red,
-                              fontWeight: FontWeight.w900,
+                            style: GoogleFonts.ebGaramond(
+                              color: const Color(0xFFC65B46),
+                              fontWeight: FontWeight.w600,
                               fontSize: 13,
                               letterSpacing: 1,
                             ),
@@ -362,14 +484,14 @@ class _MenuItem extends StatelessWidget {
         height: 44,
         decoration: BoxDecoration(
           color: isActive
-              ? (isDark ? Colors.white : Colors.black).withOpacity(0.15)
-              : (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+              ? (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.15)
+              : (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.08),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(
           icon,
           color: isActive
-              ? (isDark ? Colors.white : Colors.black)
+              ? (isDark ? Colors.white : const Color(0xFFF4EFE3))
               : (isDark
                     ? Colors.white.withOpacity(0.4)
                     : Colors.black.withOpacity(0.5)),
@@ -378,14 +500,14 @@ class _MenuItem extends StatelessWidget {
       ),
       title: Text(
         label,
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.ebGaramond(
           color: isActive
-              ? (isDark ? Colors.white : Colors.black)
+              ? (isDark ? Colors.white : const Color(0xFFF4EFE3))
               : (isDark
                     ? Colors.white.withOpacity(0.7)
-                    : Colors.black.withOpacity(0.8)),
-          fontSize: 15,
-          fontWeight: isActive ? FontWeight.w800 : FontWeight.w700,
+                    : const Color(0xFFF4EFE3).withValues(alpha: 0.92)),
+          fontSize: 16.5,
+          fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
           letterSpacing: -0.2,
         ),
       ),
@@ -423,14 +545,14 @@ class _DropdownMenuItem extends StatelessWidget {
             height: 44,
             decoration: BoxDecoration(
               color: isOpen
-                  ? (isDark ? Colors.white : Colors.black).withOpacity(0.15)
-                  : (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                  ? (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.15)
+                  : (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.08),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               icon,
               color: isOpen
-                  ? (isDark ? Colors.white : Colors.black)
+                  ? (isDark ? Colors.white : const Color(0xFFF4EFE3))
                   : (isDark
                         ? Colors.white.withOpacity(0.4)
                         : Colors.black.withOpacity(0.5)),
@@ -439,18 +561,18 @@ class _DropdownMenuItem extends StatelessWidget {
           ),
           title: Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(
+            style: GoogleFonts.ebGaramond(
+              color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(
                 isOpen ? 1.0 : 0.8,
               ),
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
+              fontSize: 16.5,
+              fontWeight: FontWeight.w500,
               letterSpacing: -0.2,
             ),
           ),
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: isDark ? Colors.white30 : Colors.black26,
+            color: const Color(0xFFF4EFE3),
             size: 18,
           ),
         ),
@@ -484,14 +606,14 @@ class _SubItem extends StatelessWidget {
           icon,
           size: 16,
           color:
-              color ?? (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+              color ?? (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.6),
         ),
         title: Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.85),
+          style: GoogleFonts.ebGaramond(
+            color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.85),
             fontSize: 13,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),
@@ -519,21 +641,21 @@ class _QuickActionItem extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+          color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.08),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(
           icon,
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+          color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.5),
           size: 18,
         ),
       ),
       title: Text(
         label,
-        style: GoogleFonts.dmSerifDisplay(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.8),
-          fontSize: 15,
-          fontWeight: FontWeight.w700,
+        style: GoogleFonts.ebGaramond(
+          color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.8),
+          fontSize: 16.5,
+          fontWeight: FontWeight.w500,
           letterSpacing: -0.2,
         ),
       ),

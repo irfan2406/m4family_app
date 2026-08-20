@@ -91,16 +91,16 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
               children: [
                 Text(
                   'M4 FAMILY',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 14,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     height: 1,
                   ),
                 ),
                 Text(
                   'DEVELOPMENTS',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 4,
@@ -147,9 +147,9 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                       const SizedBox(width: 14),
                       Text(
                         'CONTENT HUB',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 3,
                           color: isLight ? Colors.black : scheme.primary,
                         ),
@@ -159,9 +159,9 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'M4 BLOG',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 32,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: -1,
                       height: 1.0,
                       color: isLight ? Colors.black : Colors.white,
@@ -170,7 +170,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'Stay updated with our latest insights and news.',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: scheme.onSurface.withOpacity(isLight ? 0.8 : 0.6),
@@ -200,16 +200,16 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'No blog posts found',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 18,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: isLight ? Colors.black : Colors.white,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     "Check back soon for fresh updates.",
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       color: scheme.onSurface.withOpacity(isLight ? 0.7 : 0.68),
                       fontWeight: FontWeight.w600,
                     ),
@@ -256,7 +256,7 @@ class _BlogCard extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: scheme.onSurface.withOpacity(0.05)),
         boxShadow: [
@@ -322,9 +322,9 @@ class _BlogCard extends ConsumerWidget {
                             ),
                             child: Text(
                               (item['type'] ?? 'BLOG').toString().toUpperCase(),
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 8,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                                 letterSpacing: 1.2,
                                 color: scheme.onSurface.withOpacity(0.7),
                               ),
@@ -333,10 +333,10 @@ class _BlogCard extends ConsumerWidget {
                           const Spacer(),
                           Text(
                             shortDate,
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
-                              color: scheme.onSurface.withOpacity(0.4),
+                              color: scheme.onSurface.withOpacity(0.72),
                             ),
                           ),
                         ],
@@ -346,9 +346,9 @@ class _BlogCard extends ConsumerWidget {
                         (item['title'] ?? '').toString().toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 13,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           height: 1.15,
                           letterSpacing: -0.3,
                           color: isLight ? Colors.black : Colors.white,
@@ -359,9 +359,9 @@ class _BlogCard extends ConsumerWidget {
                         children: [
                           Text(
                             'READ ARTICLE',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 9,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 1,
                               color: isLight ? Colors.black : scheme.primary,
                             ),

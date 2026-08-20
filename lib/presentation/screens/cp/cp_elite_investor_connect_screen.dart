@@ -74,10 +74,10 @@ class _CpEliteInvestorConnectScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final scheme = Theme.of(context).colorScheme;
 
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = scheme.outlineVariant.withValues(alpha: 0.5);
 
     return Scaffold(
@@ -91,16 +91,16 @@ class _CpEliteInvestorConnectScreenState
           children: [
             Text(
               'Partner Terminal',
-              style: GoogleFonts.dmSerifDisplay(
-                fontWeight: FontWeight.w900,
+              style: GoogleFonts.ebGaramond(
+                fontWeight: FontWeight.w600,
                 fontSize: 16,
               ),
             ),
             Text(
               'INSTITUTIONAL PORTFOLIO ENGINE',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: scheme.primary,
               ),
@@ -123,9 +123,9 @@ class _CpEliteInvestorConnectScreenState
                     children: [
                       Text(
                         'PERFORMANCE METRICS',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 4,
                           color: muted,
                         ),
@@ -141,9 +141,9 @@ class _CpEliteInvestorConnectScreenState
                         ),
                         child: Text(
                           'REAL-TIME DATA',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 8,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                             color: scheme.primary,
                           ),
@@ -169,9 +169,9 @@ class _CpEliteInvestorConnectScreenState
                   // ── High-Yield Ventures ─────────────────────────────────
                   Text(
                     'HIGH-YIELD VENTURES',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 4,
                       color: muted,
                     ),
@@ -183,7 +183,7 @@ class _CpEliteInvestorConnectScreenState
                       child: Center(
                         child: Text(
                           'No ventures available right now',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             color: muted,
                             fontWeight: FontWeight.w700,
                           ),
@@ -252,8 +252,8 @@ class _CpEliteInvestorConnectScreenState
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.black : Colors.white,
-                  borderRadius: BorderRadius.circular(32),
+                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: border),
                   boxShadow: [
                     BoxShadow(
@@ -275,9 +275,9 @@ class _CpEliteInvestorConnectScreenState
                   children: [
                     Text(
                       s.label.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 11,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 3,
                         color: muted,
                       ),
@@ -289,9 +289,9 @@ class _CpEliteInvestorConnectScreenState
                         Flexible(
                           child: Text(
                             s.value.toUpperCase(),
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               fontSize: 28,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               height: 1,
                               letterSpacing: -1,
                               color: textPrimary,
@@ -303,9 +303,9 @@ class _CpEliteInvestorConnectScreenState
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Text(
                             s.growth.toUpperCase(),
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: -0.5,
                               color: Colors.green.shade500,
                             ),
@@ -402,9 +402,9 @@ class _CpEliteInvestorConnectScreenState
                         ),
                         child: Text(
                           o.roi.toUpperCase(),
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                             color: scheme.onPrimary,
                           ),
@@ -422,9 +422,9 @@ class _CpEliteInvestorConnectScreenState
                   children: [
                     Text(
                       o.title.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 22,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: -1,
                         height: 1,
                         color: textPrimary,
@@ -442,9 +442,9 @@ class _CpEliteInvestorConnectScreenState
                         Flexible(
                           child: Text(
                             o.type.toUpperCase(),
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 1.5,
                               color: muted,
                             ),
@@ -465,9 +465,9 @@ class _CpEliteInvestorConnectScreenState
                             children: [
                               Text(
                                 'INSTITUTIONAL ENTRY',
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 9,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: 3,
                                   color: muted,
                                 ),
@@ -475,9 +475,9 @@ class _CpEliteInvestorConnectScreenState
                               const SizedBox(height: 6),
                               Text(
                                 o.minTicket.toUpperCase(),
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 20,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: -1,
                                   height: 1,
                                   color: textPrimary,
@@ -492,7 +492,7 @@ class _CpEliteInvestorConnectScreenState
                           onTap: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                backgroundColor: Color(0xFFE24B4A),
+                                backgroundColor: Color(0xFFC65B46),
                                 content: Text(
                                   'Contact your RM for allocation — demo',
                                 ),
@@ -591,9 +591,9 @@ class _CpEliteInvestorConnectScreenState
                           children: [
                             Text(
                               'WEALTH CONCIERGE',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 20,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: -1,
                                 height: 1,
                                 color: onPanel,
@@ -602,9 +602,9 @@ class _CpEliteInvestorConnectScreenState
                             const SizedBox(height: 6),
                             Text(
                               'GLOBAL STRATEGY DESK',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 1.5,
                                 color: onPanel.withValues(alpha: 0.6),
                               ),
@@ -622,7 +622,7 @@ class _CpEliteInvestorConnectScreenState
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            backgroundColor: Color(0xFFE24B4A),
+                            backgroundColor: Color(0xFFC65B46),
                             content: Text('Scheduling protocol call — demo'),
                           ),
                         );
@@ -636,9 +636,9 @@ class _CpEliteInvestorConnectScreenState
                       ),
                       child: Text(
                         'SCHEDULE PROTOCOL CALL',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 3,
                           color: onPanel,
                         ),
@@ -671,7 +671,7 @@ class _CommitButtonState extends State<_CommitButton> {
 
   @override
   Widget build(BuildContext context) {
-    final fg = widget.isDark ? Colors.white : Colors.black; // foreground
+    final fg = widget.isDark ? Colors.white : Color(0xFF163A2C); // foreground
     final bg = widget.isDark ? Colors.black : Colors.white; // background
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
@@ -698,9 +698,9 @@ class _CommitButtonState extends State<_CommitButton> {
           ),
           child: Text(
             'COMMIT FUNDS',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: bg,
             ),

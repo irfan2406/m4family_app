@@ -93,17 +93,17 @@ class _CpEliteCpConnectScreenState
           children: [
             Text(
               'Partners Portal',
-              style: GoogleFonts.dmSerifDisplay(
-                fontWeight: FontWeight.w800,
+              style: GoogleFonts.ebGaramond(
+                fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: scheme.onSurface,
               ),
             ),
             Text(
               'INSTITUTIONAL CP NETWORK',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: scheme.primary,
               ),
@@ -167,9 +167,9 @@ class _CpEliteCpConnectScreenState
                   Expanded(
                     child: Text(
                       'VERIFIED NODE MATRIX',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                         color: scheme.onSurface.withValues(alpha: 0.6),
                       ),
@@ -186,9 +186,9 @@ class _CpEliteCpConnectScreenState
                     ),
                     child: Text(
                       'TOP TIER',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 8,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: scheme.primary,
                       ),
@@ -225,9 +225,9 @@ class _CpEliteCpConnectScreenState
                         const SizedBox(height: 12),
                         Text(
                           'NO MATCHES FOUND',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2,
                             color: scheme.onSurface.withValues(alpha: 0.68),
                           ),
@@ -258,23 +258,26 @@ class _CpEliteCpConnectScreenState
       ),
       child: TextField(
         controller: _search,
-        style: GoogleFonts.dmSerifDisplay(
-          fontSize: 11,
-          fontWeight: FontWeight.w800,
+        style: GoogleFonts.ebGaramond(
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
           letterSpacing: 0.5,
           color: scheme.onSurface,
         ),
         textCapitalization: TextCapitalization.characters,
         decoration: InputDecoration(
           hintText: 'SCAN VERIFIED INSTITUTIONAL PARTNERS…',
-          hintStyle: GoogleFonts.dmSerifDisplay(
+          hintStyle: GoogleFonts.ebGaramond(
             fontSize: 10,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.5,
             color: scheme.onSurface.withValues(alpha: 0.68),
           ),
           prefixIcon: Icon(LucideIcons.search, size: 20, color: scheme.primary),
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 8,
             vertical: 18,
@@ -376,9 +379,9 @@ class _StatCardState extends State<_StatCard> {
                   children: [
                     Text(
                       widget.stat.label.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: widget.muted,
                       ),
@@ -386,9 +389,9 @@ class _StatCardState extends State<_StatCard> {
                     const SizedBox(height: 4),
                     Text(
                       widget.stat.value.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 18,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         color: scheme.onSurface,
                         height: 1,
                       ),
@@ -519,9 +522,9 @@ class _PartnerCardState extends State<_PartnerCard> {
                         p.name.toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 15,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w500,
                           color: scheme.onSurface,
                           height: 1.05,
                         ),
@@ -531,7 +534,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                         '${p.expert} • ${p.region}'.toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           color: muted,
@@ -551,9 +554,9 @@ class _PartnerCardState extends State<_PartnerCard> {
                         const SizedBox(width: 3),
                         Text(
                           p.rating,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 12,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             color: scheme.primary,
                           ),
                         ),
@@ -562,7 +565,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                     const SizedBox(height: 2),
                     Text(
                       '${p.activeProjects} OPS',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w700,
                         color: scheme.onSurface.withValues(alpha: 0.68),
@@ -589,9 +592,9 @@ class _PartnerCardState extends State<_PartnerCard> {
                       ),
                       label: Text(
                         'TRANSMIT',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 9,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
                           color: scheme.onSurface,
                         ),
@@ -621,9 +624,9 @@ class _PartnerCardState extends State<_PartnerCard> {
                       ),
                       label: Text(
                         'LINK-UP',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 9,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
                           color: scheme.surface,
                         ),
@@ -715,9 +718,9 @@ class _AcceleratorCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           'ACCELERATOR PROTOCOL',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 18,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: -0.5,
                             color: scheme.surface,
                             height: 1,
@@ -730,7 +733,7 @@ class _AcceleratorCard extends StatelessWidget {
                   Text(
                     'Maximize institutional yield with 1.5x commission vectors on all '
                     'Prestige-tier residential clusters in core markets.',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       height: 1.6,
@@ -745,7 +748,7 @@ class _AcceleratorCard extends StatelessWidget {
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            backgroundColor: Color(0xFFE24B4A),
+                            backgroundColor: Color(0xFFC65B46),
                             content: Text('Yield structures coming soon.'),
                           ),
                         );
@@ -760,9 +763,9 @@ class _AcceleratorCard extends StatelessWidget {
                       ),
                       child: Text(
                         'VIEW YIELD STRUCTURES',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                           color: scheme.onSurface,
                         ),

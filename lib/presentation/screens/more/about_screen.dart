@@ -28,15 +28,15 @@ class _AboutScreenState extends State<AboutScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF0F1115)
-          : const Color(0xFFF9FAFB),
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFC5A35B),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             LucideIcons.chevronLeft,
-            color: isDark ? Colors.white : Colors.black,
+            color: isDark ? Colors.white : Color(0xFF163A2C),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -44,18 +44,18 @@ class _AboutScreenState extends State<AboutScreen> {
           children: [
             Text(
               'WHO WE ARE',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 14,
-                fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: 1,
               ),
             ),
             Text(
               'M4 FAMILY COLLECTIVE',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: M4Theme.premiumBlue,
                 letterSpacing: 1.5,
               ),
@@ -72,7 +72,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   : Colors.black.withOpacity(0.05),
               shape: BoxShape.circle,
             ),
-            child: const Icon(LucideIcons.moreHorizontal, size: 16),
+            child: const Icon(LucideIcons.menu, size: 16),
           ),
         ],
       ),
@@ -112,7 +112,7 @@ class _AboutScreenState extends State<AboutScreen> {
                                     ? Colors.black
                                     : (isDark
                                           ? Colors.white10
-                                          : Colors.black.withOpacity(0.05)),
+                                          : Color(0xFF163A2C).withOpacity(0.05)),
                               ),
                               boxShadow: isActive
                                   ? [
@@ -128,18 +128,18 @@ class _AboutScreenState extends State<AboutScreen> {
                               _tabs[index]['icon'],
                               color: isActive
                                   ? Colors.white
-                                  : (isDark ? Colors.white38 : Colors.black38),
+                                  : (isDark ? Colors.white38 : Color(0xFF5E6B60)),
                               size: 20,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             _tabs[index]['name'],
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 7,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               color: isActive
-                                  ? (isDark ? Colors.white : Colors.black)
+                                  ? (isDark ? Colors.white : Color(0xFF163A2C))
                                   : (isDark ? Colors.white24 : Colors.black26),
                               letterSpacing: 1,
                             ),
@@ -195,18 +195,18 @@ class _AboutScreenState extends State<AboutScreen> {
                     children: [
                       Text(
                         'THE COLLECTIVE',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 12,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white70,
                           letterSpacing: 2,
                         ),
                       ),
                       Text(
                         'M4 LEGACY',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 32,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
                           letterSpacing: -1,
                           height: 1,
@@ -236,7 +236,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       border: Border.all(
                         color: isDark
                             ? Colors.white10
-                            : Colors.black.withOpacity(0.05),
+                            : Color(0xFF163A2C).withOpacity(0.05),
                       ),
                     ),
                     child: const Icon(LucideIcons.briefcase, size: 20),
@@ -244,10 +244,10 @@ class _AboutScreenState extends State<AboutScreen> {
                   const SizedBox(width: 20),
                   Text(
                     'OUR STORY',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 16,
-                      fontWeight: FontWeight.w900,
-                      color: isDark ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: -0.5,
                     ),
                   ),
@@ -262,21 +262,21 @@ class _AboutScreenState extends State<AboutScreen> {
               child: Container(
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+                  color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(40),
                   border: Border.all(
                     color: isDark
                         ? Colors.white10
-                        : Colors.black.withOpacity(0.05),
+                        : Color(0xFF163A2C).withOpacity(0.05),
                   ),
                 ),
                 child: Column(
                   children: [
                     Text(
                       '"M4 Family, with over a decade of excellence in Mumbai\'s real estate landscape, has established itself as a trusted name in premium residential development."',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 14,
-                        color: isDark ? Colors.white70 : Colors.black87,
+                        color: isDark ? Colors.white70 : Color(0xFF163A2C),
                         height: 1.8,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.w500,
@@ -285,7 +285,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     const SizedBox(height: 24),
                     Text(
                       'Renowned for delivering homes that blend contemporary design with timeless aesthetics, every development we undertake is a testament to our commitment to quality and institutional standards.',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 13,
                         color: isDark ? Colors.white38 : Colors.black45,
                         height: 1.8,

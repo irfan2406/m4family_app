@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
@@ -22,7 +24,7 @@ class CpProfileDetailsScreen extends ConsumerStatefulWidget {
 
 class _CpProfileDetailsScreenState
     extends ConsumerState<CpProfileDetailsScreen> {
-  static const _purple = Color(0xFF9333EA);
+  static const _purple = Color(0xFFC5A35B);
 
   final _name = TextEditingController();
   final _email = TextEditingController();
@@ -111,6 +113,17 @@ class _CpProfileDetailsScreenState
   }
 
   Future<void> _save() async {
+    final vErr =
+        Validators.nameError(_name.text, field: 'full name') ??
+        Validators.phoneError(_phone.text);
+    if (vErr != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(vErr), backgroundColor: Colors.red.shade700),
+        );
+      }
+      return;
+    }
     setState(() => _saving = true);
     try {
       final trimmed = _name.text.trim();
@@ -136,7 +149,7 @@ class _CpProfileDetailsScreenState
           setState(() => _editing = false);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFF10B981),
+              backgroundColor: Color(0xFF163A2C),
               content: Text('Profile updated successfully'),
             ),
           );
@@ -147,7 +160,7 @@ class _CpProfileDetailsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? 'Update failed'),
           ),
         );
@@ -159,7 +172,7 @@ class _CpProfileDetailsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(m ?? e.message ?? 'Network error'),
           ),
         );
@@ -183,7 +196,7 @@ class _CpProfileDetailsScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('File too large (max 2MB)'),
           ),
         );
@@ -203,7 +216,7 @@ class _CpProfileDetailsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFFE24B4A),
+              backgroundColor: Color(0xFFC65B46),
               content: Text('Upload failed'),
             ),
           );
@@ -220,7 +233,7 @@ class _CpProfileDetailsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFF10B981),
+              backgroundColor: Color(0xFF163A2C),
               content: Text('Profile photo updated'),
             ),
           );
@@ -232,7 +245,7 @@ class _CpProfileDetailsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: const Color(0xFFE24B4A),
+              backgroundColor: const Color(0xFFC65B46),
               content: Text(msg ?? 'Update failed'),
             ),
           );
@@ -245,7 +258,7 @@ class _CpProfileDetailsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(m ?? 'Upload failed'),
           ),
         );
@@ -258,10 +271,10 @@ class _CpProfileDetailsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -282,6 +295,9 @@ class _CpProfileDetailsScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -298,6 +314,8 @@ class _CpProfileDetailsScreenState
                       label: 'FULL NAME',
                       controller: _name,
                       icon: LucideIcons.user,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: Validators.nameFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -309,6 +327,7 @@ class _CpProfileDetailsScreenState
                       controller: _email,
                       icon: LucideIcons.mail,
                       keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -320,6 +339,7 @@ class _CpProfileDetailsScreenState
                       controller: _phone,
                       icon: LucideIcons.phone,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: Validators.phoneFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -400,9 +420,9 @@ class _CpProfileDetailsScreenState
               children: [
                 Text(
                   'MY PROFILE',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 15,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: -0.3,
                     color: textPrimary,
                   ),
@@ -410,7 +430,7 @@ class _CpProfileDetailsScreenState
                 const SizedBox(height: 2),
                 Text(
                   'MANAGE YOUR PERSONAL DETAILS',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -553,9 +573,9 @@ class _CpProfileDetailsScreenState
             ),
             child: Text(
               'PLATINUM MEMBER',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 9,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: _purple,
               ),
@@ -575,6 +595,7 @@ class _CpProfileDetailsScreenState
     required bool isDark,
     required Color border,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     int maxLines = 1,
   }) {
     final enabled = _editing;
@@ -590,9 +611,9 @@ class _CpProfileDetailsScreenState
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: muted,
             ),
@@ -602,9 +623,10 @@ class _CpProfileDetailsScreenState
           controller: controller,
           enabled: enabled,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           maxLines: maxLines,
-          style: GoogleFonts.dmSerifDisplay(
-            fontSize: 14,
+          style: GoogleFonts.ebGaramond(
+            fontSize: 15,
             fontWeight: FontWeight.w600,
             color: enabled ? textPrimary : textPrimary.withValues(alpha: 0.8),
           ),
@@ -668,7 +690,7 @@ class _CpProfileDetailsScreenState
                 ),
                 child: Text(
                   'CANCEL',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -701,9 +723,9 @@ class _CpProfileDetailsScreenState
                       )
                     : Text(
                         'SAVE CHANGES',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 11,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
                           color: Colors.white,
                         ),

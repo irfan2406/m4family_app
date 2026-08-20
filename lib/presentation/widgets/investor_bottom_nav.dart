@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/nav_style.dart';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -25,36 +26,57 @@ class InvestorBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = isDark
-        ? Colors.white.withValues(alpha: 0.08)
-        : Colors.white.withValues(alpha: 0.95);
-    final border = (isDark ? Colors.white : Colors.black).withValues(
-      alpha: 0.08,
-    );
+    // The pill is green on the showcase tabs and cream on the light ones, so
+    // the glyphs invert to keep contrast on whichever surface they sit on.
+    final navIcon = isDark
+        ? const Color(0xFFF4EFE3)
+        : const Color(0xFF163A2C);
+    final activeDisc = isDark
+        ? const Color(0xFFF4EFE3)
+        : const Color(0xFF0C312B);
+    final activeGlyph = isDark
+        ? const Color(0xFF0C312B)
+        : const Color(0xFFF4EFE3);
 
     return SafeArea(
+      bottom: false,
       top: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+        padding: const EdgeInsets.fromLTRB(M4Nav.sideInset, 0, M4Nav.sideInset, M4Nav.bottomInset),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(M4Nav.radius),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            filter: ImageFilter.blur(sigmaX: M4Nav.blur, sigmaY: M4Nav.blur),
             child: Container(
-              height: 74,
+              height: M4Nav.height,
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(
-                color: surface,
-                borderRadius: BorderRadius.circular(40),
-                border: Border.all(color: border),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.1),
-                    blurRadius: 28,
-                    offset: const Offset(0, 14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(M4Nav.radius),
+                  // Frosted tint follows the page: deep green on the showcase tabs, cream
+                  // on the light ones. Cream over the greige page keeps the bar visibly
+                  // lighter than what is behind it, so it still reads as glass.
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: isDark
+                        ? [
+                            Color.alphaBlend(
+                              Colors.white.withValues(alpha: 0.16),
+                              const Color(0xFF0C312B).withValues(alpha: 0.62),
+                            ),
+                            const Color(0xFF0C312B).withValues(alpha: M4Nav.inactiveOpacity),
+                          ]
+                        : [
+                            const Color(0xFFF4EFE3).withValues(alpha: 0.82),
+                            const Color(0xFFF4EFE3).withValues(alpha: 0.68),
+                          ],
                   ),
-                ],
-              ),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.16),
+                    width: 0.8,
+                  ),
+                  boxShadow: M4Nav.shadow(isDark),
+                ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(_icons.length, (i) {
@@ -66,37 +88,34 @@ class InvestorBottomNav extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 6,
-                        vertical: 10,
+                        vertical: 6,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
+                          // Figma: the selected tab is a solid deep-green disc with a cream
+                          // glyph; unselected tabs are the bare icon on the glass.
+                          AnimatedContainer(
+                            duration: M4Nav.animation,
+                            curve: M4Nav.curve,
+                            padding: const EdgeInsets.all(9),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              color: active
-                                  ? onSurf.withValues(
-                                      alpha: isDark ? 0.12 : 0.08,
-                                    )
-                                  : null,
-                              border: active
-                                  ? Border.all(
-                                      color: onSurf.withValues(alpha: 0.12),
-                                    )
-                                  : null,
+                              shape: BoxShape.circle,
+                              color: active ? activeDisc : Colors.transparent,
                             ),
                             child: Icon(
                               _icons[i],
-                              size: 22,
+                              size: M4Nav.iconSize,
                               color: active
-                                  ? onSurf
-                                  : onSurf.withValues(alpha: 0.38),
+                                  ? activeGlyph
+                                  : navIcon.withValues(alpha: M4Nav.inactiveOpacity),
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Container(
+                          AnimatedContainer(
+                            duration: M4Nav.animation,
+                            curve: M4Nav.curve,
                             width: 4,
                             height: 4,
                             decoration: BoxDecoration(

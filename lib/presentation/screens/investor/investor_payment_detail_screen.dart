@@ -31,8 +31,8 @@ class InvestorPaymentDetailScreen extends ConsumerStatefulWidget {
 
 class _InvestorPaymentDetailScreenState
     extends ConsumerState<InvestorPaymentDetailScreen> {
-  static const _gold = Color(0xFFFFD700);
-  static const _green = Color(0xFF10B981);
+  static const _gold = Color(0xFFC5A35B);
+  static const _green = Color(0xFF163A2C);
 
   Map<String, dynamic>? _payment;
   bool _loading = true;
@@ -103,7 +103,7 @@ class _InvestorPaymentDetailScreenState
   void _downloadReceipt() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        backgroundColor: Color(0xFFE24B4A),
+        backgroundColor: Color(0xFFC65B46),
         content: Text('Receipt export is not available yet.'),
       ),
     );
@@ -112,7 +112,7 @@ class _InvestorPaymentDetailScreenState
   void _share() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        backgroundColor: Color(0xFFE24B4A),
+        backgroundColor: Color(0xFFC65B46),
         content: Text('Sharing is not available yet.'),
       ),
     );
@@ -121,7 +121,7 @@ class _InvestorPaymentDetailScreenState
   void _getHelp() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        backgroundColor: Color(0xFF10B981),
+        backgroundColor: Color(0xFF163A2C),
         content: Text('Support ticket created'),
       ),
     );
@@ -190,13 +190,16 @@ class _InvestorPaymentDetailScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
 
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _header(textPrimary, muted, isDark),
@@ -233,8 +236,8 @@ class _InvestorPaymentDetailScreenState
               children: [
                 Text(
                   'Transaction details',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.ebGaramond(
+                    fontWeight: FontWeight.w600,
                     fontSize: 16,
                     color: textPrimary,
                   ),
@@ -242,7 +245,7 @@ class _InvestorPaymentDetailScreenState
                 const SizedBox(height: 2),
                 Text(
                   _shortId,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1,
@@ -258,12 +261,12 @@ class _InvestorPaymentDetailScreenState
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.04,
                 ),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.08,
                   ),
                 ),
@@ -287,9 +290,9 @@ class _InvestorPaymentDetailScreenState
             const SizedBox(height: 16),
             Text(
               'Transaction not found',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 15,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
                 color: textPrimary,
               ),
             ),
@@ -297,7 +300,7 @@ class _InvestorPaymentDetailScreenState
             Text(
               'The requested transaction could not be found.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(fontSize: 12, color: muted),
+              style: GoogleFonts.ebGaramond(fontSize: 12, color: muted),
             ),
           ],
         ),
@@ -340,9 +343,9 @@ class _InvestorPaymentDetailScreenState
             const SizedBox(height: 16),
             Text(
               '${credit ? '+' : '-'}${_amountLabel()}',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 30,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: -0.5,
                 color: amountColor,
               ),
@@ -350,7 +353,7 @@ class _InvestorPaymentDetailScreenState
             const SizedBox(height: 6),
             Text(
               status.isEmpty ? '—' : status.toUpperCase(),
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
@@ -372,11 +375,11 @@ class _InvestorPaymentDetailScreenState
   }
 
   Widget _infoCard(bool isDark, Color textPrimary, Color muted) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final divider = (isDark ? Colors.white : Colors.black).withValues(
+    final divider = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.06,
     );
 
@@ -421,7 +424,7 @@ class _InvestorPaymentDetailScreenState
   }
 
   Widget _descriptionCard(bool isDark, Color textPrimary, Color muted) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -438,7 +441,7 @@ class _InvestorPaymentDetailScreenState
         children: [
           Text(
             'DESCRIPTION',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -448,9 +451,9 @@ class _InvestorPaymentDetailScreenState
           const SizedBox(height: 8),
           Text(
             _descriptionLabel(),
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 13,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               height: 1.5,
               color: textPrimary.withValues(alpha: 0.8),
             ),
@@ -461,7 +464,7 @@ class _InvestorPaymentDetailScreenState
   }
 
   Widget _idCard(bool isDark, Color textPrimary, Color muted, String fullId) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -481,7 +484,7 @@ class _InvestorPaymentDetailScreenState
               children: [
                 Text(
                   'REFERENCE ID',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.2,
@@ -507,12 +510,12 @@ class _InvestorPaymentDetailScreenState
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.04,
                 ),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.08,
                   ),
                 ),
@@ -558,7 +561,7 @@ class _InvestorPaymentDetailScreenState
     required String label,
     required VoidCallback onTap,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -580,7 +583,7 @@ class _InvestorPaymentDetailScreenState
             const SizedBox(width: 8),
             Text(
               label,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.2,
@@ -601,9 +604,9 @@ class _InvestorPaymentDetailScreenState
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.right,
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.ebGaramond(
           fontSize: 12,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           color: textPrimary,
         ),
       ),
@@ -622,7 +625,7 @@ class _InvestorPaymentDetailScreenState
       children: [
         Text(
           label,
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.ebGaramond(
             fontSize: 10,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -639,9 +642,9 @@ class _InvestorPaymentDetailScreenState
   Widget _valueText(String text, Color textPrimary) {
     return Text(
       text,
-      style: GoogleFonts.dmSerifDisplay(
+      style: GoogleFonts.ebGaramond(
         fontSize: 12,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         color: textPrimary,
       ),
     );

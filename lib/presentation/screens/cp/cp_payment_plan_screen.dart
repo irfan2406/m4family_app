@@ -22,7 +22,7 @@ class CpPaymentPlanScreen extends ConsumerStatefulWidget {
 }
 
 class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
 
   List<dynamic> _plans = [];
   bool _loading = true;
@@ -90,9 +90,9 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.68,
     );
     final border = isDark
@@ -102,6 +102,9 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             // ─── Header ─────────────────────────────────
@@ -117,7 +120,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withValues(alpha: 0.04),
                         shape: BoxShape.circle,
                         border: Border.all(color: border),
@@ -135,9 +138,9 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                     children: [
                       Text(
                         'CHOOSE PLAN',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 22,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: -0.5,
                           color: textPrimary,
                         ),
@@ -145,9 +148,9 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                       const SizedBox(height: 2),
                       Text(
                         'SELECT YOUR PREFERRED SCHEDULE',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 8,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                           color: muted,
                         ),
@@ -227,7 +230,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                 color: M4Theme.premiumBlue.withValues(
                                   alpha: 0.05,
                                 ),
-                                borderRadius: BorderRadius.circular(32),
+                                borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
                                   color: M4Theme.premiumBlue.withValues(
                                     alpha: 0.12,
@@ -257,9 +260,9 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                       children: [
                                         Text(
                                           'COMPARE PLANS',
-                                          style: GoogleFonts.dmSerifDisplay(
+                                          style: GoogleFonts.gelasio(
                                             fontSize: 11,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.w700,
                                             letterSpacing: 1.5,
                                             color: textPrimary,
                                           ),
@@ -267,7 +270,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                         const SizedBox(height: 4),
                                         Text(
                                           'NEED HELP DECIDING? CONTACT YOUR RELATIONSHIP MANAGER FOR A DETAILED COMPARISON SHEET.',
-                                          style: GoogleFonts.dmSerifDisplay(
+                                          style: GoogleFonts.ebGaramond(
                                             fontSize: 8,
                                             fontWeight: FontWeight.bold,
                                             height: 1.5,
@@ -289,7 +292,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                               onTap: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    backgroundColor: Color(0xFFE24B4A),
+                                    backgroundColor: Color(0xFFC65B46),
                                     content: Text(
                                       'Payment plan PDF will be available soon.',
                                     ),
@@ -312,9 +315,9 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                 child: Center(
                                   child: Text(
                                     'DOWNLOAD ALL PAYMENT PLANS (PDF)',
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 9,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w700,
                                       letterSpacing: 2,
                                       color: M4Theme.premiumBlue,
                                     ),
@@ -357,11 +360,11 @@ class _PaymentPlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.68,
     );
-    final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = popular
         ? M4Theme.premiumBlue.withValues(alpha: 0.4)
         : (isDark
@@ -406,9 +409,9 @@ class _PaymentPlanCard extends StatelessWidget {
                   ),
                   child: Text(
                     'MOST POPULAR',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                       color: Colors.white,
                     ),
@@ -429,9 +432,9 @@ class _PaymentPlanCard extends StatelessWidget {
                           children: [
                             Text(
                               (plan['name'] ?? 'Plan').toString().toUpperCase(),
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 22,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 height: 1.1,
                                 letterSpacing: -0.5,
                                 color: textPrimary,
@@ -441,7 +444,7 @@ class _PaymentPlanCard extends StatelessWidget {
                               const SizedBox(height: 8),
                               Text(
                                 desc,
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500,
                                   height: 1.4,
@@ -467,7 +470,7 @@ class _PaymentPlanCard extends StatelessWidget {
                   const SizedBox(height: 28),
                   Divider(
                     height: 1,
-                    color: (isDark ? Colors.white : Colors.black).withValues(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                       alpha: 0.06,
                     ),
                   ),
@@ -488,9 +491,9 @@ class _PaymentPlanCard extends StatelessWidget {
                           const SizedBox(width: 12),
                           Text(
                             benefit.toUpperCase(),
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 9,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 1,
                               color: accent,
                             ),
@@ -503,7 +506,7 @@ class _PaymentPlanCard extends StatelessWidget {
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withValues(alpha: isDark ? 0.05 : 0.03),
                           borderRadius: BorderRadius.circular(999),
                         ),
@@ -511,9 +514,9 @@ class _PaymentPlanCard extends StatelessWidget {
                           children: [
                             Text(
                               'SELECT PLAN',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 9,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                                 letterSpacing: 1,
                                 color: textPrimary,
                               ),

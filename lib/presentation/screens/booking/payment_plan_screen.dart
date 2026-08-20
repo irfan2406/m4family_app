@@ -59,7 +59,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
           'description': 'Construction linked payment schedule.',
           'benefit': 'Lower upfront cost',
           'icon': LucideIcons.zap,
-          'color': const Color(0xFF3B82F6),
+          'color': const Color(0xFFC5A35B),
         },
       ];
       _isLoading = false;
@@ -71,7 +71,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -86,7 +86,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
         leading: IconButton(
           icon: Icon(
             LucideIcons.chevronLeft,
-            color: isDark ? Colors.white : Colors.black,
+            color: isDark ? Colors.white : Color(0xFF163A2C),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -95,19 +95,19 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
           children: [
             Text(
               'CHOOSE PLAN',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 17,
-                fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: -0.5,
               ),
             ),
             Text(
               'SELECT YOUR PREFERRED SCHEDULE',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
-                fontWeight: FontWeight.w900,
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
+                fontWeight: FontWeight.w600,
                 letterSpacing: 1,
               ),
             ),
@@ -128,8 +128,8 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                         ? LucideIcons.zap
                         : LucideIcons.shieldCheck;
                     final color = isZap
-                        ? const Color(0xFF3B82F6)
-                        : const Color(0xFFF59E0B);
+                        ? const Color(0xFFC5A35B)
+                        : const Color(0xFFC5A35B);
                     final benefit =
                         plan['name']?.toString().contains('Down') == true
                         ? 'MAX SAVINGS'
@@ -168,7 +168,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                       color: isDark
                           ? Colors.white.withOpacity(0.03)
                           : Colors.black.withOpacity(0.04),
-                      borderRadius: BorderRadius.circular(32),
+                      borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isDark
                             ? Colors.white.withOpacity(0.05)
@@ -181,12 +181,12 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.white : Colors.black,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Icon(
                             LucideIcons.info,
-                            color: isDark ? Colors.black : Colors.white,
+                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                             size: 24,
                           ),
                         ),
@@ -197,19 +197,19 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                             children: [
                               Text(
                                 'COMPARE PLANS',
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: 1.5,
-                                  color: isDark ? Colors.white : Colors.black,
+                                  color: isDark ? Colors.white : Color(0xFF163A2C),
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'VIEW A DETAILED SIDE-BY-SIDE COMPARISON OF ALL AVAILABLE PAYMENT SCHEDULES.',
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 8,
-                                  color: (isDark ? Colors.white : Colors.black)
+                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
                                       .withOpacity(0.68),
                                   fontWeight: FontWeight.bold,
                                   height: 1.4,
@@ -228,7 +228,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 24),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(32),
+                      borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isDark
                             ? Colors.white.withOpacity(0.05)
@@ -238,11 +238,11 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                     child: Center(
                       child: Text(
                         'DOWNLOAD ALL PAYMENT PLANS (PDF)',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 9,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
-                          color: isDark ? Colors.white : Colors.black,
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                         ),
                       ),
                     ),
@@ -279,7 +279,7 @@ class _PaymentPlanCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+          color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(40),
           border: Border.all(
             color: isDark
@@ -308,10 +308,10 @@ class _PaymentPlanCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       (plan['name'] ?? 'Plan').toString().toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 26,
-                        fontWeight: FontWeight.w900,
-                        color: isDark ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         height: 1.1,
                         letterSpacing: -0.5,
                       ),
@@ -333,7 +333,7 @@ class _PaymentPlanCard extends StatelessWidget {
               // Web parity: divider between the plan title and the benefit row.
               Divider(
                 height: 1,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.08),
               ),
               const SizedBox(height: 30),
               Row(
@@ -345,7 +345,7 @@ class _PaymentPlanCard extends StatelessWidget {
                           width: 6,
                           height: 6,
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.white : Colors.black,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -355,10 +355,10 @@ class _PaymentPlanCard extends StatelessWidget {
                             benefit,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 9,
-                              fontWeight: FontWeight.w900,
-                              color: isDark ? Colors.white : Colors.black,
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                               letterSpacing: 1,
                             ),
                           ),
@@ -382,17 +382,17 @@ class _PaymentPlanCard extends StatelessWidget {
                       children: [
                         Text(
                           'SELECT PLAN',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
-                            color: isDark ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             letterSpacing: 1,
                           ),
                         ),
                         const SizedBox(width: 10),
                         Icon(
                           LucideIcons.arrowRight,
-                          color: isDark ? Colors.white : Colors.black,
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                           size: 14,
                         ),
                       ],

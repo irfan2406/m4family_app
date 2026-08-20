@@ -20,7 +20,7 @@ class InvestorCpScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   final _search = TextEditingController();
   String _q = '';
@@ -70,10 +70,10 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -94,17 +94,17 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
           children: [
             Text(
               'Partner Dashboard',
-              style: GoogleFonts.dmSerifDisplay(
-                fontWeight: FontWeight.w800,
+              style: GoogleFonts.ebGaramond(
+                fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: textPrimary,
               ),
             ),
             Text(
               'ID: CP-9021 • M4 PARTNER',
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 8,
-                fontWeight: FontWeight.w800,
+              style: GoogleFonts.gelasio(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: _gold,
               ),
@@ -160,9 +160,9 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
               Expanded(
                 child: Text(
                   'REGISTERED LEADS',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: textPrimary.withValues(alpha: 0.6),
                   ),
@@ -176,9 +176,9 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
                 ),
                 child: Text(
                   '${filtered.length} ACTIVE',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w800,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: _gold,
                   ),
@@ -216,11 +216,11 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
                     const SizedBox(height: 12),
                     Text(
                       'NO LEADS FOUND',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
-                        color: textPrimary.withValues(alpha: 0.3),
+                        color: textPrimary.withValues(alpha: 0.72),
                       ),
                     ),
                   ],
@@ -257,20 +257,23 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
       ),
       child: TextField(
         controller: _search,
-        style: GoogleFonts.dmSerifDisplay(
-          fontSize: 13,
+        style: GoogleFonts.ebGaramond(
+          fontSize: 15,
           fontWeight: FontWeight.w700,
           color: textPrimary,
         ),
         decoration: InputDecoration(
           hintText: 'Search registered leads…',
-          hintStyle: GoogleFonts.dmSerifDisplay(
+          hintStyle: GoogleFonts.ebGaramond(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: muted,
           ),
           prefixIcon: const Icon(LucideIcons.search, size: 20, color: _gold),
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 8,
             vertical: 18,
@@ -300,7 +303,7 @@ class _Lead {
 // STAT CARD — premium glass row with icon circle + value
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 class _StatCard extends StatelessWidget {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
   final _Stat stat;
   final Color textPrimary;
   final Color muted;
@@ -342,9 +345,9 @@ class _StatCard extends StatelessWidget {
               children: [
                 Text(
                   stat.label.toUpperCase(),
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w800,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: muted,
                   ),
@@ -352,9 +355,9 @@ class _StatCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   stat.value,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 18,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: textPrimary,
                     height: 1,
                   ),
@@ -382,7 +385,7 @@ class _StatCard extends StatelessWidget {
 // LEAD CARD — premium glass card with status badge + actions
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 class _LeadCard extends StatelessWidget {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
   final _Lead lead;
   final Color textPrimary;
   final Color muted;
@@ -427,9 +430,9 @@ class _LeadCard extends StatelessWidget {
                       lead.name.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 15,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         color: textPrimary,
                         height: 1.05,
                       ),
@@ -439,9 +442,9 @@ class _LeadCard extends StatelessWidget {
                       lead.project.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: _gold,
                       ),
@@ -461,9 +464,9 @@ class _LeadCard extends StatelessWidget {
                 ),
                 child: Text(
                   lead.status.toUpperCase(),
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w800,
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 1,
                     color: _gold,
                   ),
@@ -482,9 +485,9 @@ class _LeadCard extends StatelessWidget {
                     icon: const Icon(LucideIcons.phone, size: 16, color: _gold),
                     label: Text(
                       'CALL CLIENT',
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w800,
+                      style: GoogleFonts.gelasio(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: textPrimary,
                       ),
@@ -507,9 +510,9 @@ class _LeadCard extends StatelessWidget {
                     icon: Icon(LucideIcons.refreshCw, size: 16, color: bg),
                     label: Text(
                       'UPDATE STATUS',
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w800,
+                      style: GoogleFonts.gelasio(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: bg,
                       ),
@@ -537,7 +540,7 @@ class _LeadCard extends StatelessWidget {
 // REGISTER CARD — dark CTA to register a new lead
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 class _RegisterCard extends StatelessWidget {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
   final bool isDark;
   final Color textPrimary;
   final Color bg;
@@ -580,9 +583,9 @@ class _RegisterCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'REGISTER NEW LEAD',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 18,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: -0.5,
                       color: bg,
                       height: 1,
@@ -595,9 +598,9 @@ class _RegisterCard extends StatelessWidget {
             Text(
               'Register a high-priority lead against your channel partner ID and '
               'track it through visit, booking and payout.',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 height: 1.6,
                 color: bg.withValues(alpha: 0.7),
               ),
@@ -618,9 +621,9 @@ class _RegisterCard extends StatelessWidget {
                 ),
                 child: Text(
                   'REGISTER LEAD',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: textPrimary,
                   ),
@@ -646,7 +649,7 @@ class _LeadFormSheet extends StatefulWidget {
 }
 
 class _LeadFormSheetState extends State<_LeadFormSheet> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
   final _name = TextEditingController();
   final _mobile = TextEditingController();
   String _project = 'M4 Prestige';
@@ -664,7 +667,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        backgroundColor: Color(0xFF10B981),
+        backgroundColor: Color(0xFF163A2C),
         content: Text('Lead registered successfully.'),
       ),
     );
@@ -673,9 +676,9 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final card = isDark
         ? Colors.white.withValues(alpha: 0.05)
         : Colors.black.withValues(alpha: 0.03);
@@ -717,18 +720,18 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                     children: [
                       Text(
                         'Register New Lead',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 18,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           color: textPrimary,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'HIGH PRIORITY REGISTRATION',
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 8,
-                          fontWeight: FontWeight.w800,
+                        style: GoogleFonts.gelasio(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
                           color: _gold,
                         ),
@@ -757,10 +760,10 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                   value: _project,
                   isExpanded: true,
                   dropdownColor: isDark
-                      ? const Color(0xFF111111)
-                      : Colors.white,
+                      ? const Color(0xFF141B3A)
+                      : const Color(0xFFF4EFE3),
                   icon: Icon(LucideIcons.chevronDown, size: 18, color: muted),
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: textPrimary,
@@ -811,9 +814,9 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                 ),
                 child: Text(
                   'SUBMIT LEAD',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 11,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: bg,
                   ),
@@ -828,9 +831,9 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
 
   Widget _label(String text, Color muted) => Text(
     text,
-    style: GoogleFonts.dmSerifDisplay(
-      fontSize: 9,
-      fontWeight: FontWeight.w800,
+    style: GoogleFonts.gelasio(
+      fontSize: 11,
+      fontWeight: FontWeight.w700,
       letterSpacing: 1.5,
       color: muted,
     ),
@@ -854,19 +857,22 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
       child: TextField(
         controller: c,
         keyboardType: keyboard,
-        style: GoogleFonts.dmSerifDisplay(
-          fontSize: 13,
+        style: GoogleFonts.ebGaramond(
+          fontSize: 15,
           fontWeight: FontWeight.w700,
           color: textPrimary,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.dmSerifDisplay(
+          hintStyle: GoogleFonts.ebGaramond(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: muted,
           ),
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 16,

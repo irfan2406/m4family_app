@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -154,7 +156,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
       // Bottom nav — shown only when pushed standalone (from the menu), not
@@ -175,8 +177,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           children: [
             Text(
               'WHO WE ARE',
-              style: GoogleFonts.dmSerifDisplay(
-                color: isDark ? Colors.white : Colors.black,
+              style: GoogleFonts.gelasio(
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
                 letterSpacing: 2,
@@ -184,8 +186,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             ),
             Text(
               'M4 FAMILY COLLECTIVE',
-              style: GoogleFonts.dmSerifDisplay(
-                color: isDark ? Colors.white : Colors.black,
+              style: GoogleFonts.ebGaramond(
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
                 letterSpacing: 2,
@@ -193,9 +195,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
-          0.8,
-        ),
+        backgroundColor: isDark ? const Color(0xFF0B1026) : Theme.of(context).scaffoldBackgroundColor,
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -221,19 +221,19 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.05,
                   ),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.08,
                     ),
                   ),
                 ),
                 child: Icon(
                   LucideIcons.arrowLeft,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   size: 16,
                 ),
               ),
@@ -254,16 +254,19 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       drawer: const ConditionalDrawer(),
       body: Container(
         decoration: BoxDecoration(
-          color: isDark ? Colors.black : Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           gradient: isDark
               ? const RadialGradient(
                   center: Alignment.topCenter,
                   radius: 2.5,
-                  colors: [Color(0xFF0F1115), Colors.black],
+                  colors: [Color(0xFF141B3A), Color(0xFF0B1026)],
                 )
               : null,
         ),
         child: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: Column(
             children: [
               _buildStepIndicator(),
@@ -303,7 +306,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.black : Colors.white).withOpacity(0.3),
+        color: isDark ? const Color(0xFF0B1026) : Theme.of(context).scaffoldBackgroundColor,
         border: Border(
           bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
         ),
@@ -323,7 +326,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 right: stepWidth / 2,
                 child: Container(
                   height: 2,
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.05,
                   ),
                 ),
@@ -365,7 +368,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               color: isActive
                                   ? colorScheme.primary
                                   : isCompleted
-                                  ? (isDark ? Colors.black : Colors.white)
+                                  ? (isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3))
                                   : (isDark
                                         ? Colors.white.withOpacity(0.05)
                                         : Colors.black.withOpacity(0.04)),
@@ -394,10 +397,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                             child: Icon(
                               step['icon'],
                               color: isActive
-                                  ? (isDark ? Colors.black : Colors.white)
+                                  ? (isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3))
                                   : isCompleted
                                   ? colorScheme.primary
-                                  : (isDark ? Colors.white60 : Colors.black38),
+                                  : (isDark ? Colors.white60 : Color(0xFF5E6B60)),
                               size: 16,
                             ),
                           ),
@@ -410,14 +413,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               step['label'].toString().toUpperCase(),
                               maxLines: 1,
                               softWrap: false,
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.ebGaramond(
                                 color: isActive
-                                    ? (isDark ? Colors.white : Colors.black)
+                                    ? (isDark ? Colors.white : Color(0xFF163A2C))
                                     : (isDark
                                           ? Colors.white60
-                                          : Colors.black54),
+                                          : Color(0xFF5E6B60)),
                                 fontSize: 10,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w600,
                                 letterSpacing: -0.3,
                               ),
                             ),
@@ -467,8 +470,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             children: [
               Text(
                 '"M4 Family, with over a decade of excellence in Mumbai’s real estate landscape, has established itself as a trusted name in premium residential development."',
-                style: GoogleFonts.dmSerifDisplay(
-                  color: isDark ? Colors.white : Colors.black,
+                style: GoogleFonts.ebGaramond(
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                   height: 1.8,
@@ -477,8 +480,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               const SizedBox(height: 20),
               Text(
                 'Renowned for delivering homes that blend contemporary design with enduring quality, we take pride in creating spaces that inspire modern living while retaining timeless value.',
-                style: GoogleFonts.dmSerifDisplay(
-                  color: isDark ? Colors.white : Colors.black,
+                style: GoogleFonts.ebGaramond(
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   height: 1.8,
@@ -487,8 +490,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               const SizedBox(height: 20),
               Text(
                 'Every development we undertake reflects meticulous planning, uncompromising quality, and a commitment to delivering on promises. From Aura Heights to our latest offering Ocean View, we continue to redefine what it means to call a place home.',
-                style: GoogleFonts.dmSerifDisplay(
-                  color: isDark ? Colors.white : Colors.black,
+                style: GoogleFonts.ebGaramond(
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   height: 1.8,
@@ -528,7 +531,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         height: 24,
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.black : Colors.white,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: colorScheme.primary,
@@ -575,28 +578,28 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         children: [
                           Text(
                             item['year']!,
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               color: colorScheme.primary,
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 2,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             item['title']!.toUpperCase(),
-                            style: GoogleFonts.dmSerifDisplay(
-                              color: isDark ? Colors.white : Colors.black,
+                            style: GoogleFonts.ebGaramond(
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                               fontSize: 16,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: -0.5,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             (item['desc'] ?? item['content'] ?? '').toString(),
-                            style: GoogleFonts.dmSerifDisplay(
-                              color: isDark ? Colors.white70 : Colors.black54,
+                            style: GoogleFonts.ebGaramond(
+                              color: isDark ? Colors.white70 : Color(0xFF5E6B60),
                               fontSize: 12,
                               height: 1.6,
                               fontWeight: FontWeight.w500,
@@ -645,8 +648,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             return Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
-                borderRadius: BorderRadius.circular(32),
+                color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isDark
                       ? Colors.white.withOpacity(0.05)
@@ -677,10 +680,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 16),
                   Text(
                     pillar['title'].toString().toUpperCase(),
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: isDark ? Colors.white : Colors.black,
+                    style: GoogleFonts.gelasio(
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       fontSize: 11,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                     ),
                   ),
@@ -688,8 +691,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     pillar['desc'],
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    style: GoogleFonts.ebGaramond(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.68,
                       ),
                       fontSize: 9,
@@ -740,8 +743,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         Text(
           'EXPERIENCE THE FUTURE OF HOME PERSONALISATION. OUR PROPRIETARY CUSTOM VIEWS SUITE ALLOWS YOU TO VISUALISE AND CRAFT YOUR DREAM SPACE BEFORE IT\'S EVEN BUILT.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.dmSerifDisplay(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+          style: GoogleFonts.ebGaramond(
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
             fontSize: 11,
             fontWeight: FontWeight.w500,
             height: 1.8,
@@ -784,10 +787,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+        color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
         ),
         boxShadow: isDark
             ? null
@@ -804,20 +807,20 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         children: [
           Text(
             'CUSTOMER VIEWS',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               color: colorScheme.primary,
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
             ),
           ),
           const SizedBox(height: 16),
           Text(
             '"AT M4 FAMILY, WE BELIEVE THAT LUXURY IS DEEPLY PERSONAL. OUR \'CUSTOMER VIEWS\' PHILOSOPHY ENSURES THAT EVERY RESIDENT\'S PERSPECTIVE IS VALUED, ALLOWING FOR A COLLABORATIVE APPROACH TO CREATING LIVING SPACES THAT REFLECT INDIVIDUAL LIFESTYLES AND ASPIRATIONS. WE INVITE YOU TO EXPLORE OUR BESPOKE PERSONALISATION OPTIONS, WHERE YOUR VISION MEETS OUR ARCHITECTURAL EXCELLENCE."',
-            style: GoogleFonts.dmSerifDisplay(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+            style: GoogleFonts.ebGaramond(
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.7),
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               height: 1.7,
               fontStyle: FontStyle.italic,
               letterSpacing: 0.2,
@@ -866,20 +869,20 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 children: [
                   Text(
                     'THE COLLECTIVE',
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: Colors.white60,
+                    style: GoogleFonts.gelasio(
+                      color: Colors.white70,
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 3,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'M4 LEGACY',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       color: Colors.white,
                       fontSize: 32,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: -1,
                       height: 1.1,
                     ),
@@ -905,7 +908,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             color: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
             ),
             boxShadow: [
               BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
@@ -924,10 +927,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         const SizedBox(width: 16),
         Text(
           title,
-          style: GoogleFonts.dmSerifDisplay(
-            color: isDark ? Colors.white : Colors.black,
+          style: GoogleFonts.gelasio(
+            color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 18,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: -1,
           ),
         ),
@@ -940,7 +943,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+        color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: isDark
@@ -997,7 +1000,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 height: 48,
                 decoration: BoxDecoration(
                   // Web: glass white tile, rounded-2xl, subtle border + shadow.
-                  color: isDark ? Colors.white.withOpacity(0.06) : Colors.white,
+                  color: isDark ? Colors.white.withOpacity(0.06) : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: colorScheme.primary.withOpacity(0.1),
@@ -1027,10 +1030,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   children: [
                     Text(
                       section['title'].toString().toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
-                        color: isDark ? Colors.white : Colors.black,
+                      style: GoogleFonts.ebGaramond(
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         fontSize: 15,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -1052,8 +1055,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           Text(
             section['content'].toString().toUpperCase(),
             // Web parity: lighter, less heavy body copy inside the card.
-            style: GoogleFonts.dmSerifDisplay(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+            style: GoogleFonts.ebGaramond(
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.5),
               fontSize: 11,
               fontWeight: FontWeight.w600,
               height: 1.6,
@@ -1071,7 +1074,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       aspectRatio: 1,
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isDark
                 ? Colors.white.withOpacity(0.1)
@@ -1079,7 +1082,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           ),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20),
           child: CachedNetworkImage(
             imageUrl: url,
             fit: BoxFit.cover,
@@ -1146,20 +1149,20 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 24),
                   Text(
                     'YOUR DESIGN JOURNEY',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       color: Colors.white,
                       fontSize: 22,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: -1,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'PERSONALISE EVERY DETAIL',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       color: Colors.white.withOpacity(0.68),
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                     ),
                   ),
@@ -1167,7 +1170,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     'CHOOSE YOUR MATERIALS, EXPLORE CONFIGURATIONS, AND SEE YOUR VISION COME TO LIFE WITH M4 CUSTOM VIEWS.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       color: Colors.white.withOpacity(0.7),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -1211,8 +1214,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                     AuthStatus.authenticated
                                 ? 'CUSTOM VIEWS'
                                 : 'ENQUIRE FOR CUSTOM VIEWS',
-                            style: GoogleFonts.dmSerifDisplay(
-                              fontWeight: FontWeight.w900,
+                            style: GoogleFonts.ebGaramond(
+                              fontWeight: FontWeight.w600,
                               fontSize: 11,
                               letterSpacing: 1,
                             ),
@@ -1233,6 +1236,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   }
 
   void _showCustomEnquiryForm(BuildContext context) {
+    String? submitError;
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.6),
@@ -1242,7 +1246,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           // Web parity: a centered floating card with margins on every edge,
           // rounded on all corners — not a full-width bottom sheet.
           return Dialog(
-            backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+            backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
             insetPadding: const EdgeInsets.symmetric(
               horizontal: 20,
               vertical: 44,
@@ -1268,9 +1272,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           Expanded(
                             child: Text(
                               'CUSTOM PERSONALISATION',
-                              style: GoogleFonts.dmSerifDisplay(
-                                color: isDark ? Colors.white : Colors.black,
-                                fontWeight: FontWeight.w900,
+                              style: GoogleFonts.ebGaramond(
+                                color: isDark ? Colors.white : Color(0xFF163A2C),
+                                fontWeight: FontWeight.w600,
                                 fontSize: 17,
                                 letterSpacing: -0.3,
                               ),
@@ -1279,7 +1283,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           IconButton(
                             icon: Icon(
                               LucideIcons.x,
-                              color: isDark ? Colors.white : Colors.black,
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                               size: 20,
                             ),
                             onPressed: () => Navigator.pop(context),
@@ -1289,11 +1293,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'Enter your details to receive our premium personalisation catalog and schedule a consultation.',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           // Web parity: muted gray subtitle, not solid black.
                           color: isDark
                               ? Colors.white54
-                              : const Color(0xFF6B7280),
+                              : const Color(0xFFC5A35B),
                           fontSize: 12,
                           height: 1.5,
                           fontWeight: FontWeight.w500,
@@ -1306,6 +1310,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         _nameController,
                         'Your Name',
                         LucideIcons.user,
+                        keyboardType: TextInputType.name,
+                        inputFormatters: Validators.nameFormatters,
                       ),
                       const SizedBox(height: 20),
 
@@ -1314,6 +1320,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         _phoneController,
                         'Mobile Number',
                         LucideIcons.phone,
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: Validators.phoneFormatters,
                       ),
                       const SizedBox(height: 20),
 
@@ -1322,8 +1330,48 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         _emailController,
                         'Email Address',
                         LucideIcons.mail,
+                        keyboardType: TextInputType.emailAddress,
+                        inputFormatters: Validators.emailFormatters,
                       ),
                       const SizedBox(height: 40),
+
+                      if (submitError != null) ...[
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFC65B46).withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: const Color(0xFFC65B46).withOpacity(0.4),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                LucideIcons.alertCircle,
+                                color: Color(0xFFC65B46),
+                                size: 18,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  submitError!,
+                                  style: GoogleFonts.ebGaramond(
+                                    color: const Color(0xFFC65B46),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
 
                       SizedBox(
                         width: double.infinity,
@@ -1332,29 +1380,49 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           onPressed: _isSubmitting
                               ? null
                               : () async {
-                                  if (_nameController.text.isEmpty ||
-                                      _phoneController.text.isEmpty) {
+                                  final vErr =
+                                      Validators.nameError(
+                                        _nameController.text,
+                                        field: 'name',
+                                      ) ??
+                                      Validators.phoneError(
+                                        _phoneController.text,
+                                      ) ??
+                                      (_emailController.text.trim().isEmpty
+                                          ? null
+                                          : Validators.emailError(
+                                              _emailController.text,
+                                            ));
+                                  if (vErr != null) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        backgroundColor: Color(0xFFE24B4A),
-                                        content: Text(
-                                          'Please fill in required fields',
+                                      SnackBar(
+                                        backgroundColor: const Color(
+                                          0xFFC65B46,
                                         ),
+                                        content: Text(vErr),
                                       ),
                                     );
                                     return;
                                   }
 
-                                  setModalState(() => _isSubmitting = true);
+                                  setModalState(() {
+                                    _isSubmitting = true;
+                                    submitError = null;
+                                  });
                                   try {
                                     final apiClient = ref.read(
                                       apiClientProvider,
                                     );
-                                    await apiClient.submitCustomViews({
-                                      'name': _nameController.text,
-                                      'phone': _phoneController.text,
-                                      'email': _emailController.text,
-                                      'source': 'App Custom Views Enquiry',
+                                    // Web parity: this is a lead enquiry, so it
+                                    // posts to /api/leads (submitLead) with a
+                                    // valid `source` enum — not /api/custom-views
+                                    // (which expects a full customization payload
+                                    // and 400s for a plain enquiry).
+                                    await apiClient.submitLead({
+                                      'name': _nameController.text.trim(),
+                                      'phone': _phoneController.text.trim(),
+                                      'email': _emailController.text.trim(),
+                                      'source': 'online',
                                     });
 
                                     if (context.mounted) {
@@ -1363,7 +1431,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                         context,
                                       ).showSnackBar(
                                         const SnackBar(
-                                          backgroundColor: Color(0xFF10B981),
+                                          backgroundColor: Color(0xFF163A2C),
                                           content: Text(
                                             'Enquiry submitted successfully! We will contact you soon.',
                                           ),
@@ -1374,18 +1442,13 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                       _emailController.clear();
                                     }
                                   } catch (e) {
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: const Color(
-                                            0xFFE24B4A,
-                                          ),
-                                          content: Text('Error: $e'),
-                                        ),
-                                      );
-                                    }
+                                    // Show a short, friendly error INSIDE the
+                                    // dialog (on top) instead of dumping the raw
+                                    // DioException in a giant toast behind it.
+                                    setModalState(
+                                      () => submitError =
+                                          'Could not submit right now. Please check your details and try again.',
+                                    );
                                   } finally {
                                     if (context.mounted)
                                       setModalState(
@@ -1396,10 +1459,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isDark
                                 ? Colors.white
-                                : Colors.black,
+                                : Color(0xFF163A2C),
                             foregroundColor: isDark
                                 ? Colors.black
-                                : Colors.white,
+                                : const Color(0xFFF4EFE3),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -1410,12 +1473,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                   height: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: isDark ? Colors.black : Colors.white,
+                                    color: Theme.of(context).scaffoldBackgroundColor,
                                   ),
                                 )
                               : Text(
                                   'SEND REQUEST',
-                                  style: GoogleFonts.dmSerifDisplay(
+                                  style: GoogleFonts.ebGaramond(
                                     fontWeight: FontWeight.w400,
                                     fontSize: 12,
                                     letterSpacing: 2,
@@ -1440,9 +1503,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       padding: const EdgeInsets.only(left: 4, bottom: 10),
       child: Text(
         label,
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.ebGaramond(
           // Web parity: muted slate-gray field labels.
-          color: isDark ? Colors.white54 : const Color(0xFF8A93A5),
+          color: isDark ? Colors.white54 : const Color(0xFFC5A35B),
           fontSize: 10,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.2,
@@ -1454,29 +1517,33 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   Widget _buildTextField(
     TextEditingController controller,
     String hint,
-    IconData icon,
-  ) {
+    IconData icon, {
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     // Web parity: plain light-filled input, no leading icon, and a gold
     // border only while focused (matches the reference popup).
     final fill = isDark
         ? Colors.white.withOpacity(0.04)
-        : const Color(0xFFF3F4F6);
+        : const Color(0xFFC5A35B);
     final baseBorder = isDark
         ? Colors.white.withOpacity(0.06)
         : Colors.transparent;
-    const gold = Color(0xFFC5A358);
+    const gold = Color(0xFFC5A35B);
     return TextField(
       controller: controller,
-      style: GoogleFonts.dmSerifDisplay(
-        color: isDark ? Colors.white : Colors.black,
-        fontSize: 14,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      style: GoogleFonts.ebGaramond(
+        color: isDark ? Colors.white : Color(0xFF163A2C),
+        fontSize: 15,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.dmSerifDisplay(
-          color: isDark ? Colors.white38 : const Color(0xFF9AA1AD),
+        hintStyle: GoogleFonts.ebGaramond(
+          color: isDark ? Colors.white38 : const Color(0xFFC5A35B),
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
@@ -1529,9 +1596,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 ),
                 child: Text(
                   'BACK',
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: isDark ? Colors.white : Colors.black,
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.gelasio(
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    fontWeight: FontWeight.w700,
                     fontSize: 10,
                     letterSpacing: 2,
                   ),
@@ -1554,8 +1621,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? Colors.white : Colors.black,
-                foregroundColor: isDark ? Colors.black : Colors.white,
+                backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -1566,8 +1633,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 children: [
                   Text(
                     'NEXT STEP',
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontWeight: FontWeight.w900,
+                    style: GoogleFonts.gelasio(
+                      fontWeight: FontWeight.w700,
                       fontSize: 10,
                       letterSpacing: 2,
                     ),
@@ -1576,7 +1643,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Icon(
                     LucideIcons.chevronRight,
                     size: 14,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: Theme.of(context).scaffoldBackgroundColor,
                   ),
                 ],
               ),

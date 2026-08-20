@@ -16,9 +16,9 @@ class CpSecurityScreen extends ConsumerStatefulWidget {
 }
 
 class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
-  static const _green = Color(0xFF22C55E);
-  static const _blue = Color(0xFF3B82F6);
-  static const _purple = Color(0xFF8B5CF6);
+  static const _green = Color(0xFF163A2C);
+  static const _blue = Color(0xFFC5A35B);
+  static const _purple = Color(0xFFC5A35B);
 
   bool _biometricEnabled = true;
   bool _twoFactorEnabled = true;
@@ -49,8 +49,8 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
-        content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12)),
+        backgroundColor: const Color(0xFFC65B46),
+        content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12)),
       ),
     );
   }
@@ -58,10 +58,10 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -94,8 +94,8 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                 const SizedBox(width: 8),
                 Text(
                   'Security & Privacy',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontWeight: FontWeight.w800,
+                  style: GoogleFonts.ebGaramond(
+                    fontWeight: FontWeight.w500,
                     fontSize: 16,
                     color: textPrimary,
                   ),
@@ -106,7 +106,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
               padding: const EdgeInsets.only(left: 14, top: 1),
               child: Text(
                 'ACCOUNT PROTECTION',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 9,
                   letterSpacing: 1.5,
                   fontWeight: FontWeight.w600,
@@ -215,14 +215,14 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                       shape: BoxShape.circle,
                       color: _green,
                       border: Border.all(
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                         width: 4,
                       ),
                     ),
                     child: Icon(
                       LucideIcons.check,
                       size: 12,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     ),
                   ),
                 ),
@@ -232,7 +232,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
           const SizedBox(height: 16),
           Text(
             'Account Protected',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: textPrimary,
@@ -244,7 +244,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
             child: Text(
               'Your account is secured with military-grade encryption and 2FA.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
@@ -260,7 +260,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
   Widget _sectionLabel(String label, Color muted) {
     return Text(
       label,
-      style: GoogleFonts.dmSerifDisplay(
+      style: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.bold,
         letterSpacing: 2,
@@ -309,7 +309,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: textPrimary,
@@ -318,7 +318,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: muted,
@@ -400,7 +400,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
               children: [
                 Text(
                   login['device'] ?? '',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: textPrimary,
@@ -409,7 +409,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                 const SizedBox(height: 2),
                 Text(
                   '${login['location'] ?? ''} • ${login['time'] ?? ''}',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     fontWeight: FontWeight.w500,
                     color: muted,
@@ -430,7 +430,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
             ),
             child: Text(
               (login['status'] ?? '').toUpperCase(),
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1,
@@ -455,7 +455,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
           ),
           child: Text(
             'SIGN OUT OF ALL DEVICES',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.bold,
               letterSpacing: 2,

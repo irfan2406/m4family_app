@@ -121,7 +121,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   const SizedBox(height: 10),
                   Text(
                     'Video format not supported or unreachable',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       color: Colors.white.withOpacity(0.6),
                       fontSize: 12,
                     ),
@@ -222,9 +222,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             children: [
                               Text(
                                 widget.content['type'].toString().toUpperCase(),
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: 2,
                                   color: scheme.onSurface,
                                 ),
@@ -232,9 +232,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                               // Web parity: "DEEP DIVE" kicker under the type.
                               Text(
                                 'DEEP DIVE',
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 8,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: 3,
                                   color: scheme.onSurface.withValues(
                                     alpha: 0.4,
@@ -335,9 +335,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                               ),
                               child: Text(
                                 widget.content['type'].toString().toUpperCase(),
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 9,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   color: scheme.onSurface,
                                   letterSpacing: 1.5,
                                 ),
@@ -346,7 +346,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             const SizedBox(width: 15),
                             Text(
                               formattedDate,
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: scheme.onSurface.withOpacity(0.68),
@@ -359,9 +359,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
                         Text(
                           widget.content['title'].toString().toUpperCase(),
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 30,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: scheme.onSurface,
                             letterSpacing: -1,
                             height: 1.1,
@@ -373,7 +373,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         Text(
                           widget.content['description'] ??
                               'No description provided.',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 15,
                             color: scheme.onSurface.withOpacity(0.6),
                             height: 1.8,
@@ -388,7 +388,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           const SizedBox(height: 20),
                           HtmlWidget(
                             widget.content['content'],
-                            textStyle: GoogleFonts.dmSerifDisplay(
+                            textStyle: GoogleFonts.ebGaramond(
                               fontSize: 15,
                               color: scheme.onSurface.withOpacity(0.6),
                               height: 1.8,
@@ -416,7 +416,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             height: 65,
                             decoration: BoxDecoration(
                               color: Colors.transparent,
-                              borderRadius: BorderRadius.circular(35),
+                              borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color: scheme.onSurface.withOpacity(0.1),
                               ),
@@ -424,9 +424,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             child: Center(
                               child: Text(
                                 'CLOSE',
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 12,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   color: scheme.onSurface.withOpacity(0.6),
                                   letterSpacing: 2,
                                 ),
@@ -461,7 +461,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         decoration: BoxDecoration(
           color: isOverMedia
               ? Colors.black.withOpacity(0.3)
-              : (isBlack ? const Color(0xFF0A0A0A) : scheme.surface),
+              : (isBlack ? const Color(0xFF141B3A) : scheme.surface),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isOverMedia
@@ -496,8 +496,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         width: double.infinity,
         height: 65,
         decoration: BoxDecoration(
-          color: const Color(0xFF0A0A0A),
-          borderRadius: BorderRadius.circular(35),
+          color: const Color(0xFF141B3A),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.15),
@@ -511,9 +511,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           children: [
             Text(
               'SHARE THIS ARTICLE',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: Colors.white,
                 letterSpacing: 2,
               ),
@@ -617,13 +617,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     Color color;
     switch (status.toUpperCase()) {
       case 'TODAY':
-        color = const Color(0xFFFFD700);
+        color = const Color(0xFFC5A35B);
         break;
       case 'ENDED':
-        color = isDark ? Colors.white38 : Colors.black38;
+        color = isDark ? Colors.white38 : Color(0xFF5E6B60);
         break;
       case 'CANCELLED':
-        color = const Color(0xFFEF4444);
+        color = const Color(0xFFC65B46);
         break;
       case 'UPCOMING':
       default:
@@ -636,14 +636,14 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Text(
           status.toUpperCase(),
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 9,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: color,
             letterSpacing: 1.5,
           ),
@@ -657,7 +657,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -702,20 +702,20 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             children: [
               Text(
                 label.toUpperCase(),
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
-                  fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white38 : Colors.black38,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                   letterSpacing: 1.5,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 value,
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 12,
-                  fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: -0.2,
                 ),
               ),
@@ -786,29 +786,29 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 children: [
                   Text(
                     'LOCATION',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
-                      color: isDark ? Colors.white38 : Colors.black38,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                       letterSpacing: 1.5,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     location,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
-                      fontWeight: FontWeight.w900,
-                      color: isDark ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: -0.2,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'VIEW ON MAPS ↗',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: M4Theme.premiumBlue,
                       letterSpacing: 1,
                     ),
@@ -846,10 +846,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               const SizedBox(width: 10),
               Text(
                 '$count ATTENDING',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 1,
                 ),
               ),
@@ -877,9 +877,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   child: Center(
                     child: Text(
                       initial,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 12,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: M4Theme.premiumBlue,
                       ),
                     ),
@@ -900,8 +900,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         width: double.infinity,
         height: 65,
         decoration: BoxDecoration(
-          color: const Color(0xFF0A0A0A),
-          borderRadius: BorderRadius.circular(35),
+          color: const Color(0xFF141B3A),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.15),
@@ -915,9 +915,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           children: [
             Text(
               'RSVP TO EVENT',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 12,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: Colors.white,
                 letterSpacing: 2,
               ),
@@ -1058,7 +1058,7 @@ class _M4VideoControlsState extends State<_M4VideoControls> {
     return Container(
       constraints: const BoxConstraints(minWidth: 190),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -1089,7 +1089,7 @@ class _M4VideoControlsState extends State<_M4VideoControls> {
             const SizedBox(width: 10),
             Text(
               label,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 color: Colors.black87,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -1180,7 +1180,7 @@ class _M4VideoControlsState extends State<_M4VideoControls> {
                           const SizedBox(width: 10),
                           Text(
                             '${_fmt(value.position)} / ${_fmt(value.duration)}',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               color: Colors.white,
                               fontSize: 11,
                               fontWeight: FontWeight.w700,

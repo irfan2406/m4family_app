@@ -6,9 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 
 /// Web `/cp/hub`: cinematic header + welcome card + tool matrix + priority access.
 class CpHubScreen extends ConsumerStatefulWidget {
@@ -120,8 +121,16 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
     final scheme = Theme.of(context).colorScheme;
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
+    final cpIdx = ref.watch(cpNavigationIndexProvider);
 
     return Scaffold(
+      bottomNavigationBar: CpBottomNav(
+        currentIndex: cpIdx,
+        onTap: (i) {
+          context.go('/home');
+          ref.read(cpNavigationIndexProvider.notifier).state = i;
+        },
+      ),
       drawer: const CpSidebarMenu(),
       body: Stack(
         children: [
@@ -141,6 +150,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             ),
           ),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: RefreshIndicator(
               onRefresh: _load,
               color: scheme.onSurface,
@@ -163,9 +175,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   const SizedBox(height: 18),
                   Text(
                     'TOOL MATRIX',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 3,
                       color: scheme.onSurface.withValues(
                         alpha: isLight ? 0.7 : 0.68,
@@ -186,7 +198,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                         title: 'Reports',
                         icon: LucideIcons.fileText,
                         bg: const Color(0x1A60A5FA),
-                        fg: const Color(0xFF60A5FA),
+                        fg: const Color(0xFFC5A35B),
                         onTap: () => context.push('/cp/hub/reports'),
                         scheme: scheme,
                       ),
@@ -195,7 +207,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                         title: 'Analytics',
                         icon: LucideIcons.barChart3,
                         bg: const Color(0x1A34D399),
-                        fg: const Color(0xFF34D399),
+                        fg: const Color(0xFF163A2C),
                         onTap: () => context.push('/cp/hub/analytics'),
                         scheme: scheme,
                       ),
@@ -228,9 +240,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                     children: [
                       Text(
                         'PRIORITY ACCESS',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 3,
                           color: scheme.onSurface.withValues(
                             alpha: isLight ? 0.7 : 0.68,
@@ -248,9 +260,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                         ),
                         child: Text(
                           'VIEW ALL',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                           ),
                         ),
@@ -295,7 +307,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            isDark ? accent.withValues(alpha: 0.08) : Colors.white,
+            isDark ? accent.withValues(alpha: 0.08) : const Color(0xFFF4EFE3),
             isDark
                 ? scheme.surfaceContainerHighest.withValues(alpha: 0.15)
                 : Colors.white,
@@ -318,9 +330,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               Expanded(
                 child: Text(
                   'TOTAL ASSET PORTFOLIO',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: scheme.onSurface.withValues(
                       alpha: isDark ? 0.68 : 0.7,
@@ -349,9 +361,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           const SizedBox(height: 8),
           Text(
             _portfolioValue(),
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 28,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               height: 1,
               color: scheme.onSurface,
             ),
@@ -375,9 +387,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 ),
                 child: Text(
                   'PORTFOLIO GROWTH',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: scheme.onSurface,
                   ),
@@ -387,9 +399,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               Flexible(
                 child: Text(
                   'Performance: Optimal',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1,
                     color: scheme.onSurface.withValues(
                       alpha: isDark ? 0.68 : 0.7,
@@ -414,9 +426,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
       children: [
         Text(
           'MY HOLDINGS',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             letterSpacing: 3,
             color: scheme.onSurface.withValues(alpha: isDark ? 0.68 : 0.7),
           ),
@@ -434,9 +446,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           ),
           child: Text(
             '${_holdings.length} Active Projects',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               letterSpacing: 1,
               color: scheme.primary,
             ),
@@ -467,9 +479,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           children: [
             Text(
               'NO HOLDINGS YET',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: scheme.onSurface.withValues(alpha: 0.68),
               ),
@@ -479,9 +491,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               onPressed: () => context.push('/cp/projects'),
               child: Text(
                 'EXPLORE OPPORTUNITIES',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1,
                   color: scheme.onSurface,
                 ),
@@ -546,7 +558,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
-        color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         border: Border.all(
           color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55),
         ),
@@ -589,9 +601,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       _holdingName(h).toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 14,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
                     ),
@@ -600,9 +612,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       _holdingUnit(h).toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 8,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: scheme.onSurface.withValues(
                           alpha: isDark ? 0.68 : 0.6,
@@ -618,18 +630,18 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 children: [
                   Text(
                     _holdingValue(h),
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 14,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: scheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     'EQUITY',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                       color: scheme.onSurface.withValues(
                         alpha: isDark ? 0.68 : 0.6,
@@ -646,9 +658,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             children: [
               Text(
                 'CONSTRUCTION',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,
                   color: scheme.onSurface.withValues(
                     alpha: isDark ? 0.68 : 0.6,
@@ -657,9 +669,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               ),
               Text(
                 '${(progress * 100).round()}%',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 8,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   color: scheme.onSurface.withValues(
                     alpha: isDark ? 0.68 : 0.6,
                   ),
@@ -698,9 +710,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                     ),
                     child: Text(
                       'EXPLORE',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 2,
                         color: scheme.surface,
                       ),
@@ -819,9 +831,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             const SizedBox(height: 8),
             Text(
               label,
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: scheme.onSurface.withValues(alpha: isDark ? 0.68 : 0.7),
               ),
@@ -836,7 +848,15 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
     return Row(
       children: [
         IconButton(
-          onPressed: () => context.pop(),
+          // Back = go back if pushed, else return to the CP Home tab so the
+          // button always works (Partner Hub can be reached via a replace-nav).
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              context.go('/home');
+            }
+          },
           icon: const Icon(LucideIcons.arrowLeft),
         ),
         const SizedBox(width: 8),
@@ -846,16 +866,17 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             children: [
               Text(
                 'Partner Hub',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 18,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: -0.2,
+                  color: accent,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 'Premium Access & Tools',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.4,
@@ -865,8 +886,6 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             ],
           ),
         ),
-        const SideMenuButton(),
-        const SizedBox(width: 6),
         IconButton(
           onPressed: () => context.push('/cp/settings'),
           icon: const Icon(LucideIcons.settings),
@@ -886,7 +905,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(34),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: scheme.outlineVariant.withValues(alpha: isLight ? 0.55 : 0.35),
         ),
@@ -932,9 +951,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               const SizedBox(width: 10),
               Text(
                 'PLATINUM TIER',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: scheme.onSurface,
                 ),
@@ -944,16 +963,16 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           const SizedBox(height: 12),
           Text(
             'Welcome, $name',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 22,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: scheme.onSurface,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             'Your portfolio is performing optimally.',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: scheme.onSurface.withValues(alpha: isLight ? 0.65 : 0.68),
@@ -988,9 +1007,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
         children: [
           Text(
             label.toUpperCase(),
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               letterSpacing: 1.4,
               color: scheme.onSurface.withValues(alpha: isLight ? 0.65 : 0.68),
             ),
@@ -998,9 +1017,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           const SizedBox(height: 6),
           Text(
             value,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 18,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: scheme.onSurface,
             ),
           ),
@@ -1050,9 +1069,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               const SizedBox(height: 10),
               Text(
                 title,
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 12,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   color: scheme.onSurface.withValues(
                     alpha: isLight ? 0.92 : 0.85,
                   ),
@@ -1095,9 +1114,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
     final bg = p == null ? null : _hero(p);
     return Material(
       color: scheme.surfaceContainerHighest.withValues(alpha: 0.18),
-      borderRadius: BorderRadius.circular(34),
+      borderRadius: BorderRadius.circular(20),
       child: InkWell(
-        borderRadius: BorderRadius.circular(34),
+        borderRadius: BorderRadius.circular(20),
         onTap: () {
           if (id.isNotEmpty) {
             context.push('/cp/projects/$id', extra: p);
@@ -1108,7 +1127,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
         child: Container(
           height: 190,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(34),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: scheme.outlineVariant.withValues(alpha: 0.4),
             ),
@@ -1159,9 +1178,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                                 ? (p?['status']?.toString() ?? '')
                                 : 'PRE-LAUNCH')
                             .toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 9,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
                           color: Colors.white,
                         ),
@@ -1170,9 +1189,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                     const Spacer(),
                     Text(
                       title,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 22,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -1180,7 +1199,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       loc.isNotEmpty ? loc : desc,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface.withValues(alpha: 0.68),
@@ -1191,9 +1210,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       children: [
                         Text(
                           'Explore Opportunity',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 12,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             color: Colors.black,
                           ),
                         ),

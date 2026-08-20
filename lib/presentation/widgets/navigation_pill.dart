@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/nav_style.dart';
 import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -18,29 +19,31 @@ class NavigationPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+      margin: const EdgeInsets.fromLTRB(M4Nav.sideInset, 30, M4Nav.sideInset, M4Nav.bottomInset),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(35),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.4 : 0.08),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(M4Nav.radius),
+        boxShadow: M4Nav.shadow(isDark),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(35),
+        borderRadius: BorderRadius.circular(M4Nav.radius),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+          filter: ImageFilter.blur(sigmaX: M4Nav.blur, sigmaY: M4Nav.blur),
           child: Container(
-            height: 70,
+            height: M4Nav.height,
             padding: const EdgeInsets.symmetric(horizontal: 25),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF000000) : const Color(0xFFEDEDF0),
-              borderRadius: BorderRadius.circular(35),
+              // Frosted glass: translucent deep-green on the green screens,
+              // translucent white on the cream screens. Icons stay crisp.
+              // Follow the surface behind the pill (deep-green on the showcase
+              // screens, navy in dark mode) instead of a hardcoded navy, so the
+              // frosted glass matches every portal's background.
+              color: isDark
+                  ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5)
+                  : Theme.of(context).scaffoldBackgroundColor.withOpacity(0.62),
+              borderRadius: BorderRadius.circular(M4Nav.radius),
               border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.12),
+                color: (isDark ? M4Theme.cream : M4Theme.deepGreen)
+                    .withOpacity(isDark ? 0.14 : 0.28),
                 width: 1,
               ),
             ),
@@ -94,7 +97,14 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Active: green circle on cream / white circle on green (reference);
+    // inactive: the opposite tone, dimmed but legible on the frosted glass.
+    final activeCircle = isDark ? M4Theme.cream : M4Theme.midGreen;
+    final activeIcon = isDark ? M4Theme.navyBackground : M4Theme.cream;
+    final inactiveIcon = isDark
+        ? M4Theme.cream.withOpacity(0.75)
+        : M4Theme.deepGreen.withOpacity(0.9);
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -102,33 +112,20 @@ class _NavItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Web parity: active icon sits in a highlighted rounded box
-          // (bg-primary/10 + border-primary/20).
-          Container(
+          AnimatedContainer(
+            duration: M4Nav.animation,
+            curve: M4Nav.curve,
             padding: const EdgeInsets.all(9),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: isActive ? onSurface.withOpacity(0.1) : Colors.transparent,
-              border: isActive
-                  ? Border.all(color: onSurface.withOpacity(0.2))
-                  : null,
+              shape: BoxShape.circle,
+              color: isActive ? activeCircle : Colors.transparent,
             ),
             child: Icon(
               icon,
-              color: isActive ? onSurface : onSurface.withOpacity(0.65),
-              size: 22,
+              color: isActive ? activeIcon : inactiveIcon,
+              size: M4Nav.iconSize,
             ),
           ),
-          if (isActive)
-            Container(
-              margin: const EdgeInsets.only(top: 4),
-              width: 5,
-              height: 5,
-              decoration: BoxDecoration(
-                color: onSurface,
-                shape: BoxShape.circle,
-              ),
-            ).animate().scale(duration: 200.ms),
         ],
       ),
     );

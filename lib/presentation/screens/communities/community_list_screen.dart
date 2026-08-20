@@ -44,7 +44,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
         .toLowerCase();
     final isCp = role == 'cp';
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: const ConditionalDrawer(),
       extendBody: true,
       bottomNavigationBar: isCp
@@ -62,7 +62,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
           // on the LEFT, dark "..." pill on the RIGHT.
           SliverToBoxAdapter(
             child: Container(
-              padding: const EdgeInsets.fromLTRB(25, 60, 20, 20),
+              padding: const EdgeInsets.fromLTRB(40, 60, 40, 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -81,16 +81,16 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                           height: 45,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withOpacity(0.05),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withOpacity(0.1),
                             ),
                           ),
                           child: Icon(
                             LucideIcons.chevronLeft,
-                            color: isDark ? Colors.white : Colors.black,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             size: 20,
                           ),
                         ),
@@ -102,17 +102,17 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                           Text(
                             // Web parity: header reads "M4 FAMILY / DEVELOPMENTS".
                             'M4 FAMILY',
-                            style: GoogleFonts.dmSerifDisplay(
-                              color: isDark ? Colors.white : Colors.black,
+                            style: GoogleFonts.ebGaramond(
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                               fontSize: 16,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: -0.3,
                             ),
                           ),
                           Text(
                             'DEVELOPMENTS',
-                            style: GoogleFonts.dmSerifDisplay(
-                              color: (isDark ? Colors.white : Colors.black)
+                            style: GoogleFonts.gelasio(
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withOpacity(0.55),
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
@@ -132,7 +132,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
           // 🏗️ Intro Section
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -140,11 +140,11 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     'ABOUT THE COMMUNITIES',
                     maxLines: 1,
                     overflow: TextOverflow.visible,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       // Web parity: thin elegant serif on one line (not heavy bold).
                       fontSize: 26,
                       fontWeight: FontWeight.w400,
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: -0.5,
                       height: 1.1,
                     ),
@@ -159,8 +159,8 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in ...',
                       // Web parity: description is sans-serif (font-sans),
                       // muted, text-[13px] font-medium (not serif).
-                      style: GoogleFonts.dmSerifDisplay(
-                        color: (isDark ? Colors.white : Colors.black)
+                      style: GoogleFonts.ebGaramond(
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.78),
                         fontSize: 14.5,
                         height: 1.6,
@@ -171,8 +171,8 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in every community we curate. We believe in creating spaces that faster connection, inspiration, and a sense of belonging for every resident. Our developments are strategically located to offer the best of urban living with a touch of serenity.',
                       // Web parity: description is sans-serif (font-sans),
                       // muted, text-[13px] font-medium (not serif).
-                      style: GoogleFonts.dmSerifDisplay(
-                        color: (isDark ? Colors.white : Colors.black)
+                      style: GoogleFonts.ebGaramond(
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.78),
                         fontSize: 14.5,
                         height: 1.6,
@@ -188,7 +188,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withOpacity(0.3),
                             width: 1,
                           ),
@@ -196,8 +196,8 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       ),
                       child: Text(
                         _isExpanded ? 'Read less' : 'Read more',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: isDark ? Colors.white : Colors.black,
+                        style: GoogleFonts.ebGaramond(
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
@@ -216,7 +216,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                 child: Padding(
                   padding: EdgeInsets.all(100.0),
                   child: CircularProgressIndicator(
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
               ),
@@ -229,7 +229,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                   child: Text(
                     state.error!,
                     style: TextStyle(
-                      color: isDark ? Colors.white38 : Colors.black38,
+                      color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                     ),
                   ),
                 ),
@@ -237,7 +237,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
             )
           else
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(25, 20, 25, 100),
+              padding: const EdgeInsets.fromLTRB(40, 20, 40, 100),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final community = state.communities[index];
@@ -258,7 +258,7 @@ Widget _communityImagePlaceholder() => Container(
     gradient: LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [Color(0xFFEDEEF1), Color(0xFFD7D9DE)],
+      colors: [Color(0xFFC5A35B), Color(0xFFC5A35B)],
     ),
   ),
   child: Center(
@@ -364,7 +364,7 @@ class _CommunityCard extends ConsumerWidget {
                       children: [
                         Text(
                           community['title']?.toString() ?? 'COMMUNITY',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 28,
                             fontWeight: FontWeight.w400,
                             color: Colors.white,
@@ -378,7 +378,7 @@ class _CommunityCard extends ConsumerWidget {
                               '',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 14,
                             // Brighter on the dark card = more readable.
                             color: Colors.white.withOpacity(0.9),
@@ -394,7 +394,7 @@ class _CommunityCard extends ConsumerWidget {
                     width: 55,
                     height: 55,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
@@ -405,7 +405,7 @@ class _CommunityCard extends ConsumerWidget {
                     ),
                     child: Icon(
                       LucideIcons.arrowRight,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       size: 24,
                     ),
                   ),

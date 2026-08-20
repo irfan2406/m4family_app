@@ -1,8 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/firebase_options.dart';
+import 'package:m4_mobile/core/utils/app_toast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/screens/auth/login_screen.dart';
@@ -133,6 +135,18 @@ void main() async {
   debugRepaintRainbowEnabled = false;
 
   WidgetsFlutterBinding.ensureInitialized();
+  // Edge-to-edge: the app paints behind the status bar and the gesture bar,
+  // so every portal fills the whole screen instead of sitting inside two
+  // system-coloured strips. SafeArea still keeps controls out of those areas.
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    ),
+  );
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -166,8 +180,9 @@ class M4FamilyApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'M4 Family',
       debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
       theme: M4Theme.lightTheme,
-      darkTheme: M4Theme.darkTheme,
+      darkTheme: M4Theme.darkThemeNavy, // dark mode = deep navy (#0B1026)
       themeMode: themeMode,
       // Instant theme switch — disable MaterialApp's ~200ms cross-fade so the
       // WHOLE app (screens + menu) flips light/dark together, with zero delay.

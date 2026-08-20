@@ -54,17 +54,17 @@ class _CpResidentialConnectScreenState
           children: [
             Text(
               'Residence Suite',
-              style: GoogleFonts.dmSerifDisplay(
-                fontWeight: FontWeight.w800,
+              style: GoogleFonts.ebGaramond(
+                fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: scheme.onSurface,
               ),
             ),
             Text(
               'INSTITUTIONAL CONCIERGE',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: scheme.primary,
               ),
@@ -188,9 +188,9 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Text(
         label,
-        style: GoogleFonts.dmSerifDisplay(
+        style: GoogleFonts.gelasio(
           fontSize: 10,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w700,
           letterSpacing: 3,
           color: muted,
         ),
@@ -275,9 +275,9 @@ class _PropertyCardState extends State<_PropertyCard> {
                           'CROWN RESIDENCES',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 18,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             color: scheme.onSurface,
                             height: 1.05,
                           ),
@@ -287,9 +287,9 @@ class _PropertyCardState extends State<_PropertyCard> {
                           'TOWER A • SUITE 4802',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
                             color: widget.muted,
                           ),
@@ -310,9 +310,9 @@ class _PropertyCardState extends State<_PropertyCard> {
                     ),
                     child: Text(
                       'VERIFIED',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 8,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: scheme.onPrimary,
                       ),
@@ -327,18 +327,18 @@ class _PropertyCardState extends State<_PropertyCard> {
                 children: [
                   Text(
                     'ASSET UTILIZATION',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                       color: widget.muted,
                     ),
                   ),
                   Text(
                     '85% ACTIVE',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                       color: scheme.onSurface,
                     ),
@@ -436,9 +436,9 @@ class _ServiceCardState extends State<_ServiceCard> {
                     widget.service.name.toUpperCase(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 13,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       color: scheme.onSurface,
                       height: 1.05,
                     ),
@@ -448,9 +448,9 @@ class _ServiceCardState extends State<_ServiceCard> {
                     widget.service.status.toUpperCase(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                       letterSpacing: 1.2,
                       color: widget.muted,
                       height: 1,
@@ -538,9 +538,9 @@ class _AlertItemState extends State<_AlertItem> {
                       widget.alert.title.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 13,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         color: scheme.onSurface,
                         height: 1.1,
                       ),
@@ -550,9 +550,9 @@ class _AlertItemState extends State<_AlertItem> {
                       widget.alert.date.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         letterSpacing: 1.2,
                         color: widget.muted,
                       ),
@@ -655,9 +655,9 @@ class _CommunityChatCard extends StatelessWidget {
                           children: [
                             Text(
                               'GLOBAL LOUNGE',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 3,
                                 color: scheme.surface.withValues(alpha: 0.6),
                                 height: 1,
@@ -666,9 +666,9 @@ class _CommunityChatCard extends StatelessWidget {
                             const SizedBox(height: 6),
                             Text(
                               'RESIDENT LINK',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 18,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: -0.5,
                                 color: scheme.surface,
                                 height: 1,
@@ -687,7 +687,7 @@ class _CommunityChatCard extends StatelessWidget {
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            backgroundColor: Color(0xFFE24B4A),
+                            backgroundColor: Color(0xFFC65B46),
                             content: Text('Secure link coming soon.'),
                           ),
                         );
@@ -702,9 +702,9 @@ class _CommunityChatCard extends StatelessWidget {
                       ),
                       child: Text(
                         'INITIATE SECURE LINK',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 11,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 3,
                           color: scheme.onSurface,
                         ),

@@ -80,9 +80,9 @@ class _InvestorReferralActiveScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -90,6 +90,9 @@ class _InvestorReferralActiveScreenState
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(textPrimary, muted, border),
@@ -142,9 +145,9 @@ class _InvestorReferralActiveScreenState
                 Text(
                   'ACTIVE REFERRALS',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     fontSize: 13,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 2,
                     color: textPrimary,
                   ),
@@ -153,9 +156,9 @@ class _InvestorReferralActiveScreenState
                 Text(
                   'LEAD MATRIX',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 3,
                     color: muted,
                   ),
@@ -171,7 +174,7 @@ class _InvestorReferralActiveScreenState
 
   // ─── List ────────────────────────────────────────────────────────────────
   Widget _buildList(bool isDark, Color textPrimary, Color muted, Color border) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
 
     return RefreshIndicator(
       onRefresh: _load,
@@ -187,9 +190,9 @@ class _InvestorReferralActiveScreenState
               const SizedBox(width: 8),
               Text(
                 '${_referrals.length} IN PIPELINE',
-                style: GoogleFonts.dmSerifDisplay(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w900,
+                style: GoogleFonts.gelasio(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: muted,
                 ),
@@ -238,18 +241,18 @@ class _InvestorReferralActiveScreenState
                   children: [
                     Text(
                       name,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 14,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                         color: textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       project.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w900,
+                      style: GoogleFonts.gelasio(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: muted,
                       ),
@@ -258,7 +261,7 @@ class _InvestorReferralActiveScreenState
                       const SizedBox(height: 4),
                       Text(
                         code,
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1,
@@ -284,14 +287,14 @@ class _InvestorReferralActiveScreenState
                   const Icon(
                     LucideIcons.trendingUp,
                     size: 12,
-                    color: Color(0xFF10B981),
+                    color: Color(0xFF163A2C),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     'PIPELINE STATUS',
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                    style: GoogleFonts.gelasio(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                       color: muted,
                     ),
@@ -301,9 +304,9 @@ class _InvestorReferralActiveScreenState
               if (phone.isNotEmpty)
                 Text(
                   phone,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: textPrimary,
                   ),
                 ),
@@ -324,9 +327,9 @@ class _InvestorReferralActiveScreenState
       ),
       child: Text(
         status.toUpperCase(),
-        style: GoogleFonts.dmSerifDisplay(
-          fontSize: 8,
-          fontWeight: FontWeight.w900,
+        style: GoogleFonts.ebGaramond(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
           letterSpacing: 1,
           color: M4Theme.premiumBlue,
         ),
@@ -352,9 +355,9 @@ class _InvestorReferralActiveScreenState
           Text(
             'NO ACTIVE REFERRALS IN PIPELINE',
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: muted,
             ),
@@ -374,9 +377,9 @@ class _InvestorReferralActiveScreenState
           const SizedBox(height: 16),
           Text(
             'COULD NOT LOAD REFERRALS',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
               color: muted,
             ),
@@ -392,11 +395,11 @@ class _InvestorReferralActiveScreenState
               ),
               child: Text(
                 'RETRY',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
-                  color: Colors.white,
+                  color: const Color(0xFFF4EFE3),
                 ),
               ),
             ),

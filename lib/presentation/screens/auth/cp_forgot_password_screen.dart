@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 /// Mirrors web `app/auth/cp/forgot-password/page.tsx`: forgot → OTP → reset.
@@ -46,11 +48,12 @@ class _CpForgotPasswordScreenState
 
   Future<void> _sendEmail() async {
     final email = _emailController.text.trim();
-    if (email.isEmpty) {
+    final emailErr = Validators.emailError(email);
+    if (emailErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
-          content: Text('Please enter your email address'),
+        SnackBar(
+          backgroundColor: const Color(0xFFC65B46),
+          content: Text(emailErr),
         ),
       );
       return;
@@ -68,7 +71,7 @@ class _CpForgotPasswordScreenState
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: Color(0xFF163A2C),
             content: Text('Security code sent!'),
           ),
         );
@@ -76,14 +79,14 @@ class _CpForgotPasswordScreenState
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('DEV: recovery code $dev'),
-              backgroundColor: Colors.amber.shade900,
+              backgroundColor: const Color(0xFFC65B46),
             ),
           );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(res.data['message']?.toString() ?? 'Failed'),
           ),
         );
@@ -95,7 +98,7 @@ class _CpForgotPasswordScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? 'User not found'),
           ),
         );
@@ -110,7 +113,7 @@ class _CpForgotPasswordScreenState
     if (code.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Enter the complete 6-digit code'),
         ),
       );
@@ -125,7 +128,7 @@ class _CpForgotPasswordScreenState
     if (np.isEmpty || cp.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Please fill in all fields'),
         ),
       );
@@ -134,7 +137,7 @@ class _CpForgotPasswordScreenState
     if (np != cp) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Passwords do not match'),
         ),
       );
@@ -143,7 +146,7 @@ class _CpForgotPasswordScreenState
     if (np.length < 8) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Password must be at least 8 characters'),
         ),
       );
@@ -163,7 +166,7 @@ class _CpForgotPasswordScreenState
       if (res.statusCode == 200 && res.data['status'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: Color(0xFF163A2C),
             content: Text('Password updated. You can login.'),
           ),
         );
@@ -173,7 +176,7 @@ class _CpForgotPasswordScreenState
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(res.data['message']?.toString() ?? 'Reset failed'),
           ),
         );
@@ -185,7 +188,7 @@ class _CpForgotPasswordScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? 'Reset failed'),
           ),
         );
@@ -201,7 +204,7 @@ class _CpForgotPasswordScreenState
         GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0C312B),
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -219,6 +222,9 @@ class _CpForgotPasswordScreenState
             ),
           ),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
@@ -231,7 +237,7 @@ class _CpForgotPasswordScreenState
                         onPressed: () => context.go('/home'),
                         child: Text(
                           'BACK TO GUEST PORTAL',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 2,
@@ -268,7 +274,7 @@ class _CpForgotPasswordScreenState
                         : _step == 1
                         ? 'VERIFY CODE'
                         : 'NEW PASSWORD',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -279,10 +285,11 @@ class _CpForgotPasswordScreenState
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         labelText: 'Email',
-                        labelStyle: const TextStyle(color: Colors.white54),
+                        labelStyle: const TextStyle(color: Colors.white70),
                         prefixIcon: const Icon(
                           LucideIcons.mail,
                           color: Colors.white54,
@@ -298,7 +305,8 @@ class _CpForgotPasswordScreenState
                     FilledButton(
                       onPressed: _loading ? null : _sendEmail,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.purple.shade600,
+                        backgroundColor: const Color(0xFFF4EFE3),
+                        foregroundColor: const Color(0xFF0C312B),
                         minimumSize: const Size(double.infinity, 52),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -322,16 +330,16 @@ class _CpForgotPasswordScreenState
                         margin: const EdgeInsets.only(bottom: 16),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.amber.withValues(alpha: 0.15),
+                          color: const Color(0xFFC5A35B).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Colors.amber.withValues(alpha: 0.4),
+                            color: const Color(0xFFC5A35B).withValues(alpha: 0.4),
                           ),
                         ),
                         child: Text(
                           'DEV: code $_devOtp',
                           style: const TextStyle(
-                            color: Colors.amber,
+                            color: const Color(0xFFC5A35B),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -374,7 +382,8 @@ class _CpForgotPasswordScreenState
                     FilledButton(
                       onPressed: _goPasswordStep,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.purple.shade600,
+                        backgroundColor: const Color(0xFFF4EFE3),
+                        foregroundColor: const Color(0xFF0C312B),
                         minimumSize: const Size(double.infinity, 52),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -390,7 +399,7 @@ class _CpForgotPasswordScreenState
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         labelText: 'New password',
-                        labelStyle: const TextStyle(color: Colors.white54),
+                        labelStyle: const TextStyle(color: Colors.white70),
                         prefixIcon: const Icon(
                           LucideIcons.lock,
                           color: Colors.white54,
@@ -409,7 +418,7 @@ class _CpForgotPasswordScreenState
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         labelText: 'Confirm password',
-                        labelStyle: const TextStyle(color: Colors.white54),
+                        labelStyle: const TextStyle(color: Colors.white70),
                         prefixIcon: const Icon(
                           LucideIcons.lock,
                           color: Colors.white54,
@@ -425,7 +434,8 @@ class _CpForgotPasswordScreenState
                     FilledButton(
                       onPressed: _loading ? null : _resetPassword,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.purple.shade600,
+                        backgroundColor: const Color(0xFFF4EFE3),
+                        foregroundColor: const Color(0xFF0C312B),
                         minimumSize: const Size(double.infinity, 52),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),

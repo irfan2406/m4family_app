@@ -55,7 +55,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
           children: [
             Text(
               'CONTACT US',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
@@ -64,11 +64,11 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
             ),
             Text(
               'INSTITUTIONAL SUPPORT',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.gelasio(
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withOpacity(0.68),
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 fontSize: 10,
                 letterSpacing: 4,
               ),
@@ -96,6 +96,9 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
       body: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
         child: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           child: _isLoading
               ? const Center(
                   child: CircularProgressIndicator(color: Colors.black26),
@@ -132,10 +135,10 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
         Center(
           child: Text(
             'GLOBAL HEADQUARTERS',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
               fontSize: 9,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2.5,
             ),
           ),
@@ -190,7 +193,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                       ),
                       decoration: BoxDecoration(
                         color: Colors.black.withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: Colors.white10),
                       ),
                       child: Row(
@@ -204,10 +207,10 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                           const SizedBox(width: 12),
                           Text(
                             'OPEN MAP',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               color: Colors.white,
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 2,
                             ),
                           ),
@@ -261,14 +264,14 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
     required String mapLink,
   }) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(32),
+      borderRadius: BorderRadius.circular(20),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.04),
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
             ),
@@ -312,7 +315,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                       children: [
                         Text(
                           title.toUpperCase(),
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -322,7 +325,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                         const SizedBox(height: 12),
                         Text(
                           address,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.68),
@@ -357,7 +360,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        textStyle: GoogleFonts.dmSerifDisplay(
+                        textStyle: GoogleFonts.gelasio(
                           fontSize: 9,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 2,
@@ -386,7 +389,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         elevation: 0,
-                        textStyle: GoogleFonts.dmSerifDisplay(
+                        textStyle: GoogleFonts.gelasio(
                           fontSize: 9,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 2,
@@ -414,7 +417,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Text(
             'GET IN TOUCH',
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
               fontSize: 9,
               fontWeight: FontWeight.bold,
@@ -424,7 +427,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
         ),
         const SizedBox(height: 16),
         ClipRRect(
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(20),
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: Container(
@@ -432,7 +435,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withOpacity(0.04),
-                borderRadius: BorderRadius.circular(32),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: Theme.of(
                     context,
@@ -518,7 +521,7 @@ class _ContactRowItem extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -527,7 +530,7 @@ class _ContactRowItem extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     subtitle,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       color: Theme.of(
                         context,
                       ).colorScheme.onSurface.withOpacity(0.68),

@@ -88,7 +88,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final fg = isDark ? Colors.white : Colors.black;
+    final fg = isDark ? Colors.white : Color(0xFF163A2C);
     final years = List<int>.generate(
       _maxYear - widget.minYear + 1,
       (i) => widget.minYear + i,
@@ -96,7 +96,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF09090B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
       ),
       child: SafeArea(
@@ -119,9 +119,9 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'SELECT DATE',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 16,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 0.5,
                     color: fg,
                   ),
@@ -193,9 +193,9 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                         ),
                         child: Text(
                           'CANCEL',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 12,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1,
                             color: fg,
                           ),
@@ -219,15 +219,15 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                           borderRadius: BorderRadius.circular(18),
                           color: isDark
                               ? Colors.white
-                              : const Color(0xFF0B1120),
+                              : const Color(0xFF141B3A),
                         ),
                         child: Text(
                           'CONFIRM',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 12,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1,
-                            color: isDark ? Colors.black : Colors.white,
+                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           ),
                         ),
                       ),
@@ -262,7 +262,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
         builder: (ctx, i) => Center(
           child: Text(
             label(i),
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: fg,

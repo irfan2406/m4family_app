@@ -148,16 +148,16 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
   Color _statusColor(String status) {
     final s = status.toLowerCase();
     if (s == 'completed' || s == 'verified' || s == 'success') {
-      return const Color(0xFF16A34A); // green
+      return const Color(0xFF163A2C); // green
     }
     if (s == 'open' || s == 'active') {
-      return const Color(0xFF2563EB); // blue
+      return const Color(0xFFC5A35B); // blue
     }
-    return const Color(0xFF6B7280); // grey
+    return const Color(0xFFC5A35B); // grey
   }
 
   void _showFilterSheet(ColorScheme scheme) {
-    const sheetBg = Color(0xFF0D0D0D);
+    const sheetBg = Color(0xFF141B3A);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -168,6 +168,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
         ),
         child: SafeArea(
+          // Edge-to-edge: content runs under the gesture bar so scrolling fills
+          // the screen. Trailing padding keeps the last item reachable.
+          bottom: false,
           top: false,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -194,7 +197,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                     height: 40,
                     alignment: Alignment.center,
                     decoration: const BoxDecoration(
-                      color: Colors.white,
+                      color: Color(0xFFF4EFE3),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -208,9 +211,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               const SizedBox(height: 16),
               Text(
                 'LOG CATEGORY',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                   color: Colors.white.withValues(alpha: 0.68),
                 ),
@@ -234,7 +237,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                     child: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: active ? const Color(0xFF1A1A24) : Colors.white,
+                        color: active ? const Color(0xFF141B3A) : Colors.white,
                         borderRadius: BorderRadius.circular(18),
                         border: active
                             ? Border.all(
@@ -244,9 +247,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       ),
                       child: Text(
                         t.toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 12,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                           color: active ? Colors.white : Colors.black,
                         ),
@@ -281,6 +284,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
     return Scaffold(
       backgroundColor: scheme.surface,
       body: SafeArea(
+        // Edge-to-edge: content runs under the gesture bar so scrolling fills
+        // the screen. Trailing padding keeps the last item reachable.
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(context, scheme),
@@ -323,9 +329,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             children: [
               Text(
                 'OPERATIONAL LOGS',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 14,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: scheme.onSurface,
                   letterSpacing: 1.5,
                 ),
@@ -333,9 +339,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               const SizedBox(height: 2),
               Text(
                 'FULL AUDIT HISTORY',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: scheme.onSurface.withValues(alpha: 0.68),
                   letterSpacing: 2,
                 ),
@@ -373,15 +379,15 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               child: TextField(
                 controller: _searchController,
                 onChanged: (_) => setState(() {}),
-                style: GoogleFonts.dmSerifDisplay(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
                 ),
                 decoration: InputDecoration(
                   hintText: 'SEARCH LOGS, TICKETS, UPD...',
-                  hintStyle: GoogleFonts.dmSerifDisplay(
+                  hintStyle: GoogleFonts.ebGaramond(
                     fontSize: 12,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     color: scheme.onSurface.withValues(alpha: 0.68),
                     letterSpacing: 0.3,
                   ),
@@ -401,7 +407,10 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                               setState(() => _searchController.clear()),
                         )
                       : null,
+                  filled: false,
                   border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 14),
                 ),
               ),
@@ -459,9 +468,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               children: [
                 Text(
                   'TYPE: ${_selectedType!.toUpperCase()}',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: scheme.onSurface,
                     letterSpacing: 1,
                   ),
@@ -511,9 +520,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             const SizedBox(height: 24),
             Text(
               'NO LOGS FOUND',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 14,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
                 letterSpacing: 1,
               ),
@@ -521,9 +530,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             const SizedBox(height: 8),
             Text(
               'TRY ADJUSTING YOUR SEARCH OR FILTERS',
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: scheme.onSurface.withValues(alpha: 0.68),
                 letterSpacing: 1,
               ),
@@ -555,9 +564,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   ),
                   child: Text(
                     'RESET MATRIX',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: scheme.onSurface,
                       letterSpacing: 1,
                     ),
@@ -619,9 +628,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         ),
                         child: Text(
                           log['id'] as String,
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 8,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             color: scheme.onSurface.withValues(alpha: 0.68),
                             letterSpacing: 1,
                           ),
@@ -641,9 +650,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         ),
                         child: Text(
                           (log['type'] as String).toUpperCase(),
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 8,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             color: scheme.onSurface.withValues(alpha: 0.68),
                             letterSpacing: 1,
                           ),
@@ -664,9 +673,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   ),
                   child: Text(
                     (log['status'] as String).toUpperCase(),
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 8,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: statusColor,
                       letterSpacing: 1,
                     ),
@@ -677,9 +686,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             const SizedBox(height: 16),
             Text(
               (log['title'] as String).toUpperCase(),
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 14,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
                 letterSpacing: -0.2,
               ),
@@ -689,7 +698,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             const SizedBox(height: 8),
             Text(
               (log['description'] as String).toUpperCase(),
-              style: GoogleFonts.dmSerifDisplay(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 color: scheme.onSurface.withValues(alpha: 0.68),
@@ -719,9 +728,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                     const SizedBox(width: 8),
                     Text(
                       (log['date'] as String).toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: scheme.onSurface.withValues(alpha: 0.68),
                         letterSpacing: 1,
                       ),
@@ -732,9 +741,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   children: [
                     Text(
                       'VIEW DETAILS',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 8,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: scheme.onSurface.withValues(alpha: 0.68),
                         letterSpacing: 1,
                       ),
@@ -761,9 +770,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
     final statusColor = _statusColor(log['status'] as String);
     final details = (log['details'] as Map).cast<String, dynamic>();
 
-    const sheetBg = Color(0xFF0D0D0D);
-    const labelGrey = Color(0xFF8A8A8A);
-    const summaryText = Color(0xFF9A9A9A);
+    const sheetBg = Color(0xFF141B3A);
+    const labelGrey = Color(0xFFF4EFE3);
+    const summaryText = Color(0xFFF4EFE3);
 
     // Full-screen page (web parity — the log detail is its own page, not a
     // half-height sheet).
@@ -773,6 +782,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
         builder: (ctx) => Scaffold(
           backgroundColor: sheetBg,
           body: SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: Column(
               children: [
                 Expanded(
@@ -789,15 +801,15 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                           decoration: BoxDecoration(
                             // Web parity: `bg-card` renders as a light/white pill
                             // with grey `text-[#666]` text on the dark modal.
-                            color: Colors.white,
+                            color: const Color(0xFFF4EFE3),
                             borderRadius: BorderRadius.circular(99),
                           ),
                           child: Text(
                             '${log['id']} • ${(log['type'] as String).toUpperCase()}',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              color: const Color(0xFF666666),
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFFF4EFE3),
                               letterSpacing: 2,
                             ),
                           ),
@@ -828,9 +840,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         const SizedBox(height: 36),
                         Text(
                           'LOG SUMMARY',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: labelGrey,
                             letterSpacing: 2,
                           ),
@@ -848,7 +860,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                           ),
                           child: Text(
                             (log['description'] as String).toUpperCase(),
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w700,
                               color: summaryText,
@@ -860,9 +872,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         const SizedBox(height: 36),
                         Text(
                           'STRUCTURAL DATA',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             color: labelGrey,
                             letterSpacing: 2,
                           ),
@@ -870,7 +882,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         const SizedBox(height: 16),
                         Container(
                           decoration: BoxDecoration(
-                            color: const Color(0xFFECECEE),
+                            color: const Color(0xFFC5A35B),
                             borderRadius: BorderRadius.circular(26),
                           ),
                           clipBehavior: Clip.antiAlias,
@@ -893,9 +905,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                                     children: [
                                       Text(
                                         details.keys.elementAt(i).toUpperCase(),
-                                        style: GoogleFonts.dmSerifDisplay(
+                                        style: GoogleFonts.ebGaramond(
                                           fontSize: 10,
-                                          fontWeight: FontWeight.w800,
+                                          fontWeight: FontWeight.w500,
                                           color: Colors.black.withValues(
                                             alpha: 0.68,
                                           ),
@@ -910,9 +922,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                                               .toString()
                                               .toUpperCase(),
                                           textAlign: TextAlign.right,
-                                          style: GoogleFonts.dmSerifDisplay(
+                                          style: GoogleFonts.ebGaramond(
                                             fontSize: 12,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.w600,
                                             color: Colors.black,
                                             letterSpacing: 0.2,
                                           ),
@@ -930,6 +942,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   ),
                 ),
                 SafeArea(
+                  // Edge-to-edge: content runs under the gesture bar so scrolling fills
+                  // the screen. Trailing padding keeps the last item reachable.
+                  bottom: false,
                   top: false,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(28, 12, 28, 20),
@@ -939,7 +954,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       child: ElevatedButton(
                         onPressed: () => Navigator.pop(ctx),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1A1A24),
+                          backgroundColor: const Color(0xFF141B3A),
                           foregroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
@@ -951,9 +966,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         ),
                         child: Text(
                           'BACK TO OPERATIONAL LOGS',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 11,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -979,7 +994,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(22),
       ),
       child: Column(
@@ -987,10 +1002,10 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
-              fontWeight: FontWeight.w900,
-              color: const Color(0xFF6B6B6B),
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFFF4EFE3),
               letterSpacing: 1.5,
             ),
           ),
@@ -1011,9 +1026,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               Flexible(
                 child: Text(
                   value.toUpperCase(),
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 14,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: Colors.black,
                     letterSpacing: 0.2,
                     height: 1.25,

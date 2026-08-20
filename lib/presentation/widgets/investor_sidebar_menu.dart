@@ -21,7 +21,7 @@ class InvestorSidebarMenu extends ConsumerStatefulWidget {
 }
 
 class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
-  static const _gold = Color(0xFFE8850C);
+  static const _gold = const Color(0xFFF4EFE3);
   bool _isContentOpen = false;
   bool _isCustomViewsOpen = false;
 
@@ -35,6 +35,131 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
   void _go(String path) {
     _close();
     context.push(path);
+  }
+
+  // Confirm before logging out — a Yes/No popup so a stray tap can't log out.
+  Future<void> _confirmLogout() async {
+    final isDark = ref.read(themeProvider) == ThemeMode.dark;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogCtx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.06),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFC65B46).withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  LucideIcons.logOut,
+                  color: const Color(0xFFC65B46),
+                  size: 24,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Logout',
+                style: GoogleFonts.gelasio(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white : const Color(0xFF163A2C),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Are you sure you want to logout?',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 13,
+                  color: isDark ? Colors.white60 : const Color(0xFF163A2C).withValues(alpha: 0.78),
+                ),
+              ),
+              const SizedBox(height: 22),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(dialogCtx).pop(false),
+                      child: Container(
+                        height: 48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.06)
+                              : Colors.white.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : Colors.black.withValues(alpha: 0.06),
+                          ),
+                        ),
+                        child: Text(
+                          'NO',
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.2,
+                            color: isDark ? Colors.white70 : Colors.grey[800],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(dialogCtx).pop(true),
+                      child: Container(
+                        height: 48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFC65B46),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Text(
+                          'YES',
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.2,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (confirmed != true) return;
+    _close();
+    await ref.read(authProvider.notifier).logout();
+    if (!mounted) return;
+    // After logout, go to guest mode, not the login screen.
+    context.go('/home');
   }
 
   @override
@@ -53,9 +178,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
-                color: (isDark ? Colors.black : Colors.white).withValues(
-                  alpha: 0.6,
-                ),
+                color: isDark ? Colors.black.withValues(alpha: 0.6) : const Color(0xFF0C312B).withValues(alpha: 0.72),
               ),
             ),
           ),
@@ -70,11 +193,11 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                     children: [
                       Text(
                         'INVESTOR MENU',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
-                          color: isDark ? Colors.white38 : Colors.grey[600],
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -200,11 +323,11 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                         padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
                         child: Text(
                           'QUICK ACTIONS',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 10,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 2,
-                            color: isDark ? Colors.white38 : Colors.grey[600],
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -260,11 +383,11 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                     children: [
                       Text(
                         'THEME MODE',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 2,
-                          color: isDark ? Colors.white38 : Colors.grey[600],
+                          color: Colors.white,
                         ),
                       ),
                       GestureDetector(
@@ -278,17 +401,17 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                 .withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                   .withValues(alpha: 0.1),
                             ),
                           ),
                           child: Icon(
-                            isDark ? LucideIcons.sparkles : LucideIcons.moon,
-                            color: isDark ? Colors.white : Colors.black,
+                            isDark ? LucideIcons.moon : LucideIcons.sun,
+                            color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                             size: 18,
                           ),
                         ),
@@ -301,18 +424,12 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                 Padding(
                   padding: const EdgeInsets.all(24),
                   child: GestureDetector(
-                    onTap: () async {
-                      _close();
-                      await ref.read(authProvider.notifier).logout();
-                      if (!context.mounted) return;
-                      // After logout, go to guest mode, not the login screen.
-                      context.go('/home');
-                    },
+                    onTap: _confirmLogout,
                     child: Container(
                       height: 56,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: const Color(0xFFC65B46).withValues(alpha: 0.14),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
@@ -328,16 +445,16 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                           const Icon(
                             LucideIcons.logOut,
                             size: 18,
-                            color: Colors.red,
+                            color: const Color(0xFFC65B46),
                           ),
                           const SizedBox(width: 10),
                           Text(
                             'LOGOUT',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               fontSize: 12,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 1.5,
-                              color: Colors.red,
+                              color: const Color(0xFFC65B46),
                             ),
                           ),
                         ],
@@ -372,7 +489,7 @@ class _SidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const gold = Color(0xFFE8850C);
+    const gold = const Color(0xFFF4EFE3);
 
     return InkWell(
       onTap: onTap,
@@ -385,7 +502,7 @@ class _SidebarItem extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withValues(
                   alpha: 0.05,
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -396,7 +513,7 @@ class _SidebarItem extends StatelessWidget {
                   size: 18,
                   color: isActive
                       ? gold
-                      : (isDark ? Colors.white70 : Colors.black54),
+                      : (isDark ? Colors.white70 : Color(0xFF5E6B60)),
                 ),
               ),
             ),
@@ -404,12 +521,12 @@ class _SidebarItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 13,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w500,
                   color: isActive
                       ? gold
-                      : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                      : (isDark ? Colors.white : const Color(0xFFF4EFE3)),
                 ),
               ),
             ),
@@ -450,7 +567,7 @@ class _SidebarDropdown extends StatelessWidget {
           onTap: onToggle,
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withValues(
               alpha: 0.4,
             ),
             size: 16,
@@ -480,7 +597,7 @@ class _SidebarSubItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final fg = isDark ? Colors.white : const Color(0xFF1E293B);
+    final fg = isDark ? Colors.white : const Color(0xFFF4EFE3);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -492,7 +609,7 @@ class _SidebarSubItem extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withValues(
                   alpha: 0.05,
                 ),
                 borderRadius: BorderRadius.circular(8),
@@ -505,7 +622,7 @@ class _SidebarSubItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 12.5,
                   fontWeight: FontWeight.w600,
                   color: fg.withValues(alpha: 0.85),

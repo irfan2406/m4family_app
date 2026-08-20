@@ -76,7 +76,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
     final scheme = Theme.of(context).colorScheme;
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
-    const purple = Color(0xFFA855F7);
+    const purple = Color(0xFFC5A35B);
 
     final rate = _data?['conversionRate']?.toString() ?? '0%';
     final leads = _data?['totalLeads'] ?? 0;
@@ -116,7 +116,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
         ),
         title: Text(
           'Insights',
-          style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w800),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w500),
         ),
       ),
       body: _loading
@@ -130,7 +130,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFA855F7), Color(0xFF7C3AED)],
+                      colors: [Color(0xFFC5A35B), Color(0xFF141B3A)],
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -157,9 +157,9 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                         ),
                         child: Text(
                           'DAILY PULSE',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 8,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1.4,
                             color: Colors.white,
                           ),
@@ -168,9 +168,9 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                       const SizedBox(height: 10),
                       Text(
                         'Conversion rate $rate with $books bookings from $leads leads',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 16,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: Colors.white,
                           height: 1.2,
                         ),
@@ -180,7 +180,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                         onPressed: () =>
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                backgroundColor: Color(0xFFE24B4A),
+                                backgroundColor: Color(0xFFC65B46),
                                 content: Text('Report coming soon'),
                               ),
                             ),
@@ -196,9 +196,9 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                           children: [
                             Text(
                               'READ REPORT',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 9,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 2,
                               ),
                             ),
@@ -217,9 +217,9 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                     const SizedBox(width: 8),
                     Text(
                       'Latest Analysis',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 12,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -252,7 +252,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFFE24B4A),
+              backgroundColor: Color(0xFFC65B46),
               content: Text('Content coming soon'),
             ),
           );
@@ -293,11 +293,11 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                       ),
                       child: Text(
                         category.toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 8,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1.3,
-                          color: const Color(0xFFA855F7),
+                          color: const Color(0xFFC5A35B),
                         ),
                       ),
                     ),
@@ -309,18 +309,18 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
           const SizedBox(height: 10),
           Text(
             title,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 13,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
               height: 1.2,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             readTime.isEmpty ? 'READ' : readTime.toUpperCase(),
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
               letterSpacing: 1.4,
               color: scheme.onSurface.withValues(alpha: 0.68),
             ),

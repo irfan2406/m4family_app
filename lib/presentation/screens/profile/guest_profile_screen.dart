@@ -17,8 +17,8 @@ class GuestProfileScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeProvider);
     final bool isDarkMode = themeMode == ThemeMode.dark;
 
-    final Color bg = isDark ? Colors.black : Colors.white;
-    final Color textPrimary = isDark ? Colors.white : Colors.black;
+    final Color bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final Color textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final Color textMuted = isDark
         ? Colors.white.withValues(alpha: 0.5)
         : Colors.black.withValues(alpha: 0.5);
@@ -42,13 +42,16 @@ class GuestProfileScreen extends ConsumerWidget {
               height: 220,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.04,
                 ),
               ),
             ),
           ),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -70,7 +73,7 @@ class GuestProfileScreen extends ConsumerWidget {
                       const SizedBox(width: 16),
                       Text(
                         'MY PROFILE',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: textPrimary,
@@ -115,7 +118,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                   shape: BoxShape.circle,
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.04)
-                                      : const Color(0xFFF4F4F5),
+                                      : const Color(0xFFF4EFE3),
                                   border: Border.all(
                                     color: borderColor,
                                     width: 2,
@@ -125,7 +128,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                 child: Center(
                                   child: Text(
                                     '?',
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold,
                                       color: textMuted,
@@ -136,7 +139,7 @@ class GuestProfileScreen extends ConsumerWidget {
                               const SizedBox(height: 24),
                               Text(
                                 'GUEST USER',
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                   color: textPrimary,
@@ -147,9 +150,9 @@ class GuestProfileScreen extends ConsumerWidget {
                               Text(
                                 'SIGN IN TO ACCESS YOUR PERSONALIZED DASHBOARD, DOCUMENTS, AND EXCLUSIVE OFFERS.',
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 9,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w600,
                                   color: textMuted,
                                   letterSpacing: 1,
                                   height: 1.6,
@@ -177,7 +180,7 @@ class GuestProfileScreen extends ConsumerWidget {
                         Center(
                           child: Text(
                             'WHY JOIN M4 FAMILY?',
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.gelasio(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               color: textMuted,
@@ -209,7 +212,7 @@ class GuestProfileScreen extends ConsumerWidget {
                         // Preferences
                         Text(
                           'PREFERENCES',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             color: textMuted,
@@ -235,7 +238,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.05)
-                                      : const Color(0xFFF4F4F5),
+                                      : const Color(0xFFF4EFE3),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(color: borderColor),
                                 ),
@@ -254,7 +257,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                   children: [
                                     Text(
                                       'DARK MODE',
-                                      style: GoogleFonts.dmSerifDisplay(
+                                      style: GoogleFonts.ebGaramond(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                         color: textPrimary,
@@ -263,9 +266,9 @@ class GuestProfileScreen extends ConsumerWidget {
                                     const SizedBox(height: 2),
                                     Text(
                                       isDarkMode ? 'ENABLED' : 'DISABLED',
-                                      style: GoogleFonts.dmSerifDisplay(
+                                      style: GoogleFonts.ebGaramond(
                                         fontSize: 8,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w600,
                                         color: textMuted,
                                         letterSpacing: 1,
                                       ),
@@ -280,7 +283,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                     : Colors.white,
                                 activeTrackColor: isDark
                                     ? Colors.white
-                                    : Colors.black,
+                                    : Color(0xFF163A2C),
                                 onChanged: (checked) {
                                   ref
                                       .read(themeProvider.notifier)
@@ -302,12 +305,12 @@ class GuestProfileScreen extends ConsumerWidget {
                             height: 56,
                             decoration: BoxDecoration(
                               color: const Color(
-                                0xFFFFD700,
+                                0xFFC5A35B,
                               ).withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color: const Color(
-                                  0xFFFFD700,
+                                  0xFFC5A35B,
                                 ).withValues(alpha: 0.25),
                               ),
                             ),
@@ -318,15 +321,15 @@ class GuestProfileScreen extends ConsumerWidget {
                                   const Icon(
                                     LucideIcons.trendingUp,
                                     size: 16,
-                                    color: Color(0xFFD4A93B),
+                                    color: Color(0xFFC65B46),
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
                                     'INVESTOR LOGIN',
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 10,
-                                      fontWeight: FontWeight.w900,
-                                      color: const Color(0xFFD4A93B),
+                                      fontWeight: FontWeight.w700,
+                                      color: const Color(0xFFC65B46),
                                       letterSpacing: 1.5,
                                     ),
                                   ),
@@ -356,14 +359,14 @@ class _InfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color textPrimary = isDark ? Colors.white : Colors.black;
+    final Color textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final Color textMuted = isDark
         ? Colors.white.withValues(alpha: 0.5)
         : Colors.black.withValues(alpha: 0.5);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.03),
+        color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark
@@ -376,7 +379,7 @@ class _InfoTile extends StatelessWidget {
         children: [
           Text(
             title,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 11,
               fontWeight: FontWeight.bold,
               color: textPrimary,
@@ -385,7 +388,7 @@ class _InfoTile extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             body,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               color: textMuted,
               height: 1.4,
@@ -413,10 +416,10 @@ class _PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final Color fg = filled
-        ? (isDark ? Colors.black : Colors.white)
-        : (isDark ? Colors.white : Colors.black);
+        ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
+        : (isDark ? Colors.white : Color(0xFF163A2C));
     final Color bg = filled
-        ? (isDark ? Colors.white : Colors.black)
+        ? (isDark ? Colors.white : Color(0xFF163A2C))
         : Colors.transparent;
     return _ScaleTap(
       onTap: onTap,
@@ -442,7 +445,7 @@ class _PrimaryButton extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 label,
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   color: fg,
@@ -474,7 +477,7 @@ class _CircleButton extends StatelessWidget {
           shape: BoxShape.circle,
           color: isDark
               ? Colors.white.withValues(alpha: 0.05)
-              : const Color(0xFFF4F4F5),
+              : const Color(0xFFF4EFE3),
           border: Border.all(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.08)
@@ -484,7 +487,7 @@ class _CircleButton extends StatelessWidget {
         child: Icon(
           icon,
           size: 20,
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? Colors.white : Color(0xFF163A2C),
         ),
       ),
     );

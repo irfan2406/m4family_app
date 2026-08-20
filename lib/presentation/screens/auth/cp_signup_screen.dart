@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -58,8 +60,22 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
         _confirmPassword.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Please fill in all required fields'),
+        ),
+      );
+      return;
+    }
+    // Format checks (was empty-only): valid name / email / phone.
+    final formatErr =
+        Validators.nameError(fn, field: 'full name') ??
+        Validators.emailError(_email.text) ??
+        Validators.phoneError(_phone.text);
+    if (formatErr != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFC65B46),
+          content: Text(formatErr),
         ),
       );
       return;
@@ -67,7 +83,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
     if (_password.text != _confirmPassword.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Passwords do not match'),
         ),
       );
@@ -93,7 +109,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       if (res.statusCode == 201 && res.data['status'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: Color(0xFF163A2C),
             content: Text('Registration successful! Please login.'),
           ),
         );
@@ -103,7 +119,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(
               res.data['message']?.toString() ?? 'Registration failed',
             ),
@@ -117,7 +133,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? e.message ?? 'Registration failed'),
           ),
         );
@@ -126,7 +142,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(e.toString()),
           ),
         );
@@ -142,27 +158,14 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
         GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0C312B),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/login-bg.png', fit: BoxFit.cover),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.55),
-                  Colors.black.withValues(alpha: 0.85),
-                  Colors.black,
-                ],
-              ),
-            ),
-          ),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Column(
@@ -171,19 +174,19 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                   const SizedBox(height: 16),
                   if (fromGuest) ...[
                     Align(
-                      alignment: Alignment.center,
+                      alignment: Alignment.centerLeft,
                       child: GestureDetector(
                         onTap: () => context.go('/home'),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 32,
-                            vertical: 16,
+                            horizontal: 18,
+                            vertical: 11,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(16),
+                            color: Colors.white.withOpacity(0.06),
+                            borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.15),
+                              color: Colors.white.withOpacity(0.14),
                             ),
                           ),
                           child: Row(
@@ -192,16 +195,16 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                               const Icon(
                                 LucideIcons.chevronLeft,
                                 color: Colors.white,
-                                size: 16,
+                                size: 15,
                               ),
-                              const SizedBox(width: 12),
+                              const SizedBox(width: 8),
                               Text(
                                 'BACK TO GUEST PORTAL',
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.gelasio(
                                   color: Colors.white,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   fontSize: 11,
-                                  letterSpacing: 2.5,
+                                  letterSpacing: 2,
                                 ),
                               ),
                             ],
@@ -209,54 +212,37 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
                   ],
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        onPressed: () => context.go(
-                          '/auth/cp/login${fromGuest ? '?from=guest' : ''}',
-                        ),
-                        icon: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.1),
-                            ),
-                          ),
-                          child: const Icon(
-                            LucideIcons.chevronLeft,
-                            color: Colors.white70,
-                            size: 18,
-                          ),
-                        ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      onPressed: () => context.go(
+                        '/auth/cp/login${fromGuest ? '?from=guest' : ''}',
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(12),
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.purple.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(14),
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: Colors.purple.withValues(alpha: 0.35),
+                            color: Colors.white.withOpacity(0.1),
                           ),
                         ),
                         child: const Icon(
-                          LucideIcons.sparkles,
-                          color: Colors.purpleAccent,
-                          size: 26,
+                          LucideIcons.chevronLeft,
+                          color: Colors.white70,
+                          size: 18,
                         ),
                       ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 32),
                   Text(
                     'PARTNER\nREGISTRATION',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 42,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       color: Colors.white,
                       height: 1.1,
                       letterSpacing: -1,
@@ -265,10 +251,10 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                   const SizedBox(height: 12),
                   Text(
                     'JOIN M4 FAMILY CHANNEL PARTNER NETWORK',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white54,
+                      color: Colors.white70,
                       letterSpacing: 2,
                     ),
                   ),
@@ -278,6 +264,8 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     label: 'FULL NAME *',
                     controller: _fullName,
                     icon: LucideIcons.user,
+                    keyboard: TextInputType.name,
+                    inputFormatters: Validators.nameFormatters,
                     hint: 'John Doe',
                   ),
                   _CpField(
@@ -291,6 +279,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     controller: _email,
                     icon: LucideIcons.mail,
                     keyboard: TextInputType.emailAddress,
+                    inputFormatters: Validators.emailFormatters,
                     hint: 'john@example.com',
                   ),
                   _CpField(
@@ -298,6 +287,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     controller: _phone,
                     icon: LucideIcons.phone,
                     keyboard: TextInputType.phone,
+                    inputFormatters: Validators.phoneFormatters,
                     hint: '+91 XXXXX XXXXX',
                   ),
                   const SizedBox(height: 24),
@@ -342,9 +332,10 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     child: FilledButton(
                       onPressed: _submitting ? null : _submit,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.purple.shade600,
+                        backgroundColor: const Color(0xFFF4EFE3),
+                        foregroundColor: const Color(0xFF0C312B),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                       child: _submitting
@@ -361,8 +352,8 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                               children: [
                                 Text(
                                   'COMPLETE REGISTRATION',
-                                  style: GoogleFonts.dmSerifDisplay(
-                                    fontWeight: FontWeight.w900,
+                                  style: GoogleFonts.gelasio(
+                                    fontWeight: FontWeight.w700,
                                     fontSize: 13,
                                     letterSpacing: 1.5,
                                   ),
@@ -389,10 +380,10 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     ),
                     child: Text(
                       'ALREADY HAVE AN ACCOUNT? LOGIN',
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white54,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white70,
                         letterSpacing: 2,
                       ),
                     ),
@@ -411,10 +402,10 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
     padding: const EdgeInsets.only(bottom: 12),
     child: Text(
       t,
-      style: GoogleFonts.dmSerifDisplay(
+      style: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.bold,
-        color: Colors.purpleAccent.withValues(alpha: 0.7),
+        color: const Color(0xFFF4EFE3),
         letterSpacing: 2,
       ),
     ),
@@ -428,6 +419,7 @@ class _CpField extends StatelessWidget {
   final String? hint;
   final bool obscure;
   final TextInputType? keyboard;
+  final List<TextInputFormatter>? inputFormatters;
 
   const _CpField({
     required this.label,
@@ -436,6 +428,7 @@ class _CpField extends StatelessWidget {
     this.hint,
     this.obscure = false,
     this.keyboard,
+    this.inputFormatters,
   });
 
   @override
@@ -447,10 +440,10 @@ class _CpField extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.bold,
-              color: Colors.white54,
+              color: Colors.white70,
               letterSpacing: 2,
             ),
           ),
@@ -459,10 +452,15 @@ class _CpField extends StatelessWidget {
             controller: controller,
             obscureText: obscure,
             keyboardType: keyboard,
+            inputFormatters: inputFormatters,
+            // On the black field the default (theme-primary) cursor was
+            // invisible — force a visible white caret when the field is tapped.
+            cursorColor: Colors.white,
+            cursorWidth: 2,
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w600,
-              fontSize: 14,
+              fontSize: 15,
             ),
             decoration: InputDecoration(
               hintText: hint,
@@ -477,6 +475,12 @@ class _CpField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(
                   color: Colors.white.withValues(alpha: 0.12),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(
+                  color: Colors.white.withValues(alpha: 0.55),
                 ),
               ),
             ),

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
@@ -47,6 +46,11 @@ class _GuestCustomViewsScreenState
     },
   ];
 
+  // Ask the image host for a card-sized image instead of the full-res original
+  // (multi-MB) — massively cuts download time for these grid thumbnails.
+  String _sized(String url, int w) =>
+      url.contains('w=') ? url : '$url&w=$w';
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -56,7 +60,7 @@ class _GuestCustomViewsScreenState
     final isCp = role == 'cp';
 
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
       drawer: const ConditionalDrawer(),
       extendBody: true,
       bottomNavigationBar: isCp
@@ -74,9 +78,7 @@ class _GuestCustomViewsScreenState
           // 🔝 Premium Header
           SliverAppBar(
             pinned: true,
-            backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
-              0.8,
-            ),
+            backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3),
             elevation: 0,
             leadingWidth: 72,
             toolbarHeight: 80,
@@ -100,32 +102,26 @@ class _GuestCustomViewsScreenState
               children: [
                 Text(
                   'INTERACTIVE LIVING',
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: isDark ? Colors.white : Colors.black,
-                    fontWeight: FontWeight.w900,
+                  style: GoogleFonts.ebGaramond(
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    fontWeight: FontWeight.w600,
                     fontSize: 14,
                     letterSpacing: 0.5,
                   ),
                 ),
                 Text(
                   'M4 CUSTOM SHOWCASE',
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  style: GoogleFonts.gelasio(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.68,
                     ),
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     fontSize: 7,
                     letterSpacing: 1.5,
                   ),
                 ),
               ],
             ),
-            actions: [
-              const Padding(
-                padding: EdgeInsets.only(right: 12),
-                child: SideMenuButton(),
-              ),
-            ],
           ),
 
           // 🎭 Hero Section
@@ -139,8 +135,8 @@ class _GuestCustomViewsScreenState
                         textAlign: TextAlign.center,
                         // Web parity: font-light serif (elegant, thin
                         // high-contrast), not a heavy slab display face.
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: isDark ? Colors.white : Colors.black,
+                        style: GoogleFonts.gelasio(
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                           fontSize: 52,
                           fontWeight: FontWeight.w400,
                           height: 1.1,
@@ -154,7 +150,7 @@ class _GuestCustomViewsScreenState
                   Container(
                     width: 50,
                     height: 1.5,
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.2,
                     ),
                   ),
@@ -162,8 +158,8 @@ class _GuestCustomViewsScreenState
                   Text(
                     'Experience the future of home personalisation. Our proprietary Custom Views suite allows you to visualise and craft your dream space before it\'s even built. Every M4 residence is a bespoke masterpiece, where your vision dictates the architecture of luxury. Beyond standard configurations, we offer a multi-sensory design experience—from haptic material selection to precision spatial planning. Our suite ensures that your digital blueprint translates into a tangible sanctuary of unparalleled refinement.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    style: GoogleFonts.ebGaramond(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.7,
                       ),
                       fontSize: 14,
@@ -196,7 +192,7 @@ class _GuestCustomViewsScreenState
                         borderRadius: BorderRadius.circular(44),
                         boxShadow: [
                           BoxShadow(
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withOpacity(0.08),
                             blurRadius: 25,
                             offset: const Offset(0, 10),
@@ -209,8 +205,10 @@ class _GuestCustomViewsScreenState
                           fit: StackFit.expand,
                           children: [
                             CachedNetworkImage(
-                              imageUrl: cat['image']!,
+                              imageUrl: _sized(cat['image']!, 800),
                               fit: BoxFit.cover,
+                              memCacheWidth: 800,
+                              fadeInDuration: const Duration(milliseconds: 200),
                               placeholder: (context, url) =>
                                   Container(color: Colors.black12),
                               errorWidget: (context, url, error) =>
@@ -237,9 +235,9 @@ class _GuestCustomViewsScreenState
                               alignment: Alignment.bottomLeft,
                               child: Text(
                                 cat['title']!,
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w700,
                                   color: Colors.white,
                                   letterSpacing: 2.5,
                                   height: 1.3,
@@ -280,10 +278,10 @@ class _HeaderCircleAction extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
+          color: isDark ? Colors.white.withOpacity(0.1) : const Color(0xFFF4EFE3),
           shape: BoxShape.circle,
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
           ),
           boxShadow: [
             BoxShadow(
@@ -295,7 +293,7 @@ class _HeaderCircleAction extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? Colors.white : Color(0xFF163A2C),
           size: 18,
         ),
       ),

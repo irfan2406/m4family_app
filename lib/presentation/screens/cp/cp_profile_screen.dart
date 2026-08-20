@@ -131,7 +131,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     center: const Alignment(-0.8, -1),
                     radius: 1.2,
                     colors: [
-                      const Color(0xFF3B6FB5).withValues(alpha: 0.10),
+                      const Color(0xFFC5A35B).withValues(alpha: 0.10),
                       Colors.transparent,
                     ],
                   ),
@@ -140,6 +140,9 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
             ),
           ),
           SafeArea(
+            // Edge-to-edge: content runs under the gesture bar so scrolling fills
+            // the screen. Trailing padding keeps the last item reachable.
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(28, 8, 28, 120),
               child: Column(
@@ -149,7 +152,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     children: [
                       Text(
                         'MY PROFILE',
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface,
@@ -208,7 +211,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                   const SizedBox(height: 32),
                   Text(
                     'TEAM & ACCESS',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurfaceVariant,
@@ -224,7 +227,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                   const SizedBox(height: 28),
                   Text(
                     'QUICK ACTIONS',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurface,
@@ -281,7 +284,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                           builder: (ctx) => AlertDialog(
                             title: Text(
                               'Log out',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.ebGaramond(
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -332,9 +335,9 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                             const SizedBox(width: 8),
                             Text(
                               'LOG OUT',
-                              style: GoogleFonts.dmSerifDisplay(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w700,
                                 color: scheme.error,
                                 letterSpacing: 2,
                               ),
@@ -431,7 +434,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         name.toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(
+                        style: GoogleFonts.gelasio(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface,
@@ -446,8 +449,8 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         phone.toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 10,
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: scheme.primary.withValues(alpha: 0.8),
                           letterSpacing: 1.2,
@@ -458,8 +461,8 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         email.toLowerCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 9,
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface.withValues(alpha: 0.6),
                           letterSpacing: 0.2,
@@ -492,8 +495,8 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                             Expanded(
                               child: Text(
                                 'BORN: $born',
-                                style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 10,
+                                style: GoogleFonts.ebGaramond(
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                   color: scheme.primary,
                                   letterSpacing: 0.8,
@@ -524,9 +527,9 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
       ),
       child: Text(
         text.toUpperCase(),
-        style: GoogleFonts.dmSerifDisplay(
-          fontSize: 8,
-          fontWeight: FontWeight.w900,
+        style: GoogleFonts.ebGaramond(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
           color: scheme.primary,
           letterSpacing: 0.6,
         ),
@@ -583,9 +586,9 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9.5,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                       color: scheme.onSurface,
                       letterSpacing: 1.2,
                       height: 1.15,
@@ -644,7 +647,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
               Expanded(
                 child: Text(
                   'EMPLOYEE MANAGEMENT',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: scheme.onSurface,
