@@ -87,9 +87,19 @@ class ProjectListScreen extends ConsumerWidget {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
+            // The refine sheet is always the cream surface, in both app
+            // themes. Running its subtree under the light theme flips the
+            // whole sheet together — surface, type, chips and button — so no
+            // white-on-cream text can slip through.
+            return Theme(
+              data: M4Theme.lightTheme,
+              child: Builder(
+                builder: (context) {
             final isDark = Theme.of(context).brightness == Brightness.dark;
             return Container(
-              height: MediaQuery.of(context).size.height * 0.85,
+              // Half-sheet popup: the filter list scrolls inside it rather than
+              // the sheet swallowing the screen.
+              height: MediaQuery.of(context).size.height * 0.55,
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
                 borderRadius: const BorderRadius.vertical(
@@ -109,7 +119,7 @@ class ProjectListScreen extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
@@ -144,7 +154,7 @@ class ProjectListScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 20),
                   Expanded(
                     child: Consumer(
                       builder: (context, ref, child) {
@@ -158,7 +168,7 @@ class ProjectListScreen extends ConsumerWidget {
                         final selectedTypes = ref.watch(selectedTypesProvider);
 
                         return ListView(
-                          padding: const EdgeInsets.fromLTRB(24, 0, 24, 96),
+                          padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
                           children: [
                             _FilterSection(
                               title: 'LOCATION',
@@ -233,14 +243,19 @@ class ProjectListScreen extends ConsumerWidget {
                                     current;
                               },
                             ),
-                            const SizedBox(height: 48),
+                            const SizedBox(height: 8),
                           ],
                         );
                       },
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
+                    padding: EdgeInsets.fromLTRB(
+                      24,
+                      12,
+                      24,
+                      12 + MediaQuery.of(context).padding.bottom,
+                    ),
                     child: SizedBox(
                       width: double.infinity,
                       height: 64,
@@ -265,6 +280,9 @@ class ProjectListScreen extends ConsumerWidget {
                     ),
                   ),
                 ],
+              ),
+            );
+                },
               ),
             );
           },
@@ -1130,25 +1148,68 @@ class _ViewToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color fg = active
+        ? (isDark ? Colors.black : Colors.white)
+        : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.4);
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 32,
-        height: 28,
+        width: 30,
+        height: 26,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: active
               ? (isDark ? Colors.white : Color(0xFF163A2C))
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(9),
+          borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(
-          icon,
-          size: 15,
-          color: active
-              ? (isDark ? Colors.black : Colors.white)
-              : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.4),
-        ),
+        // Figma parity: the grid glyph is a compact 2x2 of solid squares —
+        // smaller and much heavier than Lucide's thin-stroke layoutGrid.
+        child: icon == LucideIcons.layoutGrid
+            ? _BoldGridGlyph(color: fg, size: 11)
+            : Icon(icon, size: 15, color: fg),
+      ),
+    );
+  }
+}
+
+// Figma parity: bold 2x2 grid mark used by the properties view toggle.
+class _BoldGridGlyph extends StatelessWidget {
+  final Color color;
+  final double size;
+  const _BoldGridGlyph({required this.color, required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    // Gap between the four squares; the remainder is split evenly so the
+    // mark stays optically centred inside the 30x26 toggle button. 11/3 keeps
+    // each cell on a whole 4.0 logical pixels, so the mark stays crisp — and
+    // the wider gutter reads as a crisper cross between smaller squares.
+    const double gap = 3;
+    final double cell = (size - gap) / 2;
+    final BorderRadius radius = BorderRadius.circular(1);
+
+    Widget square() => Container(
+      width: cell,
+      height: cell,
+      decoration: BoxDecoration(color: color, borderRadius: radius),
+    );
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [square(), square()],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [square(), square()],
+          ),
+        ],
       ),
     );
   }

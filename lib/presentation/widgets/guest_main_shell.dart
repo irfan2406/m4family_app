@@ -94,8 +94,16 @@ class GuestMainShell extends ConsumerWidget {
   }
 }
 
-/// Height the floating pill occupies: 62px bar + 14px bottom margin.
-const double _navFootprint = 80;
+// Guest pill runs one size up from the shared M4Nav metrics so it matches the
+// web reference. Kept local to this shell: M4Nav still drives the customer, CP
+// and investor bars unchanged.
+const double _guestNavHeight = 74;
+const double _guestNavDisc = 50;
+const double _guestNavIcon = 24;
+const double _guestNavInnerPadding = 10;
+
+/// Height the floating pill occupies: 74px bar + 14px bottom margin.
+const double _navFootprint = 92;
 
 class _GuestNavigationPill extends StatelessWidget {
   final int currentIndex;
@@ -119,7 +127,7 @@ class _GuestNavigationPill extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: M4Nav.blur, sigmaY: M4Nav.blur),
           child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: M4Nav.innerPadding, vertical: (M4Nav.height - M4Nav.activeDisc) / 2),
+      padding: const EdgeInsets.symmetric(horizontal: _guestNavInnerPadding, vertical: (_guestNavHeight - _guestNavDisc) / 2),
       decoration: BoxDecoration(
         // Frosted glass: a translucent tint over the 30px blur, with a top-down
         // reflection so the bar reads as glass rather than a flat panel.
@@ -203,8 +211,8 @@ class _NavIcon extends StatelessWidget {
       child: AnimatedContainer(
         duration: M4Nav.animation,
         curve: M4Nav.curve,
-        width: M4Nav.activeDisc,
-        height: M4Nav.activeDisc,
+        width: _guestNavDisc,
+        height: _guestNavDisc,
         decoration: BoxDecoration(
           color: isActive
               ? (isDark ? Colors.white : Color(0xFF163A2C))
@@ -227,7 +235,7 @@ class _NavIcon extends StatelessWidget {
             color: isActive
                 ? (isDark ? Colors.black : Colors.white)
                 : (isDark ? Colors.white70 : Color(0xFF5E6B60)),
-            size: M4Nav.iconSize,
+            size: _guestNavIcon,
           ),
         ),
       ),
