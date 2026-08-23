@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,7 +11,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 import 'package:m4_mobile/presentation/screens/support/raise_ticket_screen.dart';
 import 'dart:ui';
@@ -2201,7 +2201,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 0),
-          _LocationMap(
+          M4MapView(
             query: locName,
             onOpen: () => _launchAction(
               'Opening Maps...',
@@ -3567,143 +3567,6 @@ class _SocialIconButton extends StatelessWidget {
 
 /// Web parity: an embedded Google Map (matching the web iframe) with
 /// "Open in Maps" and "VIEW ON MAPS" overlays, via webview_flutter.
-class _LocationMap extends StatefulWidget {
-  final String query;
-  final VoidCallback onOpen;
-  const _LocationMap({required this.query, required this.onOpen});
-
-  @override
-  State<_LocationMap> createState() => _LocationMapState();
-}
-
-class _LocationMapState extends State<_LocationMap> {
-  late final WebViewController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    // Google's ?output=embed page refuses to render as a TOP-LEVEL document
-    // ("must be used in an iframe"). Wrapping it in an actual <iframe> inside a
-    // local HTML page makes the embed work.
-    final src =
-        'https://maps.google.com/maps?q=${Uri.encodeComponent(widget.query)}'
-        '&t=&z=13&ie=UTF8&iwloc=&output=embed';
-    final html =
-        '<!DOCTYPE html><html><head>'
-        '<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">'
-        '<style>html,body{margin:0;padding:0;height:100%;background:#e5e3df;overflow:hidden}'
-        'iframe{border:0;width:100%;height:100%;display:block}</style></head>'
-        '<body><iframe src="$src" allowfullscreen loading="lazy" '
-        'referrerpolicy="no-referrer-when-downgrade"></iframe></body></html>';
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0xFFF4EFE3))
-      ..loadHtmlString(html);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: SizedBox(
-        height: 220,
-        width: double.infinity,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            WebViewWidget(controller: _controller),
-            // Open in Maps (top-left)
-            Positioned(
-              top: 12,
-              left: 12,
-              child: GestureDetector(
-                onTap: widget.onOpen,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: (isDark ? Colors.black : Colors.white).withOpacity(
-                      0.85,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Open in Maps',
-                        style: GoogleFonts.ebGaramond(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFFC5A35B),
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      const Icon(
-                        LucideIcons.externalLink,
-                        size: 12,
-                        color: Color(0xFFC5A35B),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            // VIEW ON MAPS (top-right)
-            Positioned(
-              top: 12,
-              right: 12,
-              child: GestureDetector(
-                onTap: widget.onOpen,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 9,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.15),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        LucideIcons.mapPin,
-                        size: 13,
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'VIEW ON MAPS',
-                        style: GoogleFonts.ebGaramond(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Color(0xFF163A2C),
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 /// Web parity: the construction progress ring is a DOTTED circle
 /// (SVG strokeDasharray="1.5 1.5") — the filled portion in the accent color,
 /// the remainder in a faded track. Rendered here with a dashed-arc painter.

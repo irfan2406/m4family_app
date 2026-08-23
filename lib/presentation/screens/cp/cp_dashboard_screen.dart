@@ -150,12 +150,11 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
   @override
   Widget build(BuildContext context) {
     // CP "Dashboard landing" is a green showcase screen (same rule as CP Home /
-    // Projects): deep-green surface + white typography in light mode, navy in
-    // dark. It is reached as a standalone route, so it wraps itself in the
-    // showcase theme instead of inheriting the shell's.
-    final bool appIsDark = Theme.of(context).brightness == Brightness.dark;
+    // Projects): deep-green surface + white typography. It is reached as a
+    // standalone route, so it wraps itself in the showcase theme instead of
+    // inheriting the shell's.
     return Theme(
-      data: appIsDark ? M4Theme.darkThemeNavy : M4Theme.darkTheme,
+      data: M4Theme.darkTheme,
       child: Builder(builder: _buildBody),
     );
   }

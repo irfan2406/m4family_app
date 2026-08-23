@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
-import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 class MyPropertyScreen extends ConsumerStatefulWidget {
@@ -53,7 +52,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = ref.watch(themeProvider) == ThemeMode.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: isDark
@@ -167,7 +166,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                 'PORTFOLIO OVERVIEW',
                 style: GoogleFonts.gelasio(
                   textStyle: const TextStyle(inherit: true),
-                  fontSize: 8,
+                  fontSize: 10,
                   fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                   letterSpacing: 1.5,
@@ -192,7 +191,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                 'TOTAL VALUE',
                 style: GoogleFonts.gelasio(
                   textStyle: const TextStyle(inherit: true),
-                  fontSize: 8,
+                  fontSize: 10,
                   fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                   letterSpacing: 1.5,
@@ -287,7 +286,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                                 .toUpperCase(),
                             style: GoogleFonts.ebGaramond(
                               textStyle: const TextStyle(inherit: true),
-                              fontSize: 9,
+                              fontSize: 10,
                               fontWeight: FontWeight.w700,
                               color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                               letterSpacing: 0.5,
@@ -359,16 +358,16 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                         Text(
                           'PAYMENT PROGRESS',
                           style: GoogleFonts.gelasio(
-                            fontSize: 8,
+                            fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: isDark ? Colors.white24 : Colors.black26,
+                            color: isDark ? Colors.white70 : Colors.black54,
                             letterSpacing: 1.5,
                           ),
                         ),
                         Text(
                           '$paymentPercent% PAID',
                           style: GoogleFonts.ebGaramond(
-                            fontSize: 9,
+                            fontSize: 10,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF163A2C),
                           ),
@@ -449,7 +448,7 @@ class _StatusBadge extends StatelessWidget {
       child: Text(
         status.toUpperCase(),
         style: GoogleFonts.ebGaramond(
-          fontSize: 8,
+          fontSize: 10,
           fontWeight: FontWeight.w600,
           color: color,
           letterSpacing: 0.5,
@@ -479,7 +478,7 @@ class _InfoItem extends StatelessWidget {
         Text(
           label,
           style: GoogleFonts.ebGaramond(
-            fontSize: 8,
+            fontSize: 10,
             fontWeight: FontWeight.w500,
             color: isDark ? Colors.white38 : Color(0xFF5E6B60),
             letterSpacing: 1,

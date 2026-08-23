@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:ui';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 
@@ -23,7 +22,11 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
 
   // Confirm before leaving — a Yes/No popup so a stray tap can't exit the app.
   Future<void> _confirmExit() async {
-    final isDark = ref.read(themeProvider) == ThemeMode.dark;
+    // Dark mode is gone, so this is always false. It is NOT read from the
+    // ambient brightness: the drawer can be opened from a green "showcase"
+    // screen, whose theme reports Brightness.dark, and that would flip the
+    // menu to tones it never used in light mode.
+    final bool isDark = false;
     final confirmed = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -145,8 +148,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
 
   @override
   Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeProvider);
-    final isDark = themeMode == ThemeMode.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Drawer(
       backgroundColor: Colors.transparent,
@@ -369,53 +371,6 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                   ),
                 ),
 
-                // Bottom section
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'THEME MODE',
-                        style: GoogleFonts.ebGaramond(
-                          color: isDark ? Colors.white70 : const Color(0xFFF4EFE3),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          ref
-                              .read(themeProvider.notifier)
-                              .setTheme(
-                                isDark ? ThemeMode.light : ThemeMode.dark,
-                              );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
-                                .withOpacity(0.08),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
-                                  .withOpacity(0.1),
-                            ),
-                          ),
-                          child: Icon(
-                            isDark ? LucideIcons.moon : LucideIcons.sun,
-                            color: isDark ? Colors.white : const Color(0xFFF4EFE3),
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 12, 24, 40),
                   child: Container(

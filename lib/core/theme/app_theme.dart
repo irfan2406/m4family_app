@@ -606,87 +606,10 @@ class M4Theme {
     dividerTheme: const DividerThemeData(color: darkBorder, thickness: 1),
   );
 
-  // ===================================================================
-  // DARK MODE — NAVY (screenshot parity)
-  // ===================================================================
-  /// The app's DARK theme is a deep navy blue (matches the reference
-  /// screenshot). LIGHT mode is unaffected: the guest "showcase" screens
-  /// (Home/Properties/Drawer) keep using the green `darkTheme` in LIGHT mode,
-  /// while the app's actual dark mode uses THIS navy theme for every section.
-  static const Color navyBackground = Color(0xFF0B1026); // deep navy
-  static const Color navyCard = Color(0xFF141B3A); // lifted navy surface
-  static const Color navyMuted = Color(0xFF1C2547);
-  static const Color navyBorder = Color(0xFF2C3866);
-
-  static final ThemeData darkThemeNavy = darkTheme.copyWith(
-    scaffoldBackgroundColor: navyBackground,
-    canvasColor: navyBackground,
-    colorScheme: darkTheme.colorScheme.copyWith(
-      surface: navyCard,
-      // ignore: deprecated_member_use
-      background: navyBackground,
-      outline: navyBorder,
-      outlineVariant: navyBorder,
-      surfaceContainerHighest: navyMuted,
-    ),
-    cardTheme: darkTheme.cardTheme.copyWith(
-      color: navyCard,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-        side: const BorderSide(color: navyBorder),
-      ),
-    ),
-    inputDecorationTheme: darkTheme.inputDecorationTheme.copyWith(
-      fillColor: navyCard,
-    ),
-    dialogTheme: darkTheme.dialogTheme.copyWith(backgroundColor: navyCard),
-    bottomSheetTheme: darkTheme.bottomSheetTheme.copyWith(
-      backgroundColor: navyCard,
-    ),
-    dividerTheme: const DividerThemeData(color: navyBorder, thickness: 1),
-    // Navy overlays so popup menus, dropdowns, menus and tabs match the dark
-    // navy surfaces (mirrors the light theme's centralised overlay styling).
-    popupMenuTheme: PopupMenuThemeData(
-      color: navyCard,
-      surfaceTintColor: Colors.transparent,
-      elevation: 8,
-      shadowColor: Colors.black.withOpacity(0.5),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: navyBorder),
-      ),
-      textStyle: GoogleFonts.ebGaramond(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: cream,
-      ),
-    ),
-    menuTheme: MenuThemeData(
-      style: MenuStyle(
-        backgroundColor: const WidgetStatePropertyAll(navyCard),
-        surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
-        elevation: const WidgetStatePropertyAll(8),
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: navyBorder),
-          ),
-        ),
-      ),
-    ),
-    dropdownMenuTheme: DropdownMenuThemeData(
-      menuStyle: MenuStyle(
-        backgroundColor: const WidgetStatePropertyAll(navyCard),
-        surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: navyBorder),
-          ),
-        ),
-      ),
-    ),
-  );
+  /// Kept as a palette colour only: the navigation pill uses it for the active
+  /// glyph on the green showcase surfaces. The navy DARK theme it belonged to
+  /// was removed when dark mode was dropped — the app is light-only.
+  static const Color navyBackground = Color(0xFF0B1026);
 }
 
 // Glassmorphism helper

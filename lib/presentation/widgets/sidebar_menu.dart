@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
+import 'package:m4_mobile/core/theme/app_theme.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,7 +12,6 @@ import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
 import 'package:m4_mobile/presentation/screens/careers/careers_screen.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/core/providers/theme_provider.dart';
 
 class SidebarMenu extends ConsumerStatefulWidget {
   const SidebarMenu({super.key});
@@ -28,8 +28,11 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(navigationProvider);
     final authState = ref.watch(authProvider);
-    final themeMode = ref.watch(themeProvider);
-    final isDark = themeMode == ThemeMode.dark;
+    // Dark mode is gone, so this is always false. It is NOT read from the
+    // ambient brightness: the drawer can be opened from a green "showcase"
+    // screen, whose theme reports Brightness.dark, and that would flip the
+    // menu to tones it never used in light mode.
+    final bool isDark = false;
     final user = authState.user;
     final role = user?['role']?.toString().toLowerCase();
     final isInvestor = role == 'investor';
@@ -99,7 +102,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         isInvestor ? 'INVESTOR MENU' : 'MENU',
                         style: GoogleFonts.gelasio(
                           color: Colors.white,
-                          fontSize: 10,
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 4,
                         ),
@@ -272,10 +275,12 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         child: Text(
                           'QUICK ACTIONS',
                           style: GoogleFonts.gelasio(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withOpacity(0.68),
-                            fontSize: 10,
+                            // The drawer is always the dark green panel, so the
+                            // section label is cream like MENU above it —
+                            // onSurface resolved dark here and sank into the
+                            // background.
+                            color: const Color(0xFFF4EFE3),
+                            fontSize: 12,
                             fontWeight: FontWeight.w700, // 👈 Match web bold
                             letterSpacing: 4,
                           ),
@@ -334,53 +339,6 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Theme Mode Toggle
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(32, 16, 32, 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'THEME MODE',
-                              style: GoogleFonts.gelasio(
-                                color: isDark ? Colors.white70 : const Color(0xFFF4EFE3),
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                ref
-                                    .read(themeProvider.notifier)
-                                    .setTheme(
-                                      isDark ? ThemeMode.light : ThemeMode.dark,
-                                    );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
-                                      .withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color:
-                                        (isDark ? Colors.white : const Color(0xFFF4EFE3))
-                                            .withOpacity(0.1),
-                                  ),
-                                ),
-                                child: Icon(
-                                  isDark
-                                      ? LucideIcons.moon
-                                      : LucideIcons.sun,
-                                  color: isDark ? Colors.white : const Color(0xFFF4EFE3),
-                                  size: 18,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
 
                       // Bottom Actions (LOG OUT)
                       Container(
@@ -424,10 +382,14 @@ class _SidebarExitButton extends ConsumerWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
+            // The sheet is navy in dark mode but CREAM in light — hardcoded
+            // white type vanished on it. Both tones now follow the surface.
             title: Text(
               'Logout',
               style: GoogleFonts.gelasio(
-                color: Colors.white,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : M4Theme.lightForeground,
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
               ),
@@ -435,8 +397,10 @@ class _SidebarExitButton extends ConsumerWidget {
             content: Text(
               'Are you sure you want to logout?',
               style: GoogleFonts.ebGaramond(
-                color: Colors.white70,
-                fontSize: 14,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white70
+                    : M4Theme.lightForeground.withOpacity(0.78),
+                fontSize: 15,
               ),
             ),
             actions: [
@@ -444,7 +408,13 @@ class _SidebarExitButton extends ConsumerWidget {
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'CANCEL',
-                  style: GoogleFonts.ebGaramond(color: const Color(0xFFC5A35B)),
+                  style: GoogleFonts.ebGaramond(
+                    // Gold reads on navy but washes out on cream.
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFFC5A35B)
+                        : const Color(0xFF163A2C),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               TextButton(
@@ -583,8 +553,8 @@ class _SidebarItem extends StatelessWidget {
               label,
               style: GoogleFonts.ebGaramond(
                 color: isActive ? activeColor : const Color(0xFFF4EFE3),
-                fontSize: 14,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                fontSize: 17,
+                fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
                 letterSpacing: -0.2,
               ),
             ),

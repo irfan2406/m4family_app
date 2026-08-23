@@ -306,8 +306,8 @@ class ProjectListScreen extends ConsumerWidget {
       drawer: cpCatalogMode ? const CpSidebarMenu() : const ConditionalDrawer(),
       body: Stack(
         children: [
-          // Figma parity: faint geometric mesh, behind content, on the green surface.
-          if (Theme.of(context).brightness == Brightness.dark) const MeshOverlay(),
+          // No page-level mesh: it ran to the top edge and showed through the
+          // header and nav. The texture lives on the cards only, like Figma.
           SafeArea(
             // Edge-to-edge: content runs under the gesture bar so scrolling fills
             // the screen. Trailing padding keeps the last item reachable.
@@ -429,7 +429,9 @@ class ProjectListScreen extends ConsumerWidget {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.ebGaramond(
-                                        fontSize: 15,
+                                        // Figma sets the wordmark a touch
+                                        // larger than the app had it.
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w500,
                                         color: Theme.of(
                                           context,
@@ -478,14 +480,12 @@ class ProjectListScreen extends ConsumerWidget {
                           // (active button filled black, matching projects/page.tsx).
                           Container(
                             padding: const EdgeInsets.all(3),
+                            // No outline on the toggle: the soft fill alone
+                            // holds the pair together.
                             decoration: BoxDecoration(
                               color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withOpacity(0.05),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                    .withOpacity(0.08),
-                              ),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -526,14 +526,23 @@ class ProjectListScreen extends ConsumerWidget {
                 // 🎛️ Pill Tabs
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 24),
-                  height: 45,
+                  // Figma runs this control noticeably slimmer than a stock
+                  // 45pt tab bar — that lower height is what makes it read as
+                  // sleek rather than chunky.
+                  height: 38,
+                  padding: const EdgeInsets.all(3),
+                  // Figma: a soft tinted track behind the three tabs — a lift
+                  // off the green, not a drawn outline.
                   decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(20),
+                    color: isDark
+                        ? Colors.white.withOpacity(0.05)
+                        : Colors.black.withOpacity(0.04),
+                    borderRadius: BorderRadius.circular(19),
+                    // Faint outline around the track, as in the reference.
                     border: Border.all(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withOpacity(0.08),
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.08,
+                      ),
                     ),
                   ),
                   child: Row(
@@ -549,12 +558,44 @@ class ProjectListScreen extends ConsumerWidget {
                             curve: Curves.easeInOut,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: isSelected
-                                  ? (Theme.of(context).brightness == Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(20),
+                              // Figma: the selected tab is a dark plate on the
+                              // green with white type — not a white chip.
+                              // Figma: the selected tab is a polished light
+                              // chip — a top-to-bottom sheen from near-white
+                              // into warm grey, so the surface catches light
+                              // instead of reading as flat paint.
+                              gradient: isSelected
+                                  ? const LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Color(0xFFFDFCF9),
+                                        Color(0xFFDCD9D0),
+                                      ],
+                                    )
+                                  : null,
+                              color: isSelected ? null : Colors.transparent,
+                              borderRadius: BorderRadius.circular(16),
+                              // Lifted inside the track: soft shadow beneath,
+                              // bright hairline on the edge for the highlight.
+                              boxShadow: isSelected
+                                  ? [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(
+                                          isDark ? 0.30 : 0.16,
+                                        ),
+                                        blurRadius: 12,
+                                        spreadRadius: -2,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ]
+                                  : null,
+                              border: isSelected
+                                  ? Border.all(
+                                      color: Colors.white.withOpacity(0.6),
+                                      width: 0.8,
+                                    )
+                                  : null,
                             ),
                             child: Text(
                               filter.toUpperCase(),
@@ -564,10 +605,7 @@ class ProjectListScreen extends ConsumerWidget {
                                     ? FontWeight.w600
                                     : FontWeight.bold,
                                 color: isSelected
-                                    ? (Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.black
-                                          : Colors.white)
+                                    ? const Color(0xFF15271E)
                                     : Theme.of(
                                         context,
                                       ).colorScheme.onSurface.withOpacity(0.55),
@@ -585,7 +623,13 @@ class ProjectListScreen extends ConsumerWidget {
     
                 // 🏙️ Project List
                 Expanded(
-                  child: projectsAsync.when(
+                  child: Stack(
+                    children: [
+                      // Figma: a whisper of the triangular mesh sits just below
+                      // the tabs, on the right. Anchored to this area's top so
+                      // it never climbs into the header or the nav.
+                      if (isDark) const MeshOverlay(opacity: 0.05),
+                      projectsAsync.when(
                     data: (projects) => ListView.builder(
                       padding: const EdgeInsets.fromLTRB(
                         24,
@@ -730,6 +774,8 @@ class ProjectListScreen extends ConsumerWidget {
                         ),
                       );
                     },
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -758,19 +804,27 @@ class _ProjectGridItem extends StatelessWidget {
         : (loc?.toString() ?? ''));
     final locationLabel = (locName.isEmpty ? 'N/A' : locName).split(',').first;
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
+      // Figma: cards stack close together and are softly rounded, not
+      // pill-round.
+      margin: const EdgeInsets.only(bottom: 12),
       height:
           200, // Enforce 16:9 aspect ratio parity with web (approx for mobile width)
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(24),
+        // Figma depth: the card sits ON the green, lifted by a soft shadow that
+        // falls straight down and stays tucked under the card. The negative
+        // spread is what keeps it from haloing past the corners.
+        // (The dark branch used to be Colors.transparent — i.e. no shadow at
+        // all — so cards read as flat cut-outs on the green.)
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.transparent : Color(0xFF163A2C)).withOpacity(
-              isDark ? 0.3 : 0.05,
-            ),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: isDark
+                ? Colors.black.withOpacity(0.34)
+                : const Color(0xFF163A2C).withOpacity(0.10),
+            blurRadius: 26,
+            spreadRadius: -6,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
@@ -780,7 +834,7 @@ class _ProjectGridItem extends StatelessWidget {
         children: [
           _projListImage(imageUrl),
           // Figma parity: faint network mesh over the photo ("picture ke upar").
-          const MeshOverlay(opacity: 0.22),
+          const MeshOverlay(opacity: 0.11),
           // Subtle Gradient Overlay for text readability on images
           Container(
             decoration: BoxDecoration(
@@ -808,16 +862,18 @@ class _ProjectGridItem extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.4),
+                  // Figma: pale translucent glass over the photo, not a dark
+                  // chip — the label reads light against the image.
+                  color: Colors.white.withOpacity(0.18),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  border: Border.all(color: Colors.white.withOpacity(0.22)),
                 ),
                 child: Text(
                   'ARTISTIC IMPRESSION',
                   style: GoogleFonts.gelasio(
-                    fontSize: 7,
+                    fontSize: 8,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withOpacity(0.9),
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -833,47 +889,36 @@ class _ProjectGridItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Web order: title ABOVE location.
+                // Figma order: a small tracked-out locality sits above the
+                // project name, and the name carries all the weight.
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        (project['title'] ?? 'M4 PROJECT')
-                            .toString()
-                            .toUpperCase(),
+                        locationLabel.toUpperCase(),
                         style: GoogleFonts.gelasio(
-                          fontSize: 20,
+                          fontSize: 9,
+                          color: Colors.white70,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          letterSpacing: -0.5,
+                          letterSpacing: 1.5,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          const Icon(
-                            LucideIcons.mapPin,
-                            size: 12,
-                            color: Colors.white70,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              locationLabel.toUpperCase(),
-                              style: GoogleFonts.gelasio(
-                                fontSize: 9,
-                                color: Colors.white70,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 1.5,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                      const SizedBox(height: 4),
+                      Text(
+                        (project['title'] ?? 'M4 Project').toString(),
+                        style: GoogleFonts.gelasio(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          letterSpacing: -0.5,
+                          height: 1.05,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

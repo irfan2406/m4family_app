@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
-import 'package:m4_mobile/core/providers/theme_provider.dart';
 
 /// Guest profile screen — mirrors the web `/guest/profile` page.
 /// Unauthenticated state: sign-in / create-account CTAs, "why join" grid,
@@ -14,8 +13,6 @@ class GuestProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final themeMode = ref.watch(themeProvider);
-    final bool isDarkMode = themeMode == ThemeMode.dark;
 
     final Color bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final Color textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
@@ -217,84 +214,6 @@ class GuestProfileScreen extends ConsumerWidget {
                             fontWeight: FontWeight.w700,
                             color: textMuted,
                             letterSpacing: 2,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
-                          ),
-                          decoration: BoxDecoration(
-                            color: cardColor,
-                            borderRadius: BorderRadius.circular(28),
-                            border: Border.all(color: borderColor),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? Colors.white.withValues(alpha: 0.05)
-                                      : const Color(0xFFF4EFE3),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: borderColor),
-                                ),
-                                child: Icon(
-                                  isDarkMode
-                                      ? LucideIcons.moon
-                                      : LucideIcons.globe,
-                                  size: 20,
-                                  color: textMuted,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'DARK MODE',
-                                      style: GoogleFonts.ebGaramond(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: textPrimary,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      isDarkMode ? 'ENABLED' : 'DISABLED',
-                                      style: GoogleFonts.ebGaramond(
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.w600,
-                                        color: textMuted,
-                                        letterSpacing: 1,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Switch(
-                                value: isDarkMode,
-                                activeThumbColor: isDark
-                                    ? Colors.black
-                                    : Colors.white,
-                                activeTrackColor: isDark
-                                    ? Colors.white
-                                    : Color(0xFF163A2C),
-                                onChanged: (checked) {
-                                  ref
-                                      .read(themeProvider.notifier)
-                                      .setTheme(
-                                        checked
-                                            ? ThemeMode.dark
-                                            : ThemeMode.light,
-                                      );
-                                },
-                              ),
-                            ],
                           ),
                         ),
                         const SizedBox(height: 16),

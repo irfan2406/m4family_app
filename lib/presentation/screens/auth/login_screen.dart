@@ -456,9 +456,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 controller: _otpControllers[index],
                 focusNode: _focusNodes[index],
                 textAlign: TextAlign.center,
+                textAlignVertical: TextAlignVertical.center,
                 keyboardType: TextInputType.number,
                 maxLength: 1,
                 cursorColor: Colors.white,
+                cursorWidth: 2,
+                cursorHeight: 28,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -466,6 +469,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 decoration: InputDecoration(
                   counterText: "",
+                  // The global input theme pads every field by 20 horizontally.
+                  // In a 45-wide OTP box that leaves ~5px for the glyph, so the
+                  // digit and caret were squeezed out of sight. These boxes
+                  // centre their own single character instead.
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(

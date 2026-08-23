@@ -365,8 +365,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
+                              // Softer green: the step marks sit back on the
+                              // cream page instead of punching out of it.
                               color: isActive
-                                  ? colorScheme.primary
+                                  ? colorScheme.primary.withOpacity(0.72)
                                   : isCompleted
                                   ? (isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3))
                                   : (isDark
@@ -375,9 +377,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: isActive
-                                    ? colorScheme.primary
+                                    ? colorScheme.primary.withOpacity(0.72)
                                     : isCompleted
-                                    ? colorScheme.primary
+                                    ? colorScheme.primary.withOpacity(0.55)
                                     : (isDark
                                           ? Colors.white.withOpacity(0.1)
                                           : Colors.black.withOpacity(0.1)),
@@ -399,7 +401,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               color: isActive
                                   ? (isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3))
                                   : isCompleted
-                                  ? colorScheme.primary
+                                  ? colorScheme.primary.withOpacity(0.62)
                                   : (isDark ? Colors.white60 : Color(0xFF5E6B60)),
                               size: 16,
                             ),
@@ -407,21 +409,34 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           const SizedBox(height: 8),
                           // Web parity: single line — long labels auto-shrink
                           // to fit (e.g. "CUSTOM VIEWS") instead of wrapping.
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              step['label'].toString().toUpperCase(),
-                              maxLines: 1,
-                              softWrap: false,
-                              style: GoogleFonts.ebGaramond(
-                                color: isActive
-                                    ? (isDark ? Colors.white : Color(0xFF163A2C))
-                                    : (isDark
-                                          ? Colors.white60
-                                          : Color(0xFF5E6B60)),
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: -0.3,
+                          Padding(
+                            // Gutter between neighbouring labels: without it
+                            // PHILOSOPHY and CUSTOM VIEWS fill their cells edge
+                            // to edge and run into each other.
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                step['label'].toString().toUpperCase(),
+                                maxLines: 1,
+                                softWrap: false,
+                                // 9.5 so the longest name (CUSTOM VIEWS) fits
+                                // its cell unscaled: FittedBox only shrinks
+                                // what overflows, so a size the long labels
+                                // clear is what keeps all five equal.
+                                style: GoogleFonts.ebGaramond(
+                                  color: isActive
+                                      ? (isDark
+                                            ? Colors.white
+                                            : M4Theme.lightForeground)
+                                      : (isDark
+                                            ? Colors.white70
+                                            : M4Theme.lightForeground
+                                                  .withOpacity(0.72)),
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ),
                           ),
@@ -468,31 +483,36 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         _buildGlassCard(
           child: Column(
             children: [
+              // Centred, a size up and a shade darker so the copy reads
+              // clearly on the cream card.
               Text(
                 '"M4 Family, with over a decade of excellence in Mumbai’s real estate landscape, has established itself as a trusted name in premium residential development."',
+                textAlign: TextAlign.center,
                 style: GoogleFonts.ebGaramond(
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w400,
-                  height: 1.8,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Renowned for delivering homes that blend contemporary design with enduring quality, we take pride in creating spaces that inspire modern living while retaining timeless value.',
-                style: GoogleFonts.ebGaramond(
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
-                  fontSize: 13,
+                  color: isDark ? Colors.white : M4Theme.lightForeground,
+                  fontSize: 15,
                   fontWeight: FontWeight.w500,
                   height: 1.8,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 6),
+              Text(
+                'Renowned for delivering homes that blend contemporary design with enduring quality, we take pride in creating spaces that inspire modern living while retaining timeless value.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.ebGaramond(
+                  color: isDark ? Colors.white : M4Theme.lightForeground,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  height: 1.8,
+                ),
+              ),
+              const SizedBox(height: 6),
               Text(
                 'Every development we undertake reflects meticulous planning, uncompromising quality, and a commitment to delivering on promises. From Aura Heights to our latest offering Ocean View, we continue to redefine what it means to call a place home.',
+                textAlign: TextAlign.center,
                 style: GoogleFonts.ebGaramond(
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
-                  fontSize: 13,
+                  color: isDark ? Colors.white : M4Theme.lightForeground,
+                  fontSize: 15,
                   fontWeight: FontWeight.w500,
                   height: 1.8,
                 ),
@@ -737,15 +757,18 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionHeader(LucideIcons.sparkles, 'INTERACTIVE LIVING'),
-        const SizedBox(height: 32),
+        // 24, matching the OUR STORY step's header-to-card gap.
+        const SizedBox(height: 24),
         _buildPhilosophyQuote(),
         const SizedBox(height: 32),
         Text(
           'EXPERIENCE THE FUTURE OF HOME PERSONALISATION. OUR PROPRIETARY CUSTOM VIEWS SUITE ALLOWS YOU TO VISUALISE AND CRAFT YOUR DREAM SPACE BEFORE IT\'S EVEN BUILT.',
           textAlign: TextAlign.center,
+          // Was 11px at 60% — too faint to read on the cream page.
           style: GoogleFonts.ebGaramond(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
-            fontSize: 11,
+            color: (isDark ? Colors.white : M4Theme.lightForeground)
+                .withOpacity(0.82),
+            fontSize: 13,
             fontWeight: FontWeight.w500,
             height: 1.8,
             letterSpacing: 0.5,
@@ -784,46 +807,38 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   Widget _buildPhilosophyQuote() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(40),
-        border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
-        ),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-      ),
+    // Card chrome comes from the same builder the OUR STORY card uses, so the
+    // surface, radius, padding, border and shadow can never drift apart.
+    return _buildGlassCard(
+      // Same treatment as the OUR STORY card: centred, EB Garamond at 15,
+      // full-strength foreground, upright rather than italic.
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             'CUSTOMER VIEWS',
+            textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               color: colorScheme.primary,
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 2,
             ),
           ),
           const SizedBox(height: 16),
           Text(
-            '"AT M4 FAMILY, WE BELIEVE THAT LUXURY IS DEEPLY PERSONAL. OUR \'CUSTOMER VIEWS\' PHILOSOPHY ENSURES THAT EVERY RESIDENT\'S PERSPECTIVE IS VALUED, ALLOWING FOR A COLLABORATIVE APPROACH TO CREATING LIVING SPACES THAT REFLECT INDIVIDUAL LIFESTYLES AND ASPIRATIONS. WE INVITE YOU TO EXPLORE OUR BESPOKE PERSONALISATION OPTIONS, WHERE YOUR VISION MEETS OUR ARCHITECTURAL EXCELLENCE."',
+            // Sentence case, like the OUR STORY copy: at the same 15pt, all
+            // caps render a size larger because every glyph sits at cap
+            // height, so the case is what made this card look bigger.
+            '"At M4 Family, we believe that luxury is deeply personal. Our \'Customer Views\' philosophy ensures that every resident\'s perspective is valued, allowing for a collaborative approach to creating living spaces that reflect individual lifestyles and aspirations. We invite you to explore our bespoke personalisation options, where your vision meets our architectural excellence."',
+            textAlign: TextAlign.center,
             style: GoogleFonts.ebGaramond(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.7),
-              fontSize: 11,
+              color: isDark ? Colors.white : M4Theme.lightForeground,
+              // Same 15 as the OUR STORY card, so both steps' body copy
+              // matches point for point.
+              fontSize: 15,
               fontWeight: FontWeight.w500,
-              height: 1.7,
-              fontStyle: FontStyle.italic,
-              letterSpacing: 0.2,
+              height: 1.8,
             ),
           ),
         ],
@@ -919,7 +934,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Center(
-                child: Icon(icon, color: colorScheme.primary, size: 18),
+                // Softer green, matching the step marks above.
+                child: Icon(
+                  icon,
+                  color: colorScheme.primary.withOpacity(0.62),
+                  size: 18,
+                ),
               ),
             ),
           ),

@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:intl/intl.dart';
-import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:go_router/go_router.dart';
@@ -21,8 +20,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final user = authState.user;
-    final themeMode = ref.watch(themeProvider);
-    final isDark = themeMode == ThemeMode.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (user == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -230,7 +228,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.ebGaramond(
-                                  fontSize: 9,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w500,
                                   color: isDark
                                       ? Colors.white70
@@ -255,7 +253,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           Text(
                             'BORN: ${born.toUpperCase()}',
                             style: GoogleFonts.ebGaramond(
-                              fontSize: 9,
+                              fontSize: 10,
                               fontWeight: FontWeight.w700,
                               color: isDark ? Colors.white38 : Colors.black45,
                               letterSpacing: 0.5,
@@ -492,9 +490,9 @@ class _SupportTile extends StatelessWidget {
                   Text(
                     subtitle,
                     style: GoogleFonts.ebGaramond(
-                      fontSize: 8,
+                      fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white24 : Colors.black45,
+                      color: isDark ? Colors.white70 : Colors.black54,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -504,7 +502,7 @@ class _SupportTile extends StatelessWidget {
             Icon(
               LucideIcons.chevronRight,
               size: 16,
-              color: isDark ? Colors.white24 : Colors.black26,
+              color: isDark ? Colors.white70 : Colors.black54,
             ),
             const SizedBox(width: 8),
           ],

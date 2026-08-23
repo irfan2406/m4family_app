@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:flutter/services.dart';
@@ -315,7 +314,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
         label,
         style: GoogleFonts.ebGaramond(
           color: const Color(0xFFF4EFE3),
-          fontSize: 8,
+          fontSize: 10,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
         ),
@@ -370,7 +369,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               label,
               style: GoogleFonts.ebGaramond(
                 color: foreground.withOpacity(0.72),
-                fontSize: 8,
+                fontSize: 10,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
               ),
@@ -463,7 +462,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                         project.toString().toUpperCase(),
                         style: GoogleFonts.ebGaramond(
                           color: foreground.withOpacity(0.72),
-                          fontSize: 8,
+                          fontSize: 10,
                           fontWeight: FontWeight.w600,
                           fontStyle: FontStyle.italic,
                         ),
@@ -487,7 +486,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     status,
                     style: GoogleFonts.ebGaramond(
                       color: theme.colorScheme.primary,
-                      fontSize: 7,
+                      fontSize: 9,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -507,7 +506,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   'EST. REWARD',
                   style: GoogleFonts.ebGaramond(
                     color: foreground.withOpacity(0.72),
-                    fontSize: 7,
+                    fontSize: 9,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1,
                   ),
@@ -582,7 +581,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 type,
                 style: GoogleFonts.ebGaramond(
                   color: foreground,
-                  fontSize: 9,
+                  fontSize: 10,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -591,7 +590,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 DateFormat('dd/MM/yyyy').format(date),
                 style: GoogleFonts.ebGaramond(
                   color: foreground.withOpacity(0.72),
-                  fontSize: 7,
+                  fontSize: 9,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -674,7 +673,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     'ADD TO YOUR SUCCESS MATRIX',
                     style: GoogleFonts.gelasio(
                       color: foreground.withOpacity(0.72),
-                      fontSize: 9,
+                      fontSize: 10,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 3,
                     ),
@@ -688,7 +687,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                         'SELECT PROJECT',
                         style: GoogleFonts.ebGaramond(
                           color: foreground.withOpacity(0.72),
-                          fontSize: 8,
+                          fontSize: 10,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                         ),
@@ -984,7 +983,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           label,
           style: GoogleFonts.ebGaramond(
             color: foreground.withOpacity(0.72),
-            fontSize: 8,
+            fontSize: 10,
             fontWeight: FontWeight.w600,
             letterSpacing: 1,
           ),

@@ -65,9 +65,11 @@ class CpBottomNav extends StatelessWidget {
                     onTap: () => onTap(i),
                     borderRadius: BorderRadius.circular(14),
                     child: Padding(
+                      // No vertical padding: the taller disc plus its dot
+                      // already fills the 64px bar.
                       padding: const EdgeInsets.symmetric(
                         horizontal: 2,
-                        vertical: 6,
+                        vertical: 0,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -76,7 +78,7 @@ class CpBottomNav extends StatelessWidget {
                           AnimatedContainer(
                             duration: M4Nav.animation,
                             curve: M4Nav.curve,
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(13),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(14),
                               color: active

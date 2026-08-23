@@ -170,7 +170,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
         Text(
           'SUPPORT MATRIX',
           style: GoogleFonts.gelasio(
-            fontSize: 9,
+            fontSize: 10,
             fontWeight: FontWeight.w700,
             color: scheme.onSurface,
             letterSpacing: 2,
@@ -267,7 +267,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           child: Text(
             'VIEW ALL LOGS',
             style: GoogleFonts.ebGaramond(
-              fontSize: 9,
+              fontSize: 10,
               fontWeight: FontWeight.w600,
               color: scheme.onSurface.withValues(alpha: 0.6),
               letterSpacing: 1.2,
@@ -375,7 +375,7 @@ class _MatrixItem extends StatelessWidget {
               subtitle.toUpperCase(),
               style: GoogleFonts.ebGaramond(
                 color: scheme.onSurface.withValues(alpha: 0.68),
-                fontSize: 8,
+                fontSize: 10,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.8,
               ),
@@ -445,7 +445,7 @@ class _TicketPreviewItem extends StatelessWidget {
                                 : id.substring(0, id.length.clamp(0, 8)),
                             style: GoogleFonts.ebGaramond(
                               color: const Color(0xFFC5A35B),
-                              fontSize: 8,
+                              fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -485,7 +485,7 @@ class _TicketPreviewItem extends StatelessWidget {
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.62),
-                            fontSize: 9,
+                            fontSize: 10,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -507,7 +507,7 @@ class _TicketPreviewItem extends StatelessWidget {
                   status.toUpperCase(),
                   style: GoogleFonts.ebGaramond(
                     color: badgeFg,
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

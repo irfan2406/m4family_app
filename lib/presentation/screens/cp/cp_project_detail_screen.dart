@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -19,7 +20,6 @@ import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 /// CP portal project details — visual parity with web `/cp/projects/[id]`.
 ///
@@ -2555,76 +2555,16 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ? raw
         : (raw is Map ? (raw['name'] ?? '').toString() : '');
     final effective = invalid(loc) ? defaultLoc : loc;
-    final isLight = scheme.brightness == Brightness.light;
-    final btnBg = isLight ? Colors.black : scheme.primary;
-    final btnFg = isLight ? Colors.white : scheme.onPrimary;
-    final embed =
-        'https://www.google.com/maps?q=${Uri.encodeComponent(effective)}&output=embed';
-
-    // Google's embed URL only renders inside an <iframe>; loading it directly
-    // shows "must be used in an iframe". Wrap it in a minimal HTML page (this is
-    // what the web does with its <iframe>).
-    final mapHtml =
-        '<!DOCTYPE html><html><head>'
-        '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
-        '<style>html,body{margin:0;padding:0;height:100%;overflow:hidden;background:transparent;}'
-        'iframe{border:0;width:100%;height:100%;}</style></head>'
-        '<body><iframe src="$embed" allowfullscreen loading="lazy" '
-        'referrerpolicy="no-referrer-when-downgrade"></iframe></body></html>';
-    final controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..loadHtmlString(mapHtml);
-
-    return Container(
-      height: 280,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: scheme.outlineVariant.withValues(alpha: 0.35),
-          width: 4,
-        ),
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.18),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          Positioned.fill(child: WebViewWidget(controller: controller)),
-          Positioned(
-            top: 14,
-            right: 14,
-            child: FilledButton.icon(
-              onPressed: () => _openUrl(
-                'https://www.google.com/maps?q=${Uri.encodeComponent(effective)}',
-              ),
-              icon: const Icon(LucideIcons.mapPin, size: 16),
-              label: Text(
-                'VIEW ON MAPS',
-                style: GoogleFonts.gelasio(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2,
-                ),
-              ),
-              style: FilledButton.styleFrom(
-                backgroundColor: btnBg,
-                foregroundColor: btnFg,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 10,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(999),
-                ),
-              ),
-            ),
-          ),
-        ],
+    return M4MapView(
+      query: effective,
+      onOpen: () => _openUrl(
+        'https://www.google.com/maps?q=${Uri.encodeComponent(effective)}',
       ),
     );
   }
 
   Widget _videoCallSheet(ColorScheme scheme) {
+
     final isLight = scheme.brightness == Brightness.light;
     final btnBg = isLight ? Colors.black : Colors.white;
     final btnFg = isLight ? Colors.white : Colors.black;

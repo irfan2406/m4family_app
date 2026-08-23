@@ -50,17 +50,14 @@ class _MainShellState extends ConsumerState<MainShell> {
   @override
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(navigationProvider);
-    final bool appIsDark = Theme.of(context).brightness == Brightness.dark;
-
-    // Home (0) & Projects (1) are the deep-green "showcase" screens in LIGHT
-    // mode (white typography); other tabs stay cream with green typography.
-    Widget showcase(int i, Widget child) => (i <= 1 && !appIsDark)
+    // Home (0) & Projects (1) are the deep-green "showcase" screens (white
+    // typography); other tabs stay cream with green typography.
+    Widget showcase(int i, Widget child) => (i <= 1)
         ? Theme(data: M4Theme.darkTheme, child: child)
         : child;
 
-    final ThemeData navTheme = appIsDark
-        ? M4Theme.darkThemeNavy
-        : (currentIndex <= 1 ? M4Theme.darkTheme : M4Theme.lightTheme);
+    final ThemeData navTheme =
+        currentIndex <= 1 ? M4Theme.darkTheme : M4Theme.lightTheme;
 
 
     return PopScope(

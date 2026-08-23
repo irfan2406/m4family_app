@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
-import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_picker.dart';
 import 'package:go_router/go_router.dart';
@@ -82,7 +81,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
 
   void _showToast(String message, {bool isError = false}) {
     if (!mounted) return;
-    final isDark = ref.read(themeProvider) == ThemeMode.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -108,7 +107,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
   }
 
   Future<void> _handleDelete(int index) async {
-    final isDark = ref.read(themeProvider) == ThemeMode.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => Dialog(
@@ -210,7 +209,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
     int? index,
     Map<String, dynamic>? existing,
   }) async {
-    final isDark = ref.read(themeProvider) == ThemeMode.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final nameController = TextEditingController(
       text: existing?['name']?.toString() ?? '',
     );
@@ -446,7 +445,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = ref.watch(themeProvider) == ThemeMode.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark
         ? Colors.black
         : Theme.of(context).scaffoldBackgroundColor;

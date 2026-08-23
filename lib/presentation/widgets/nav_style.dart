@@ -9,7 +9,7 @@ class M4Nav {
   M4Nav._();
 
   /// Bar height, excluding the float margin.
-  static const double height = 62;
+  static const double height = 64;
 
   /// Fully rounded pill - both ends read as floating, never edge-attached.
   static const double radius = 40;
@@ -22,13 +22,13 @@ class M4Nav {
   static const double bottomInset = 14;
 
   /// Inner horizontal padding between the pill edge and the first/last tab.
-  static const double innerPadding = 8;
+  static const double innerPadding = 16;
 
   /// Tab glyph size.
-  static const double iconSize = 22;
+  static const double iconSize = 24;
 
   /// Active-tab disc diameter.
-  static const double activeDisc = 40;
+  static const double activeDisc = 50;
 
   /// Inactive glyphs sit at this opacity of the active colour.
   static const double inactiveOpacity = 0.72;

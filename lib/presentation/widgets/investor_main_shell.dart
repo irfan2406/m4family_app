@@ -19,14 +19,10 @@ class InvestorMainShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final idx = ref.watch(investorNavigationIndexProvider);
 
-    final bool appIsDark = Theme.of(context).brightness == Brightness.dark;
-
-    // Home (0) & Projects (1) are the deep-green "showcase" screens in LIGHT
-    // mode (white typography); Support/Profile stay cream with green
-    // typography. In DARK mode everything inherits the navy theme.
-    Widget showcase(Widget child) => appIsDark
-        ? child
-        : Theme(data: M4Theme.darkTheme, child: child);
+    // Home (0) & Projects (1) are the deep-green "showcase" screens (white
+    // typography); Support/Profile stay cream with green typography.
+    Widget showcase(Widget child) =>
+        Theme(data: M4Theme.darkTheme, child: child);
 
     final screens = [
       showcase(const InvestorHomeScreen()),
@@ -36,15 +32,13 @@ class InvestorMainShell extends ConsumerWidget {
     ];
 
     // Nav + scaffold follow the active tab's surface.
-    final ThemeData navTheme = appIsDark
-        ? M4Theme.darkThemeNavy
-        : ((idx == 0 || idx == 1)
+    final ThemeData navTheme = (idx == 0 || idx == 1)
               ? M4Theme.darkTheme
               // Investor light tabs sit on a deeper warm greige than the other
               // portals' cream, so the cream cards read as raised surfaces.
               : M4Theme.lightTheme.copyWith(
                   scaffoldBackgroundColor: const Color(0xFFD4CFBC),
-                ));
+                );
 
     return Scaffold(
       backgroundColor: navTheme.scaffoldBackgroundColor,

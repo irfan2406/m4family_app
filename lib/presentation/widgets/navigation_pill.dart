@@ -115,7 +115,7 @@ class _NavItem extends StatelessWidget {
           AnimatedContainer(
             duration: M4Nav.animation,
             curve: M4Nav.curve,
-            padding: const EdgeInsets.all(9),
+            padding: const EdgeInsets.all(13),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isActive ? activeCircle : Colors.transparent,

@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +10,6 @@ import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 
@@ -27,7 +27,6 @@ class ContactScreen extends ConsumerStatefulWidget {
 class _ContactScreenState extends ConsumerState<ContactScreen> {
   Map<String, dynamic>? _config;
   bool _isLoading = true;
-  late final WebViewController _mapController;
 
   // Contact form (web parity: "Get in touch with us").
   final _nameController = TextEditingController();
@@ -40,7 +39,6 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
   @override
   void initState() {
     super.initState();
-    _initMapController();
     _fetchData();
   }
 
@@ -110,37 +108,6 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
-  }
-
-  void _initMapController() {
-    _mapController = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..loadHtmlString('''
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <style>
-            body { margin: 0; padding: 0; overflow: hidden; }
-            iframe {
-              width: 100vw;
-              height: 100vh;
-              border: 0;
-              filter: grayscale(1) contrast(1.1);
-            }
-          </style>
-        </head>
-        <body>
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3773.743144883176!2d72.812627!3d18.960416!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7ce0e2634354b%3A0x67399a9b3a3a3a3a!2sM4+Aura+Heights!5e0!3m2!1sen!2sin!4v1711234567890!5m2!1sen!2sin"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
-        </body>
-        </html>
-      ''');
   }
 
   Future<void> _fetchData() async {
@@ -839,118 +806,11 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     final mapsUrl =
         mapConfig['google_maps_url'] ??
         'https://maps.google.com/?q=M4+Aura+Heights';
-    return Container(
-      height: 300,
-      decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.03),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
-        ),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
-                  blurRadius: 30,
-                  offset: const Offset(0, 14),
-                ),
-              ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          WebViewWidget(controller: _mapController),
-          // Web parity: "Open in Maps" link top-left.
-          Positioned(
-            top: 16,
-            left: 16,
-            child: GestureDetector(
-              onTap: () => _launchUrl(mapsUrl),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: (isDark ? Colors.black : Colors.white).withOpacity(
-                    0.8,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Open in Maps',
-                      style: GoogleFonts.ebGaramond(
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Icon(
-                      LucideIcons.externalLink,
-                      size: 12,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          // "OPEN MAP" pill bottom-center.
-          Positioned(
-            bottom: 24,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: GestureDetector(
-                onTap: () => _launchUrl(mapsUrl),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 28,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: (isDark ? Colors.black : Colors.white).withOpacity(
-                      0.92,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                        0.1,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        LucideIcons.mapPin,
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
-                        size: 14,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'OPEN MAP',
-                        style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.white : Color(0xFF163A2C),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+    final query =
+        (mapConfig['address'] ?? 'M4 Aura Heights, Grant Road, Mumbai').toString();
+    return M4MapView(
+      query: query,
+      onOpen: () => _launchUrl(mapsUrl),
     ).animate().fadeIn(delay: 200.ms);
   }
 

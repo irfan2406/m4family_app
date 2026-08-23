@@ -29,14 +29,10 @@ class GuestMainShell extends ConsumerWidget {
     final currentIndex = ref.watch(guestNavigationProvider);
     final isDrawerOpen = ref.watch(drawerOpenProvider);
 
-    final bool appIsDark = Theme.of(context).brightness == Brightness.dark;
-
-    // LIGHT mode: Home (0) & Properties (1) are the deep-green "showcase"
-    // screens (white typography); the info tabs stay cream with green
-    // typography. DARK mode: everything inherits the navy theme.
-    Widget showcase(Widget child) => appIsDark
-        ? child
-        : Theme(data: M4Theme.darkTheme, child: child);
+    // Home (0) & Properties (1) are the deep-green "showcase" screens (white
+    // typography); the info tabs stay cream with green typography.
+    Widget showcase(Widget child) =>
+        Theme(data: M4Theme.darkTheme, child: child);
 
     final List<Widget> screens = [
       showcase(const GuestDashboardScreen()), // 0: Home     — green
@@ -48,9 +44,8 @@ class GuestMainShell extends ConsumerWidget {
 
     // Nav pill follows the active tab's surface: green on the showcase tabs,
     // cream on the info tabs, navy in dark mode.
-    final ThemeData navTheme = appIsDark
-        ? M4Theme.darkThemeNavy
-        : (currentIndex <= 1 ? M4Theme.darkTheme : M4Theme.lightTheme);
+    final ThemeData navTheme =
+        currentIndex <= 1 ? M4Theme.darkTheme : M4Theme.lightTheme;
 
     return Scaffold(
       backgroundColor: navTheme.scaffoldBackgroundColor,
@@ -94,16 +89,13 @@ class GuestMainShell extends ConsumerWidget {
   }
 }
 
-// Guest pill runs one size up from the shared M4Nav metrics so it matches the
-// web reference. Kept local to this shell: M4Nav still drives the customer, CP
-// and investor bars unchanged.
-const double _guestNavHeight = 74;
-const double _guestNavDisc = 50;
-const double _guestNavIcon = 24;
-const double _guestNavInnerPadding = 10;
+// Bar height, disc, glyph and side padding all come from the shared M4Nav
+// metrics, so guest, customer, CP and investor stay the same size. Only the
+// gap is local: this pill hugs its tabs instead of spanning the screen.
+const double _guestNavGap = 14;
 
-/// Height the floating pill occupies: 74px bar + 14px bottom margin.
-const double _navFootprint = 92;
+/// Height the floating pill occupies: the bar plus its bottom float margin.
+const double _navFootprint = M4Nav.height + M4Nav.bottomInset + 4;
 
 class _GuestNavigationPill extends StatelessWidget {
   final int currentIndex;
@@ -127,7 +119,7 @@ class _GuestNavigationPill extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: M4Nav.blur, sigmaY: M4Nav.blur),
           child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: _guestNavInnerPadding, vertical: (_guestNavHeight - _guestNavDisc) / 2),
+      padding: const EdgeInsets.symmetric(horizontal: M4Nav.innerPadding, vertical: (M4Nav.height - M4Nav.activeDisc) / 2),
       decoration: BoxDecoration(
         // Frosted glass: a translucent tint over the 30px blur, with a top-down
         // reflection so the bar reads as glass rather than a flat panel.
@@ -159,25 +151,25 @@ class _GuestNavigationPill extends StatelessWidget {
             isActive: currentIndex == 0,
             onTap: () => onTap(0),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: _guestNavGap),
           _NavIcon(
             icon: LucideIcons.building2,
             isActive: currentIndex == 1,
             onTap: () => onTap(1),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: _guestNavGap),
           _NavIcon(
             icon: LucideIcons.info,
             isActive: currentIndex == 2,
             onTap: () => onTap(2),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: _guestNavGap),
           _NavIcon(
             icon: LucideIcons.briefcase,
             isActive: currentIndex == 3,
             onTap: () => onTap(3),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: _guestNavGap),
           _NavIcon(
             icon: LucideIcons.headphones,
             isActive: currentIndex == 4,
@@ -211,11 +203,13 @@ class _NavIcon extends StatelessWidget {
       child: AnimatedContainer(
         duration: M4Nav.animation,
         curve: M4Nav.curve,
-        width: _guestNavDisc,
-        height: _guestNavDisc,
+        width: M4Nav.activeDisc,
+        height: M4Nav.activeDisc,
         decoration: BoxDecoration(
+          // Figma: on the green surfaces the active tab is a soft translucent
+          // disc with a white glyph, not a solid white chip.
           color: isActive
-              ? (isDark ? Colors.white : Color(0xFF163A2C))
+              ? (isDark ? Colors.white.withOpacity(0.22) : Color(0xFF163A2C))
               : Colors.transparent,
           shape: BoxShape.circle,
           boxShadow: isActive
@@ -233,9 +227,9 @@ class _NavIcon extends StatelessWidget {
           child: Icon(
             icon,
             color: isActive
-                ? (isDark ? Colors.black : Colors.white)
+                ? Colors.white
                 : (isDark ? Colors.white70 : Color(0xFF5E6B60)),
-            size: _guestNavIcon,
+            size: M4Nav.iconSize,
           ),
         ),
       ),

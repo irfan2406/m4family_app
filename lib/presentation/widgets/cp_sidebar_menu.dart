@@ -7,7 +7,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
-import 'package:m4_mobile/core/providers/theme_provider.dart';
 
 class CpSidebarMenu extends ConsumerStatefulWidget {
   const CpSidebarMenu({super.key});
@@ -31,7 +30,11 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
 
   // Confirm before logging out — a Yes/No popup so a stray tap can't log out.
   Future<void> _confirmLogout() async {
-    final isDark = ref.read(themeProvider) == ThemeMode.dark;
+    // Dark mode is gone, so this is always false. It is NOT read from the
+    // ambient brightness: the drawer can be opened from a green "showcase"
+    // screen, whose theme reports Brightness.dark, and that would flip the
+    // menu to tones it never used in light mode.
+    final bool isDark = false;
     final confirmed = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -157,8 +160,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
   @override
   Widget build(BuildContext context) {
     final idx = ref.watch(cpNavigationIndexProvider);
-    final themeMode = ref.watch(themeProvider);
-    final isDark = themeMode == ThemeMode.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Drawer(
       width: MediaQuery.of(context).size.width * 0.8,
@@ -335,56 +337,6 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           _close();
                           SupportHandlers.launchWhatsApp();
                         },
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Theme Mode Toggle
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'THEME MODE',
-                        style: GoogleFonts.gelasio(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 2,
-                          color: Colors.white,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          ref
-                              .read(themeProvider.notifier)
-                              .setTheme(
-                                isDark ? ThemeMode.light : ThemeMode.dark,
-                              );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
-                                .withOpacity(0.08),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
-                                  .withOpacity(0.1),
-                            ),
-                          ),
-                          // Web parity: light mode → Sparkles, dark → Moon
-                          // (resolvedTheme === "dark" ? Moon : Sparkles).
-                          child: Icon(
-                            isDark ? LucideIcons.moon : LucideIcons.sun,
-                            color: isDark ? Colors.white : const Color(0xFFF4EFE3),
-                            size: 18,
-                          ),
-                        ),
                       ),
                     ],
                   ),

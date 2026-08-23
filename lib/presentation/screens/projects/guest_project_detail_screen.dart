@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,6 @@ import 'package:m4_mobile/presentation/widgets/sidebar_menu.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 /// Decoded base64 image bytes keyed by data-URI, so multi-MB inline hero
 /// images (e.g. Cledor) decode once instead of on every rebuild.
@@ -2097,9 +2097,9 @@ class _GuestProjectDetailScreenState
     final loc = invalid ? defaultLoc : rawLoc;
 
     // Web parity: embedded Google Map (iframe -> WebView) + View on Maps button.
-    return _LocationMap(
-      location: loc,
-      onOpenMaps: () => _launchAction(
+    return M4MapView(
+      query: loc,
+      onOpen: () => _launchAction(
         'Opening Maps...',
         'https://www.google.com/maps?q=${Uri.encodeComponent(loc)}',
       ),
@@ -3664,135 +3664,6 @@ class _SquareAction extends StatelessWidget {
           color: isDark ? Colors.white : Color(0xFF163A2C),
           size: 20,
         ),
-      ),
-    );
-  }
-}
-
-class _LocationMap extends StatefulWidget {
-  final String location;
-  final VoidCallback onOpenMaps;
-  const _LocationMap({required this.location, required this.onOpenMaps});
-
-  @override
-  State<_LocationMap> createState() => _LocationMapState();
-}
-
-class _LocationMapState extends State<_LocationMap> {
-  late final WebViewController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0xFF141B3A));
-
-    final locEncoded = Uri.encodeComponent(widget.location);
-    final htmlContent =
-        '''
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-          <style>
-            body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0b111e; }
-            iframe {
-              width: 100%;
-              height: 100%;
-              border: 0;
-              filter: invert(90%) hue-rotate(180deg) brightness(95%) contrast(90%);
-            }
-          </style>
-        </head>
-        <body>
-          <iframe 
-            src="https://www.google.com/maps?q=$locEncoded&output=embed"
-            allowfullscreen
-            loading="lazy"
-          ></iframe>
-        </body>
-      </html>
-    ''';
-    _controller.loadHtmlString(htmlContent);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      height: 280,
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(40),
-        border: Border.all(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-          width: 4,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          WebViewWidget(controller: _controller),
-          Positioned(
-            top: 16,
-            right: 16,
-            child: _ScaleButton(
-              onTap: widget.onOpenMaps,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 9,
-                ),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? const Color(0xFF141B3A)
-                      : Colors.white.withValues(alpha: 0.95),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.08)
-                        : Colors.black.withValues(alpha: 0.08),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.15),
-                      blurRadius: 10,
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      LucideIcons.mapPin,
-                      color: M4Theme.premiumBlue,
-                      size: 12,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'VIEW ON MAPS',
-                      style: GoogleFonts.ebGaramond(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
