@@ -304,7 +304,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
           const SizedBox(height: 8),
           Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: scheme.onSurface.withValues(alpha: 0.68),
@@ -314,7 +314,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
           const SizedBox(height: 4),
           Text(
             value,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
               color: scheme.onSurface,
@@ -350,7 +350,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 Expanded(
                   child: TextField(
                     onChanged: (v) => setState(() => _search = v),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                     ),
@@ -391,7 +391,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 padding: EdgeInsets.only(left: 8),
                 child: Icon(LucideIcons.chevronDown, size: 14),
               ),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
@@ -477,7 +477,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                             (t['customerName'] ?? 'UNKNOWN')
                                 .toString()
                                 .toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: scheme.onSurface,
@@ -499,7 +499,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                                   (t['project'] ?? 'PROJECT')
                                       .toString()
                                       .toUpperCase(),
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     fontSize: 10.5,
                                     fontWeight: FontWeight.w600,
                                     color: scheme.onSurface.withValues(
@@ -535,7 +535,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                       ),
                       child: Text(
                         status,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 12.5,
                           fontWeight: FontWeight.w600,
                           color: isCompleted
@@ -683,7 +683,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
       children: [
         Text(
           title,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w600,
             color: titleColor.withValues(alpha: 0.82),
@@ -699,7 +699,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
               children: [
                 Text(
                   r.$1,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 11.5,
                     fontWeight: FontWeight.w500,
                     color: scheme.onSurface.withValues(alpha: 0.62),
@@ -708,7 +708,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 const SizedBox(width: 8),
                 Text(
                   r.$2.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 11.5,
                     fontWeight: FontWeight.w600,
                     color: scheme.onSurface.withValues(alpha: 0.92),
@@ -761,7 +761,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
       ),
       child: Text(
         label,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 12,
           fontWeight: FontWeight.w600,
           color: fg,
@@ -842,7 +842,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
               .map(
                 (d) => Text(
                   d,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w600,
                     color: scheme.onSurface.withValues(alpha: 0.62),
@@ -874,7 +874,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 onTap: () => setState(() => _selectedDay = sel ? null : day),
                 child: Text(
                   '$dayNo',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: sel ? FontWeight.w600 : FontWeight.w700,
                     color: sel

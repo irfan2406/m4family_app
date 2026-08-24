@@ -126,7 +126,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
               padding: const EdgeInsets.all(16),
               child: Text(
                 'Update status',
-                style: GoogleFonts.ebGaramond(fontWeight: FontWeight.bold),
+                style: GoogleFonts.inter(fontWeight: FontWeight.bold),
               ),
             ),
             ...options.map(
@@ -404,7 +404,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
             children: [
               Text(
                 'AED ',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.white70,
@@ -447,7 +447,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
           children: [
             Text(
               label,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 8,
                 fontWeight: FontWeight.w600,
                 color: Colors.white70,
@@ -457,7 +457,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
             const SizedBox(height: 6),
             Text(
               val,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
@@ -488,7 +488,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
             children: [
               Text(
                 'View all',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
@@ -580,7 +580,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                   ),
                   child: Text(
                     'ONGOING',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 8,
                       fontWeight: FontWeight.w600,
                     ),
@@ -596,7 +596,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                   children: [
                     Text(
                       p['title'] ?? '',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
@@ -605,7 +605,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                     const SizedBox(height: 4),
                     Text(
                       'FROM 18% YOY',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         color: Colors.white70,
                         fontWeight: FontWeight.w500,
                         fontSize: 8,
@@ -645,7 +645,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       children: [
         Text(
           'REGISTERED LEADS',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
           ),
@@ -668,7 +668,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                 const SizedBox(width: 8),
                 Text(
                   'FILTER',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1,
@@ -687,7 +687,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: TextField(
         onChanged: (v) => setState(() => _searchQuery = v),
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w700,
         ),
@@ -771,7 +771,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                     ),
                     child: Text(
                       status.replaceAll('_', ' ').toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 8,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFFF4EFE3),
@@ -833,7 +833,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                       ),
                       child: Text(
                         'CALL CLIENT',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           color: Colors.black,
@@ -858,7 +858,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                       ),
                       child: Text(
                         'UPDATE STATUS',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1,
@@ -890,7 +890,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                         children: [
                           Text(
                             'PAYMENT JOURNEY',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 9,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1,
@@ -899,7 +899,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                           const SizedBox(height: 4),
                           Text(
                             'WAITING FOR FIRST PAYMENT\nSCHEDULE...',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 8,
                               fontWeight: FontWeight.w700,
                               color: Colors.black45,
@@ -922,7 +922,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
   Widget _traceStep(String label, {required bool active}) {
     return Text(
       label,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.inter(
         fontSize: 8,
         fontWeight: FontWeight.w600,
         color: active ? Colors.black : Colors.black12,

@@ -582,7 +582,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                     alpha: 0.15,
                   ),
                   borderRadius: BorderRadius.circular(99),
@@ -594,11 +594,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 'SELECT DATE & TIME',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : Color(0xFF155A4F),
                 ),
               ),
             ),
@@ -625,14 +625,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       side: BorderSide(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withValues(alpha: 0.2),
                       ),
-                      foregroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                      foregroundColor: isDark ? Colors.white : Color(0xFF0C312B),
                     ),
                     child: Text(
                       'CANCEL',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -644,7 +644,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   child: FilledButton(
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                      backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
                       foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
@@ -653,7 +653,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     ),
                     child: Text(
                       'CONFIRM',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -1038,7 +1038,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                 const SizedBox(width: 6),
                                 Text(
                                   _locationLine(),
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
                                     color: scheme.onSurface.withValues(
@@ -1091,7 +1091,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         const SizedBox(height: 12),
                         Text(
                           'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                             letterSpacing: -0.2,
@@ -1281,7 +1281,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 child: Text(
                   label,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
@@ -1352,7 +1352,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               const SizedBox(height: 3),
               Text(
                 '360° VIEW',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 8,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1404,7 +1404,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 13,
               fontWeight: FontWeight.w500,
               color: scheme.onSurface,
@@ -1485,7 +1485,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               children: [
                 Text(
                   title.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.2,
@@ -1495,7 +1495,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 const SizedBox(height: 3),
                 Text(
                   subtitle.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 9,
                     fontWeight: FontWeight.w600,
                     color: subColor,
@@ -1523,7 +1523,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               ),
               child: Text(
                 'WATCH',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.4,
@@ -1554,7 +1554,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   ),
                   child: Text(
                     'VIEW',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.2,
@@ -1603,7 +1603,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     if (list.isEmpty) {
       return Text(
         'No amenities listed',
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           color: scheme.onSurfaceVariant,
           fontSize: 11,
         ),
@@ -1640,7 +1640,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9.5,
                       fontWeight: FontWeight.w600,
                       height: 1.2,
@@ -1678,7 +1678,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 children: [
                   Text(
                     'ESTIMATED\nCOMPLETION\nDATE',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.2,
@@ -1690,7 +1690,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   const SizedBox(height: 8),
                   Text(
                     est.replaceAll(' ', '\n'),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 46,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -1.5,
@@ -1728,7 +1728,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     children: [
                       Text(
                         '$pct%',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 22,
                           fontWeight: FontWeight.w600,
                           // Was inheriting the theme's navy — force dark.
@@ -1737,7 +1737,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       ),
                       Text(
                         'OVERALL',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 8,
                           fontWeight: FontWeight.w500,
                           color: scheme.onSurface.withValues(alpha: 0.7),
@@ -1758,7 +1758,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           overflow: _showFullProgressDesc
               ? TextOverflow.visible
               : TextOverflow.ellipsis,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             // Was 12.5 / 0.55 — small and faint. Bigger + darker for
             // readability.
             fontSize: 13.5,
@@ -1773,7 +1773,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               setState(() => _showFullProgressDesc = !_showFullProgressDesc),
           child: Text(
             _showFullProgressDesc ? 'Show less' : 'Read more',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12.5,
               fontWeight: FontWeight.w700,
               color: isLight ? Colors.black : scheme.onSurface,
@@ -1918,7 +1918,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     ),
                     child: Text(
                       status.toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 8,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1,
@@ -1958,7 +1958,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   (_project?['title'] ?? '').toString().toUpperCase(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.2,
@@ -1986,7 +1986,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             child: Center(
                               child: Text(
                                 '$pct%',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
                                   color: scheme.onSurfaceVariant,
@@ -2003,7 +2003,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         name.toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                           color: scheme.onSurfaceVariant,
@@ -2031,7 +2031,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       children: [
         Text(
           '2026',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             color: accent,
@@ -2090,7 +2090,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               children: [
                 Text(
                   'PHASE TRACKING',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 2,
@@ -2100,7 +2100,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 const SizedBox(height: 4),
                 Text(
                   'REAL-TIME DEVELOPMENT STATUS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 8,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 1,
@@ -2118,7 +2118,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               ),
               child: Text(
                 '${phases.length} MILESTONES',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 8,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1,
@@ -2189,7 +2189,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           ),
                           child: Text(
                             (i + 1).toString().padLeft(2, '0'),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: scheme.onSurfaceVariant,
@@ -2205,7 +2205,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                 name.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.6,
@@ -2226,7 +2226,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                   const SizedBox(width: 6),
                                   Text(
                                     status.toUpperCase(),
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.inter(
                                       fontSize: 8,
                                       fontWeight: FontWeight.w500,
                                       letterSpacing: 0.6,
@@ -2240,7 +2240,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         ),
                         Text(
                           '$pct%',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
@@ -2305,7 +2305,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             borderRadius: BorderRadius.circular(16),
             elevation: 4,
             iconEnabledColor: scheme.onSurface.withValues(alpha: 0.55),
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 13,
               fontWeight: FontWeight.w700,
               color: scheme.onSurface,
@@ -2315,7 +2315,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 value: null,
                 child: Text(
                   '— Select —',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: scheme.onSurface.withValues(alpha: 0.55),
@@ -2327,7 +2327,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   value: e['_id']?.toString(),
                   child: Text(
                     (e['name'] ?? '').toString().toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurface,
@@ -2339,7 +2339,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 value: 'other',
                 child: Text(
                   '+ OTHER (TYPE NAME)',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: const Color(0xFFC65B46),
@@ -2624,7 +2624,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           children: [
                             Text(
                               'VIDEO CALL',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: -0.2,
@@ -2635,7 +2635,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                               (_project?['title'] ?? '')
                                   .toString()
                                   .toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1.4,
@@ -2664,7 +2664,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       iconEnabledColor: scheme.onSurface.withValues(
                         alpha: 0.55,
                       ),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: scheme.onSurface,
@@ -2674,7 +2674,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           value: null,
                           child: Text(
                             '— Select Project —',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: scheme.onSurface.withValues(alpha: 0.55),
@@ -2686,7 +2686,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             value: (proj['_id'] ?? proj['id'])?.toString(),
                             child: Text(
                               (proj['title'] ?? '').toString().toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                                 color: scheme.onSurface,
@@ -2715,7 +2715,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       iconEnabledColor: scheme.onSurface.withValues(
                         alpha: 0.55,
                       ),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: scheme.onSurface,
@@ -2725,7 +2725,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           value: null,
                           child: Text(
                             '— Select —',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: scheme.onSurface.withValues(alpha: 0.55),
@@ -2737,7 +2737,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             value: e['_id']?.toString(),
                             child: Text(
                               (e['name'] ?? '').toString().toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                                 color: scheme.onSurface,
@@ -2749,7 +2749,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           value: 'other',
                           child: Text(
                             '+ OTHER (TYPE NAME)',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFFC65B46),
@@ -2886,7 +2886,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ),
         child: Text(
           label.toUpperCase(),
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w600,
             letterSpacing: 1,
@@ -2903,7 +2903,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     // Web labels are uppercase (text-[10.5px] font-black uppercase).
     return Text(
       text.toUpperCase(),
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.inter(
         fontSize: 10.5,
         fontWeight: FontWeight.w600,
         color: scheme.onSurface,
@@ -2921,7 +2921,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         SnackBar(
           content: Text(
             message,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
               color: Colors.white,
@@ -2953,7 +2953,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       keyboardType: keyboardType,
       onChanged: onChanged,
       decoration: _cpInputDec(scheme, hint: hint, errorText: errorText),
-      style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w700),
+      style: GoogleFonts.inter(fontWeight: FontWeight.w700),
     );
   }
 
@@ -2967,7 +2967,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     return InputDecoration(
       hintText: hint,
       errorText: errorText,
-      errorStyle: GoogleFonts.ebGaramond(
+      errorStyle: GoogleFonts.inter(
         fontSize: 11,
         fontWeight: FontWeight.w600,
         color: errorColor,
@@ -3111,7 +3111,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 right: 16,
                 child: Text(
                   '${_galleryIndex + 1} / ${_gallery.length}',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
                   ),

@@ -144,7 +144,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
 
     return Scaffold(
       backgroundColor: bg,
@@ -329,7 +329,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                         ),
                         child: Text(
                           'PRO',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 1,
@@ -388,7 +388,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
               const SizedBox(height: 6),
               Text(
                 value,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: const Color(0xFFF4EFE3),
@@ -530,7 +530,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: textPrimary,
@@ -554,7 +554,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                       ],
                       Text(
                         meta[i].toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.8,
@@ -652,7 +652,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                     children: [
                       Text(
                         'SECURE ACCESS ONLY',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1,
@@ -662,7 +662,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                       const SizedBox(height: 4),
                       Text(
                         'All documents downloaded contain a unique user watermark for security. Unauthorized sharing is strictly prohibited.',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           height: 1.4,

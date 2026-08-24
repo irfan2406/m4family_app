@@ -34,7 +34,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
       SnackBar(
         content: Text(
           'Checkout coming soon',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.bold,
           ),
@@ -50,8 +50,8 @@ class PremiumUpsellScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
     const subtle = Color(0xFFF4EFE3);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
@@ -161,7 +161,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                   Text(
                                         'EXPERIENCE YOUR FUTURE HOME LIKE NEVER BEFORE. EXCLUSIVE ACCESS FOR M4 ELITE MEMBERS ONLY.',
                                         textAlign: TextAlign.center,
-                                        style: GoogleFonts.ebGaramond(
+                                        style: GoogleFonts.inter(
                                           fontSize: 11,
                                           fontWeight: FontWeight.bold,
                                           color: subtle,
@@ -231,7 +231,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                           children: [
                                             Text(
                                               b.title.toUpperCase(),
-                                              style: GoogleFonts.ebGaramond(
+                                              style: GoogleFonts.inter(
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.bold,
                                                 color: textPrimary,
@@ -241,7 +241,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                             const SizedBox(height: 2),
                                             Text(
                                               b.desc.toUpperCase(),
-                                              style: GoogleFonts.ebGaramond(
+                                              style: GoogleFonts.inter(
                                                 fontSize: 9,
                                                 fontWeight: FontWeight.bold,
                                                 color: subtle,
@@ -337,7 +337,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                             ),
                                             child: Text(
                                               '/one-time',
-                                              style: GoogleFonts.ebGaramond(
+                                              style: GoogleFonts.inter(
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.bold,
                                                 color: subtle,
@@ -383,7 +383,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                       Text(
                                         '*GET INSTANT ACCESS TO ALL PREMIUM FEATURES AND PROPERTY TOURS',
                                         textAlign: TextAlign.center,
-                                        style: GoogleFonts.ebGaramond(
+                                        style: GoogleFonts.inter(
                                           fontSize: 8,
                                           fontWeight: FontWeight.bold,
                                           fontStyle: FontStyle.italic,
@@ -502,7 +502,7 @@ class _CircleAction extends StatelessWidget {
         child: Icon(
           icon,
           size: 20,
-          color: isDark ? Colors.white : Color(0xFF163A2C),
+          color: isDark ? Colors.white : Color(0xFF0C312B),
         ),
       ),
     );

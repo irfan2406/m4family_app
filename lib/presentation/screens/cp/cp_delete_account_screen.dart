@@ -83,7 +83,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
       SnackBar(
         content: Text(
           msg,
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
         ),
         backgroundColor: error ? _dangerDeep : Colors.green,
       ),
@@ -104,7 +104,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
           ),
           title: Text(
             'FINAL CONFIRMATION',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
@@ -114,10 +114,10 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
           content: Text(
             'This permanently erases your Channel Partner account and all '
             'associated data. This action cannot be undone.',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                 alpha: 0.7,
               ),
             ),
@@ -127,10 +127,10 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
               onPressed: () => Navigator.pop(ctx, false),
               child: Text(
                 'CANCEL',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                     alpha: 0.6,
                   ),
                 ),
@@ -146,7 +146,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
               ),
               child: Text(
                 'DELETE FOREVER',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1,
@@ -194,8 +194,8 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
@@ -346,7 +346,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
             'Deleting your account is permanent and cannot be reversed. All your '
             'data will be erased immediately and any pending commissions or rewards '
             'will be forfeited. You will be signed out of every device.',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12,
               height: 1.55,
               fontWeight: FontWeight.w500,
@@ -410,7 +410,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                       children: [
                         Text(
                           _purgeScope[i]['title'] as String,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: textPrimary,
@@ -419,7 +419,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                         const SizedBox(height: 3),
                         Text(
                           _purgeScope[i]['subtitle'] as String,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
                             height: 1.3,
@@ -551,14 +551,14 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
             controller: _passCtrl,
             obscureText: _obscurePass,
             onChanged: (_) => setState(() {}),
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: textPrimary,
             ),
             decoration: InputDecoration(
               hintText: '••••••••',
-              hintStyle: GoogleFonts.ebGaramond(
+              hintStyle: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: muted.withValues(alpha: 0.68),
@@ -626,7 +626,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
               child: Text(
                 'I understand this action is permanent and cannot be undone. I '
                 'authorise the deletion of my account and all associated data.',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 11,
                   height: 1.5,
                   fontWeight: FontWeight.w500,

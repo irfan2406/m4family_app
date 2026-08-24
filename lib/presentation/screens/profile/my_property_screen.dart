@@ -116,7 +116,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : Color(0xFF0C312B),
                   letterSpacing: 2,
                 ),
               ),
@@ -144,7 +144,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
         color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
         ),
         boxShadow: isDark
             ? []
@@ -168,18 +168,18 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                  color: isDark ? Colors.white38 : Color(0xFF155A4F),
                   letterSpacing: 1.5,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 '$units Units • $visits Visits',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : Color(0xFF155A4F),
                 ),
               ),
             ],
@@ -193,18 +193,18 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                  color: isDark ? Colors.white38 : Color(0xFF155A4F),
                   letterSpacing: 1.5,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 '₹${NumberFormat('#,##,###').format(_totalValue)}',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: const Color(0xFF163A2C),
+                  color: const Color(0xFF155A4F),
                 ),
               ),
             ],
@@ -225,7 +225,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
         color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
         ),
         boxShadow: isDark
             ? []
@@ -247,14 +247,14 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                       0.05,
                     ),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
                     LucideIcons.building2,
-                    color: isDark ? Colors.white54 : Color(0xFF5E6B60),
+                    color: isDark ? Colors.white54 : Color(0xFF155A4F),
                     size: 24,
                   ),
                 ),
@@ -265,11 +265,11 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                     children: [
                       Text(
                         (project['title'] ?? 'Unknown Project').toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           textStyle: const TextStyle(inherit: true),
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: isDark ? Colors.white : Color(0xFF163A2C),
+                          color: isDark ? Colors.white : Color(0xFF155A4F),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -278,17 +278,17 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                           Icon(
                             LucideIcons.mapPin,
                             size: 10,
-                            color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                            color: isDark ? Colors.white38 : Color(0xFF155A4F),
                           ),
                           const SizedBox(width: 4),
                           Text(
                             (project['location']?['name'] ?? 'Developing Area')
                                 .toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               textStyle: const TextStyle(inherit: true),
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
-                              color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                              color: isDark ? Colors.white38 : Color(0xFF155A4F),
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -304,10 +304,10 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.01),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.01),
               border: Border(
                 top: BorderSide(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                     0.05,
                   ),
                 ),
@@ -366,10 +366,10 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                         ),
                         Text(
                           '$paymentPercent% PAID',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF163A2C),
+                            color: const Color(0xFF155A4F),
                           ),
                         ),
                       ],
@@ -379,7 +379,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                       height: 6,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withOpacity(0.05),
                         borderRadius: BorderRadius.circular(3),
                       ),
@@ -411,7 +411,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
         Icon(
           LucideIcons.building2,
           size: 64,
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.1),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.1),
         ),
         const SizedBox(height: 24),
         Text(
@@ -420,7 +420,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             textStyle: const TextStyle(inherit: true),
             fontSize: 10,
             fontWeight: FontWeight.w700,
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.72),
             letterSpacing: 2,
           ),
         ),
@@ -447,7 +447,7 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         status.toUpperCase(),
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 10,
           fontWeight: FontWeight.w600,
           color: color,
@@ -477,20 +477,20 @@ class _InfoItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 10,
             fontWeight: FontWeight.w500,
-            color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+            color: isDark ? Colors.white38 : Color(0xFF155A4F),
             letterSpacing: 1,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           value,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : Color(0xFF155A4F),
           ),
         ),
       ],
@@ -518,12 +518,12 @@ class _IconButton extends StatelessWidget {
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
           ),
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white54 : Color(0xFF5E6B60),
+          color: isDark ? Colors.white54 : Color(0xFF155A4F),
           size: 20,
         ),
       ),

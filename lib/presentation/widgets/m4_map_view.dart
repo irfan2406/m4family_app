@@ -116,7 +116,7 @@ class _M4MapViewState extends State<M4MapView> {
                   children: [
                     Text(
                       'Open in Maps',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         color: ink,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,

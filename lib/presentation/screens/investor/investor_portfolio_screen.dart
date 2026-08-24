@@ -160,7 +160,7 @@ class _InvestorPortfolioScreenState
 
   // ─── Header ────────────────────────────────────────────────────────────────
   Widget _buildHeader(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -276,7 +276,7 @@ class _InvestorPortfolioScreenState
         style: GoogleFonts.gelasio(
           fontSize: 11,
           fontWeight: FontWeight.w700,
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5),
           letterSpacing: 3,
         ),
       ),
@@ -285,7 +285,7 @@ class _InvestorPortfolioScreenState
 
   // ─── Summary card ────────────────────────────────────────────────────────────
   Widget _buildSummaryCard(bool isDark) {
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
 
     final count = _holdings.length.toString().padLeft(2, '0');
 
@@ -368,7 +368,7 @@ class _InvestorPortfolioScreenState
                       const SizedBox(width: 4),
                       Text(
                         '${_roiPct >= 0 ? '+' : ''}${_roiPct.toStringAsFixed(1)}%',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: _gains >= 0 ? _green : _amber,
@@ -441,7 +441,7 @@ class _InvestorPortfolioScreenState
         const SizedBox(height: 6),
         Text(
           value,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: valueColor,
@@ -493,7 +493,7 @@ class _InvestorPortfolioScreenState
     required String value,
     required Color accent,
   }) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
@@ -533,7 +533,7 @@ class _InvestorPortfolioScreenState
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: textPrimary,
@@ -557,7 +557,7 @@ class _InvestorPortfolioScreenState
 
   // ─── Allocation breakdown ────────────────────────────────────────────────────
   Widget _buildAllocationCard(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
@@ -654,7 +654,7 @@ class _InvestorPortfolioScreenState
             name.toUpperCase(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w500,
               color: textPrimary,
@@ -665,7 +665,7 @@ class _InvestorPortfolioScreenState
         const SizedBox(width: 12),
         Text(
           '${pct.toStringAsFixed(0)}%',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w600,
             color: muted,
@@ -677,7 +677,7 @@ class _InvestorPortfolioScreenState
 
   // ─── Holding card ────────────────────────────────────────────────────────────
   Widget _buildHoldingCard(dynamic holding, bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
@@ -787,7 +787,7 @@ class _InvestorPortfolioScreenState
                       Expanded(
                         child: Text(
                           location.toUpperCase(),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                             color: muted,
@@ -877,7 +877,7 @@ class _InvestorPortfolioScreenState
   }
 
   Widget _buildImage(String? url, bool isDark) {
-    final placeholderBg = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final placeholderBg = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
       alpha: 0.05,
     );
     if (url == null || url.isEmpty) {
@@ -886,7 +886,7 @@ class _InvestorPortfolioScreenState
         child: Icon(
           LucideIcons.building2,
           size: 48,
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.15),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.15),
         ),
       );
     }
@@ -900,7 +900,7 @@ class _InvestorPortfolioScreenState
         child: Icon(
           LucideIcons.building2,
           size: 48,
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.15),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.15),
         ),
       ),
     );
@@ -928,7 +928,7 @@ class _InvestorPortfolioScreenState
             .toString();
     final imageUrl = _firstImage(holding);
 
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
     final sheetBg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
     final border = isDark
@@ -1190,7 +1190,7 @@ class _InvestorPortfolioScreenState
 
   // ─── Empty / error states ────────────────────────────────────────────────────
   Widget _buildEmptyState(bool isDark) {
-    final faint = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.55);
+    final faint = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.55);
     return Padding(
       padding: const EdgeInsets.only(top: 32),
       child: Center(
@@ -1211,10 +1211,10 @@ class _InvestorPortfolioScreenState
             Text(
               'Your portfolio holdings will appear here.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                   alpha: 0.35,
                 ),
               ),
@@ -1228,7 +1228,7 @@ class _InvestorPortfolioScreenState
                   vertical: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : Color(0xFF0C312B),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Text(
@@ -1249,7 +1249,7 @@ class _InvestorPortfolioScreenState
   }
 
   Widget _buildErrorState(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
     return Center(
       child: Padding(
@@ -1519,7 +1519,7 @@ class _RoiBadge extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             '${positive ? '+' : ''}${roi.toStringAsFixed(1)}% ROI',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: color,
@@ -1566,7 +1566,7 @@ class _DetailItem extends StatelessWidget {
         Text(
           value.toUpperCase(),
           textAlign: alignEnd ? TextAlign.right : TextAlign.left,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w500,
             fontStyle: FontStyle.italic,
@@ -1617,7 +1617,7 @@ class _SpecItem extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           value.toUpperCase(),
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: textPrimary,

@@ -479,7 +479,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
               children: [
                 Text(
                   name.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: scheme.onSurface,
@@ -515,7 +515,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
             ),
             child: Text(
               status.toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 8,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1,
@@ -628,7 +628,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                                 value: selectedProjectId,
                                 hint: Text(
                                   'SELECT PROJECT',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
                                     color: scheme.onSurface.withValues(
@@ -655,7 +655,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                                           (p['title'] ?? 'Project')
                                               .toString()
                                               .toUpperCase(),
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.inter(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w500,
                                             color: scheme.onSurface,
@@ -839,14 +839,14 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
         inputFormatters: isPhone
             ? Validators.phoneFormatters
             : Validators.nameFormatters,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w700,
           color: scheme.onSurface,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.ebGaramond(
+          hintStyle: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w500,
             color: scheme.onSurface.withValues(alpha: 0.62),

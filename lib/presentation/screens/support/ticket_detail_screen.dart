@@ -193,8 +193,8 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
       alpha: 0.68,
     );
     final border = isDark
@@ -277,7 +277,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   subject,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: textPrimary,
@@ -345,7 +345,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             const SizedBox(height: 20),
             Text(
               'UNABLE TO LOAD TICKET',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
@@ -372,7 +372,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: textPrimary == Colors.white
@@ -404,7 +404,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             const SizedBox(height: 20),
             Text(
               'NO MESSAGES YET',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
@@ -414,7 +414,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             const SizedBox(height: 8),
             Text(
               'START THE CONVERSATION BELOW',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 9,
                 fontWeight: FontWeight.w600,
                 color: muted,
@@ -539,7 +539,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   if (text.isNotEmpty)
                     Text(
                       text,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: bubbleTextColor,
@@ -611,7 +611,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               const SizedBox(width: 6),
               Text(
                 'VIEW ATTACHMENT',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 9,
                   fontWeight: FontWeight.w600,
                   color: textColor,
@@ -636,7 +636,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
           const SizedBox(width: 6),
           Text(
             'VIEW ATTACHMENT',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 9,
               fontWeight: FontWeight.w600,
               color: textColor,
@@ -681,14 +681,14 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 maxLines: 4,
                 textInputAction: TextInputAction.send,
                 onSubmitted: (_) => _handleSend(),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
                 ),
                 decoration: InputDecoration(
                   hintText: 'TYPE MESSAGE...',
-                  hintStyle: GoogleFonts.ebGaramond(
+                  hintStyle: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                     color: muted.withValues(alpha: 0.6),

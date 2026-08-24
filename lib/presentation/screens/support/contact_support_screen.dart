@@ -315,7 +315,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                       children: [
                         Text(
                           title.toUpperCase(),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -325,7 +325,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                         const SizedBox(height: 12),
                         Text(
                           address,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.68),
@@ -521,7 +521,7 @@ class _ContactRowItem extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

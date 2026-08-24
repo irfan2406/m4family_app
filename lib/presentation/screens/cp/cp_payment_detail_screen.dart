@@ -121,8 +121,8 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
 
     return Scaffold(
       backgroundColor: bg,
@@ -166,7 +166,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
               children: [
                 Text(
                   'Commission details',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                     color: textPrimary,
@@ -175,7 +175,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
                 const SizedBox(height: 2),
                 Text(
                   _shortId,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1,
@@ -191,12 +191,12 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                   alpha: 0.04,
                 ),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                     alpha: 0.08,
                   ),
                 ),
@@ -220,7 +220,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             const SizedBox(height: 16),
             Text(
               'Commission not found',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 color: textPrimary,
@@ -230,7 +230,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             Text(
               'This commission could not be found or you do not have access.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(fontSize: 12, color: muted),
+              style: GoogleFonts.inter(fontSize: 12, color: muted),
             ),
           ],
         ),
@@ -298,7 +298,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final divider = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final divider = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
       alpha: 0.06,
     );
 
@@ -337,7 +337,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.right,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: textPrimary,
@@ -371,7 +371,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
               children: [
                 Text(
                   'COMMISSION ID',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.2,
@@ -397,12 +397,12 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                   alpha: 0.04,
                 ),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                     alpha: 0.08,
                   ),
                 ),
@@ -427,7 +427,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 10,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -444,7 +444,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
   Widget _valueText(String text, Color textPrimary) {
     return Text(
       text,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.inter(
         fontSize: 12,
         fontWeight: FontWeight.w500,
         color: textPrimary,

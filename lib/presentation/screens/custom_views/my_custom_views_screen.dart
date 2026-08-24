@@ -103,7 +103,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           // subtitle with a paint-bucket icon.
           Text(
             'PORTFOLIO SUITE',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 14,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.5,
@@ -220,7 +220,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           const SizedBox(height: 12),
           Text(
             'Automatic reflection of your purchased units from the M4 Admin Panel. Select a unit below to start or manage your bespoke interior customizations.',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 13,
               height: 1.6,
               fontWeight: FontWeight.w500,
@@ -259,7 +259,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   alignment: Alignment.center,
                   child: Text(
                     'SELECTION',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
@@ -286,7 +286,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   alignment: Alignment.center,
                   child: Text(
                     'HISTORY',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
@@ -313,7 +313,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       );
     }
     if (state.units.isEmpty) {
-      final foreground = isDark ? Colors.white : Color(0xFF163A2C);
+      final foreground = isDark ? Colors.white : Color(0xFF0C312B);
       // Web parity: styled empty-state card (orange icon box + heading + copy)
       // under the "ASSET CUSTOMIZATION STATUS" header, not bare text.
       return SliverToBoxAdapter(
@@ -376,7 +376,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   const SizedBox(height: 24),
                   Text(
                     'NO UNITS FOUND',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: foreground,
@@ -387,7 +387,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   Text(
                     'You currently have no purchased units registered in your portfolio that support online customization.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       height: 1.6,
@@ -443,7 +443,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       );
     }
 
-    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
+    final foreground = isDark ? Colors.white : Color(0xFF0C312B);
     final q = _historyQuery.trim().toLowerCase();
     // Web parity: filter by project title or log id.
     final filtered = state.history.where((req) {
@@ -579,7 +579,7 @@ class _UnitCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final status = unit['customizationStatus'] ?? 'NOT_STARTED';
-    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
+    final foreground = isDark ? Colors.white : Color(0xFF0C312B);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
@@ -620,7 +620,7 @@ class _UnitCard extends ConsumerWidget {
                                 )
                                 .toUpperCase() ??
                             'UNIT',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 7,
                           fontWeight: FontWeight.w600,
                           color: foreground.withOpacity(0.68),
@@ -630,7 +630,7 @@ class _UnitCard extends ConsumerWidget {
                       Text(
                         unit['projectName']?.toString().toUpperCase() ??
                             'M4 PROJECT',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: foreground,
@@ -769,7 +769,7 @@ class _UnitCard extends ConsumerWidget {
                         status == 'NOT_STARTED'
                             ? 'START PERSONALISATION'
                             : 'MANAGE SELECTION',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
@@ -816,7 +816,7 @@ class _HistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
+    final foreground = isDark ? Colors.white : Color(0xFF0C312B);
     final id =
         req['_id']
             ?.toString()
@@ -878,7 +878,7 @@ class _HistoryCard extends StatelessWidget {
                       Text(
                         req['project']?['title']?.toString().toUpperCase() ??
                             'STANDARD UNIT',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: foreground,
@@ -968,7 +968,7 @@ class _HistoryMeta extends StatelessWidget {
         Text(
           value,
           textAlign: alignEnd ? TextAlign.right : TextAlign.left,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 10,
             fontWeight: FontWeight.w700,
             color: foreground,
@@ -1070,7 +1070,7 @@ class _DetailDialog {
                                                 ?.toString()
                                                 .toUpperCase() ??
                                             'FULL UNIT',
-                                        style: GoogleFonts.ebGaramond(
+                                        style: GoogleFonts.inter(
                                           fontSize: 9,
                                           fontWeight: FontWeight.w500,
                                           letterSpacing: 1.2,
@@ -1145,7 +1145,7 @@ class _DetailDialog {
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style:
-                                                      GoogleFonts.ebGaramond(
+                                                      GoogleFonts.inter(
                                                         fontSize: 7,
                                                         fontWeight:
                                                             FontWeight.w600,
@@ -1161,7 +1161,7 @@ class _DetailDialog {
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style:
-                                                      GoogleFonts.ebGaramond(
+                                                      GoogleFonts.inter(
                                                         fontSize: 11,
                                                         fontWeight:
                                                             FontWeight.w600,
@@ -1233,7 +1233,7 @@ class _DetailDialog {
                                 child: Text(
                                   errorMessage!.toUpperCase(),
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     color: Colors.redAccent,
                                     fontSize: 9,
                                     fontWeight: FontWeight.w500,
@@ -1387,7 +1387,7 @@ class _DetailDialog {
                                           child: Text(
                                             'MODIFY SELECTIONS',
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.ebGaramond(
+                                            style: GoogleFonts.inter(
                                               color: Colors.white,
                                               fontSize: 10,
                                               fontWeight: FontWeight.w600,
@@ -1429,7 +1429,7 @@ class _DetailDialog {
                                         child: Text(
                                           'CLOSE VIEW',
                                           textAlign: TextAlign.center,
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.inter(
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
@@ -1527,7 +1527,7 @@ class _StatusBadge extends StatelessWidget {
       child: Text(
         // Web parity: "NOT STARTED" (space, not underscore).
         status.replaceAll('_', ' ').toUpperCase(),
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           color: color,
           fontSize: 8,
           fontWeight: FontWeight.w600,
@@ -1582,7 +1582,7 @@ class _IconBox extends StatelessWidget {
       child: Icon(
         icon,
         size: 20,
-        color: color ?? (isDark ? Colors.white : Color(0xFF163A2C)),
+        color: color ?? (isDark ? Colors.white : Color(0xFF0C312B)),
       ),
     );
   }
@@ -1602,13 +1602,13 @@ class _DetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
+    final foreground = isDark ? Colors.white : Color(0xFF0C312B);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 8,
             fontWeight: FontWeight.w600,
             color: foreground.withOpacity(0.68),
@@ -1618,7 +1618,7 @@ class _DetailItem extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           value.toUpperCase(),
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w600,
             color: isPrimary

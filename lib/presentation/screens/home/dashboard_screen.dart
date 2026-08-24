@@ -367,7 +367,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           label,
           textAlign: TextAlign.center,
           // Was 8px / 60% — far too small and faint to read. Bigger + darker.
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             color: foreground.withOpacity(0.85),
             fontSize: 10.5,
             fontWeight: FontWeight.w600,
@@ -833,7 +833,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Text(
                     'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner.',
                     textAlign: TextAlign.justify,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: Theme.of(
                         context,
                       ).colorScheme.onSurface.withOpacity(0.6),
@@ -1003,7 +1003,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           overflow: TextOverflow.ellipsis,
                                           // Was 10px / 80% — faint on the photo.
                                           // Bigger, bolder, near-solid white.
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.inter(
                                             color: Colors.white.withOpacity(
                                               0.95,
                                             ),
@@ -1429,13 +1429,13 @@ class _CategoryChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
         decoration: BoxDecoration(
           color: isActive
-              ? (isDark ? Colors.white : Color(0xFF163A2C))
+              ? (isDark ? Colors.white : Color(0xFF0C312B))
               : (isDark
                     ? Colors.white.withOpacity(0.05)
                     : Colors.black.withOpacity(0.05)),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.1),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.1),
           ),
         ),
         child: Text(
@@ -1443,7 +1443,7 @@ class _CategoryChip extends StatelessWidget {
           style: GoogleFonts.gelasio(
             color: isActive
                 ? (isDark ? Colors.black : Colors.white)
-                : (isDark ? Colors.white38 : Color(0xFF5E6B60)),
+                : (isDark ? Colors.white38 : Color(0xFF155A4F)),
             fontSize: 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 2,
@@ -1536,7 +1536,7 @@ class _ProjectCard extends StatelessWidget {
                           ),
                           child: Text(
                             status.toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               color: Colors.white,
                               fontSize: 8,
                               fontWeight: FontWeight.w500,
@@ -1559,7 +1559,7 @@ class _ProjectCard extends StatelessWidget {
                         ),
                         child: Text(
                           'ARTISTIC IMPRESSION',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Colors.white,
                             fontSize: 6.5,
                             fontWeight: FontWeight.w600,
@@ -1602,7 +1602,7 @@ class _ProjectCard extends StatelessWidget {
                           location.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: scheme.onSurface.withOpacity(0.55),
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
@@ -1625,7 +1625,7 @@ class _ProjectCard extends StatelessWidget {
                       children: [
                         Text(
                           'READ MORE',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: scheme.surface,
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -1677,12 +1677,12 @@ class _QuickAction extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                     0.05,
                   ),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                       0.08,
                     ),
                   ),
@@ -1698,7 +1698,7 @@ class _QuickAction extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 8,
               fontWeight: FontWeight.w700,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
@@ -1748,7 +1748,7 @@ class _EngageCell extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
@@ -1762,7 +1762,7 @@ class _EngageCell extends StatelessWidget {
               textAlign: TextAlign.center,
               // Was 10.5px / 65% (then 12 / 82%) — still read as faint grey.
               // Now near-solid foreground at a proper body size.
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: scheme.onSurface.withOpacity(0.95),
@@ -1822,7 +1822,7 @@ class _QuickFilterSheet extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                       0.1,
                     ),
                   ),
@@ -1852,7 +1852,7 @@ class _QuickFilterSheet extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 20),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : Color(0xFF0C312B),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Center(
@@ -1907,19 +1907,19 @@ class _FilterSection extends StatelessWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                       0.05,
                     ),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                         0.05,
                       ),
                     ),
                   ),
                   child: Text(
                     opt,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
@@ -1943,7 +1943,7 @@ class _SliderNavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
+    final foreground = isDark ? Colors.white : Color(0xFF0C312B);
 
     return GestureDetector(
       onTap: onTap,
@@ -2012,7 +2012,7 @@ class _PremiumInputField extends StatelessWidget {
                   border: Border.all(
                     color: hasError
                         ? _errorColor
-                        : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                        : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                             0.08,
                           ),
                     width: hasError ? 1.5 : 1,
@@ -2034,7 +2034,7 @@ class _PremiumInputField extends StatelessWidget {
                   onChanged: onChanged,
                   inputFormatters: inputFormatters,
                   cursorColor: Theme.of(context).colorScheme.onSurface,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 15.5,
                     fontWeight: FontWeight.w700,
@@ -2045,7 +2045,7 @@ class _PremiumInputField extends StatelessWidget {
                     isCollapsed: true,
                     hintText: label,
                     // Was 14px / 68% — the placeholder read as washed out.
-                    hintStyle: GoogleFonts.ebGaramond(
+                    hintStyle: GoogleFonts.inter(
                       color: hasError
                           ? _errorColor.withOpacity(0.85)
                           : Theme.of(
@@ -2068,7 +2068,7 @@ class _PremiumInputField extends StatelessWidget {
               padding: const EdgeInsets.only(left: 10, top: 6),
               child: Text(
                 errorText!,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   color: _errorColor,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -2106,17 +2106,17 @@ class _PremiumDropdownField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.03),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
               ),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButtonFormField<String>(
                 value: value,
                 dropdownColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 13,
                 ),
@@ -2129,7 +2129,7 @@ class _PremiumDropdownField extends StatelessWidget {
                 ),
                 decoration: InputDecoration(
                   labelText: label,
-                  labelStyle: GoogleFonts.ebGaramond(
+                  labelStyle: GoogleFonts.inter(
                     color: Theme.of(
                       context,
                     ).colorScheme.onSurface.withOpacity(0.68),
@@ -2175,10 +2175,10 @@ class _PremiumFormField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.03),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
               ),
             ),
             child: Row(
@@ -2186,7 +2186,7 @@ class _PremiumFormField extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: Theme.of(
                       context,
                     ).colorScheme.onSurface.withOpacity(0.68),
@@ -2237,13 +2237,13 @@ class _GlassSearchField extends StatelessWidget {
                 child: TextField(
                   cursorColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
                   onChanged: onChanged,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: Colors.black,
                     fontSize: 15,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Search residences...',
-                    hintStyle: GoogleFonts.ebGaramond(
+                    hintStyle: GoogleFonts.inter(
                       color: Colors.black45,
                       fontSize: 13,
                     ),
@@ -2321,7 +2321,7 @@ class _WebTab extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             color: isActive ? onSurface : onSurface.withOpacity(0.55),
             fontSize: 12,
             fontWeight: FontWeight.w600,
@@ -2359,10 +2359,10 @@ class _UpdateCard extends StatelessWidget {
         width: 280,
         margin: const EdgeInsets.only(left: 20, right: 10),
         decoration: BoxDecoration(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.04),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.04),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
           ),
         ),
         padding: const EdgeInsets.all(16),
@@ -2398,7 +2398,7 @@ class _UpdateCard extends StatelessWidget {
                   ),
                   child: Text(
                     type,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 7,
                       fontWeight: FontWeight.w600,
                       color: Theme.of(
@@ -2409,7 +2409,7 @@ class _UpdateCard extends StatelessWidget {
                 ),
                 Text(
                   date,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 8,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(
@@ -2422,7 +2422,7 @@ class _UpdateCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               title,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onSurface,
@@ -2434,7 +2434,7 @@ class _UpdateCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               snippet,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 9,
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                 height: 1.4,
@@ -2626,7 +2626,7 @@ class _CommunityCard extends StatelessWidget {
                     const SizedBox(height: 10),
                     Text(
                       description,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         color: Colors.white.withOpacity(0.7),
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
@@ -2642,7 +2642,7 @@ class _CommunityCard extends StatelessWidget {
                       children: [
                         Text(
                           'EXPLORE COMMUNITY',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w400,

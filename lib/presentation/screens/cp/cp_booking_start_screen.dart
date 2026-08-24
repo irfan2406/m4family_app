@@ -18,7 +18,7 @@ class CpBookingStartScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
 
     final projectTitle =
         (project is Map ? project['title'] : null)?.toString() ?? 'Project';
@@ -208,7 +208,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                                 children: [
                                   Text(
                                     'M4 FAMILY MEMBERS GET PRIORITY SITE VISITS AND EXCLUSIVE UNIT SELECTION WINDOWS.',
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.inter(
                                       fontSize: 9,
                                       fontWeight: FontWeight.w600,
                                       color: textPrimary.withValues(
@@ -223,7 +223,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                                     onTap: () => context.push('/about'),
                                     child: Text(
                                       'LEARN MORE',
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.inter(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w600,
                                         color: M4Theme.premiumBlue,
@@ -310,19 +310,19 @@ class _BookingOptionCard extends StatelessWidget {
                 children: [
                   Text(
                     opt['title'] as String,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : Color(0xFF155A4F),
                       letterSpacing: 0.5,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     opt['desc'] as String,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9,
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                         alpha: 0.68,
                       ),
                       fontWeight: FontWeight.bold,
@@ -337,14 +337,14 @@ class _BookingOptionCard extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                   alpha: 0.05,
                 ),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 LucideIcons.chevronRight,
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                   alpha: 0.5,
                 ),
                 size: 16,

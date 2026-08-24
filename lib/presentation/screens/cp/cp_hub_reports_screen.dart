@@ -163,8 +163,8 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
     final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final accent = isDark ? scheme.primary : Colors.black;
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
@@ -181,7 +181,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
         ),
         title: Text(
           'Reports',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
         ),
       ),
       body: Column(
@@ -348,7 +348,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
               const SizedBox(height: 4),
               Text(
                 'FY $_year • ${_reports.length} ${_reports.length == 1 ? 'DOCUMENT' : 'DOCUMENTS'}',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 9,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.2,
@@ -363,7 +363,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                   icon: const Icon(LucideIcons.download, size: 14),
                   label: Text(
                     'DOWNLOAD SUMMARY',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.4,
@@ -402,7 +402,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
           backgroundColor: const Color(0xFFC65B46),
           content: Text(
             'Summary will be available soon',
-            style: GoogleFonts.ebGaramond(fontSize: 12),
+            style: GoogleFonts.inter(fontSize: 12),
           ),
         ),
       );
@@ -468,7 +468,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                     ),
                     child: Text(
                       type,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 7,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.6,
@@ -488,7 +488,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: textPrimary,
@@ -500,7 +500,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                         .where((x) => x.trim().isNotEmpty)
                         .join(' • ')
                         .toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.2,
@@ -540,8 +540,8 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
 
   void _showMoreActions(String title, String url) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
     showModalBottomSheet(
       context: context,
       backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
@@ -573,7 +573,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
               ),
               title: Text(
                 'Open / Print PDF',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
@@ -588,7 +588,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
               leading: Icon(LucideIcons.share2, color: textPrimary, size: 20),
               title: Text(
                 'Share document',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
@@ -619,7 +619,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
           child: Text(
             'No documents available for FY $_year',
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 13,
               fontWeight: FontWeight.w500,
               color: textPrimary,
@@ -631,7 +631,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
           child: Text(
             'Check back soon or select another year',
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: muted,

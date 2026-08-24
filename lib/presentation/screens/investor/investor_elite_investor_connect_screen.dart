@@ -118,8 +118,8 @@ class _InvestorEliteInvestorConnectScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
@@ -146,7 +146,7 @@ class _InvestorEliteInvestorConnectScreenState
           children: [
             Text(
               'Investor Connect',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
                 color: textPrimary,
@@ -190,7 +190,7 @@ class _InvestorEliteInvestorConnectScreenState
                   const SizedBox(height: 8),
                   Text(
                     'Connect with fellow investors and co-invest in proven deals.',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: muted,
@@ -318,7 +318,7 @@ class _InvestorEliteInvestorConnectScreenState
             Text(
               _error ?? 'Something went wrong',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: textPrimary,
@@ -355,7 +355,7 @@ class _InvestorEliteInvestorConnectScreenState
       child: Center(
         child: Text(
           message,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             color: muted,
             fontWeight: FontWeight.w700,
           ),
@@ -430,7 +430,7 @@ class _InvestorEliteInvestorConnectScreenState
                   const SizedBox(height: 4),
                   Text(
                     s.growth,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: Colors.green.shade500,
@@ -492,11 +492,11 @@ class _InvestorEliteInvestorConnectScreenState
                             .resolveUrl(p.avatar),
                         fit: BoxFit.cover,
                         placeholder: (_, __) => Container(
-                          color: (isDark ? Colors.white : Color(0xFF163A2C))
+                          color: (isDark ? Colors.white : Color(0xFF0C312B))
                               .withValues(alpha: 0.06),
                         ),
                         errorWidget: (_, __, ___) => Container(
-                          color: (isDark ? Colors.white : Color(0xFF163A2C))
+                          color: (isDark ? Colors.white : Color(0xFF0C312B))
                               .withValues(alpha: 0.06),
                           alignment: Alignment.center,
                           child: Icon(LucideIcons.user, color: muted, size: 24),
@@ -512,7 +512,7 @@ class _InvestorEliteInvestorConnectScreenState
                     children: [
                       Text(
                         p.name,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.5,
@@ -527,7 +527,7 @@ class _InvestorEliteInvestorConnectScreenState
                           Flexible(
                             child: Text(
                               p.location,
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                                 color: muted,
@@ -554,7 +554,7 @@ class _InvestorEliteInvestorConnectScreenState
                     const SizedBox(height: 2),
                     Text(
                       p.portfolio,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.5,
@@ -577,14 +577,14 @@ class _InvestorEliteInvestorConnectScreenState
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withValues(alpha: 0.04),
                         borderRadius: BorderRadius.circular(999),
                         border: Border.all(color: border),
                       ),
                       child: Text(
                         tag.toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1,
@@ -677,11 +677,11 @@ class _InvestorEliteInvestorConnectScreenState
                       imageUrl: ref.read(apiClientProvider).resolveUrl(d.image),
                       fit: BoxFit.cover,
                       placeholder: (_, __) => Container(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withValues(alpha: 0.06),
                       ),
                       errorWidget: (_, __, ___) => Container(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withValues(alpha: 0.06),
                         alignment: Alignment.center,
                         child: Icon(LucideIcons.image, color: muted),

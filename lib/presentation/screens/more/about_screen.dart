@@ -36,7 +36,7 @@ class _AboutScreenState extends State<AboutScreen> {
         leading: IconButton(
           icon: Icon(
             LucideIcons.chevronLeft,
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : Color(0xFF0C312B),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -44,10 +44,10 @@ class _AboutScreenState extends State<AboutScreen> {
           children: [
             Text(
               'WHO WE ARE',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : Color(0xFF155A4F),
                 letterSpacing: 1,
               ),
             ),
@@ -128,18 +128,18 @@ class _AboutScreenState extends State<AboutScreen> {
                               _tabs[index]['icon'],
                               color: isActive
                                   ? Colors.white
-                                  : (isDark ? Colors.white38 : Color(0xFF5E6B60)),
+                                  : (isDark ? Colors.white38 : Color(0xFF155A4F)),
                               size: 20,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             _tabs[index]['name'],
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 7,
                               fontWeight: FontWeight.w600,
                               color: isActive
-                                  ? (isDark ? Colors.white : Color(0xFF163A2C))
+                                  ? (isDark ? Colors.white : Color(0xFF0C312B))
                                   : (isDark ? Colors.white24 : Colors.black26),
                               letterSpacing: 1,
                             ),
@@ -244,10 +244,10 @@ class _AboutScreenState extends State<AboutScreen> {
                   const SizedBox(width: 20),
                   Text(
                     'OUR STORY',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : Color(0xFF155A4F),
                       letterSpacing: -0.5,
                     ),
                   ),
@@ -274,9 +274,9 @@ class _AboutScreenState extends State<AboutScreen> {
                   children: [
                     Text(
                       '"M4 Family, with over a decade of excellence in Mumbai\'s real estate landscape, has established itself as a trusted name in premium residential development."',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 14,
-                        color: isDark ? Colors.white70 : Color(0xFF163A2C),
+                        color: isDark ? Colors.white70 : Color(0xFF0C312B),
                         height: 1.8,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.w500,
@@ -285,7 +285,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     const SizedBox(height: 24),
                     Text(
                       'Renowned for delivering homes that blend contemporary design with timeless aesthetics, every development we undertake is a testament to our commitment to quality and institutional standards.',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 13,
                         color: isDark ? Colors.white38 : Colors.black45,
                         height: 1.8,

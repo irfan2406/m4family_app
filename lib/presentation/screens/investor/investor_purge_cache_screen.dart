@@ -143,7 +143,7 @@ class _InvestorPurgeCacheScreenState
           backgroundColor: _green,
           content: Text(
             'Cache purged successfully! The app cache has been rebuilt.',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: const Color(0xFFF4EFE3),
@@ -158,7 +158,7 @@ class _InvestorPurgeCacheScreenState
           backgroundColor: const Color(0xFFC65B46),
           content: Text(
             'Failed to purge cache: $e',
-            style: GoogleFonts.ebGaramond(fontSize: 12),
+            style: GoogleFonts.inter(fontSize: 12),
           ),
         ),
       );
@@ -177,8 +177,8 @@ class _InvestorPurgeCacheScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
@@ -200,7 +200,7 @@ class _InvestorPurgeCacheScreenState
           children: [
             Text(
               'Purge Data',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: textPrimary,
@@ -208,7 +208,7 @@ class _InvestorPurgeCacheScreenState
             ),
             Text(
               'RESET PLATFORM STATE',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 11,
                 letterSpacing: 1.5,
                 fontWeight: FontWeight.w600,
@@ -303,7 +303,7 @@ class _InvestorPurgeCacheScreenState
                   'cached media, transient session artifacts and offline render '
                   'buffers. Your account and saved data are not affected, but the '
                   'platform will rebuild its caches on next load.',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 11,
                     height: 1.5,
                     fontWeight: FontWeight.w600,
@@ -375,7 +375,7 @@ class _InvestorPurgeCacheScreenState
                 const SizedBox(height: 2),
                 Text(
                   '$_cacheCount cached item${_cacheCount == 1 ? '' : 's'}',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: muted,
@@ -430,7 +430,7 @@ class _InvestorPurgeCacheScreenState
                 children: [
                   Text(
                     s.title,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: textPrimary,
@@ -439,7 +439,7 @@ class _InvestorPurgeCacheScreenState
                   const SizedBox(height: 2),
                   Text(
                     s.subtitle,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       height: 1.4,
@@ -492,7 +492,7 @@ class _InvestorPurgeCacheScreenState
                 Expanded(
                   child: Text(
                     item,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: textPrimary.withValues(alpha: 0.8),
@@ -559,7 +559,7 @@ class _InvestorPurgeCacheScreenState
                 Expanded(
                   child: Text(
                     e.key,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: checked

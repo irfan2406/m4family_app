@@ -1,10 +1,10 @@
+import 'package:m4_mobile/presentation/widgets/drawer_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:ui';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
@@ -73,7 +73,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
               Text(
                 'Are you sure you want to exit the app?',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 13,
                   color: isDark ? Colors.white60 : Colors.grey[600],
                 ),
@@ -100,7 +100,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         ),
                         child: Text(
                           'NO',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
@@ -123,7 +123,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         ),
                         child: Text(
                           'YES',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
@@ -150,28 +150,34 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    // The drawer can be opened from a screen pushed with Navigator.push (e.g.
+    // the guest project detail), which is NOT under a GoRoute builder — so
+    // GoRouterState.of(context) throws there. Read the path defensively; when
+    // it's unavailable, no tab is marked active, which is correct on a pushed
+    // detail screen anyway. Taps still use context.go/push, which work under
+    // MaterialApp.router regardless.
+    String? currentPath;
+    try {
+      currentPath = GoRouterState.of(context).uri.path;
+    } catch (_) {
+      currentPath = null;
+    }
+
     return Drawer(
       backgroundColor: Colors.transparent,
-      width: MediaQuery.of(context).size.width * 0.85,
-      child: Stack(
+      width: M4Drawer.panelWidth(context),
+      child: DecoratedBox(
+        // Large soft ambient lift and an almost-invisible cream hairline —
+        // the luxury floating-card effect, no hard shadow or harsh outline.
+        decoration: BoxDecoration(
+          boxShadow: M4Drawer.shadow,
+          border: Border(right: BorderSide(color: M4Drawer.border)),
+        ),
+        child: Stack(
         children: [
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-            child: Container(
-              decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF0B1026).withValues(alpha: 0.82)
-                    : const Color(0xFF0C312B).withValues(alpha: 0.72),
-                border: Border(
-                  right: BorderSide(
-                    color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(
-                      0.05,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          // Figma glass panel: deep-green base, cream bloom through
+          // the middle, blue bloom low down, #0B0000 10% veil, blur 40.
+          const DrawerGlass(),
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,14 +203,14 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                       _MenuItem(
                         label: 'Home',
                         icon: LucideIcons.home,
-                        isActive: GoRouterState.of(context).uri.path == '/home',
+                        isActive: currentPath == '/home',
                         onTap: () => context.go('/home'),
                       ),
                       _MenuItem(
                         label: 'Community',
                         icon: LucideIcons.building2,
                         isActive:
-                            GoRouterState.of(context).uri.path ==
+                            currentPath ==
                             '/communities',
                         onTap: () => context.push('/communities'),
                       ),
@@ -212,7 +218,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         label: 'Properties',
                         icon: LucideIcons.layoutGrid,
                         isActive:
-                            GoRouterState.of(context).uri.path == '/projects',
+                            currentPath == '/projects',
                         onTap: () => context.push('/projects'),
                       ),
 
@@ -262,7 +268,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         label: 'Custom Views',
                         icon: LucideIcons.sparkles,
                         isActive:
-                            GoRouterState.of(context).uri.path ==
+                            currentPath ==
                             '/custom-views',
                         onTap: () => context.push('/custom-views'),
                       ),
@@ -270,7 +276,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         label: 'Who We Are',
                         icon: LucideIcons.info,
                         isActive:
-                            GoRouterState.of(context).uri.path == '/about',
+                            currentPath == '/about',
                         onTap: () => context.push('/about'),
                       ),
 
@@ -312,14 +318,14 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         label: 'Careers',
                         icon: LucideIcons.briefcase,
                         isActive:
-                            GoRouterState.of(context).uri.path == '/careers',
+                            currentPath == '/careers',
                         onTap: () => context.push('/careers'),
                       ),
                       _MenuItem(
                         label: 'Contact',
                         icon: LucideIcons.phone,
                         isActive:
-                            GoRouterState.of(context).uri.path == '/contact',
+                            currentPath == '/contact',
                         onTap: () => context.push('/contact'),
                       ),
 
@@ -395,7 +401,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                           const SizedBox(width: 12),
                           Text(
                             'EXIT APP',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               color: const Color(0xFFC65B46),
                               fontWeight: FontWeight.w600,
                               fontSize: 13,
@@ -411,6 +417,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
@@ -455,7 +462,7 @@ class _MenuItem extends StatelessWidget {
       ),
       title: Text(
         label,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           color: isActive
               ? (isDark ? Colors.white : const Color(0xFFF4EFE3))
               : (isDark
@@ -516,7 +523,7 @@ class _DropdownMenuItem extends StatelessWidget {
           ),
           title: Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(
                 isOpen ? 1.0 : 0.8,
               ),
@@ -565,7 +572,7 @@ class _SubItem extends StatelessWidget {
         ),
         title: Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.85),
             fontSize: 13,
             fontWeight: FontWeight.w500,
@@ -607,7 +614,7 @@ class _QuickActionItem extends StatelessWidget {
       ),
       title: Text(
         label,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.8),
           fontSize: 16.5,
           fontWeight: FontWeight.w500,

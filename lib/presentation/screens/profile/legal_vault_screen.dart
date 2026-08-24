@@ -124,7 +124,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : Color(0xFF0C312B),
                   letterSpacing: 2,
                 ),
               ),
@@ -140,7 +140,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             ),
             child: Icon(
               LucideIcons.shield,
-              color: isDark ? Colors.white54 : Color(0xFF5E6B60),
+              color: isDark ? Colors.white54 : Color(0xFF155A4F),
               size: 20,
             ),
           ),
@@ -157,7 +157,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
         color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
         ),
         boxShadow: isDark
             ? []
@@ -175,12 +175,12 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
               LucideIcons.lock,
-              color: isDark ? Colors.white54 : Color(0xFF5E6B60),
+              color: isDark ? Colors.white54 : Color(0xFF155A4F),
               size: 20,
             ),
           ),
@@ -195,17 +195,17 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                     textStyle: const TextStyle(inherit: true),
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                    color: isDark ? Colors.white38 : Color(0xFF155A4F),
                     letterSpacing: 1.5,
                   ),
                 ),
                 Text(
                   'SECURE DOCUMENT REPOSITORY',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     textStyle: const TextStyle(inherit: true),
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : Color(0xFF155A4F),
                   ),
                 ),
               ],
@@ -232,15 +232,15 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                   onSelected: (selected) {
                     if (selected) setState(() => _selectedFilter = f);
                   },
-                  labelStyle: GoogleFonts.ebGaramond(
+                  labelStyle: GoogleFonts.inter(
                     textStyle: const TextStyle(inherit: true),
                     fontSize: 9,
                     fontWeight: FontWeight.w500,
                     color: _selectedFilter == f
                         ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
-                        : (isDark ? Colors.white54 : Color(0xFF5E6B60)),
+                        : (isDark ? Colors.white54 : Color(0xFF155A4F)),
                   ),
-                  selectedColor: isDark ? Colors.white : Color(0xFF163A2C),
+                  selectedColor: isDark ? Colors.white : Color(0xFF0C312B),
                   backgroundColor: isDark
                       ? const Color(0xFF141B3A)
                       : const Color(0xFFF4EFE3),
@@ -269,7 +269,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
         color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
         ),
         boxShadow: isDark
             ? []
@@ -290,21 +290,21 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
             LucideIcons.fileText,
-            color: isDark ? Colors.white54 : Color(0xFF5E6B60),
+            color: isDark ? Colors.white54 : Color(0xFF155A4F),
             size: 20,
           ),
         ),
         title: Text(
           (doc['name'] ?? 'DOCUMENT').toUpperCase(),
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : Color(0xFF155A4F),
           ),
           overflow: TextOverflow.ellipsis,
         ),
@@ -312,10 +312,10 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
           children: [
             Text(
               (project['title'] ?? 'GENERAL').toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                color: isDark ? Colors.white38 : Color(0xFF155A4F),
               ),
             ),
             const SizedBox(width: 8),
@@ -323,17 +323,17 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
               width: 3,
               height: 3,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.2),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
             ),
             const SizedBox(width: 8),
             Text(
               date,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                color: isDark ? Colors.white38 : Color(0xFF155A4F),
               ),
             ),
           ],
@@ -341,7 +341,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
         trailing: Icon(
           LucideIcons.chevronRight,
           size: 16,
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.2),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.2),
         ),
         onTap: () => _showDocumentDetails(doc, isDark),
       ),
@@ -373,7 +373,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
         Icon(
           LucideIcons.fileWarning,
           size: 64,
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.1),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.1),
         ),
         const SizedBox(height: 24),
         Text(
@@ -382,7 +382,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             textStyle: const TextStyle(inherit: true),
             fontSize: 10,
             fontWeight: FontWeight.w700,
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.72),
             letterSpacing: 2,
           ),
         ),
@@ -411,15 +411,15 @@ class _DocumentDetailSheet extends StatelessWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
               ),
             ),
             child: Icon(
               LucideIcons.fileText,
-              color: isDark ? Colors.white54 : Color(0xFF5E6B60),
+              color: isDark ? Colors.white54 : Color(0xFF155A4F),
               size: 40,
             ),
           ),
@@ -430,7 +430,7 @@ class _DocumentDetailSheet extends StatelessWidget {
             style: GoogleFonts.gelasio(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : Color(0xFF163A2C),
+              color: isDark ? Colors.white : Color(0xFF0C312B),
             ),
           ),
           const SizedBox(height: 8),
@@ -439,7 +439,7 @@ class _DocumentDetailSheet extends StatelessWidget {
             style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+              color: isDark ? Colors.white38 : Color(0xFF155A4F),
               letterSpacing: 2,
             ),
           ),
@@ -519,10 +519,10 @@ class _DetailRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.02),
+        color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.02),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.04),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.04),
         ),
       ),
       child: Row(
@@ -538,10 +538,10 @@ class _DetailRow extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 label,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 9,
                   fontWeight: FontWeight.w500,
-                  color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                  color: isDark ? Colors.white38 : Color(0xFF155A4F),
                   letterSpacing: 1,
                 ),
               ),
@@ -549,10 +549,10 @@ class _DetailRow extends StatelessWidget {
           ),
           Text(
             value,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 10,
               fontWeight: FontWeight.w500,
-              color: color ?? (isDark ? Colors.white : Color(0xFF163A2C)),
+              color: color ?? (isDark ? Colors.white : Color(0xFF0C312B)),
             ),
           ),
         ],
@@ -592,18 +592,18 @@ class _ActionButton extends StatelessWidget {
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary
-              ? (isDark ? Colors.white : Color(0xFF163A2C))
+              ? (isDark ? Colors.white : Color(0xFF0C312B))
               : (isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3)),
           foregroundColor: isPrimary
               ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
-              : (isDark ? Colors.white54 : Color(0xFF5E6B60)),
+              : (isDark ? Colors.white54 : Color(0xFF155A4F)),
           elevation: isPrimary ? 8 : 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
             side: isPrimary
                 ? BorderSide.none
                 : BorderSide(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                       0.05,
                     ),
                   ),
@@ -634,12 +634,12 @@ class _IconButton extends StatelessWidget {
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
           ),
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white54 : Color(0xFF5E6B60),
+          color: isDark ? Colors.white54 : Color(0xFF155A4F),
           size: 20,
         ),
       ),

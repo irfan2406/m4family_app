@@ -125,7 +125,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final onSurface = isDark ? Colors.white : Color(0xFF163A2C);
+    final onSurface = isDark ? Colors.white : Color(0xFF0C312B);
     const amber = Color(0xFFC5A35B);
 
     return Scaffold(
@@ -174,7 +174,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                     child: Text(
                       'RAISE TICKET',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 17,
                         fontWeight: FontWeight.w500,
                         color: onSurface,
@@ -219,7 +219,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                           Expanded(
                             child: Text(
                               'MOST TICKETS ARE RESOLVED WITHIN 4-6 WORKING HOURS. PLEASE PROVIDE DETAIL.',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w500,
                                 color: amber.withOpacity(0.75),
@@ -241,7 +241,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                         controller: _subjectController,
                         textCapitalization: TextCapitalization.characters,
                         cursorColor: onSurface,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: onSurface,
@@ -264,7 +264,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                           isExpanded: true,
                           hint: Text(
                             'SELECT CATEGORY',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
                               color: onSurface.withOpacity(0.68),
@@ -286,7 +286,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                                   value: e.key,
                                   child: Text(
                                     e.value,
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.inter(
                                       fontSize: 11,
                                       fontWeight: FontWeight.w500,
                                       color: onSurface,
@@ -310,7 +310,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                         controller: _messageController,
                         maxLines: 6,
                         cursorColor: onSurface,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: onSurface,
@@ -347,7 +347,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                                 _attachments.isEmpty
                                     ? 'ADD FILES (PDF, JPG)'
                                     : '${_attachments.length} FILE(S) ATTACHED',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w500,
                                   color: onSurface.withOpacity(0.68),
@@ -438,7 +438,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
   InputDecoration _inputDecoration(String hint, Color onSurface) =>
       InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.ebGaramond(
+        hintStyle: GoogleFonts.inter(
           fontSize: 12,
           fontWeight: FontWeight.w700,
           color: onSurface.withOpacity(0.68),

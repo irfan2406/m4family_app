@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:m4_mobile/presentation/widgets/drawer_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -82,16 +82,16 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Are you sure you want to logout?',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 13,
-                  color: isDark ? Colors.white60 : const Color(0xFF163A2C).withValues(alpha: 0.78),
+                  color: isDark ? Colors.white60 : const Color(0xFF0C312B).withValues(alpha: 0.78),
                 ),
               ),
               const SizedBox(height: 22),
@@ -116,7 +116,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                         ),
                         child: Text(
                           'NO',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
@@ -139,7 +139,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                         ),
                         child: Text(
                           'YES',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
@@ -168,22 +168,22 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
   @override
   Widget build(BuildContext context) {
     final idx = ref.watch(investorNavigationIndexProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Drawer(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: M4Drawer.panelWidth(context),
       backgroundColor: Colors.transparent,
       elevation: 0,
-      child: Stack(
+      child: DecoratedBox(
+        // Large soft ambient lift — the luxury floating-card effect, no hard
+        // shadow and no harsh outline.
+        decoration: BoxDecoration(
+          boxShadow: M4Drawer.shadow,
+          border: Border(right: BorderSide(color: M4Drawer.border)),
+        ),
+        child: Stack(
         children: [
-          ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-              child: Container(
-                color: isDark ? Colors.black.withValues(alpha: 0.6) : const Color(0xFF0C312B).withValues(alpha: 0.72),
-              ),
-            ),
-          ),
+          // Frosted deep-green glass with the cream and blue blooms.
+          const DrawerGlass(),
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,6 +421,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
             ),
           ),
         ],
+        ),
       ),
     );
   }
@@ -468,7 +469,7 @@ class _SidebarItem extends StatelessWidget {
                   size: 18,
                   color: isActive
                       ? gold
-                      : (isDark ? Colors.white70 : Color(0xFF5E6B60)),
+                      : (isDark ? Colors.white70 : Color(0xFF155A4F)),
                 ),
               ),
             ),
@@ -476,7 +477,7 @@ class _SidebarItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: isActive
@@ -577,7 +578,7 @@ class _SidebarSubItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 12.5,
                   fontWeight: FontWeight.w600,
                   color: fg.withValues(alpha: 0.85),

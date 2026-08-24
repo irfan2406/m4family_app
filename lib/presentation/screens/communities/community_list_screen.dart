@@ -81,16 +81,16 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                           height: 45,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: (isDark ? Colors.white : Color(0xFF163A2C))
+                            color: (isDark ? Colors.white : Color(0xFF0C312B))
                                 .withOpacity(0.05),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Color(0xFF163A2C))
+                              color: (isDark ? Colors.white : Color(0xFF0C312B))
                                   .withOpacity(0.1),
                             ),
                           ),
                           child: Icon(
                             LucideIcons.chevronLeft,
-                            color: isDark ? Colors.white : Color(0xFF163A2C),
+                            color: isDark ? Colors.white : Color(0xFF0C312B),
                             size: 20,
                           ),
                         ),
@@ -102,8 +102,8 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                           Text(
                             // Web parity: header reads "M4 FAMILY / DEVELOPMENTS".
                             'M4 FAMILY',
-                            style: GoogleFonts.ebGaramond(
-                              color: isDark ? Colors.white : Color(0xFF163A2C),
+                            style: GoogleFonts.inter(
+                              color: isDark ? Colors.white : Color(0xFF155A4F),
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.3,
@@ -112,7 +112,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                           Text(
                             'DEVELOPMENTS',
                             style: GoogleFonts.gelasio(
-                              color: (isDark ? Colors.white : Color(0xFF163A2C))
+                              color: (isDark ? Colors.white : Color(0xFF0C312B))
                                   .withOpacity(0.55),
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
@@ -144,7 +144,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       // Web parity: thin elegant serif on one line (not heavy bold).
                       fontSize: 26,
                       fontWeight: FontWeight.w400,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : Color(0xFF0C312B),
                       letterSpacing: -0.5,
                       height: 1.1,
                     ),
@@ -159,8 +159,8 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in ...',
                       // Web parity: description is sans-serif (font-sans),
                       // muted, text-[13px] font-medium (not serif).
-                      style: GoogleFonts.ebGaramond(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                      style: GoogleFonts.inter(
+                        color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withOpacity(0.78),
                         fontSize: 14.5,
                         height: 1.6,
@@ -171,8 +171,8 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in every community we curate. We believe in creating spaces that faster connection, inspiration, and a sense of belonging for every resident. Our developments are strategically located to offer the best of urban living with a touch of serenity.',
                       // Web parity: description is sans-serif (font-sans),
                       // muted, text-[13px] font-medium (not serif).
-                      style: GoogleFonts.ebGaramond(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                      style: GoogleFonts.inter(
+                        color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withOpacity(0.78),
                         fontSize: 14.5,
                         height: 1.6,
@@ -188,7 +188,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
-                            color: (isDark ? Colors.white : Color(0xFF163A2C))
+                            color: (isDark ? Colors.white : Color(0xFF0C312B))
                                 .withOpacity(0.3),
                             width: 1,
                           ),
@@ -196,8 +196,8 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       ),
                       child: Text(
                         _isExpanded ? 'Read less' : 'Read more',
-                        style: GoogleFonts.ebGaramond(
-                          color: isDark ? Colors.white : Color(0xFF163A2C),
+                        style: GoogleFonts.inter(
+                          color: isDark ? Colors.white : Color(0xFF155A4F),
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
@@ -216,7 +216,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                 child: Padding(
                   padding: EdgeInsets.all(100.0),
                   child: CircularProgressIndicator(
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : Color(0xFF0C312B),
                   ),
                 ),
               ),
@@ -229,7 +229,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                   child: Text(
                     state.error!,
                     style: TextStyle(
-                      color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                      color: isDark ? Colors.white38 : Color(0xFF155A4F),
                     ),
                   ),
                 ),
@@ -378,7 +378,7 @@ class _CommunityCard extends ConsumerWidget {
                               '',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 14,
                             // Brighter on the dark card = more readable.
                             color: Colors.white.withOpacity(0.9),
@@ -394,7 +394,7 @@ class _CommunityCard extends ConsumerWidget {
                     width: 55,
                     height: 55,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : Color(0xFF0C312B),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(

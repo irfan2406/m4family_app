@@ -173,7 +173,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
             : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.1),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.1),
         ),
         boxShadow: isDark
             ? null
@@ -189,14 +189,14 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
         controller: _searchController,
         onChanged: (value) =>
             setState(() => _searchQuery = value.toLowerCase()),
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           color: scheme.onSurface,
           fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
           hintText: 'SEARCH FOR HELP...',
-          hintStyle: GoogleFonts.ebGaramond(
+          hintStyle: GoogleFonts.inter(
             color: scheme.onSurface.withValues(alpha: 0.68),
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -282,7 +282,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
             : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.1),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.1),
         ),
         boxShadow: isDark
             ? null
@@ -346,7 +346,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
                 foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
@@ -416,7 +416,7 @@ class _FaqCategory extends StatelessWidget {
             // Web parity: a clean, visible thin outline border — the FAQ groups
             // read as outlined cards, not soft-shadow "floating" cards.
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                 alpha: 0.1,
               ),
             ),
@@ -438,7 +438,7 @@ class _FaqCategory extends StatelessWidget {
                   Divider(
                     height: 1,
                     thickness: 1,
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                       alpha: 0.07,
                     ),
                   ),
@@ -488,7 +488,7 @@ class _FaqRowState extends State<_FaqRow> {
                       widget.question.toUpperCase(),
                       // Web parity: text-xs (12px) font-bold text-foreground —
                       // full-strength dark, heavier than the previous 11px/700.
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         color: scheme.onSurface,
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
@@ -511,7 +511,7 @@ class _FaqRowState extends State<_FaqRow> {
                   padding: const EdgeInsets.only(top: 12),
                   child: Text(
                     widget.answer,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: scheme.onSurfaceVariant,
                       fontSize: 11,
                       fontWeight: FontWeight.w700,

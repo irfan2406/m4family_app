@@ -768,7 +768,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         const SizedBox(height: 24),
         RichText(
           text: TextSpan(
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               // Was 0.6 — too faint/grey to read. Darker + slightly heavier.
               color: Theme.of(
                 context,
@@ -787,8 +787,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                   onTap: () => context.push('/investor/about'),
                   child: Text(
                     'Who We Are',
-                    style: GoogleFonts.ebGaramond(
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                    style: GoogleFonts.inter(
+                      color: isDark ? Colors.white : Color(0xFF155A4F),
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
                     ),
@@ -835,8 +835,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                               tab.toUpperCase(),
                               style: GoogleFonts.gelasio(
                                 color: isSelected
-                                    ? (isDark ? Colors.white : Color(0xFF163A2C))
-                                    : (isDark ? Colors.white : Color(0xFF163A2C))
+                                    ? (isDark ? Colors.white : Color(0xFF0C312B))
+                                    : (isDark ? Colors.white : Color(0xFF0C312B))
                                           .withValues(alpha: 0.72),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
@@ -849,7 +849,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                 width: 24,
                                 height: 2,
                                 decoration: BoxDecoration(
-                                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                                  color: isDark ? Colors.white : Color(0xFF0C312B),
                                   borderRadius: BorderRadius.circular(1),
                                 ),
                               ),
@@ -950,7 +950,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       ),
                       child: Text(
                         status.toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: const Color(0xFFF4EFE3),
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
@@ -973,7 +973,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       ),
                       child: Text(
                         'ARTISTIC IMPRESSION',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: const Color(0xFFF4EFE3),
                           fontSize: 6.5,
                           fontWeight: FontWeight.w600,
@@ -1014,7 +1014,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           location.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: scheme.onSurface.withValues(alpha: 0.55),
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -1037,7 +1037,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       children: [
                         Text(
                           'READ MORE',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: scheme.surface,
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -1189,7 +1189,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                             .toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           // Brighter on the dark card = clearly readable.
                           color: Colors.white.withValues(alpha: 0.92),
                           fontSize: 10.5,
@@ -1204,7 +1204,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         children: [
                           Text(
                             'EXPLORE COMMUNITY',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               color: const Color(0xFFF4EFE3),
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
@@ -1391,7 +1391,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                               .toUpperCase(),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Colors.white.withValues(alpha: 0.8),
                             fontSize: 11,
                             height: 1.6,
@@ -1446,14 +1446,14 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                         alpha: 0.1,
                       ),
                     ),
                   ),
                   child: Icon(
                     LucideIcons.arrowLeft,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : Color(0xFF0C312B),
                     size: 20,
                   ),
                 ),
@@ -1468,7 +1468,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                   child: Container(
                     height: 56,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : Color(0xFF0C312B),
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
@@ -1504,14 +1504,14 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                         alpha: 0.1,
                       ),
                     ),
                   ),
                   child: Icon(
                     LucideIcons.arrowRight,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : Color(0xFF0C312B),
                     size: 20,
                   ),
                 ),
@@ -1527,13 +1527,13 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
-        Icon(icon, color: isDark ? Colors.white : Color(0xFF163A2C), size: 24),
+        Icon(icon, color: isDark ? Colors.white : Color(0xFF0C312B), size: 24),
         const SizedBox(height: 8),
         Text(
           label,
           textAlign: TextAlign.center,
           style: GoogleFonts.gelasio(
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : Color(0xFF0C312B),
             fontSize: 11,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
@@ -1569,7 +1569,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                 : Colors.black.withValues(alpha: 0.02),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                 alpha: 0.08,
               ),
             ),
@@ -1646,19 +1646,19 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                   alpha: 0.05,
                 ),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                     alpha: 0.1,
                   ),
                 ),
               ),
               child: Icon(
                 icon,
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : Color(0xFF0C312B),
                 size: 20,
               ),
             ),
@@ -1666,8 +1666,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+              style: GoogleFonts.inter(
+                color: isDark ? Colors.white : Color(0xFF155A4F),
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
                 letterSpacing: 1,
@@ -1677,8 +1677,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             Text(
               desc,
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+              style: GoogleFonts.inter(
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                   alpha: 0.5,
                 ),
                 fontSize: 11,
@@ -1701,7 +1701,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         Text(
           'REGISTER\nINTEREST',
           style: GoogleFonts.gelasio(
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : Color(0xFF0C312B),
             fontSize: 32,
             fontWeight: FontWeight.w600,
             letterSpacing: -1,
@@ -1751,15 +1751,15 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             Checkbox(
               value: _agreedToTerms,
               onChanged: (val) => setState(() => _agreedToTerms = val ?? false),
-              activeColor: isDark ? Colors.white : Color(0xFF163A2C),
+              activeColor: isDark ? Colors.white : Color(0xFF0C312B),
               checkColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
               side: BorderSide(color: isDark ? Colors.white24 : Colors.black26),
             ),
             Expanded(
               child: RichText(
                 text: TextSpan(
-                  style: GoogleFonts.ebGaramond(
-                    color: isDark ? Colors.white54 : Color(0xFF5E6B60),
+                  style: GoogleFonts.inter(
+                    color: isDark ? Colors.white54 : Color(0xFF155A4F),
                     fontSize: 11,
                     letterSpacing: 0.8,
                     height: 1.4,
@@ -1768,8 +1768,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     const TextSpan(text: "I'VE READ AND AGREE TO THE "),
                     TextSpan(
                       text: 'PRIVACY POLICY',
-                      style: GoogleFonts.ebGaramond(
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                      style: GoogleFonts.inter(
+                        color: isDark ? Colors.white : Color(0xFF155A4F),
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.8,
@@ -1791,7 +1791,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             onTap: _submitting ? () {} : _submitInterest,
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : const Color(0xFF163A2C),
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
@@ -1801,7 +1801,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       )
                     : Text(
                         'SUBMIT INTEREST',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w600,
                           letterSpacing: 2,
@@ -1842,7 +1842,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             border: Border.all(
               color: hasError
                   ? errorColor
-                  : (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                  : (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                       alpha: 0.12,
                     ),
               width: hasError ? 1.5 : 1,
@@ -1863,11 +1863,11 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
             onChanged: onChanged,
-            style: TextStyle(color: isDark ? Colors.white : Color(0xFF163A2C)),
+            style: TextStyle(color: isDark ? Colors.white : Color(0xFF0C312B)),
             maxLines: isLong ? 5 : 1,
             decoration: InputDecoration(
               hintText: hint ?? label,
-              hintStyle: GoogleFonts.ebGaramond(
+              hintStyle: GoogleFonts.inter(
                 color: hasError
                     ? errorColor.withValues(alpha: 0.75)
                     : (isDark ? Colors.white54 : Colors.black45),
@@ -1889,7 +1889,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             padding: const EdgeInsets.only(left: 10, top: 6),
             child: Text(
               errorText,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 color: errorColor,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,

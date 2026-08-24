@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'package:m4_mobile/presentation/widgets/mesh_overlay.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'dart:convert';
@@ -54,9 +55,18 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
 
 /// Channel Partner catalog: set [cpCatalogMode] so back + detail routes match web `/cp/projects`.
 class ProjectListScreen extends ConsumerWidget {
-  const ProjectListScreen({super.key, this.cpCatalogMode = false});
+  const ProjectListScreen({
+    super.key,
+    this.cpCatalogMode = false,
+    this.guestMode = false,
+  });
 
   final bool cpCatalogMode;
+
+  /// When shown as the guest portal's Properties tab, the drawer must be the
+  /// guest menu — the same one the guest Home uses — not the role-guessed
+  /// ConditionalDrawer, so the whole guest portal shares one menu.
+  final bool guestMode;
 
   // Retained for future use; the header filter button was removed for web
   // parity (screenshot has only the grid/list toggle and the "..." menu).
@@ -262,7 +272,7 @@ class ProjectListScreen extends ConsumerWidget {
                       child: ElevatedButton(
                         onPressed: () => Navigator.pop(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                          backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
                           foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -303,7 +313,11 @@ class ProjectListScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      drawer: cpCatalogMode ? const CpSidebarMenu() : const ConditionalDrawer(),
+      drawer: cpCatalogMode
+          ? const CpSidebarMenu()
+          : guestMode
+          ? const GuestSidebarMenu()
+          : const ConditionalDrawer(),
       body: Stack(
         children: [
           // No page-level mesh: it ran to the top edge and showed through the
@@ -360,11 +374,11 @@ class ProjectListScreen extends ConsumerWidget {
                                 height: 40,
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                  color: (isDark ? Colors.white : Color(0xFF0C312B))
                                       .withOpacity(0.05),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                    color: (isDark ? Colors.white : Color(0xFF0C312B))
                                         .withOpacity(0.08),
                                   ),
                                 ),
@@ -386,7 +400,7 @@ class ProjectListScreen extends ConsumerWidget {
                                       'M4 PROPERTIES',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.inter(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                         color: Theme.of(
@@ -428,7 +442,7 @@ class ProjectListScreen extends ConsumerWidget {
                                       'M4 PROPERTIES',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.inter(
                                         // Figma sets the wordmark a touch
                                         // larger than the app had it.
                                         fontSize: 16,
@@ -460,11 +474,11 @@ class ProjectListScreen extends ConsumerWidget {
                               height: 40,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                color: (isDark ? Colors.white : Color(0xFF0C312B))
                                     .withOpacity(0.05),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                  color: (isDark ? Colors.white : Color(0xFF0C312B))
                                       .withOpacity(0.08),
                                 ),
                               ),
@@ -483,7 +497,7 @@ class ProjectListScreen extends ConsumerWidget {
                             // No outline on the toggle: the soft fill alone
                             // holds the pair together.
                             decoration: BoxDecoration(
-                              color: (isDark ? Colors.white : Color(0xFF163A2C))
+                              color: (isDark ? Colors.white : Color(0xFF0C312B))
                                   .withOpacity(0.05),
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -599,7 +613,7 @@ class ProjectListScreen extends ConsumerWidget {
                             ),
                             child: Text(
                               filter.toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 10,
                                 fontWeight: isSelected
                                     ? FontWeight.w600
@@ -705,7 +719,7 @@ class ProjectListScreen extends ConsumerWidget {
                     error: (e, s) {
                       final isDark =
                           Theme.of(context).brightness == Brightness.dark;
-                      final onSurface = isDark ? Colors.white : Color(0xFF163A2C);
+                      final onSurface = isDark ? Colors.white : Color(0xFF0C312B);
                       final msg = e.toString().toLowerCase();
                       final isTimeout =
                           msg.contains('timeout') || msg.contains('connection');
@@ -726,7 +740,7 @@ class ProjectListScreen extends ConsumerWidget {
                                     ? 'TAKING LONGER THAN USUAL'
                                     : "COULDN'T LOAD PROPERTIES",
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: onSurface,
@@ -739,7 +753,7 @@ class ProjectListScreen extends ConsumerWidget {
                                     ? 'The server may be waking up. Please try again.'
                                     : 'Please check your connection and try again.',
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500,
                                   color: onSurface.withOpacity(0.5),
@@ -977,7 +991,7 @@ class _ProjectListRowItem extends StatelessWidget {
           ),
         ],
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
         ),
       ),
       child: Row(
@@ -1003,10 +1017,10 @@ class _ProjectListRowItem extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   (project['title'] ?? 'M4 PROJECT').toString().toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : Color(0xFF155A4F),
                     letterSpacing: -0.5,
                   ),
                   maxLines: 1,
@@ -1026,7 +1040,7 @@ class _ProjectListRowItem extends StatelessWidget {
                     Expanded(
                       child: Text(
                         project['location']?['name'] ?? 'N/A',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           color: Theme.of(
                             context,
@@ -1080,7 +1094,7 @@ class _Badge extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 8,
           fontWeight: FontWeight.w600,
           color: Theme.of(context).colorScheme.onSurface,
@@ -1160,7 +1174,7 @@ class _FilterSection extends StatelessWidget {
                 ),
                 child: Text(
                   opt.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 9,
                     fontWeight: FontWeight.w600,
                     color: isSelected
@@ -1195,7 +1209,7 @@ class _ViewToggleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color fg = active
         ? (isDark ? Colors.black : Colors.white)
-        : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.4);
+        : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.4);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -1204,7 +1218,7 @@ class _ViewToggleButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: active
-              ? (isDark ? Colors.white : Color(0xFF163A2C))
+              ? (isDark ? Colors.white : Color(0xFF0C312B))
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),

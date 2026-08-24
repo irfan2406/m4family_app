@@ -54,7 +54,7 @@ class _CpResidentialConnectScreenState
           children: [
             Text(
               'Residence Suite',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: scheme.onSurface,
@@ -287,7 +287,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                           'TOWER A • SUITE 4802',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
@@ -436,7 +436,7 @@ class _ServiceCardState extends State<_ServiceCard> {
                     widget.service.name.toUpperCase(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: scheme.onSurface,
@@ -448,7 +448,7 @@ class _ServiceCardState extends State<_ServiceCard> {
                     widget.service.status.toUpperCase(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9,
                       fontWeight: FontWeight.w500,
                       letterSpacing: 1.2,
@@ -538,7 +538,7 @@ class _AlertItemState extends State<_AlertItem> {
                       widget.alert.title.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: scheme.onSurface,
@@ -550,7 +550,7 @@ class _AlertItemState extends State<_AlertItem> {
                       widget.alert.date.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 9,
                         fontWeight: FontWeight.w500,
                         letterSpacing: 1.2,

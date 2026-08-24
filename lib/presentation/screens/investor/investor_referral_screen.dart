@@ -106,7 +106,7 @@ class _InvestorReferralScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
 
     return Scaffold(
       backgroundColor: bg,
@@ -121,14 +121,14 @@ class _InvestorReferralScreenState
               child: _loading
                   ? Center(
                       child: CircularProgressIndicator(
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        color: isDark ? Colors.white : Color(0xFF0C312B),
                       ),
                     )
                   : _error && _wallet == null && _referrals.isEmpty
                   ? _buildErrorState(isDark, textPrimary)
                   : RefreshIndicator(
                       onRefresh: _load,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : Color(0xFF0C312B),
                       backgroundColor: isDark
                           ? const Color(0xFF141B3A)
                           : const Color(0xFFF4EFE3),
@@ -266,7 +266,7 @@ class _InvestorReferralScreenState
                     letterSpacing: 3,
                     // Was the gold accent — plain ink now (white on dark, since
                     // black there would be unreadable).
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : Color(0xFF0C312B),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -555,7 +555,7 @@ class _InvestorReferralScreenState
               children: [
                 Text(
                   name.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: textPrimary,
@@ -569,20 +569,20 @@ class _InvestorReferralScreenState
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     // Was the gold accent — plain ink now.
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : Color(0xFF0C312B),
                   ),
                 ),
                 if (code != null && code.isNotEmpty) ...[
                   const SizedBox(height: 2),
                   Text(
                     code,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1,
                       // Was _gold — slightly muted ink so it still reads as
                       // secondary next to the name above it.
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                         alpha: 0.65,
                       ),
                     ),
@@ -600,7 +600,7 @@ class _InvestorReferralScreenState
             ),
             child: Text(
               status.toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1,
@@ -657,7 +657,7 @@ class _InvestorReferralScreenState
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: textPrimary,
@@ -666,7 +666,7 @@ class _InvestorReferralScreenState
                 const SizedBox(height: 2),
                 Text(
                   date,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: textPrimary.withValues(alpha: 0.72),
@@ -680,7 +680,7 @@ class _InvestorReferralScreenState
             children: [
               Text(
                 '${isDebit ? '-' : '+'}$amount',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: isDebit ? Colors.redAccent : const Color(0xFF163A2C),
@@ -689,7 +689,7 @@ class _InvestorReferralScreenState
               if (status.isNotEmpty)
                 Text(
                   'STATUS: ${status.toUpperCase()}',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 9,
                     fontWeight: FontWeight.w600,
                     color: textPrimary.withValues(alpha: 0.72),
@@ -762,7 +762,7 @@ class _InvestorReferralScreenState
                 ),
                 decoration: BoxDecoration(
                   // Was the gold accent — matches the app's black CTA style.
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : Color(0xFF0C312B),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Text(
@@ -870,7 +870,7 @@ class _InvestorReferralScreenState
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                                  color: isDark ? Colors.white : Color(0xFF0C312B),
                                 ),
                               ),
                             ),
@@ -882,7 +882,7 @@ class _InvestorReferralScreenState
                             decoration: _inputBox(isDark, textPrimary),
                             child: Text(
                               'COULD NOT LOAD PROJECTS',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500,
                                 color: textPrimary.withValues(alpha: 0.72),
@@ -899,7 +899,7 @@ class _InvestorReferralScreenState
                                 value: selectedProjectId,
                                 hint: Text(
                                   'SELECT PROJECT',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
                                     color: textPrimary.withValues(alpha: 0.72),
@@ -922,7 +922,7 @@ class _InvestorReferralScreenState
                                           (p['title'] ?? p['name'] ?? 'PROJECT')
                                               .toString()
                                               .toUpperCase(),
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.inter(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w500,
                                             color: textPrimary,
@@ -1104,14 +1104,14 @@ class _InvestorReferralScreenState
         controller: controller,
         keyboardType: type,
         inputFormatters: inputFormatters,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w700,
           color: textPrimary,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.ebGaramond(
+          hintStyle: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             color: textPrimary.withValues(alpha: 0.72),

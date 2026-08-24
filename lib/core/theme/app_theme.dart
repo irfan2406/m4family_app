@@ -34,14 +34,21 @@ class M4Theme {
   // ===================================================================
   // LIGHT (:root) — CREAM
   // ===================================================================
-  static const Color lightBackground = Color(0xFFF3EDE0); // Figma cream page
+  static const Color lightBackground = Color(0xFFD4CFBC); // Figma cream page #D4CFBC
   static const Color lightForeground = Color(0xFF15271E); // dark green-black
+
+  /// Figma typography colours (M4 Web reference). Headings sit at [figmaHeading]
+  /// and body copy at [figmaBody] on the light / cream surfaces. Dark and green
+  /// "showcase" surfaces keep their own cream / white text — those are correct
+  /// by design and #155A4F would be unreadable on them.
+  static const Color figmaHeading = Color(0xFF0C312B);
+  static const Color figmaBody = Color(0xFF155A4F);
   static const Color lightCard = Color(0xFFF4EFE3); // warm cream card (never white)
   static const Color lightPrimary = Color(0xFF15271E); // dark green fill
   static const Color lightPrimaryFg = Color(0xFFF6F1E7); // cream on dark fill
   static const Color lightSecondary = Color(0xFFEAE1D0); // cream secondary
   static const Color lightMuted = Color(0xFFEAE1D0);
-  static const Color lightMutedFg = Color(0xFF5E6B60); // muted green-gray
+  static const Color lightMutedFg = Color(0xFF155A4F); // muted green-gray
   static const Color lightAccent = Color(0xFFEDE5D6);
   static const Color lightDestructive = coral;
   static const Color lightBorder = Color(0xFFD4CFBC); // Figma: 1px input border
@@ -98,7 +105,7 @@ class M4Theme {
     Color? color,
     double? letterSpacing,
     double? height,
-  }) => GoogleFonts.ebGaramond(
+  }) => GoogleFonts.inter(
     fontSize: fontSize,
     fontWeight: fontWeight,
     color: color,
@@ -235,31 +242,31 @@ class M4Theme {
           surfaceContainerHighest: lightMuted,
           onSurfaceVariant: lightMutedFg,
         ),
-    textTheme: GoogleFonts.ebGaramondTextTheme().copyWith(
+    textTheme: GoogleFonts.interTextTheme().copyWith(
       displayLarge: GoogleFonts.gelasio(
         fontSize: 32,
         fontWeight: FontWeight.bold,
-        color: lightForeground,
+        color: figmaHeading,
         letterSpacing: -0.5,
       ),
       displayMedium: GoogleFonts.gelasio(
         fontSize: 28,
         fontWeight: FontWeight.bold,
-        color: lightForeground,
+        color: figmaHeading,
         letterSpacing: -0.5,
       ),
       headlineMedium: GoogleFonts.gelasio(
         fontSize: 24,
         fontWeight: FontWeight.w600,
-        color: lightForeground,
+        color: figmaHeading,
       ),
       titleLarge: GoogleFonts.gelasio(
         fontSize: 20,
         fontWeight: FontWeight.w600,
-        color: lightForeground,
+        color: figmaHeading,
       ),
-      bodyLarge: GoogleFonts.ebGaramond(fontSize: 17, color: lightForeground),
-      bodyMedium: GoogleFonts.ebGaramond(fontSize: 15, color: lightMutedFg),
+      bodyLarge: GoogleFonts.inter(fontSize: 17, color: figmaBody, height: 1.42),
+      bodyMedium: GoogleFonts.inter(fontSize: 15, color: figmaBody, height: 1.42),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -333,7 +340,7 @@ class M4Theme {
         fontWeight: FontWeight.w700,
         color: lightForeground,
       ),
-      contentTextStyle: GoogleFonts.ebGaramond(
+      contentTextStyle: GoogleFonts.inter(
         fontSize: 15,
         color: lightMutedFg,
       ),
@@ -347,7 +354,7 @@ class M4Theme {
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: lightForeground,
-      contentTextStyle: GoogleFonts.ebGaramond(
+      contentTextStyle: GoogleFonts.inter(
         color: lightPrimaryFg,
         fontSize: 14,
       ),
@@ -367,7 +374,7 @@ class M4Theme {
         borderRadius: BorderRadius.circular(16),
         side: const BorderSide(color: lightBorder),
       ),
-      textStyle: GoogleFonts.ebGaramond(
+      textStyle: GoogleFonts.inter(
         fontSize: 14,
         fontWeight: FontWeight.w500,
         color: lightForeground,
@@ -403,18 +410,18 @@ class M4Theme {
         color: lightForeground,
         borderRadius: BorderRadius.circular(8),
       ),
-      textStyle: GoogleFonts.ebGaramond(color: lightPrimaryFg, fontSize: 12),
+      textStyle: GoogleFonts.inter(color: lightPrimaryFg, fontSize: 12),
     ),
     tabBarTheme: TabBarThemeData(
       labelColor: lightForeground,
       unselectedLabelColor: lightMutedFg,
       indicatorColor: gold,
       dividerColor: Colors.transparent,
-      labelStyle: GoogleFonts.ebGaramond(
+      labelStyle: GoogleFonts.inter(
         fontWeight: FontWeight.w800,
         letterSpacing: 0.5,
       ),
-      unselectedLabelStyle: GoogleFonts.ebGaramond(
+      unselectedLabelStyle: GoogleFonts.inter(
         fontWeight: FontWeight.w600,
         letterSpacing: 0.5,
       ),
@@ -482,7 +489,7 @@ class M4Theme {
           surfaceContainerHighest: darkMuted,
           onSurfaceVariant: darkMutedFg,
         ),
-    textTheme: GoogleFonts.ebGaramondTextTheme(ThemeData.dark().textTheme)
+    textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme)
         .copyWith(
           displayLarge: GoogleFonts.gelasio(
             fontSize: 32,
@@ -506,8 +513,8 @@ class M4Theme {
             fontWeight: FontWeight.w600,
             color: darkForeground,
           ),
-          bodyLarge: GoogleFonts.ebGaramond(fontSize: 17, color: darkForeground),
-          bodyMedium: GoogleFonts.ebGaramond(fontSize: 15, color: darkMutedFg),
+          bodyLarge: GoogleFonts.inter(fontSize: 17, color: darkForeground),
+          bodyMedium: GoogleFonts.inter(fontSize: 15, color: darkMutedFg),
         ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -581,7 +588,7 @@ class M4Theme {
         fontWeight: FontWeight.w700,
         color: darkForeground,
       ),
-      contentTextStyle: GoogleFonts.ebGaramond(
+      contentTextStyle: GoogleFonts.inter(
         fontSize: 15,
         color: darkMutedFg,
       ),
@@ -595,7 +602,7 @@ class M4Theme {
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: darkCard,
-      contentTextStyle: GoogleFonts.ebGaramond(
+      contentTextStyle: GoogleFonts.inter(
         color: darkForeground,
         fontSize: 14,
       ),

@@ -418,7 +418,7 @@ class _CpReferralRedeemScreenState
                 children: [
                   Text(
                     opt['title'] as String,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: scheme.onSurface,

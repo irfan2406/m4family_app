@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:m4_mobile/presentation/widgets/drawer_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -74,16 +74,16 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Are you sure you want to logout?',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 13,
-                  color: isDark ? Colors.white60 : const Color(0xFF163A2C).withValues(alpha: 0.78),
+                  color: isDark ? Colors.white60 : const Color(0xFF0C312B).withValues(alpha: 0.78),
                 ),
               ),
               const SizedBox(height: 22),
@@ -108,7 +108,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         ),
                         child: Text(
                           'NO',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
@@ -131,7 +131,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         ),
                         child: Text(
                           'YES',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
@@ -163,19 +163,21 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Drawer(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: M4Drawer.panelWidth(context),
       backgroundColor: Colors.transparent,
       elevation: 0,
-      child: Stack(
+      child: DecoratedBox(
+        // Large soft ambient lift and an almost-invisible cream hairline —
+        // the luxury floating-card effect, no hard shadow or harsh outline.
+        decoration: BoxDecoration(
+          boxShadow: M4Drawer.shadow,
+          border: Border(right: BorderSide(color: M4Drawer.border)),
+        ),
+        child: Stack(
         children: [
-          ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-              child: Container(
-                color: isDark ? Colors.black.withOpacity(0.6) : const Color(0xFF0C312B).withValues(alpha: 0.72),
-              ),
-            ),
-          ),
+          // Figma glass panel: deep-green base, cream bloom through
+          // the middle, blue bloom low down, #0B0000 10% veil, blur 40.
+          const DrawerGlass(),
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -385,6 +387,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
           ),
         ],
       ),
+      ),
     );
   }
 }
@@ -439,7 +442,7 @@ class _SidebarItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   letterSpacing: -0.2,
@@ -482,13 +485,13 @@ class _SubItem extends StatelessWidget {
               child: Icon(
                 LucideIcons.logIn,
                 size: 14,
-                color: isDark ? Colors.white70 : Color(0xFF5E6B60),
+                color: isDark ? Colors.white70 : Color(0xFF155A4F),
               ),
             ),
             const SizedBox(width: 12),
             Text(
               label,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: isDark ? Colors.white : const Color(0xFFF4EFE3),

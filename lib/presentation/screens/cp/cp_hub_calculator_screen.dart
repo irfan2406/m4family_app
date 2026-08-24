@@ -40,7 +40,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
         ),
         title: Text(
           'Calculator',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
         ),
       ),
       body: ListView(
@@ -106,11 +106,11 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
                       const SizedBox(width: 8),
                       Text(
                         '+${fmt.format(profit)} PROFIT',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
-                          color: const Color(0xFF163A2C),
+                          color: const Color(0xFF155A4F),
                         ),
                       ),
                     ],
@@ -183,7 +183,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
                 Expanded(
                   child: Text(
                     'Disclaimer: Calculations are estimates based on compounded annual growth rate. Actual returns may vary based on market conditions and project performance.',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       height: 1.5,
@@ -223,7 +223,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
             ),
             Text(
               valueText,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),

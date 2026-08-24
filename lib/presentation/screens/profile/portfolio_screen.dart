@@ -113,7 +113,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
   // ─── Header ────────────────────────────────────────────────────────────────
   Widget _buildHeader(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -206,7 +206,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 style: GoogleFonts.gelasio(
                   fontSize: 9,
                   fontWeight: FontWeight.w700,
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                     alpha: 0.5,
                   ),
                   letterSpacing: 3,
@@ -225,7 +225,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
   // ─── Summary card ────────────────────────────────────────────────────────────
   Widget _buildSummaryCard(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
@@ -279,7 +279,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                     children: [
                       TextSpan(
                         text: '  PROPERTIES',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: muted,
@@ -323,7 +323,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
   // ─── Holding card ────────────────────────────────────────────────────────────
   Widget _buildHoldingCard(dynamic holding, bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
@@ -437,7 +437,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                       Expanded(
                         child: Text(
                           location.toUpperCase(),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             color: muted,
@@ -520,7 +520,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   }
 
   Widget _buildImage(String? url, bool isDark) {
-    final placeholderBg = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final placeholderBg = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
       alpha: 0.05,
     );
     if (url == null || url.isEmpty) {
@@ -529,7 +529,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
         child: Icon(
           LucideIcons.building2,
           size: 48,
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.15),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.15),
         ),
       );
     }
@@ -543,7 +543,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
         child: Icon(
           LucideIcons.building2,
           size: 48,
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.15),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.15),
         ),
       ),
     );
@@ -561,7 +561,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
         .toString();
     final imageUrl = _firstImage(project);
 
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
     final sheetBg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
     final border = isDark
@@ -746,7 +746,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
   // ─── Empty / error states ────────────────────────────────────────────────────
   Widget _buildEmptyState(bool isDark) {
-    final faint = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.2);
+    final faint = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.2);
     return Padding(
       padding: const EdgeInsets.only(top: 48),
       child: Center(
@@ -766,10 +766,10 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             const SizedBox(height: 8),
             Text(
               'Your acquired properties will appear here.',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                   alpha: 0.35,
                 ),
               ),
@@ -781,7 +781,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   }
 
   Widget _buildErrorState(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
     return Center(
       child: Padding(
@@ -980,7 +980,7 @@ class _DetailItem extends StatelessWidget {
         Text(
           value.toUpperCase(),
           textAlign: alignEnd ? TextAlign.right : TextAlign.left,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w500,
             fontStyle: FontStyle.italic,
@@ -1031,7 +1031,7 @@ class _SpecItem extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           value.toUpperCase(),
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: textPrimary,

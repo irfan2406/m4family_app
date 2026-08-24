@@ -234,7 +234,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             Text(
               'SECURE MULTI-FACTOR AUTHENTICATION',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: Colors.white70,
@@ -255,7 +255,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         const SizedBox(height: 16),
         Text(
           'A secure one-time access token will be dispatched via WhatsApp for identity validation.',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 10,
             color: Colors.white70,
             height: 1.5,
@@ -305,7 +305,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       Text(
                         'REQUEST TOKEN',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
                           letterSpacing: 1,
@@ -346,7 +346,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(width: 8),
                   Text(
                     'BACK',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: Colors.white70,
                       fontWeight: FontWeight.w700,
                       fontSize: 9,
@@ -374,7 +374,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             Text(
               'WHATSAPP CODE SENT TO ${authState.identifier}',
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: Colors.white70,
@@ -560,7 +560,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           const SizedBox(height: 4),
           Text(
             'V2.4.0 • ENCRYPTED',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 8,
               color: Colors.white,
               letterSpacing: 1.5,

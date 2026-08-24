@@ -114,7 +114,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                             const SizedBox(width: 10),
                             Text(
                               'BACK TO GUEST PORTAL',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 color: Colors.white.withValues(alpha: 0.6),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 11,
@@ -129,7 +129,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                   ],
                   Text(
                     'CHANNEL\nPARTNER',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 46,
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
@@ -144,7 +144,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         const TextSpan(text: 'AUTHORIZED '),
                         TextSpan(
                           text: 'PARTNER',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: const Color(0xFFF4EFE3),
                             fontWeight: FontWeight.w700,
                             fontSize: 10,
@@ -154,7 +154,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         const TextSpan(text: ' ACCESS PORTAL'),
                       ],
                     ),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: Colors.white70,
@@ -184,7 +184,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         ),
                         child: Text(
                           'FORGOT PASSWORD?',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
                             color: Colors.white70,
@@ -198,7 +198,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         ),
                         child: Text(
                           'REGISTER NOW',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFFF4EFE3),
@@ -287,7 +287,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                           children: [
                                             Text(
                                               'AUTHORIZE ACCESS',
-                                              style: GoogleFonts.ebGaramond(
+                                              style: GoogleFonts.inter(
                                                 color: const Color(0xFF0C312B),
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 13,
@@ -322,7 +322,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                   Text(
                     'M4 FAMILY PARTNER NETWORK\nSECURE • VERIFIED • TRUSTED',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: Colors.white70,
@@ -370,7 +370,7 @@ class _FieldState extends State<_Field> {
       children: [
         Text(
           widget.label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 9,
             fontWeight: FontWeight.bold,
             color: Colors.white70,

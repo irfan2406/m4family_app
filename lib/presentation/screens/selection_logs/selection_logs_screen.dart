@@ -138,7 +138,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
               children: [
                 Text(
                   'CUSTOMIZATION LOGS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: foreground,
@@ -173,10 +173,10 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
         ),
         child: TextField(
           onChanged: (v) => setState(() => _searchQuery = v),
-          style: GoogleFonts.ebGaramond(color: foreground, fontSize: 15),
+          style: GoogleFonts.inter(color: foreground, fontSize: 15),
           decoration: InputDecoration(
             hintText: 'SEARCH BY ID OR PROJECT...',
-            hintStyle: GoogleFonts.ebGaramond(
+            hintStyle: GoogleFonts.inter(
               color: foreground.withOpacity(0.72),
               fontSize: 10,
               fontWeight: FontWeight.w600,
@@ -218,7 +218,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
           ),
           Text(
             '$count LOGS RETRIEVED',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 9,
               fontWeight: FontWeight.w600,
               color: foreground.withOpacity(0.72),
@@ -255,12 +255,12 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                     0.03,
                   ),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                       0.05,
                     ),
                   ),
@@ -421,7 +421,7 @@ class _LogCard extends StatelessWidget {
                           ),
                           child: Text(
                             '#$shortId',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               color: foreground.withOpacity(0.72),
                               fontSize: 9,
                               fontWeight: FontWeight.w600,
@@ -458,7 +458,7 @@ class _LogCard extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     projectName.toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: foreground,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -503,7 +503,7 @@ class _LogCard extends StatelessWidget {
                     if (summaryItems.length > 2)
                       Text(
                         ' +${summaryItems.length - 2} MORE',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 8,
                           fontWeight: FontWeight.w600,
                           color: foreground.withOpacity(0.72),
@@ -534,7 +534,7 @@ class _LogCard extends StatelessWidget {
       ),
       child: Text(
         status,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           color: color,
           fontSize: 8,
           fontWeight: FontWeight.w600,
@@ -558,7 +558,7 @@ class _LogCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 8,
             fontWeight: FontWeight.w600,
             color: foreground.withOpacity(0.72),
@@ -568,7 +568,7 @@ class _LogCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           value,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w500,
             color: foreground.withOpacity(0.8),
@@ -591,7 +591,7 @@ class _LogCard extends StatelessWidget {
       ),
       child: Text(
         label.toUpperCase(),
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           color: foreground.withOpacity(0.7),
           fontSize: 7.5,
           fontWeight: FontWeight.w600,
@@ -689,7 +689,7 @@ class _LogDetailDialog extends ConsumerWidget {
                             ),
                             child: Text(
                               'LOG ID: #$shortId',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 color: foreground.withOpacity(0.5),
                                 fontSize: 9,
                                 fontWeight: FontWeight.w600,
@@ -781,7 +781,7 @@ class _LogDetailDialog extends ConsumerWidget {
                       (status == 'PENDING' || status == 'REQUESTED')
                           ? 'Your selection is currently under review by our interior consultants. We will contact you shortly.'
                           : 'This request has been ${status.toLowerCase()} and logged in your asset history.',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 12,
                         height: 1.6,
                         color: foreground.withOpacity(0.54),
@@ -897,7 +897,7 @@ class _LogDetailDialog extends ConsumerWidget {
       ),
       child: Text(
         status,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           color: color,
           fontSize: 8,
           fontWeight: FontWeight.w600,
@@ -948,7 +948,7 @@ class _LogDetailDialog extends ConsumerWidget {
               children: [
                 Text(
                   key.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 8,
                     fontWeight: FontWeight.w600,
                     color: foreground.withOpacity(0.72),
@@ -958,7 +958,7 @@ class _LogDetailDialog extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                   displayValue.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: foreground,
@@ -993,7 +993,7 @@ class _LogDetailDialog extends ConsumerWidget {
         alignment: Alignment.center,
         child: Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w600,
             color: isPrimary

@@ -137,8 +137,8 @@ class _CpBookingConfirmationScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
       alpha: 0.68,
     );
 
@@ -368,7 +368,7 @@ class _CpBookingConfirmationScreenState
                       width: double.infinity,
                       height: 64,
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        color: isDark ? Colors.white : Color(0xFF0C312B),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
@@ -473,7 +473,7 @@ class _CpBookingConfirmationScreenState
                 const SizedBox(height: 6),
                 Text(
                   '#${(_receiptId.isNotEmpty ? _receiptId : _fallbackReceipt).toUpperCase()}',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: textPrimary,
@@ -492,7 +492,7 @@ class _CpBookingConfirmationScreenState
             muted: muted,
             child: Text(
               _projectTitle.toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
@@ -513,7 +513,7 @@ class _CpBookingConfirmationScreenState
                   muted: muted,
                   child: Text(
                     '₹$_amount',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: M4Theme.premiumBlue,
@@ -560,7 +560,7 @@ class _CpBookingConfirmationScreenState
                             style: GoogleFonts.gelasio(
                               fontSize: 8,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFF163A2C),
+                              color: const Color(0xFF0C312B),
                               letterSpacing: 2,
                             ),
                           ),
@@ -659,7 +659,7 @@ class _ActionButton extends StatelessWidget {
                 style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : Color(0xFF0C312B),
                   letterSpacing: 1.5,
                 ),
               ),

@@ -89,7 +89,7 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
         ),
         title: Text(
           'Wallet & history',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontWeight: FontWeight.w500,
             fontSize: 16,
           ),
@@ -226,7 +226,7 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
         children: [
           Text(
             label.toUpperCase(),
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 9,
               letterSpacing: 1,
               color: Theme.of(context).hintColor,
@@ -235,7 +235,7 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
           const SizedBox(height: 4),
           Text(
             value,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontWeight: FontWeight.w500,
               fontSize: 14,
               color: highlight ? Colors.greenAccent : null,

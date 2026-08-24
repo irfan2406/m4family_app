@@ -112,8 +112,8 @@ class _InvestorReferralClosedScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -275,7 +275,7 @@ class _InvestorReferralClosedScreenState
                         Flexible(
                           child: Text(
                             name,
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                               color: textPrimary,
@@ -336,7 +336,7 @@ class _InvestorReferralClosedScreenState
                     const SizedBox(height: 6),
                     Text(
                       unitConfig.toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                         color: textPrimary,
@@ -362,7 +362,7 @@ class _InvestorReferralClosedScreenState
                   const SizedBox(height: 6),
                   Text(
                     '+${_formatNumber(points)} PTS',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: _emerald,
@@ -405,7 +405,7 @@ class _InvestorReferralClosedScreenState
       ),
       child: Text(
         'CONVERTED',
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 10,
           fontWeight: FontWeight.w600,
           letterSpacing: 1,

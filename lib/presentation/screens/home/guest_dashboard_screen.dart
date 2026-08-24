@@ -450,7 +450,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               const SizedBox(height: 18),
               Text(
                 'M4 FAMILY',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 5,
@@ -623,7 +623,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                 ),
                                 child: Text(
                                   'ARTISTIC IMPRESSION',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     color: Colors.white,
                                     fontSize: 8,
                                     fontWeight: FontWeight.w600,
@@ -769,7 +769,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         const SizedBox(height: 24),
         RichText(
           text: TextSpan(
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
               fontSize: 14,
               height: 1.8,
@@ -784,8 +784,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   onTap: () => context.push('/about'),
                   child: Text(
                     'Who We Are',
-                    style: GoogleFonts.ebGaramond(
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                    style: GoogleFonts.inter(
+                      color: isDark ? Colors.white : Color(0xFF155A4F),
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
                     ),
@@ -833,7 +833,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                             border: Border(
                               bottom: BorderSide(
                                 color: isSelected
-                                    ? (isDark ? Colors.white : Color(0xFF163A2C))
+                                    ? (isDark ? Colors.white : Color(0xFF0C312B))
                                     : Colors.transparent,
                                 width: 2,
                               ),
@@ -841,10 +841,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           ),
                           child: Text(
                             tab.toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               color: isSelected
-                                  ? (isDark ? Colors.white : Color(0xFF163A2C))
-                                  : (isDark ? Colors.white : Color(0xFF163A2C))
+                                  ? (isDark ? Colors.white : Color(0xFF0C312B))
+                                  : (isDark ? Colors.white : Color(0xFF0C312B))
                                         .withValues(alpha: 0.55),
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -1058,7 +1058,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           ? 'MEDIA'
                           : (item['status']?.toString() ?? 'ONGOING')
                                 .toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         color: Colors.white,
                         fontSize: 8,
                         fontWeight: FontWeight.w400,
@@ -1099,7 +1099,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           .toUpperCase(),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
@@ -1115,7 +1115,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           isCommunity
                               ? 'EXPLORE COMMUNITY'
                               : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w400,
@@ -1220,7 +1220,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   (item['title'] ?? item['name'] ?? '')
                       .toString()
                       .toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -1294,7 +1294,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       ),
                       child: Text(
                         status.toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 8,
                           fontWeight: FontWeight.w500,
@@ -1317,7 +1317,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       ),
                       child: Text(
                         'ARTISTIC IMPRESSION',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 6.5,
                           fontWeight: FontWeight.w600,
@@ -1360,7 +1360,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           location.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: scheme.onSurface.withValues(alpha: 0.55),
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
@@ -1383,7 +1383,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       children: [
                         Text(
                           'READ MORE',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: scheme.surface,
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -1613,7 +1613,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       ),
                       child: Text(
                         'ARTISTIC IMPRESSION',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 7,
                           fontWeight: FontWeight.w600,
@@ -1632,7 +1632,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       children: [
                         Text(
                           'FEATURED PROPERTY',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: const Color(0xFFC5A35B),
                             fontSize: 9,
                             fontWeight: FontWeight.w600,
@@ -1658,7 +1658,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           featuredDesc.toUpperCase(),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Colors.white.withOpacity(0.8),
                             fontSize: 9,
                             height: 1.6,
@@ -1714,14 +1714,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                         0.1,
                       ),
                     ),
                   ),
                   child: Icon(
                     LucideIcons.arrowLeft,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : Color(0xFF0C312B),
                     size: 20,
                   ),
                 ),
@@ -1733,7 +1733,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   child: Container(
                     height: 56,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : Color(0xFF0C312B),
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
@@ -1746,7 +1746,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     child: Center(
                       child: Text(
                         'READ MORE',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
@@ -1770,14 +1770,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                         0.1,
                       ),
                     ),
                   ),
                   child: Icon(
                     LucideIcons.arrowRight,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : Color(0xFF0C312B),
                     size: 20,
                   ),
                 ),
@@ -1793,13 +1793,13 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
-        Icon(icon, color: isDark ? Colors.white : Color(0xFF163A2C), size: 24),
+        Icon(icon, color: isDark ? Colors.white : Color(0xFF0C312B), size: 24),
         const SizedBox(height: 8),
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.ebGaramond(
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+          style: GoogleFonts.inter(
+            color: isDark ? Colors.white : Color(0xFF155A4F),
             fontSize: 9,
             fontWeight: FontWeight.w600,
             letterSpacing: 1.5,
@@ -1820,12 +1820,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           color: isDark ? Colors.black : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
           ),
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white70 : Color(0xFF163A2C),
+          color: isDark ? Colors.white70 : Color(0xFF0C312B),
           size: 20,
         ),
       ),
@@ -1858,7 +1858,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 : Colors.black.withOpacity(0.02),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.08),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.08),
             ),
             boxShadow: [
               BoxShadow(
@@ -1933,17 +1933,17 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                     0.1,
                   ),
                 ),
               ),
               child: Icon(
                 icon,
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : Color(0xFF0C312B),
                 size: 20,
               ),
             ),
@@ -1951,8 +1951,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+              style: GoogleFonts.inter(
+                color: isDark ? Colors.white : Color(0xFF155A4F),
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
                 letterSpacing: 1,
@@ -1962,8 +1962,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             Text(
               desc,
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
+              style: GoogleFonts.inter(
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.68),
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
@@ -1984,7 +1984,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         Text(
           'REGISTER YOUR\nINTEREST',
           style: GoogleFonts.gelasio(
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : Color(0xFF0C312B),
             fontSize: 32,
             fontWeight: FontWeight.w400,
             letterSpacing: -1,
@@ -2033,15 +2033,15 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             Checkbox(
               value: _agreedToTerms,
               onChanged: (val) => setState(() => _agreedToTerms = val ?? false),
-              activeColor: isDark ? Colors.white : Color(0xFF163A2C),
+              activeColor: isDark ? Colors.white : Color(0xFF0C312B),
               checkColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
               side: BorderSide(color: isDark ? Colors.white24 : Colors.black26),
             ),
             Expanded(
               child: Text(
                 "I've read and agree to the Privacy Policy",
-                style: GoogleFonts.ebGaramond(
-                  color: isDark ? Colors.white54 : Color(0xFF5E6B60),
+                style: GoogleFonts.inter(
+                  color: isDark ? Colors.white54 : Color(0xFF155A4F),
                   fontSize: 11,
                   letterSpacing: 1,
                 ),
@@ -2057,7 +2057,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             onTap: _submitting ? () {} : _submitInterest,
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : Color(0xFF0C312B),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
@@ -2067,7 +2067,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       )
                     : Text(
                         'SUBMIT INTEREST',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w400,
                           letterSpacing: 2,
@@ -2109,7 +2109,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             border: Border.all(
               color: hasError
                   ? errorColor
-                  : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.12),
+                  : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.12),
               width: hasError ? 1.5 : 1,
             ),
             boxShadow: isDark
@@ -2128,11 +2128,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             onChanged: onChanged,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
-            style: TextStyle(color: isDark ? Colors.white : Color(0xFF163A2C)),
+            style: TextStyle(color: isDark ? Colors.white : Color(0xFF0C312B)),
             maxLines: isLong ? 5 : 1,
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: GoogleFonts.ebGaramond(
+              hintStyle: GoogleFonts.inter(
                 color: hasError
                     ? errorColor.withOpacity(0.75)
                     : (isDark ? Colors.white54 : Colors.black45),
@@ -2154,7 +2154,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             padding: const EdgeInsets.only(left: 10, top: 6),
             child: Text(
               errorText,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 color: errorColor,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,

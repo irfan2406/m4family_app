@@ -91,8 +91,8 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
       alpha: 0.68,
     );
     final border = isDark
@@ -120,7 +120,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withValues(alpha: 0.04),
                         shape: BoxShape.circle,
                         border: Border.all(color: border),
@@ -270,7 +270,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                         const SizedBox(height: 4),
                                         Text(
                                           'NEED HELP DECIDING? CONTACT YOUR RELATIONSHIP MANAGER FOR A DETAILED COMPARISON SHEET.',
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.inter(
                                             fontSize: 8,
                                             fontWeight: FontWeight.bold,
                                             height: 1.5,
@@ -360,8 +360,8 @@ class _PaymentPlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
       alpha: 0.68,
     );
     final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
@@ -444,7 +444,7 @@ class _PaymentPlanCard extends StatelessWidget {
                               const SizedBox(height: 8),
                               Text(
                                 desc,
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500,
                                   height: 1.4,
@@ -470,7 +470,7 @@ class _PaymentPlanCard extends StatelessWidget {
                   const SizedBox(height: 28),
                   Divider(
                     height: 1,
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                       alpha: 0.06,
                     ),
                   ),
@@ -491,7 +491,7 @@ class _PaymentPlanCard extends StatelessWidget {
                           const SizedBox(width: 12),
                           Text(
                             benefit.toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 9,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1,
@@ -506,7 +506,7 @@ class _PaymentPlanCard extends StatelessWidget {
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          color: (isDark ? Colors.white : Color(0xFF163A2C))
+                          color: (isDark ? Colors.white : Color(0xFF0C312B))
                               .withValues(alpha: isDark ? 0.05 : 0.03),
                           borderRadius: BorderRadius.circular(999),
                         ),
@@ -514,7 +514,7 @@ class _PaymentPlanCard extends StatelessWidget {
                           children: [
                             Text(
                               'SELECT PLAN',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1,

@@ -88,7 +88,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final fg = isDark ? Colors.white : Color(0xFF163A2C);
+    final fg = isDark ? Colors.white : Color(0xFF0C312B);
     final years = List<int>.generate(
       _maxYear - widget.minYear + 1,
       (i) => widget.minYear + i,
@@ -119,7 +119,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'SELECT DATE',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.5,
@@ -193,7 +193,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                         ),
                         child: Text(
                           'CANCEL',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1,
@@ -223,7 +223,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                         ),
                         child: Text(
                           'CONFIRM',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1,

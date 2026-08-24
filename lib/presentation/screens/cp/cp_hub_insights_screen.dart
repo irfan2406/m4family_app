@@ -116,7 +116,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
         ),
         title: Text(
           'Insights',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w500),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w500),
         ),
       ),
       body: _loading
@@ -157,7 +157,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                         ),
                         child: Text(
                           'DAILY PULSE',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 8,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 1.4,
@@ -168,7 +168,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                       const SizedBox(height: 10),
                       Text(
                         'Conversion rate $rate with $books bookings from $leads leads',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
@@ -217,7 +217,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                     const SizedBox(width: 8),
                     Text(
                       'Latest Analysis',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
@@ -293,7 +293,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                       ),
                       child: Text(
                         category.toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 8,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.3,
@@ -309,7 +309,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
           const SizedBox(height: 10),
           Text(
             title,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               height: 1.2,
@@ -318,7 +318,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
           const SizedBox(height: 4),
           Text(
             readTime.isEmpty ? 'READ' : readTime.toUpperCase(),
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 9,
               fontWeight: FontWeight.w500,
               letterSpacing: 1.4,

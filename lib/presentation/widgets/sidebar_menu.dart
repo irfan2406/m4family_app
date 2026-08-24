@@ -1,7 +1,7 @@
+import 'package:m4_mobile/presentation/widgets/drawer_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:ui';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -63,31 +63,20 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
     final currentRouteName = ModalRoute.of(context)?.settings.name;
 
     return Drawer(
-      width: MediaQuery.of(context).size.width * 0.85,
+      width: M4Drawer.panelWidth(context),
       backgroundColor: Colors.transparent,
-      child: Stack(
+      child: DecoratedBox(
+        // Large soft ambient lift and an almost-invisible cream hairline —
+        // the luxury floating-card effect, no hard shadow or harsh outline.
+        decoration: BoxDecoration(
+          boxShadow: M4Drawer.shadow,
+          border: Border(right: BorderSide(color: M4Drawer.border)),
+        ),
+        child: Stack(
         children: [
-          // 🧊 Premium Glassmorphism Background
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.black.withOpacity(0.4)
-                    : const Color(0xFF0C312B).withValues(alpha: 0.72),
-                border: Border(
-                  right: BorderSide(
-                    color:
-                        (Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.white)
-                            .withOpacity(0.1),
-                    width: 1,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          // Figma glass panel: deep-green base, cream bloom through
+          // the middle, blue bloom low down, #0B0000 10% veil, blur 40.
+          const DrawerGlass(),
 
           SafeArea(
             child: Column(
@@ -364,6 +353,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
           ),
         ],
       ),
+      ),
     );
   }
 }
@@ -396,7 +386,7 @@ class _SidebarExitButton extends ConsumerWidget {
             ),
             content: Text(
               'Are you sure you want to logout?',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.white70
                     : M4Theme.lightForeground.withOpacity(0.78),
@@ -408,7 +398,7 @@ class _SidebarExitButton extends ConsumerWidget {
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'CANCEL',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     // Gold reads on navy but washes out on cream.
                     color: Theme.of(context).brightness == Brightness.dark
                         ? const Color(0xFFC5A35B)
@@ -427,7 +417,7 @@ class _SidebarExitButton extends ConsumerWidget {
                 },
                 child: Text(
                   'LOGOUT',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: const Color(0xFFC65B46),
                     fontWeight: FontWeight.bold,
                   ),
@@ -551,7 +541,7 @@ class _SidebarItem extends StatelessWidget {
             ),
             title: Text(
               label,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 color: isActive ? activeColor : const Color(0xFFF4EFE3),
                 fontSize: 17,
                 fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
@@ -643,7 +633,7 @@ class _SidebarSubItem extends StatelessWidget {
       ),
       title: Text(
         label,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           color: const Color(0xFFF4EFE3),
           fontSize: 14,
           fontWeight: FontWeight.w500,

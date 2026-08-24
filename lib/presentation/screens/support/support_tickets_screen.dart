@@ -247,7 +247,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       ),
                       child: Text(
                         t.toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1,
@@ -379,13 +379,13 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               child: TextField(
                 controller: _searchController,
                 onChanged: (_) => setState(() {}),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
                 ),
                 decoration: InputDecoration(
                   hintText: 'SEARCH LOGS, TICKETS, UPD...',
-                  hintStyle: GoogleFonts.ebGaramond(
+                  hintStyle: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: scheme.onSurface.withValues(alpha: 0.68),
@@ -468,7 +468,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               children: [
                 Text(
                   'TYPE: ${_selectedType!.toUpperCase()}',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 8,
                     fontWeight: FontWeight.w600,
                     color: scheme.onSurface,
@@ -520,7 +520,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             const SizedBox(height: 24),
             Text(
               'NO LOGS FOUND',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
@@ -530,7 +530,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             const SizedBox(height: 8),
             Text(
               'TRY ADJUSTING YOUR SEARCH OR FILTERS',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 9,
                 fontWeight: FontWeight.w600,
                 color: scheme.onSurface.withValues(alpha: 0.68),
@@ -564,7 +564,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   ),
                   child: Text(
                     'RESET MATRIX',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: scheme.onSurface,
@@ -628,7 +628,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         ),
                         child: Text(
                           log['id'] as String,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 8,
                             fontWeight: FontWeight.w500,
                             color: scheme.onSurface.withValues(alpha: 0.68),
@@ -650,7 +650,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         ),
                         child: Text(
                           (log['type'] as String).toUpperCase(),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 8,
                             fontWeight: FontWeight.w500,
                             color: scheme.onSurface.withValues(alpha: 0.68),
@@ -673,7 +673,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   ),
                   child: Text(
                     (log['status'] as String).toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 8,
                       fontWeight: FontWeight.w600,
                       color: statusColor,
@@ -686,7 +686,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             const SizedBox(height: 16),
             Text(
               (log['title'] as String).toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
@@ -698,7 +698,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             const SizedBox(height: 8),
             Text(
               (log['description'] as String).toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 color: scheme.onSurface.withValues(alpha: 0.68),
@@ -728,7 +728,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                     const SizedBox(width: 8),
                     Text(
                       (log['date'] as String).toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 9,
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface.withValues(alpha: 0.68),
@@ -741,7 +741,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   children: [
                     Text(
                       'VIEW DETAILS',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 8,
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface.withValues(alpha: 0.68),
@@ -860,7 +860,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                           ),
                           child: Text(
                             (log['description'] as String).toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w700,
                               color: summaryText,
@@ -905,7 +905,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                                     children: [
                                       Text(
                                         details.keys.elementAt(i).toUpperCase(),
-                                        style: GoogleFonts.ebGaramond(
+                                        style: GoogleFonts.inter(
                                           fontSize: 10,
                                           fontWeight: FontWeight.w500,
                                           color: Colors.black.withValues(
@@ -922,7 +922,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                                               .toString()
                                               .toUpperCase(),
                                           textAlign: TextAlign.right,
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.inter(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
                                             color: Colors.black,
@@ -1026,7 +1026,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               Flexible(
                 child: Text(
                   value.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.black,

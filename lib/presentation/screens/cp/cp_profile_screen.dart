@@ -284,7 +284,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                           builder: (ctx) => AlertDialog(
                             title: Text(
                               'Log out',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -449,7 +449,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         phone.toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: scheme.primary.withValues(alpha: 0.8),
@@ -461,7 +461,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         email.toLowerCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface.withValues(alpha: 0.6),
@@ -495,7 +495,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                             Expanded(
                               child: Text(
                                 'BORN: $born',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                   color: scheme.primary,
@@ -527,7 +527,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
       ),
       child: Text(
         text.toUpperCase(),
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 10,
           fontWeight: FontWeight.w600,
           color: scheme.primary,
@@ -586,7 +586,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9.5,
                       fontWeight: FontWeight.w600,
                       color: scheme.onSurface,
@@ -647,7 +647,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
               Expanded(
                 child: Text(
                   'EMPLOYEE MANAGEMENT',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: scheme.onSurface,

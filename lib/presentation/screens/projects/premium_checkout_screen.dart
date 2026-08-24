@@ -71,7 +71,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
         backgroundColor: _gold,
         content: Text(
           'Welcome to M4 Elite! Your membership is now active.',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             color: Colors.black,
             fontWeight: FontWeight.w700,
             fontSize: 13,
@@ -85,7 +85,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
 
     return Scaffold(
       backgroundColor: bg,
@@ -121,8 +121,8 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
 
   // ─────────────────────────── STEP 1 · DETAILS ───────────────────────────
   Widget _buildDetails(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
@@ -163,7 +163,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                                 ),
                                 child: Text(
                                   'M4 ELITE',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.black,
@@ -196,7 +196,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                             ),
                             Text(
                               'Fixed One-time',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 10,
                                 color: muted,
                               ),
@@ -337,7 +337,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                   child: Text(
                     'Your transaction is secured with bank-grade encryption. '
                     'M4 Family does not store your card details on our servers.',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 11,
                       color: muted,
                       height: 1.5,
@@ -370,7 +370,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                   child: Center(
                     child: Text(
                       'Pay ₹4,999',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -394,7 +394,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
         const SizedBox(width: 8),
         Text(
           label,
-          style: GoogleFonts.ebGaramond(fontSize: 12, color: muted),
+          style: GoogleFonts.inter(fontSize: 12, color: muted),
         ),
       ],
     );
@@ -403,7 +403,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
   Widget _fieldLabel(String text, Color muted) {
     return Text(
       text,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.inter(
         fontSize: 10,
         fontWeight: FontWeight.w600,
         color: muted,
@@ -436,7 +436,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       textAlign: center ? TextAlign.center : TextAlign.start,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.inter(
         fontSize: 17,
         fontWeight: FontWeight.w600,
         color: textPrimary,
@@ -445,7 +445,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
       decoration: InputDecoration(
         counterText: '',
         hintText: hint,
-        hintStyle: GoogleFonts.ebGaramond(
+        hintStyle: GoogleFonts.inter(
           fontSize: 17,
           fontWeight: FontWeight.w600,
           color: muted,
@@ -472,8 +472,8 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
 
   // ────────────────────────── STEP 2 · PROCESSING ─────────────────────────
   Widget _buildProcessing(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
 
     return Center(
           child: Column(
@@ -517,7 +517,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
               const SizedBox(height: 8),
               Text(
                 'Communicating with your banking partner...',
-                style: GoogleFonts.ebGaramond(fontSize: 13, color: muted),
+                style: GoogleFonts.inter(fontSize: 13, color: muted),
               ),
             ],
           ),
@@ -529,8 +529,8 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
 
   // ─────────────────────────── STEP 3 · SUCCESS ───────────────────────────
   Widget _buildSuccess(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -612,7 +612,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                 'Your premium membership is now active. Explore exclusive '
                 'property tours and premium features.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 13,
                   color: muted,
                   height: 1.5,
@@ -630,13 +630,13 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                       width: double.infinity,
                       height: 52,
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        color: isDark ? Colors.white : Color(0xFF0C312B),
                         borderRadius: BorderRadius.circular(18),
                       ),
                       child: Center(
                         child: Text(
                           'Explore M4 Projects',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.black : const Color(0xFFF4EFE3),
@@ -654,7 +654,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                       child: Center(
                         child: Text(
                           'Go to Profile',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: muted,

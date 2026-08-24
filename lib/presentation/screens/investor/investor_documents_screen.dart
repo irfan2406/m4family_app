@@ -168,7 +168,7 @@ class _InvestorDocumentsScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
 
     return Scaffold(
       backgroundColor: bg,
@@ -226,7 +226,7 @@ class _InvestorDocumentsScreenState
               child: Icon(
                 LucideIcons.arrowLeft,
                 size: 20,
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                   alpha: 0.5,
                 ),
               ),
@@ -256,7 +256,7 @@ class _InvestorDocumentsScreenState
                       style: GoogleFonts.gelasio(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withValues(alpha: 0.5),
                         letterSpacing: 2,
                       ),
@@ -277,7 +277,7 @@ class _InvestorDocumentsScreenState
             child: Icon(
               LucideIcons.shield,
               size: 18,
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                 alpha: 0.5,
               ),
             ),
@@ -322,7 +322,7 @@ class _InvestorDocumentsScreenState
                     letterSpacing: 1.5,
                     color: selected
                         ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
-                        : (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                        : (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                             alpha: 0.5,
                           ),
                   ),
@@ -370,7 +370,7 @@ class _InvestorDocumentsScreenState
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -398,7 +398,7 @@ class _InvestorDocumentsScreenState
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                   alpha: 0.05,
                 ),
                 borderRadius: BorderRadius.circular(16),
@@ -415,7 +415,7 @@ class _InvestorDocumentsScreenState
                     (doc['title'] ?? 'DOCUMENT').toString().toUpperCase(),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: textPrimary,
@@ -427,7 +427,7 @@ class _InvestorDocumentsScreenState
                     children: [
                       Text(
                         _formatDate(doc['createdAt']).toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           color: muted,
@@ -448,7 +448,7 @@ class _InvestorDocumentsScreenState
                         child: Text(
                           (doc['size'] ?? '').toString().toUpperCase(),
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
                             color: _gold.withValues(alpha: 0.7),
@@ -520,14 +520,14 @@ class _InvestorDocumentsScreenState
   }
 
   Widget _buildEmptyState(bool isDark) {
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
     return Column(
       children: [
         Container(
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
               alpha: 0.04,
             ),
             shape: BoxShape.circle,
@@ -553,7 +553,7 @@ class _InvestorDocumentsScreenState
   }
 
   Widget _buildErrorState(bool isDark, Color textPrimary) {
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -569,7 +569,7 @@ class _InvestorDocumentsScreenState
             Text(
               _error ?? 'Something went wrong',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: textPrimary,
@@ -633,7 +633,7 @@ class _SquareIconButton extends StatelessWidget {
         child: Icon(
           icon,
           size: 16,
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5),
         ),
       ),
     );
@@ -659,8 +659,8 @@ class _DocumentDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -691,7 +691,7 @@ class _DocumentDetail extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [
                     _gold.withValues(alpha: 0.18),
-                    (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                    (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                       alpha: 0.03,
                     ),
                   ],
@@ -796,7 +796,7 @@ class _DocumentDetail extends StatelessWidget {
                           style: GoogleFonts.gelasio(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: const Color(0xFF163A2C),
+                            color: const Color(0xFF0C312B),
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -818,7 +818,7 @@ class _DocumentDetail extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       '"${doc['description']}"',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         fontStyle: FontStyle.italic,
@@ -883,8 +883,8 @@ class _MetaTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
@@ -923,7 +923,7 @@ class _MetaTile extends StatelessWidget {
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w500,
               color: textPrimary,

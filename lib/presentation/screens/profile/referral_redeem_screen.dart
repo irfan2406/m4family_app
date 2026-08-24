@@ -65,7 +65,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
         leading: IconButton(
           icon: Icon(
             LucideIcons.chevronLeft,
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : Color(0xFF0C312B),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -73,7 +73,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
           'REDEEM POINTS',
           style: GoogleFonts.gelasio(
             textStyle: const TextStyle(inherit: true),
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : Color(0xFF0C312B),
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 2,
@@ -124,7 +124,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
         color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
         ),
         boxShadow: isDark
             ? null
@@ -156,7 +156,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                 widget.walletBalance.toStringAsFixed(0),
                 style: GoogleFonts.gelasio(
                   textStyle: const TextStyle(inherit: true),
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : Color(0xFF0C312B),
                   fontSize: 48,
                   fontWeight: FontWeight.w700,
                 ),
@@ -164,9 +164,9 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
               const SizedBox(width: 8),
               Text(
                 'PTS',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   textStyle: const TextStyle(inherit: true),
-                  color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                  color: isDark ? Colors.white38 : Color(0xFF155A4F),
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
@@ -177,14 +177,14 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
               'VALUE: ₹${widget.walletBalance.toStringAsFixed(0)}',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 textStyle: const TextStyle(inherit: true),
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : Color(0xFF155A4F),
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1,
@@ -212,8 +212,8 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
           borderRadius: BorderRadius.circular(25),
           border: Border.all(
             color: isSelected
-                ? (isDark ? Colors.white : Color(0xFF163A2C))
-                : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+                ? (isDark ? Colors.white : Color(0xFF0C312B))
+                : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isDark
@@ -231,12 +231,12 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 opt['icon'],
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : Color(0xFF0C312B),
                 size: 20,
               ),
             ),
@@ -247,9 +247,9 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                 children: [
                   Text(
                     opt['title'],
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       textStyle: const TextStyle(inherit: true),
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : Color(0xFF155A4F),
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -257,9 +257,9 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                   const SizedBox(height: 2),
                   Text(
                     opt['subtitle'],
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       textStyle: const TextStyle(inherit: true),
-                      color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                      color: isDark ? Colors.white38 : Color(0xFF155A4F),
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                     ),
@@ -270,7 +270,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             if (isSelected)
               Icon(
                 LucideIcons.checkCircle2,
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : Color(0xFF0C312B),
                 size: 20,
               ),
           ],
@@ -301,7 +301,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
             ),
           ),
           child: TextField(
@@ -310,7 +310,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               textStyle: const TextStyle(inherit: true),
-              color: isDark ? Colors.white : Color(0xFF163A2C),
+              color: isDark ? Colors.white : Color(0xFF0C312B),
               fontSize: 24,
               fontWeight: FontWeight.w700,
             ),
@@ -361,15 +361,15 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.1),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.1),
             ),
           ),
           alignment: Alignment.center,
           child: Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               textStyle: const TextStyle(inherit: true),
-              color: isDark ? Colors.white : Color(0xFF163A2C),
+              color: isDark ? Colors.white : Color(0xFF155A4F),
               fontSize: 10,
               fontWeight: FontWeight.w500,
             ),
@@ -450,7 +450,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 20),
           decoration: BoxDecoration(
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : Color(0xFF0C312B),
             borderRadius: BorderRadius.circular(15),
           ),
           alignment: Alignment.center,

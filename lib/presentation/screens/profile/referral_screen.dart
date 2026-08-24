@@ -226,7 +226,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                       padding: const EdgeInsets.only(bottom: 6),
                       child: Text(
                         'PTS',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: cardFg.withOpacity(0.72),
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -278,7 +278,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                       children: [
                         Text(
                           'REDEEM POINTS',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Colors.black,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -312,7 +312,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       ),
       child: Text(
         label,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           color: const Color(0xFFF4EFE3),
           fontSize: 10,
           fontWeight: FontWeight.w600,
@@ -367,7 +367,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             const SizedBox(height: 12),
             Text(
               label,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 color: foreground.withOpacity(0.72),
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
@@ -450,7 +450,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     children: [
                       Text(
                         name.toString().toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: foreground,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -460,7 +460,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                       const SizedBox(height: 4),
                       Text(
                         project.toString().toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: foreground.withOpacity(0.72),
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
@@ -484,7 +484,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   ),
                   child: Text(
                     status,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: theme.colorScheme.primary,
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
@@ -504,7 +504,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               children: [
                 Text(
                   'EST. REWARD',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: foreground.withOpacity(0.72),
                     fontSize: 9,
                     fontWeight: FontWeight.w600,
@@ -513,7 +513,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 ),
                 Text(
                   '${NumberFormat('#,###').format(points)} PTS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: const Color(0xFFC5A35B),
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
@@ -579,7 +579,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             children: [
               Text(
                 type,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   color: foreground,
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
@@ -588,7 +588,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               const SizedBox(height: 2),
               Text(
                 DateFormat('dd/MM/yyyy').format(date),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   color: foreground.withOpacity(0.72),
                   fontSize: 9,
                   fontWeight: FontWeight.w500,
@@ -601,7 +601,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             children: [
               Text(
                 '${isRedemption ? '-' : '+'}$amount',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   color: isRedemption
                       ? Colors.redAccent
                       : const Color(0xFF163A2C),
@@ -612,7 +612,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               ),
               Text(
                 'STATUS: $status',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   color: foreground.withOpacity(0.72),
                   fontSize: 6,
                   fontWeight: FontWeight.w600,
@@ -685,7 +685,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     children: [
                       Text(
                         'SELECT PROJECT',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: foreground.withOpacity(0.72),
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
@@ -713,7 +713,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                 selectedProjectName.isEmpty
                                     ? 'CHOOSE OPPORTUNITY'
                                     : selectedProjectName.toUpperCase(),
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   color: selectedProjectName.isEmpty
                                       ? foreground.withOpacity(0.72)
                                       : foreground,
@@ -793,7 +793,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                             ),
                                             child: Text(
                                               name.toString().toUpperCase(),
-                                              style: GoogleFonts.ebGaramond(
+                                              style: GoogleFonts.inter(
                                                 color: isSelected
                                                     ? theme.colorScheme.primary
                                                     : foreground.withOpacity(
@@ -981,7 +981,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             color: foreground.withOpacity(0.72),
             fontSize: 10,
             fontWeight: FontWeight.w600,
@@ -1003,7 +1003,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   padding: const EdgeInsets.only(left: 20, right: 10),
                   child: Text(
                     '+91',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: foreground,
                       fontWeight: FontWeight.bold,
                     ),
@@ -1029,14 +1029,14 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                       : isPhone
                       ? Validators.phoneFormatters
                       : Validators.nameFormatters,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: foreground,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
                   decoration: InputDecoration(
                     hintText: hint,
-                    hintStyle: GoogleFonts.ebGaramond(
+                    hintStyle: GoogleFonts.inter(
                       color: foreground.withOpacity(0.72),
                       fontSize: 10,
                       fontWeight: FontWeight.w600,

@@ -50,7 +50,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: const Color(0xFFC65B46),
-        content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12)),
+        content: Text(msg, style: GoogleFonts.inter(fontSize: 12)),
       ),
     );
   }
@@ -59,8 +59,8 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
@@ -94,7 +94,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                 const SizedBox(width: 8),
                 Text(
                   'Security & Privacy',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontWeight: FontWeight.w500,
                     fontSize: 16,
                     color: textPrimary,
@@ -106,7 +106,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
               padding: const EdgeInsets.only(left: 14, top: 1),
               child: Text(
                 'ACCOUNT PROTECTION',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 9,
                   letterSpacing: 1.5,
                   fontWeight: FontWeight.w600,
@@ -244,7 +244,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
             child: Text(
               'Your account is secured with military-grade encryption and 2FA.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
@@ -309,7 +309,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: textPrimary,
@@ -318,7 +318,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: muted,
@@ -400,7 +400,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
               children: [
                 Text(
                   login['device'] ?? '',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: textPrimary,
@@ -409,7 +409,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                 const SizedBox(height: 2),
                 Text(
                   '${login['location'] ?? ''} • ${login['time'] ?? ''}',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 9,
                     fontWeight: FontWeight.w500,
                     color: muted,
@@ -430,7 +430,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
             ),
             child: Text(
               (login['status'] ?? '').toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 8,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1,

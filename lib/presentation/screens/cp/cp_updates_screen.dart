@@ -118,7 +118,7 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
           ? Center(
               child: Text(
                 _error!,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   color: scheme.onSurfaceVariant,
                 ),
               ),
@@ -229,7 +229,7 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
                                       title.toUpperCase(),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.inter(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 1.2,

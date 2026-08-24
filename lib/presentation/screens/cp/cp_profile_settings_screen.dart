@@ -317,7 +317,7 @@ class _CpProfileSettingsScreenState
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
                     alpha: 0.15,
                   ),
                   borderRadius: BorderRadius.circular(99),
@@ -329,11 +329,11 @@ class _CpProfileSettingsScreenState
               alignment: Alignment.centerLeft,
               child: Text(
                 'SELECT DATE',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : Color(0xFF155A4F),
                 ),
               ),
             ),
@@ -356,14 +356,14 @@ class _CpProfileSettingsScreenState
                         borderRadius: BorderRadius.circular(16),
                       ),
                       side: BorderSide(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withValues(alpha: 0.2),
                       ),
-                      foregroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                      foregroundColor: isDark ? Colors.white : Color(0xFF0C312B),
                     ),
                     child: Text(
                       'CANCEL',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -375,7 +375,7 @@ class _CpProfileSettingsScreenState
                   child: FilledButton(
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                      backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
                       foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
@@ -384,7 +384,7 @@ class _CpProfileSettingsScreenState
                     ),
                     child: Text(
                       'CONFIRM',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -408,7 +408,7 @@ class _CpProfileSettingsScreenState
       builder: (ctx) => AlertDialog(
         title: Text(
           'Deactivate sessions?',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w500),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w500),
         ),
         content: const Text(
           'You will be logged out everywhere, including this device.',
@@ -470,7 +470,7 @@ class _CpProfileSettingsScreenState
       builder: (ctx) => AlertDialog(
         title: Text(
           'Permanent deactivation',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w500),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w500),
         ),
         content: const Text(
           'CRITICAL: This will remove your data from M4 Family. Continue?',
@@ -615,7 +615,7 @@ class _CpProfileSettingsScreenState
               ),
               title: Text(
                 'UPDATE SECURITY PASSCODE',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.2,
@@ -628,7 +628,7 @@ class _CpProfileSettingsScreenState
                   children: [
                     Text(
                       'SET A NEW 4–6 DIGIT SECURE ACCESS CODE',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 9,
                         color: Theme.of(ctx).colorScheme.onSurfaceVariant,
                         letterSpacing: 1,
@@ -648,7 +648,7 @@ class _CpProfileSettingsScreenState
                   onPressed: submitting ? null : () => Navigator.pop(ctx),
                   child: Text(
                     'CANCEL',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9,
                       fontWeight: FontWeight.w500,
                     ),
@@ -673,7 +673,7 @@ class _CpProfileSettingsScreenState
                         )
                       : Text(
                           'CONFIRM',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 9,
                             fontWeight: FontWeight.w500,
                           ),
@@ -849,7 +849,7 @@ class _CpProfileSettingsScreenState
                 Flexible(
                   child: Text(
                     'CONFIGURATION',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.5,
@@ -893,7 +893,7 @@ class _CpProfileSettingsScreenState
                         )
                       : Text(
                           'SAVE CHANGES',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 9,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 1,
@@ -1066,7 +1066,7 @@ class _CpProfileSettingsScreenState
                 const SizedBox(height: 4),
                 Text(
                   'Recommended: square PNG/JPG · max 2MB',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 8,
                     fontWeight: FontWeight.w600,
                     color: scheme.onSurface.withValues(alpha: 0.68),
@@ -1092,7 +1092,7 @@ class _CpProfileSettingsScreenState
                     textCapitalization: TextCapitalization.words,
                     keyboardType: TextInputType.name,
                     inputFormatters: Validators.nameFormatters,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontWeight: FontWeight.w500,
                       fontSize: 16,
                       color: scheme.onSurface,
@@ -1118,7 +1118,7 @@ class _CpProfileSettingsScreenState
                     textCapitalization: TextCapitalization.words,
                     keyboardType: TextInputType.name,
                     inputFormatters: Validators.nameFormatters,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontWeight: FontWeight.w500,
                       fontSize: 16,
                       color: scheme.onSurface,
@@ -1139,7 +1139,7 @@ class _CpProfileSettingsScreenState
                 TextField(
                   controller: _email,
                   readOnly: true,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                     color: scheme.onSurface.withValues(alpha: 0.92),
@@ -1188,10 +1188,10 @@ class _CpProfileSettingsScreenState
                         const SizedBox(width: 4),
                         Text(
                           'VERIFIED',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 8,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF163A2C),
+                            color: const Color(0xFF155A4F),
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -1210,7 +1210,7 @@ class _CpProfileSettingsScreenState
               controller: _phone,
               keyboardType: TextInputType.phone,
               inputFormatters: Validators.phoneFormatters,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontWeight: FontWeight.w700,
                 fontSize: 15,
                 color: scheme.onSurface.withValues(alpha: 0.92),
@@ -1235,7 +1235,7 @@ class _CpProfileSettingsScreenState
                   'FIRM NAME',
                   TextField(
                     controller: _company,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
                       color: scheme.onSurface.withValues(alpha: 0.92),
@@ -1251,7 +1251,7 @@ class _CpProfileSettingsScreenState
                   'RERA NUMBER',
                   TextField(
                     controller: _rera,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
                       color: scheme.onSurface.withValues(alpha: 0.92),
@@ -1299,7 +1299,7 @@ class _CpProfileSettingsScreenState
                               : DateFormat(
                                   'dd-MM-yyyy',
                                 ).format(DateTime.parse(_dobIso!)),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
                             color: scheme.onSurface.withValues(
