@@ -183,16 +183,16 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: selected ? const Color(0xFFC5A35B) : card,
+                    color: selected ? const Color(0xFF0C312B) : card,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: selected ? const Color(0xFFC5A35B) : border,
+                      color: selected ? const Color(0xFF0C312B) : border,
                     ),
                     boxShadow: selected
                         ? [
                             BoxShadow(
                               color: const Color(
-                                0xFFC5A35B,
+                                0xFF0C312B,
                               ).withValues(alpha: 0.3),
                               blurRadius: 15,
                             ),

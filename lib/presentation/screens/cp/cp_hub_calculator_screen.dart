@@ -30,7 +30,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
     );
     final scheme = Theme.of(context).colorScheme;
     final isLight = scheme.brightness == Brightness.light;
-    const purple = Color(0xFFC5A35B);
+    const purple = Color(0xFF0C312B);
 
     return Scaffold(
       appBar: AppBar(

@@ -17,8 +17,8 @@ class CpSecurityScreen extends ConsumerStatefulWidget {
 
 class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
   static const _green = Color(0xFF163A2C);
-  static const _blue = Color(0xFFC5A35B);
-  static const _purple = Color(0xFFC5A35B);
+  static const _blue = Color(0xFF0C312B);
+  static const _purple = Color(0xFF0C312B);
 
   bool _biometricEnabled = true;
   bool _twoFactorEnabled = true;

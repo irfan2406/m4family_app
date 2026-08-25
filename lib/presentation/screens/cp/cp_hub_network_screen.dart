@@ -65,7 +65,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    const purple = Color(0xFFC5A35B);
+    const purple = Color(0xFF0C312B);
 
     const events = [
       {
@@ -123,7 +123,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           icon: LucideIcons.wallet,
                           label: 'COMMISSION',
                           value: 'AED ${_formatNumber(_balance())}',
-                          accent: const Color(0xFFC5A35B),
+                          accent: const Color(0xFF0C312B),
                         ),
                       ),
                     ],
@@ -354,7 +354,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                   shape: BoxShape.circle,
                                   gradient: LinearGradient(
                                     colors: [
-                                      Color(0xFFC5A35B),
+                                      Color(0xFF0C312B),
                                       Color(0xFF141B3A),
                                     ],
                                   ),

@@ -20,7 +20,6 @@ class InvestorSidebarMenu extends ConsumerStatefulWidget {
 }
 
 class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
-  static const _gold = const Color(0xFFF4EFE3);
   bool _isContentOpen = false;
   bool _isCustomViewsOpen = false;
 
@@ -442,56 +441,15 @@ class _SidebarItem extends StatelessWidget {
     this.trailing,
   });
 
+  // Rendering is M4DrawerTile — the one row every portal uses.
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    const gold = const Color(0xFFF4EFE3);
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withValues(
-                  alpha: 0.05,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Icon(
-                  icon,
-                  size: 18,
-                  color: isActive
-                      ? gold
-                      : (isDark ? Colors.white70 : Color(0xFF155A4F)),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                label,
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: isActive
-                      ? gold
-                      : (isDark ? Colors.white : const Color(0xFFF4EFE3)),
-                ),
-              ),
-            ),
-            if (trailing != null) trailing!,
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => M4DrawerTile(
+    icon: icon,
+    label: label,
+    isActive: isActive,
+    onTap: onTap,
+    trailing: trailing,
+  );
 }
 
 /// Expandable menu group (Content Hub / Custom Views) — a header row with a

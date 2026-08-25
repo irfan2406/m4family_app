@@ -1360,7 +1360,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         Text(
                           'FEATURED PROPERTY',
                           style: GoogleFonts.gelasio(
-                            color: const Color(0xFFC5A35B),
+                            color: const Color(0xFFF4EFE3),
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 2.5,
@@ -1373,7 +1373,16 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           // 400, so fontWeight can't thin it. Playfair Display
                           // at w400 reads noticeably less bold.
                           style: GoogleFonts.gelasio(
-                            color: Colors.black,
+                            // White on the photo: the title sat in black over a dark night render
+                            // and was unreadable. A soft shadow keeps it legible on light images too.
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withValues(alpha: 0.45),
+                                blurRadius: 12,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                             fontSize: 44,
                             fontWeight: FontWeight.w600,
                             height: 1,
@@ -1598,7 +1607,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                   () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ProjectListScreen(),
+                      builder: (context) => Theme(
+                        data: M4Theme.darkTheme,
+                        child: const ProjectListScreen(),
+                      ),
                     ),
                   ),
                 ),
@@ -1835,8 +1847,11 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       children: [
         Container(
           decoration: BoxDecoration(
+            // Same fill the guest form uses: a translucent white lift over the
+            // green showcase rather than a solid mid-green, so the field reads
+            // identically in both portals.
             color: isDark
-                ? const Color(0xFF1C4535)
+                ? Colors.white.withValues(alpha: 0.08)
                 : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(

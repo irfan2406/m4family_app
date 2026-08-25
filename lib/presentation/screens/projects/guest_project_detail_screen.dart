@@ -3799,7 +3799,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
     final primaryImg = _uniqueImages.first;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0C312B),
       body: SafeArea(
         // Edge-to-edge: content runs under the gesture bar so scrolling fills
         // the screen. Trailing padding keeps the last item reachable.

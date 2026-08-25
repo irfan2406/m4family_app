@@ -754,7 +754,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black45,
+                          color: const Color(0xFF0C312B).withValues(alpha: 0.5),
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -849,8 +849,8 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                           ? null
                           : () => _showStatusSheet(id, status),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
+                        backgroundColor: const Color(0xFF0C312B),
+                        foregroundColor: const Color(0xFFF4EFE3),
                         minimumSize: const Size(0, 56),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(28),
@@ -902,7 +902,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                             style: GoogleFonts.inter(
                               fontSize: 8,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black45,
+                              color: const Color(0xFF0C312B).withValues(alpha: 0.5),
                               height: 1.5,
                             ),
                           ),

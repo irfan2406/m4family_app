@@ -175,6 +175,8 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           : SafeArea(
               bottom: false,
               child: SingleChildScrollView(
+                // Bottom room for the floating nav pill. The shell already
+                // releases its own nav reserve while the keyboard is up.
                 padding: const EdgeInsets.fromLTRB(40, 8, 40, 120),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

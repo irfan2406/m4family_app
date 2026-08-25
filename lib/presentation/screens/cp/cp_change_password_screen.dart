@@ -21,7 +21,7 @@ class CpChangePasswordScreen extends ConsumerStatefulWidget {
 
 class _CpChangePasswordScreenState
     extends ConsumerState<CpChangePasswordScreen> {
-  static const _purple = Color(0xFFC5A35B);
+  static const _purple = Color(0xFF0C312B);
   static const _indigo = Color(0xFF141B3A);
 
   final _current = TextEditingController();

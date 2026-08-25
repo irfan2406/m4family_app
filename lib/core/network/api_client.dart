@@ -544,6 +544,11 @@ class ApiClient {
     return dio.post('/api/user/referrals/redeem', data: data);
   }
 
+  /// Redemption catalog shown on the web's "REDEEM REWARDS" page.
+  Future<Response> getRewardsCatalog() async {
+    return dio.get('/api/rewards');
+  }
+
   // Site Visits & Bookings
   Future<Response> scheduleSiteVisit(Map<String, dynamic> data) async {
     return dio.post('/api/user/site-visit', data: data);

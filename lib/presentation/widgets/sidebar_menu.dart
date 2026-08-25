@@ -480,85 +480,17 @@ class _SidebarItem extends StatelessWidget {
     this.trailing,
   });
 
+  // Rendering is M4DrawerTile — the one row every portal uses. The portal
+  // accent (investor gold vs cream) still comes through.
   @override
-  Widget build(BuildContext context) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
-    // Default active colour is the theme foreground (black in light mode,
-    // white in dark) so active items never show white on the light sidebar.
-    final activeColor = this.activeColor ?? onSurface;
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 5),
-      child: Stack(
-        children: [
-          // Active Indicator
-          if (isActive)
-            Positioned(
-              left: 0,
-              top: 15,
-              bottom: 15,
-              child: Container(
-                width: 4,
-                decoration: BoxDecoration(
-                  color: activeColor,
-                  borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(10),
-                    bottomRight: Radius.circular(10),
-                  ),
-                ),
-              ),
-            ),
-
-          ListTile(
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                // Web: bg-black/5 (light) / white/5 (dark) → theme-aware.
-                color: isActive
-                    ? activeColor.withOpacity(0.1)
-                    : onSurface.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isActive
-                      ? activeColor.withOpacity(0.3)
-                      : Colors.transparent,
-                ),
-                boxShadow: isActive
-                    ? [
-                        BoxShadow(
-                          color: activeColor.withOpacity(0.15),
-                          blurRadius: 20,
-                          spreadRadius: 0,
-                        ),
-                      ]
-                    : null,
-              ),
-              child: Icon(
-                icon,
-                color: isActive ? activeColor : const Color(0xFFF4EFE3).withValues(alpha: 0.85),
-                size: 18,
-              ),
-            ),
-            title: Text(
-              label,
-              style: GoogleFonts.inter(
-                color: isActive ? activeColor : const Color(0xFFF4EFE3),
-                fontSize: 17,
-                fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
-                letterSpacing: -0.2,
-              ),
-            ),
-            trailing: trailing,
-            onTap: onTap,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 4,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => M4DrawerTile(
+    icon: icon,
+    label: label,
+    isActive: isActive,
+    onTap: onTap,
+    trailing: trailing,
+    accent: activeColor,
+  );
 }
 
 class _SidebarDropdown extends StatelessWidget {
@@ -617,7 +549,6 @@ class _SidebarSubItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
     return ListTile(
       onTap: onTap,
       contentPadding: EdgeInsets.zero,

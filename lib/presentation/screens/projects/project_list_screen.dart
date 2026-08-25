@@ -1,6 +1,4 @@
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
-import 'package:m4_mobile/presentation/widgets/mesh_overlay.dart';
-import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -26,7 +24,7 @@ import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 /// (CachedNetworkImage can only fetch network URLs). Used by the project cards.
 Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
   Widget errorBox() => Container(
-    color: const Color(0xFF141B3A),
+    color: const Color(0xFF1C4535),
     child: const Center(
       child: Icon(LucideIcons.building2, color: Colors.white24, size: 40),
     ),
@@ -111,7 +109,7 @@ class ProjectListScreen extends ConsumerWidget {
               // the sheet swallowing the screen.
               height: MediaQuery.of(context).size.height * 0.55,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(40),
                 ),
@@ -466,71 +464,76 @@ class ProjectListScreen extends ConsumerWidget {
                         children: [
                           // Web parity: filter icon (light rounded square) to the
                           // left of the view toggle. Opens the REFINE SEARCH sheet.
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () => _showFilterBottomSheet(context, ref),
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              alignment: Alignment.center,
+                          // Guest has no refine-search filter; CP and investor keep it.
+
+                          if (!guestMode) ...[
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () => _showFilterBottomSheet(context, ref),
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                                      .withOpacity(0.05),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                                        .withOpacity(0.08),
+                                  ),
+                                ),
+                                child: Icon(
+                                  LucideIcons.slidersHorizontal,
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                  size: 18,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                          ],
+                          // Web parity: grid / list view segmented toggle
+                          // (active button filled black, matching projects/page.tsx).
+                          // CP catalog shows one fixed card layout - no grid/list switch.
+                          if (!cpCatalogMode) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.all(3),
+                              // No outline on the toggle: the soft fill alone
+                              // holds the pair together.
                               decoration: BoxDecoration(
                                 color: (isDark ? Colors.white : Color(0xFF0C312B))
                                     .withOpacity(0.05),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                      .withOpacity(0.08),
-                                ),
                               ),
-                              child: Icon(
-                                LucideIcons.slidersHorizontal,
-                                color: Theme.of(context).colorScheme.onSurface,
-                                size: 18,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  _ViewToggleButton(
+                                    icon: LucideIcons.layoutGrid,
+                                    active: isGridView,
+                                    isDark: isDark,
+                                    onTap: () =>
+                                        ref
+                                                .read(projectLayoutProvider.notifier)
+                                                .state =
+                                            true,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  _ViewToggleButton(
+                                    icon: LucideIcons.list,
+                                    active: !isGridView,
+                                    isDark: isDark,
+                                    onTap: () =>
+                                        ref
+                                                .read(projectLayoutProvider.notifier)
+                                                .state =
+                                            false,
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          // Web parity: grid / list view segmented toggle
-                          // (active button filled black, matching projects/page.tsx).
-                          Container(
-                            padding: const EdgeInsets.all(3),
-                            // No outline on the toggle: the soft fill alone
-                            // holds the pair together.
-                            decoration: BoxDecoration(
-                              color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                  .withOpacity(0.05),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _ViewToggleButton(
-                                  icon: LucideIcons.layoutGrid,
-                                  active: isGridView,
-                                  isDark: isDark,
-                                  onTap: () =>
-                                      ref
-                                              .read(projectLayoutProvider.notifier)
-                                              .state =
-                                          true,
-                                ),
-                                const SizedBox(width: 3),
-                                _ViewToggleButton(
-                                  icon: LucideIcons.list,
-                                  active: !isGridView,
-                                  isDark: isDark,
-                                  onTap: () =>
-                                      ref
-                                              .read(projectLayoutProvider.notifier)
-                                              .state =
-                                          false,
-                                ),
-                              ],
-                            ),
-                          ),
-                        const SizedBox(width: 8),
-                        // Figma parity: drawer button sits after the grid/list toggle.
-                        const SideMenuButton(),
+                          ],
                         ],
                       ),
                     ],
@@ -639,10 +642,6 @@ class ProjectListScreen extends ConsumerWidget {
                 Expanded(
                   child: Stack(
                     children: [
-                      // Figma: a whisper of the triangular mesh sits just below
-                      // the tabs, on the right. Anchored to this area's top so
-                      // it never climbs into the header or the nav.
-                      if (isDark) const MeshOverlay(opacity: 0.05),
                       projectsAsync.when(
                     data: (projects) => ListView.builder(
                       padding: const EdgeInsets.fromLTRB(
@@ -655,16 +654,29 @@ class ProjectListScreen extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final project = filteredProjects[index];
                         final projectId = project['_id']?.toString() ?? '';
-                        final heroImages = project['heroImages'] as List?;
-                        // Web parity (projects/page.tsx): the card image is ONLY
-                        // heroImages[0], else the same stock fallback. The web list
-                        // does NOT fall back to the singular `heroImage`, which is
-                        // often a brand/palette graphic (why DING DONG showed the
-                        // green M4 render instead of a real photo).
+                        // Thumbnail source, in order of preference. `heroImages`
+                        // is empty on every record the catalog returns, so on its
+                        // own every card fell through to one shared stock photo -
+                        // which is why the list showed the same building three
+                        // times. Fall through the project's own galleries first so
+                        // each card shows its own building.
+                        String? firstOf(String key) {
+                          final v = project[key];
+                          if (v is List && v.isNotEmpty) {
+                            final f = v.first;
+                            final str = f is Map
+                                ? (f['url'] ?? f['image'] ?? '').toString()
+                                : f.toString();
+                            return str.isEmpty ? null : str;
+                          }
+                          return null;
+                        }
+
                         final rawHero =
-                            (heroImages != null && heroImages.isNotEmpty)
-                            ? heroImages[0].toString()
-                            : null;
+                            firstOf('heroImages') ??
+                            firstOf('exteriorImages') ??
+                            firstOf('interiorImages') ??
+                            firstOf('media');
                         final imageUrl = (rawHero == null || rawHero.isEmpty)
                             ? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'
                             : apiClient.resolveUrl(rawHero);
@@ -824,7 +836,7 @@ class _ProjectGridItem extends StatelessWidget {
       height:
           200, // Enforce 16:9 aspect ratio parity with web (approx for mobile width)
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+        color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         // Figma depth: the card sits ON the green, lifted by a soft shadow that
         // falls straight down and stays tucked under the card. The negative
@@ -847,8 +859,6 @@ class _ProjectGridItem extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           _projListImage(imageUrl),
-          // Figma parity: faint network mesh over the photo ("picture ke upar").
-          const MeshOverlay(opacity: 0.11),
           // Subtle Gradient Overlay for text readability on images
           Container(
             decoration: BoxDecoration(
@@ -923,9 +933,11 @@ class _ProjectGridItem extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        (project['title'] ?? 'M4 Project').toString(),
+                        (project['title'] ?? 'M4 Project')
+                            .toString()
+                            .toUpperCase(),
                         style: GoogleFonts.gelasio(
-                          fontSize: 26,
+                          fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                           letterSpacing: -0.5,
@@ -940,18 +952,20 @@ class _ProjectGridItem extends StatelessWidget {
 
                 const SizedBox(width: 16),
 
-                // Action Arrow Button (web parity: light glass-icon, dark arrow)
+                // Guest-portal parity: white glass circle with a green arrow.
                 Container(
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.white.withOpacity(0.4)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.4),
+                    ),
                   ),
                   child: const Icon(
                     LucideIcons.arrowUpRight,
-                    color: Colors.black,
+                    color: Color(0xFF0C312B),
                     size: 20,
                   ),
                 ),
@@ -979,7 +993,7 @@ class _ProjectListRowItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+        color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(

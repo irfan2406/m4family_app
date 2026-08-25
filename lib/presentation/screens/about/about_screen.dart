@@ -481,39 +481,42 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         const SizedBox(height: 24),
         _buildGlassCard(
           child: Column(
+            // Stretch, so each paragraph fills the card and its text can start
+            // at the left edge instead of being centred as a block.
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Centred, a size up and a shade darker so the copy reads
-              // clearly on the cream card.
+              // Figma: Inter 400, 12px, line-height 168%, #0C312B, and the
+              // copy starts at the left edge (not centred).
               Text(
                 '"M4 Family, with over a decade of excellence in Mumbai’s real estate landscape, has established itself as a trusted name in premium residential development."',
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.start,
                 style: GoogleFonts.inter(
-                  color: isDark ? Colors.white : M4Theme.lightForeground,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  height: 1.8,
+                  color: isDark ? Colors.white : M4Theme.figmaHeading,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  height: 1.68,
                 ),
               ),
               const SizedBox(height: 6),
               Text(
                 'Renowned for delivering homes that blend contemporary design with enduring quality, we take pride in creating spaces that inspire modern living while retaining timeless value.',
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.start,
                 style: GoogleFonts.inter(
-                  color: isDark ? Colors.white : M4Theme.lightForeground,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  height: 1.8,
+                  color: isDark ? Colors.white : M4Theme.figmaHeading,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  height: 1.68,
                 ),
               ),
               const SizedBox(height: 6),
               Text(
                 'Every development we undertake reflects meticulous planning, uncompromising quality, and a commitment to delivering on promises. From Aura Heights to our latest offering Ocean View, we continue to redefine what it means to call a place home.',
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.start,
                 style: GoogleFonts.inter(
-                  color: isDark ? Colors.white : M4Theme.lightForeground,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  height: 1.8,
+                  color: isDark ? Colors.white : M4Theme.figmaHeading,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  height: 1.68,
                 ),
               ),
             ],
@@ -812,7 +815,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       // Same treatment as the OUR STORY card: centred, EB Garamond at 15,
       // full-strength foreground, upright rather than italic.
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        // Stretch, so the body copy fills the card and starts at its left
+        // edge; the label above keeps its own centred alignment.
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             'CUSTOMER VIEWS',
@@ -830,14 +835,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             // caps render a size larger because every glyph sits at cap
             // height, so the case is what made this card look bigger.
             '"At M4 Family, we believe that luxury is deeply personal. Our \'Customer Views\' philosophy ensures that every resident\'s perspective is valued, allowing for a collaborative approach to creating living spaces that reflect individual lifestyles and aspirations. We invite you to explore our bespoke personalisation options, where your vision meets our architectural excellence."',
-            textAlign: TextAlign.center,
+            // Figma: Inter 400, 12px, line-height 168%, #0C312B, starting at
+            // the left edge — same body spec as the OUR STORY card.
+            textAlign: TextAlign.start,
             style: GoogleFonts.inter(
-              color: isDark ? Colors.white : M4Theme.lightForeground,
-              // Same 15 as the OUR STORY card, so both steps' body copy
-              // matches point for point.
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              height: 1.8,
+              color: isDark ? Colors.white : M4Theme.figmaHeading,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              height: 1.68,
             ),
           ),
         ],
@@ -1121,13 +1126,15 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.black,
+        // M4 deep green, not black - the card sits on the cream page.
+        color: const Color(0xFF0C312B),
         borderRadius: BorderRadius.circular(48),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
-            blurRadius: 40,
-            offset: const Offset(0, 20),
+            color: const Color(0xFF0C312B).withValues(alpha: 0.22),
+            blurRadius: 32,
+            spreadRadius: -8,
+            offset: const Offset(0, 14),
           ),
         ],
       ),
@@ -1316,11 +1323,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'Enter your details to receive our premium personalisation catalog and schedule a consultation.',
-                        style: GoogleFonts.inter(
-                          // Web parity: muted gray subtitle, not solid black.
+                        style: GoogleFonts.ebGaramond(
                           color: isDark
                               ? Colors.white54
-                              : const Color(0xFFC5A35B),
+                              : const Color(0xFF163A2C).withValues(alpha: 0.78),
                           fontSize: 12,
                           height: 1.5,
                           fontWeight: FontWeight.w500,
@@ -1526,9 +1532,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       padding: const EdgeInsets.only(left: 4, bottom: 10),
       child: Text(
         label,
-        style: GoogleFonts.inter(
-          // Web parity: muted slate-gray field labels.
-          color: isDark ? Colors.white54 : const Color(0xFFC5A35B),
+        style: GoogleFonts.ebGaramond(
+          color: isDark ? Colors.white54 : const Color(0xFF163A2C),
           fontSize: 10,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.2,
@@ -1547,26 +1552,30 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     // Web parity: plain light-filled input, no leading icon, and a gold
     // border only while focused (matches the reference popup).
+    // M4 palette: cream field on the cream sheet, hairline border, green ink -
+    // the gold fill made the inputs read as solid yellow blocks.
     final fill = isDark
         ? Colors.white.withOpacity(0.04)
-        : const Color(0xFFC5A35B);
+        : const Color(0xFFF4EFE3);
     final baseBorder = isDark
         ? Colors.white.withOpacity(0.06)
-        : Colors.transparent;
-    const gold = Color(0xFFC5A35B);
+        : const Color(0xFFD4CFBC);
+    const focus = Color(0xFF163A2C);
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
-      style: GoogleFonts.inter(
-        color: isDark ? Colors.white : Color(0xFF155A4F),
+      style: GoogleFonts.ebGaramond(
+        color: isDark ? Colors.white : const Color(0xFF163A2C),
         fontSize: 15,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.inter(
-          color: isDark ? Colors.white38 : const Color(0xFFC5A35B),
+        hintStyle: GoogleFonts.ebGaramond(
+          color: isDark
+              ? Colors.white38
+              : const Color(0xFF163A2C).withValues(alpha: 0.5),
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
@@ -1577,12 +1586,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           vertical: 18,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: baseBorder, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: gold, width: 1.8),
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: focus, width: 1),
         ),
       ),
     );

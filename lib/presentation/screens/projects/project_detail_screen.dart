@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -76,9 +77,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           backgroundColor: const Color(0xFF163A2C),
           duration: const Duration(milliseconds: 1100),
           behavior: SnackBarBehavior.fixed,
-          content: Text(
-            next ? 'Saved to favorites' : 'Removed from favorites',
-          ),
+          content: Text(next ? 'Saved to favorites' : 'Removed from favorites'),
         ),
       );
   }
@@ -407,7 +406,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               icon: LucideIcons.messageSquare,
               title: 'SEND INQUIRY',
               desc: 'Get detailed brochure and pricing via email/WhatsApp.',
-              color: const Color(0xFFC5A35B),
+              color: const Color(0xFF163A2C),
               onTap: () {
                 Navigator.pop(context);
                 _showRequestDetailsDialog(project, null, 'General');
@@ -429,7 +428,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               icon: LucideIcons.creditCard,
               title: 'TOKEN BOOKING',
               desc: 'Lock your preferred unit with a refundable token amount.',
-              color: const Color(0xFFC5A35B),
+              color: const Color(0xFF163A2C),
               onTap: () {
                 Navigator.pop(context);
                 _showRequestDetailsDialog(project, 'TOKEN BOOKING', 'General');
@@ -595,7 +594,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       barrierColor: Colors.black.withOpacity(0.55),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => Dialog(
-          backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          backgroundColor: isDark
+              ? const Color(0xFF141B3A)
+              : const Color(0xFFF4EFE3),
           insetPadding: const EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 40,
@@ -642,80 +643,95 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   Text(
                     planName != null
                         ? 'INQUIRY FOR "$planName" PAYMENT PLAN'
+                        // Web parity wording on the REQUEST DETAILS sheet.
+                        : type == 'General'
+                        ? 'A BESPOKE SHOWCASE OF LUXURY AT ${projectTitle.toUpperCase()}.'
                         : 'INQUIRY FOR ${projectTitle.toUpperCase()}',
                     style: GoogleFonts.inter(
                       fontSize: 10,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.6,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.6),
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                     ),
                   ),
                   const SizedBox(height: 28),
 
-                  Text(
-                    'PREFERRED CONFIGURATION *',
-                    style: GoogleFonts.inter(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.72,
+                  // Web parity: the REQUEST DETAILS sheet collects only name,
+                  // email, phone and notes — no configuration chips. The video
+                  // call / site visit variants keep theirs.
+                  if (type != 'General') ...[
+                    Text(
+                      'PREFERRED CONFIGURATION *',
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                            .withOpacity(0.72),
+                        letterSpacing: 1,
                       ),
-                      letterSpacing: 1,
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  // Web parity: 3-column grid (grid-cols-3), wider chips.
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.zero,
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                    childAspectRatio: 2.8,
-                    children: ["1 BHK", "2 BHK", "3 BHK", "4 BHK", "PENTHOUSE"]
-                        .map((config) {
-                          final isActive = _selectedConfig == config;
-                          return GestureDetector(
-                            onTap: () =>
-                                setModalState(() => _selectedConfig = config),
-                            child: Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: isActive
-                                    ? (isDark ? Colors.white : Color(0xFF0C312B))
-                                    : (isDark
-                                          ? Colors.white.withOpacity(0.03)
-                                          : Colors.black.withOpacity(0.04)),
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
+                    const SizedBox(height: 12),
+                    // Web parity: 3-column grid (grid-cols-3), wider chips.
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.zero,
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      childAspectRatio: 2.8,
+                      children:
+                          [
+                            "1 BHK",
+                            "2 BHK",
+                            "3 BHK",
+                            "4 BHK",
+                            "PENTHOUSE",
+                          ].map((config) {
+                            final isActive = _selectedConfig == config;
+                            return GestureDetector(
+                              onTap: () =>
+                                  setModalState(() => _selectedConfig = config),
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
                                   color: isActive
-                                      ? (isDark ? Colors.white : Color(0xFF0C312B))
+                                      ? (isDark
+                                            ? Colors.white
+                                            : Color(0xFF0C312B))
                                       : (isDark
-                                            ? Colors.white.withOpacity(0.1)
-                                            : Colors.black.withOpacity(0.08)),
+                                            ? Colors.white.withOpacity(0.03)
+                                            : Colors.black.withOpacity(0.04)),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: isActive
+                                        ? (isDark
+                                              ? Colors.white
+                                              : Color(0xFF0C312B))
+                                        : (isDark
+                                              ? Colors.white.withOpacity(0.1)
+                                              : Colors.black.withOpacity(0.08)),
+                                  ),
+                                ),
+                                child: Text(
+                                  config,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.5,
+                                    color: isActive
+                                        ? (isDark ? Colors.black : Colors.white)
+                                        : (isDark
+                                              ? Colors.white54
+                                              : Color(0xFF155A4F)),
+                                  ),
                                 ),
                               ),
-                              child: Text(
-                                config,
-                                style: GoogleFonts.inter(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.5,
-                                  color: isActive
-                                      ? (isDark ? Colors.black : Colors.white)
-                                      : (isDark
-                                            ? Colors.white54
-                                            : Color(0xFF155A4F)),
-                                ),
-                              ),
-                            ),
-                          );
-                        })
-                        .toList(),
-                  ),
+                            );
+                          }).toList(),
+                    ),
+                  ],
 
                   if (type == 'VC' || type == 'Site Visit') ...[
                     // VISIT TYPE toggle (web parity)
@@ -746,7 +762,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                 ),
                                 decoration: BoxDecoration(
                                   color: active
-                                      ? (isDark ? Colors.white : Color(0xFF0C312B))
+                                      ? (isDark
+                                            ? Colors.white
+                                            : Color(0xFF0C312B))
                                       : Colors.transparent,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -811,7 +829,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                 style: GoogleFonts.inter(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: isDark ? Colors.white : Color(0xFF155A4F),
+                                  color: isDark
+                                      ? Colors.white
+                                      : Color(0xFF155A4F),
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -885,6 +905,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       ),
                     ),
                   ] else ...[
+                    // Web parity order: name, then email, then phone.
                     const SizedBox(height: 24),
                     _buildInquiryField(
                       'FULL NAME *',
@@ -895,19 +916,19 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     ),
                     const SizedBox(height: 16),
                     _buildInquiryField(
+                      'EMAIL ADDRESS (OPTIONAL)',
+                      _emailController,
+                      LucideIcons.mail,
+                      keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildInquiryField(
                       'PHONE NUMBER *',
                       _phoneController,
                       LucideIcons.phone,
                       keyboardType: TextInputType.phone,
                       inputFormatters: Validators.phoneFormatters,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildInquiryField(
-                      'EMAIL (OPTIONAL)',
-                      _emailController,
-                      LucideIcons.mail,
-                      keyboardType: TextInputType.emailAddress,
-                      inputFormatters: Validators.emailFormatters,
                     ),
                   ],
 
@@ -933,18 +954,26 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'SUBMIT INQUIRY',
+                            // Web parity: the REQUEST DETAILS sheet confirms a
+                            // booking; the other variants stay an inquiry.
+                            type == 'General'
+                                ? 'CONFIRM BOOKING'
+                                : 'SUBMIT INQUIRY',
                             style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
-                              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                              color: isDark
+                                  ? Colors.black
+                                  : const Color(0xFFF4EFE3),
                               letterSpacing: 1,
                             ),
                           ),
                           const SizedBox(width: 8),
                           Icon(
                             LucideIcons.arrowUpRight,
-                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            color: isDark
+                                ? Colors.black
+                                : const Color(0xFFF4EFE3),
                             size: 14,
                           ),
                         ],
@@ -996,7 +1025,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       context: context,
       barrierColor: Colors.black.withOpacity(0.55),
       builder: (dCtx) => Dialog(
-        backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+        backgroundColor: isDark
+            ? const Color(0xFF141B3A)
+            : const Color(0xFFF4EFE3),
         insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         child: Padding(
@@ -1038,7 +1069,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                           color: (isDark ? Colors.white : Color(0xFF0C312B))
                               .withOpacity(0.2),
                         ),
-                        foregroundColor: isDark ? Colors.white : Color(0xFF0C312B),
+                        foregroundColor: isDark
+                            ? Colors.white
+                            : Color(0xFF0C312B),
                       ),
                       child: Text(
                         'CANCEL',
@@ -1056,8 +1089,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       onPressed: () => Navigator.pop(dCtx, temp),
                       style: FilledButton.styleFrom(
                         minimumSize: const Size.fromHeight(52),
-                        backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
-                        foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        backgroundColor: isDark
+                            ? Colors.white
+                            : Color(0xFF0C312B),
+                        foregroundColor: isDark
+                            ? Colors.black
+                            : const Color(0xFFF4EFE3),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -1340,7 +1377,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
     if (_isLoading && project == null) {
       return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: const Color(0xFF0C312B),
         body: Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
@@ -1348,7 +1385,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+      backgroundColor: isDark
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFF4EFE3),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -1362,47 +1401,47 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 const SizedBox(height: 24),
                 _buildTitleSection(project, isDark),
                 const SizedBox(height: 24),
-                GridView.count(
+                // Web parity: one row of three — VIDEO CALL · COMPLETION ·
+                // SITE VISIT. The web page carries no CONFIG tile here; the
+                // configuration is listed in the Overview below.
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  // Taller cards (was 2.5) so the larger label/value text fits
-                  // without the "BOTTOM OVERFLOWED" warning.
-                  childAspectRatio: 2.1,
-                  children: [
-                    _OverviewActionCard(
-                      label: 'COMPLETION',
-                      value: '${project?['completion'] ?? 0}%',
-                      icon: LucideIcons.checkCircle2,
-                    ),
-                    _OverviewActionCard(
-                      label: 'CONFIG',
-                      value: project?['config'] ?? '3 & 4 BHK',
-                      icon: LucideIcons.building2,
-                    ),
-                    _OverviewActionCard(
-                      label: 'VIDEO CALL',
-                      value: 'CONNECT NOW',
-                      icon: LucideIcons.video,
-                      isAction: true,
-                      onTap: () =>
-                          _showRequestDetailsDialog(project, null, 'VC'),
-                    ),
-                    _OverviewActionCard(
-                      label: 'SITE VISIT',
-                      value: 'BOOK TOUR',
-                      icon: LucideIcons.eye,
-                      isAction: true,
-                      onTap: () => _showRequestDetailsDialog(
-                        project,
-                        null,
-                        'Site Visit',
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _OverviewActionCard(
+                          label: 'VIDEO CALL',
+                          value: 'Connect Now',
+                          icon: LucideIcons.video,
+                          isAction: true,
+                          onTap: () =>
+                              _showRequestDetailsDialog(project, null, 'VC'),
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _OverviewActionCard(
+                          label: 'COMPLETION',
+                          value: '${project?['completion'] ?? 0}%',
+                          icon: LucideIcons.calendar,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _OverviewActionCard(
+                          label: 'SITE VISIT',
+                          value: 'Book Tour',
+                          icon: LucideIcons.eye,
+                          isAction: true,
+                          onTap: () => _showRequestDetailsDialog(
+                            project,
+                            null,
+                            'Site Visit',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 24),
                 Padding(
@@ -1416,10 +1455,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       _buildAmenitiesSection(project),
                       const SizedBox(height: 40),
                       _buildConstructionSection(project),
-                      const SizedBox(height: 40),
-                      // Web parity: Gallery follows Construction (web has no
-                      // standalone Plans section — plans live in the Overview).
-                      _buildMediaGallerySection(project),
                       const SizedBox(height: 40),
                       // Web parity: no standalone Documents section here.
                       _buildContactSection(project),
@@ -1512,19 +1547,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             borderRadius: const BorderRadius.vertical(
               bottom: Radius.circular(40),
             ),
-            child: CachedNetworkImage(
-              imageUrl: heroUrl,
-              fit: BoxFit.cover,
-              // Decode at roughly display size and skip the default 500ms
-              // fade — full-res decodes are what make the hero appear late.
+            child: _ProjectImage(
+              url: heroUrl,
+              isDark: isDark,
+              // Decode at roughly display size — full-res decodes are what
+              // make the hero appear late.
               memCacheWidth: 1080,
-              fadeInDuration: Duration.zero,
-              placeholder: (context, url) => Container(
-                color: isDark ? Colors.white10 : Color(0xFF163A2C).withOpacity(0.1),
-              ),
-              errorWidget: (context, url, error) => Container(
-                color: isDark ? Colors.white10 : Color(0xFF163A2C).withOpacity(0.1),
-              ),
             ),
           ),
           Container(
@@ -1699,7 +1727,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           style: GoogleFonts.inter(
             // Was 11 / 60% — small & faint. Bigger + darker.
             fontSize: 12.5,
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.78),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.78,
+            ),
             height: 1.7,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.2,
@@ -1790,17 +1820,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         _buildSectionHeader('Amenities'),
         const SizedBox(height: 24),
         _buildAmenities(project),
-      ],
-    );
-  }
-
-  Widget _buildMediaGallerySection(dynamic project) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader('Gallery'),
-        const SizedBox(height: 24),
-        _buildMedia(project),
       ],
     );
   }
@@ -2242,96 +2261,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     );
   }
 
-  Widget _buildMedia(dynamic project) {
-    final allMedia = project?['media'] as List? ?? [];
-    final List<dynamic> filteredMedia = allMedia;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final apiClient = ref.read(apiClientProvider);
-
-    if (filteredMedia.isEmpty)
-      return const _EmptyTabContent(message: 'Coming soon');
-
-    return Column(
-      children: [
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.zero,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1.3,
-          ),
-          itemCount: filteredMedia.length,
-          itemBuilder: (context, index) {
-            final item = filteredMedia[index];
-            final type = (item['type'] ?? 'Image').toString().toUpperCase();
-            final isVideo = type == 'VIDEO' || type == 'VIDEO_THUMBNAIL';
-            final url = apiClient.resolveUrl(item['url']?.toString());
-
-            final allUrls = filteredMedia
-                .map((m) => m['url']?.toString() ?? '')
-                .where((u) => u.isNotEmpty)
-                .toList();
-
-            return _ScaleButton(
-              onTap: () => _showMediaLightbox(
-                allUrls,
-                isVideo ? 'VIDEO' : 'IMAGE',
-                index,
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: isDark
-                        ? Colors.white.withOpacity(0.05)
-                        : Colors.black.withOpacity(0.05),
-                  ),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl: url,
-                        fit: BoxFit.cover,
-                        // Thumbnails render ~90dp wide — decoding the full-res
-                        // source here was the main cost on this row.
-                        memCacheWidth: 300,
-                        fadeInDuration: Duration.zero,
-                        placeholder: (context, url) => Container(
-                          color: isDark
-                              ? Colors.white10
-                              : Color(0xFF163A2C).withOpacity(0.05),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: isDark
-                              ? Colors.white10
-                              : Color(0xFF163A2C).withOpacity(0.05),
-                        ),
-                      ),
-                      if (isVideo)
-                        const Center(
-                          child: Icon(
-                            LucideIcons.playCircle,
-                            color: Colors.white,
-                            size: 40,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
   Widget _buildDocuments(dynamic project) {
     final docs = project?['documents'] as List? ?? [];
     return _buildTabContent(
@@ -2456,15 +2385,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               ),
               const SizedBox(height: 24),
               _ScaleButton(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BookingStartScreen(
-                      projectId: widget.projectId,
-                      project: project,
-                    ),
-                  ),
-                ),
+                // Web parity: BOOK YOUR UNIT NOW opens the REQUEST DETAILS
+                // sheet straight away — the web has no intermediate
+                // "how can we help?" chooser.
+                onTap: () =>
+                    _showRequestDetailsDialog(project, null, 'General'),
                 child: Container(
                   width: double.infinity,
                   height: 64,
@@ -2669,7 +2594,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     }
     return Icon(
       _getAmenityIcon(name),
-      color: const Color(0xFFC5A35B),
+      color: const Color(0xFF155A4F),
       size: size,
     );
   }
@@ -2693,6 +2618,59 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 }
 
 // Helper Widgets
+/// Project imagery arrives either as a URL or as an inline `data:image;base64`
+/// payload (the CMS stores some heroes that way — Skyline Heights is one).
+/// CachedNetworkImage is an HTTP loader and renders a data URI as a blank box,
+/// so those are decoded to bytes instead.
+class _ProjectImage extends StatelessWidget {
+  final String url;
+  final bool isDark;
+  final int? memCacheWidth;
+
+  const _ProjectImage({
+    required this.url,
+    required this.isDark,
+    this.memCacheWidth,
+  });
+
+  Widget _fallback() => Container(
+    color: isDark ? Colors.white10 : const Color(0xFF163A2C).withOpacity(0.1),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    if (url.isEmpty) return _fallback();
+
+    if (url.startsWith('data:')) {
+      final comma = url.indexOf(',');
+      if (comma == -1) return _fallback();
+      try {
+        final bytes = base64Decode(url.substring(comma + 1));
+        return Image.memory(
+          bytes,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          cacheWidth: memCacheWidth,
+          gaplessPlayback: true,
+          errorBuilder: (_, _, _) => _fallback(),
+        );
+      } catch (_) {
+        return _fallback();
+      }
+    }
+
+    return CachedNetworkImage(
+      imageUrl: url,
+      fit: BoxFit.cover,
+      memCacheWidth: memCacheWidth,
+      fadeInDuration: Duration.zero,
+      placeholder: (context, url) => _fallback(),
+      errorWidget: (context, url, error) => _fallback(),
+    );
+  }
+}
+
 class _OverviewActionCard extends StatelessWidget {
   final String label;
   final String value;
@@ -2715,49 +2693,68 @@ class _OverviewActionCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
+      // Web parity: icon stacked above the label and value, centred, so three
+      // cards sit side by side. The old icon-beside-label row could not fit at
+      // a third of the width.
       child: Container(
-        padding: const EdgeInsets.all(16),
+        height: 140,
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isDark
-                ? Colors.white.withOpacity(0.05)
-                : Colors.black.withOpacity(0.03),
+                ? Colors.white.withOpacity(0.08)
+                : Colors.black.withOpacity(0.05),
           ),
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
+            Icon(
+              icon,
+              size: 24,
+              color: isDark ? Colors.white60 : const Color(0xFF155A4F),
+            ),
+            Column(
               children: [
-                Icon(
-                  icon,
-                  size: 16,
-                  color: isDark ? Colors.white60 : Color(0xFF155A4F),
-                ),
-                const SizedBox(width: 8),
                 Text(
                   label.toUpperCase(),
-                  // Was 8px / 38% — too small & faint. Bigger + darker.
-                  style: GoogleFonts.inter(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white70 : Color(0xFF155A4F),
-                    letterSpacing: 0.5,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? Colors.white70 : const Color(0xFF155A4F),
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    value,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
+                      letterSpacing: -0.2,
+                    ),
                   ),
                 ),
               ],
-            ),
-            Text(
-              value.toUpperCase(),
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : Color(0xFF155A4F),
-                letterSpacing: -0.2,
-              ),
             ),
           ],
         ),
@@ -3670,7 +3667,7 @@ class _HeroMediaThumb extends StatelessWidget {
         width: 68,
         height: 68,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFEDE5D6),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: isDark
@@ -3692,34 +3689,21 @@ class _HeroMediaThumb extends StatelessWidget {
           children: [
             if (isVR)
               Container(
-                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                color: isDark
+                    ? const Color(0xFF141B3A)
+                    : const Color(0xFFF4EFE3),
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Web parity: the same /360-vr.png icon (dark:invert in
-                      // dark mode via an inversion color matrix).
-                      isDark
-                          ? ColorFiltered(
-                              colorFilter: const ColorFilter.matrix(<double>[
-                                -1, 0, 0, 0, 255, //
-                                0, -1, 0, 0, 255, //
-                                0, 0, -1, 0, 255, //
-                                0, 0, 0, 1, 0, //
-                              ]),
-                              child: Image.asset(
-                                'assets/360-vr.png',
-                                width: 30,
-                                height: 30,
-                                fit: BoxFit.contain,
-                              ),
-                            )
-                          : Image.asset(
-                              'assets/360-vr.png',
-                              width: 30,
-                              height: 30,
-                              fit: BoxFit.contain,
-                            ),
+                      // A vector icon rather than the 360-vr.png bitmap: it
+                      // tints with the theme and needs no multiply blend to
+                      // hide the PNG's white plate.
+                      Icon(
+                        LucideIcons.rotate3d,
+                        size: 26,
+                        color: isDark ? Colors.white : const Color(0xFF155A4F),
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         '360° VIEW',
@@ -3734,22 +3718,7 @@ class _HeroMediaThumb extends StatelessWidget {
                 ),
               )
             else if (imageUrl != null)
-              CachedNetworkImage(
-                imageUrl: imageUrl!,
-                fit: BoxFit.cover,
-                memCacheWidth: 900,
-                fadeInDuration: Duration.zero,
-                placeholder: (context, url) => Container(
-                  color: isDark
-                      ? Colors.white10
-                      : Color(0xFF163A2C).withOpacity(0.1),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  color: isDark
-                      ? Colors.white10
-                      : Color(0xFF163A2C).withOpacity(0.1),
-                ),
-              ),
+              _ProjectImage(url: imageUrl!, isDark: isDark, memCacheWidth: 900),
 
             if (!isVR) ...[
               // Gradient Overlay for text readability
@@ -4115,7 +4084,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     height: 12,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                      color: isDark
+                          ? const Color(0xFF141B3A)
+                          : const Color(0xFFF4EFE3),
                       border: Border.all(
                         color: isDark ? Colors.white : Color(0xFF0C312B),
                         width: 2,
@@ -4125,9 +4096,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   Expanded(
                     child: Container(
                       height: 1,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.2,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.2),
                     ),
                   ),
                 ],
@@ -4223,10 +4193,14 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                   final bg = s == 'completed'
                                       ? const Color(0xFF163A2C)
                                       : s == 'in progress'
-                                      ? (isDark ? Colors.white : Color(0xFF0C312B))
+                                      ? (isDark
+                                            ? Colors.white
+                                            : Color(0xFF0C312B))
                                       : (isDark
                                             ? Colors.white24
-                                            : Color(0xFF163A2C).withOpacity(0.12));
+                                            : Color(
+                                                0xFF163A2C,
+                                              ).withOpacity(0.12));
                                   final fg = s == 'completed'
                                       ? Colors.white
                                       : s == 'in progress'
@@ -4333,7 +4307,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                       fontSize: 10,
                                       fontWeight: FontWeight.w700,
                                       color:
-                                          (isDark ? Colors.white : Color(0xFF0C312B))
+                                          (isDark
+                                                  ? Colors.white
+                                                  : Color(0xFF0C312B))
                                               .withOpacity(0.8),
                                       letterSpacing: 2,
                                     ),
@@ -4376,9 +4352,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w700,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.5,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.5),
                       letterSpacing: 1.5,
                     ),
                   ),
@@ -4390,14 +4365,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   vertical: 7,
                 ),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.05),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.15,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.15),
                   ),
                 ),
                 child: Text(
@@ -4420,9 +4393,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.12,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.12),
                 ),
               ),
               child: Center(
@@ -4431,9 +4403,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   style: GoogleFonts.gelasio(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.35,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.35),
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -4571,7 +4542,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                               style: GoogleFonts.gelasio(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
-                                color: isDark ? Colors.white : Color(0xFF0C312B),
+                                color: isDark
+                                    ? Colors.white
+                                    : Color(0xFF0C312B),
                                 letterSpacing: -0.5,
                               ),
                             ),
@@ -4753,7 +4726,9 @@ class _CircleAction extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.1) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withOpacity(0.1)
+              : const Color(0xFFF4EFE3),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(

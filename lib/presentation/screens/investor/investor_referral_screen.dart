@@ -361,7 +361,7 @@ class _InvestorReferralScreenState
   Widget _buildRedeemButton(bool isDark, Color textPrimary) {
     return GestureDetector(
       onTap: () async {
-        await context.push('/investor/referral/redeem');
+        await context.push('/investor/referral/redeem', extra: _points());
         if (mounted) _load();
       },
       child: Container(

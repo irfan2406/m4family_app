@@ -405,58 +405,14 @@ class _SidebarItem extends StatelessWidget {
     this.onTap,
   });
 
+  // Rendering is M4DrawerTile — the one row every portal uses.
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    const purple = const Color(0xFFF4EFE3); // purple-600
-    // Web parity: active → purple icon tile; inactive → slate tile + slate-400
-    // icon.
-    final iconBg = isActive
-        ? (isDark
-              ? purple.withOpacity(0.25)
-              : Colors.white.withValues(alpha: 0.14)) // purple-100
-        : (isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : Colors.white.withValues(alpha: 0.10)); // slate-800 / slate-50
-    final iconColor = isActive ? purple : const Color(0xFFF4EFE3).withValues(alpha: 0.75); // slate-400
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Padding(
-        // Web parity: px-6 py-3.5 (24px horizontal via the ListView pad + 8;
-        // 14px vertical rhythm).
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: iconBg,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(child: Icon(icon, size: 16, color: iconColor)),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                label,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: -0.2,
-                  color: isActive
-                      ? purple
-                      : (isDark ? Colors.white70 : const Color(0xFFF4EFE3)),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => M4DrawerTile(
+    icon: icon,
+    label: label,
+    isActive: isActive,
+    onTap: onTap,
+  );
 }
 
 class _SubItem extends StatelessWidget {

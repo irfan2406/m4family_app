@@ -778,11 +778,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    // M4 deep green, not black, on the light surfaces.
     final accent = scheme.brightness == Brightness.light
-        ? Colors.black
+        ? const Color(0xFF0C312B)
         : scheme.primary;
     final accentFg = scheme.brightness == Brightness.light
-        ? Colors.white
+        ? const Color(0xFFF4EFE3)
         : scheme.onPrimary;
     final p = _project ?? widget.projectData;
 
@@ -1217,7 +1218,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     Color? activeColor,
   }) {
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     return Material(
       color: Colors.black.withValues(alpha: 0.25),
       borderRadius: BorderRadius.circular(14),
@@ -1312,18 +1314,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           width: 66,
           height: 66,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: const Color(0xFFEDE5D6),
             borderRadius: BorderRadius.circular(18),
             // Outline-bordered card — same footprint + frame as the Exterior /
             // Interior thumbnails (matched on request). A visible hairline outline
             // (white-on-white would be invisible) plus a soft shadow.
             border: Border.all(
-              color: Colors.black.withValues(alpha: 0.12),
+              color: const Color(0xFF0C312B).withValues(alpha: 0.18),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.10),
+                color: const Color(0xFF0C312B).withValues(alpha: 0.10),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -1342,11 +1344,17 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 child: ClipRect(
                   child: Transform.scale(
                     scale: 1.5,
-                    child: Image.asset(
+                    child: ColorFiltered(
+                      colorFilter: const ColorFilter.mode(
+                        Color(0xFFEDE5D6),
+                        BlendMode.multiply,
+                      ),
+                      child: Image.asset(
                       'assets/360-vr.png',
                       fit: BoxFit.contain,
                     ),
                   ),
+                    ),
                 ),
               ),
               const SizedBox(height: 3),
@@ -1453,7 +1461,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     bool watchOnly = false,
   }) {
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     final titleColor = scheme.onSurface.withValues(alpha: isLight ? 0.92 : 1);
     final subColor = scheme.onSurface.withValues(alpha: isLight ? 0.68 : 0.6);
     return Container(
@@ -1660,7 +1669,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final estRaw = (p['estimatedCompletionDate'] ?? '').toString().trim();
     final est = estRaw.isEmpty ? 'Q1 2028' : estRaw;
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     // Web parity: the box + shadow now live on the SINGLE outer construction
     // container in build() (which also wraps the year rail, phase cards and
     // phase tracking), so this returns content only.
@@ -1695,7 +1705,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       fontWeight: FontWeight.w600,
                       letterSpacing: -1.5,
                       height: 1.02,
-                      color: isLight ? Colors.black : scheme.onSurface,
+                      color: isLight ? const Color(0xFF0C312B) : scheme.onSurface,
                     ),
                   ),
                 ],
@@ -1732,7 +1742,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           fontSize: 22,
                           fontWeight: FontWeight.w600,
                           // Was inheriting the theme's navy — force dark.
-                          color: isLight ? Colors.black : scheme.onSurface,
+                          color: isLight ? const Color(0xFF0C312B) : scheme.onSurface,
                         ),
                       ),
                       Text(
@@ -1776,7 +1786,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             style: GoogleFonts.inter(
               fontSize: 12.5,
               fontWeight: FontWeight.w700,
-              color: isLight ? Colors.black : scheme.onSurface,
+              color: isLight ? const Color(0xFF0C312B) : scheme.onSurface,
             ),
           ),
         ),
@@ -1786,7 +1796,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Widget _progressTimeline(ColorScheme scheme) {
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     final phases =
         _progress
             .whereType<Map>()
@@ -2026,7 +2037,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   // mirrors that rather than deriving it from data.
   Widget _progressYearHeader(ColorScheme scheme) {
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     return Row(
       children: [
         Text(
@@ -2066,7 +2078,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   // of phase cards (index, name, status dot, percentage, progress bar).
   Widget _phaseTrackingSection(ColorScheme scheme) {
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     final phases =
         _progress
             .whereType<Map>()
@@ -2272,9 +2285,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Widget _registrationCard(ColorScheme scheme) {
     final isLight = scheme.brightness == Brightness.light;
-    final btnBg = isLight ? Colors.black : Colors.white;
+    final btnBg = isLight ? const Color(0xFF0C312B) : Colors.white;
     final btnFg = isLight ? Colors.white : Colors.black;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -2301,7 +2315,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           DropdownButtonFormField<String>(
             initialValue: _regEmployeeId,
             isExpanded: true,
-            dropdownColor: isLight ? Colors.white : const Color(0xFF141B3A),
+            dropdownColor: isLight ? const Color(0xFFF4EFE3) : const Color(0xFF141B3A),
             borderRadius: BorderRadius.circular(16),
             elevation: 4,
             iconEnabledColor: scheme.onSurface.withValues(alpha: 0.55),
@@ -2339,10 +2353,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 value: 'other',
                 child: Text(
                   '+ OTHER (TYPE NAME)',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.gelasio(
                     fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFFC65B46),
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF0C312B),
                   ),
                 ),
               ),
@@ -2438,7 +2452,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Widget _buildBookingCtaBar(ColorScheme scheme) {
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     final accentFg = isLight ? Colors.white : scheme.onPrimary;
 
     return Container(
@@ -2566,9 +2581,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   Widget _videoCallSheet(ColorScheme scheme) {
 
     final isLight = scheme.brightness == Brightness.light;
-    final btnBg = isLight ? Colors.black : Colors.white;
+    final btnBg = isLight ? const Color(0xFF0C312B) : Colors.white;
     final btnFg = isLight ? Colors.white : Colors.black;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     final media = MediaQuery.of(context);
     // Clear the floating bottom nav (the sheet used to butt straight into it),
     // and ride up with the keyboard when a field is focused.
@@ -2657,7 +2673,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       initialValue: _selectedProjectId,
                       isExpanded: true,
                       dropdownColor: scheme.brightness == Brightness.light
-                          ? Colors.white
+                          ? const Color(0xFFF4EFE3)
                           : const Color(0xFF141B3A),
                       borderRadius: BorderRadius.circular(16),
                       elevation: 4,
@@ -2708,7 +2724,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       initialValue: _employeeId,
                       isExpanded: true,
                       dropdownColor: scheme.brightness == Brightness.light
-                          ? Colors.white
+                          ? const Color(0xFFF4EFE3)
                           : const Color(0xFF141B3A),
                       borderRadius: BorderRadius.circular(16),
                       elevation: 4,

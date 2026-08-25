@@ -232,7 +232,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
   // ELITE STATUS CARD — dark gradient (parity web from-zinc-800→black)
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Widget _buildEliteCard(bool isDark) {
-    const gold = Color(0xFFC5A35B);
+    const gold = Color(0xFF0C312B);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(

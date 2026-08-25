@@ -23,9 +23,9 @@ class CpPurgeCacheScreen extends ConsumerStatefulWidget {
 
 class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
   static const _red = Color(0xFFC65B46);
-  static const _amber = Color(0xFFC5A35B);
+  static const _amber = Color(0xFF0C312B);
   static const _green = Color(0xFF163A2C);
-  static const _gold = Color(0xFFC5A35B);
+  static const _gold = Color(0xFF0C312B);
 
   bool _purging = false;
   bool _done = false;

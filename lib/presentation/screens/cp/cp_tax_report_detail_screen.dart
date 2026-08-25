@@ -461,7 +461,7 @@ class _CpTaxReportDetailScreenState
   }
 
   Widget _secureWarning(bool isDark, Color textPrimary, Color muted) {
-    const gold = Color(0xFFC5A35B);
+    const gold = Color(0xFF0C312B);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

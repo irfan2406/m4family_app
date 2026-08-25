@@ -23,7 +23,7 @@ class CpEmployeesScreen extends ConsumerStatefulWidget {
 class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   // Web parity: the CP accent is purple (only the header dot uses it); the
   // icons/buttons are neutral grey, not gold.
-  static const Color _purple = Color(0xFFC5A35B);
+  static const Color _purple = Color(0xFF0C312B);
 
   bool _loading = true;
   String? _error;

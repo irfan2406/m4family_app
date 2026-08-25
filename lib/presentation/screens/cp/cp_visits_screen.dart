@@ -1099,11 +1099,11 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     String label;
     switch (status) {
       case 'NEW':
-        base = const Color(0xFFC5A35B); // blue
+        base = const Color(0xFF0C312B); // blue
         label = 'NEW VISIT';
         break;
       case 'INTERESTED':
-        base = const Color(0xFFC5A35B); // amber
+        base = const Color(0xFF0C312B); // amber
         label = 'INTERESTED';
         break;
       case 'NOT_INTERESTED':

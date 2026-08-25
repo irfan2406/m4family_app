@@ -2790,7 +2790,7 @@ class _IconThumb extends StatelessWidget {
         width: 64,
         height: 64,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFEDE5D6),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark
@@ -2810,29 +2810,21 @@ class _IconThumb extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Web parity: the same /360-vr.png glyph as the guest detail
-            // (inverted in dark mode), instead of a Lucide eye icon.
-            isDark
-                ? ColorFiltered(
-                    colorFilter: const ColorFilter.matrix(<double>[
-                      -1, 0, 0, 0, 255, //
-                      0, -1, 0, 0, 255, //
-                      0, 0, -1, 0, 255, //
-                      0, 0, 0, 1, 0, //
-                    ]),
-                    child: Image.asset(
-                      'assets/360-vr.png',
-                      width: 26,
-                      height: 26,
-                      fit: BoxFit.contain,
-                    ),
-                  )
-                : Image.asset(
-                    'assets/360-vr.png',
-                    width: 26,
-                    height: 26,
-                    fit: BoxFit.contain,
-                  ),
+            // Web parity: the same /360-vr.png glyph as the guest detail. Multiplied
+            // by the tile colour so the PNG's white plate blends into the tile
+            // instead of showing as a white box.
+            ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                isDark ? const Color(0xFF141B3A) : const Color(0xFFEDE5D6),
+                BlendMode.multiply,
+              ),
+              child: Image.asset(
+                'assets/360-vr.png',
+                width: 26,
+                height: 26,
+                fit: BoxFit.contain,
+              ),
+            ),
             const SizedBox(height: 5),
             Text(
               label,

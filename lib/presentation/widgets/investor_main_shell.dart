@@ -44,12 +44,10 @@ class InvestorMainShell extends ConsumerWidget {
       backgroundColor: navTheme.scaffoldBackgroundColor,
       drawer: const InvestorSidebarMenu(),
       // No extendBody: Scaffold reserves the pill's slot so page content stops
-      // above it. With it enabled, cards scrolled into the margins beside and
-      // under the floating bar and read as a stray footer.
-      // Content runs to the bottom edge behind the floating pill, so scrolling
-      // reads as full-screen. Each tab carries 96px trailing clearance so the
-      // last card still comes to rest above the bar.
-      extendBody: true,
+      // above it. With it enabled the last element — the white SUBMIT INTEREST
+      // button on Home — slid under the bar, and the glass blur picked up that
+      // white, washing the green pill out to a pale grey-green.
+      extendBody: false,
       // Horizontal fling moves a tab. It sets the same provider the bottom
       // bar sets, so no second navigation path is introduced.
       body: NavSwipe(

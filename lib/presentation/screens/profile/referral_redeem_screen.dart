@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 
 class ReferralRedeemScreen extends ConsumerStatefulWidget {
@@ -19,6 +21,125 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
   String? _selectedOption;
   bool _isLoading = false;
   final TextEditingController _amountController = TextEditingController();
+
+  /// Catalog from GET /api/rewards — the same list the web's "REDEMPTION
+  /// CATALOG" renders. Empty means we fall back to the fixed options below so
+  /// the screen is never blank if the call fails.
+  List<dynamic> _rewards = [];
+  bool _loadingCatalog = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCatalog();
+  }
+
+  /// GET /api/rewards answers 404 for an authenticated user, so the catalog
+  /// route is still unknown. These are tried in order until one returns a list;
+  /// the winner is logged so it can be pinned as the single call.
+  static const _catalogCandidates = [
+    '/api/rewards',
+    '/api/rewards/catalog',
+    '/api/rewards/list',
+    '/api/rewards/all',
+    '/api/rewards/available',
+    '/api/rewards/active',
+    '/api/rewards/items',
+    '/api/user/rewards/catalog',
+    '/api/user/referrals/rewards',
+    '/api/user/referrals/catalog',
+    '/api/loyalty/rewards',
+    '/api/redemption/catalog',
+    '/api/admin/rewards',
+  ];
+
+  List<dynamic>? _extractList(dynamic body) {
+    if (body is List) return body;
+    if (body is Map) {
+      for (final k in ['data', 'rewards', 'items', 'results', 'catalog']) {
+        final v = body[k];
+        if (v is List) return v;
+        if (v is Map && v['rewards'] is List) return v['rewards'] as List;
+      }
+    }
+    return null;
+  }
+
+  Future<void> _fetchCatalog() async {
+    final api = ref.read(apiClientProvider);
+    for (final path in _catalogCandidates) {
+      try {
+        final res = await api.dio.get(
+          path,
+          options: Options(validateStatus: (_) => true),
+        );
+        if (res.statusCode != 200) {
+          if (kDebugMode) debugPrint('M4 catalog $path -> ${res.statusCode}');
+          continue;
+        }
+        final list = _extractList(res.data);
+        if (list == null || list.isEmpty) {
+          if (kDebugMode) debugPrint('M4 catalog $path -> 200 but no list');
+          continue;
+        }
+        _rewards = list;
+        if (kDebugMode) {
+          debugPrint('M4 catalog FOUND $path (${list.length} items)');
+          if (list.first is Map) {
+            debugPrint(
+              'M4 reward keys: ${(list.first as Map).keys.join(', ')}',
+            );
+            debugPrint('M4 reward sample: ${list.first}');
+          }
+        }
+        break;
+      } catch (e) {
+        if (kDebugMode) debugPrint('M4 catalog $path -> error $e');
+      }
+    }
+    if (mounted) setState(() => _loadingCatalog = false);
+  }
+
+  // The catalog payload is authored in the CMS, so field names are read
+  // leniently rather than assumed.
+  String _rs(dynamic reward, List<String> keys, [String fallback = '']) {
+    if (reward is! Map) return fallback;
+    for (final k in keys) {
+      final v = reward[k];
+      if (v == null) continue;
+      final s = v.toString().trim();
+      if (s.isNotEmpty && s != 'null') return s;
+    }
+    return fallback;
+  }
+
+  int _rewardPoints(dynamic reward) {
+    final raw = _rs(reward, [
+      'points',
+      'pointsCost',
+      'pointsRequired',
+      'cost',
+      'price',
+    ], '0');
+    return int.tryParse(raw.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+  }
+
+  /// Stock is optional — null means the CMS did not publish a count.
+  int? _rewardStock(dynamic reward) {
+    final raw = _rs(reward, ['stock', 'stockLeft', 'quantity', 'available']);
+    if (raw.isEmpty) return null;
+    return int.tryParse(raw.replaceAll(RegExp(r'[^0-9]'), ''));
+  }
+
+  String _rewardImage(dynamic reward) {
+    var url = _rs(reward, ['image', 'imageUrl', 'thumbnail', 'photo']);
+    if (url.isEmpty && reward is Map) {
+      final imgs = reward['images'];
+      if (imgs is List && imgs.isNotEmpty) url = imgs.first.toString();
+    }
+    if (url.isEmpty) return '';
+    return ref.read(apiClientProvider).resolveUrl(url);
+  }
 
   @override
   void dispose() {
@@ -69,15 +190,33 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          'REDEEM POINTS',
-          style: GoogleFonts.gelasio(
-            textStyle: const TextStyle(inherit: true),
-            color: isDark ? Colors.white : Color(0xFF0C312B),
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 2,
-          ),
+        // Web parity: title with a "CONVERT YOUR POINTS" sub-line.
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'REDEEM REWARDS',
+              style: GoogleFonts.gelasio(
+                textStyle: const TextStyle(inherit: true),
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 2,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              'CONVERT YOUR POINTS',
+              style: GoogleFonts.gelasio(
+                textStyle: const TextStyle(inherit: true),
+                color: (isDark ? Colors.white : const Color(0xFF155A4F))
+                    .withOpacity(0.75),
+                fontSize: 9,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.5,
+              ),
+            ),
+          ],
         ),
         centerTitle: true,
       ),
@@ -90,20 +229,31 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             _buildWalletCard(isDark),
             const SizedBox(height: 24),
             Text(
-              'REDEMPTION MATRIX',
+              'REDEMPTION CATALOG',
               style: GoogleFonts.gelasio(
                 textStyle: const TextStyle(inherit: true),
-                color: isDark ? Colors.white24 : Colors.black26,
+                color: (isDark ? Colors.white : const Color(0xFF155A4F))
+                    .withOpacity(0.75),
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 2,
               ),
             ),
             const SizedBox(height: 16),
-            ..._redemptionOptions
-                .map((opt) => _buildOption(opt, isDark))
-                .toList(),
-            if (_selectedOption != null) ...[
+            if (_loadingCatalog)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 40),
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+              )
+            else if (_rewards.isNotEmpty)
+              ..._rewards.map((r) => _buildRewardCard(r, isDark))
+            else
+              // Catalog unavailable — keep the fixed options so redemption
+              // still works rather than showing an empty page.
+              ..._redemptionOptions.map((opt) => _buildOption(opt, isDark)),
+            // Catalog rewards cost a fixed number of points; only the legacy
+            // options need a volume entry.
+            if (_selectedOption != null && _rewards.isEmpty) ...[
               const SizedBox(height: 8),
               _buildVolumeInput(isDark),
             ],
@@ -136,62 +286,189 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                 ),
               ],
       ),
-      child: Column(
+      // Web parity: a large gift glyph watermarked behind the balance.
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          Text(
-            'AVAILABLE BALANCE',
-            style: GoogleFonts.gelasio(
-              textStyle: const TextStyle(inherit: true),
-              color: isDark ? Colors.white24 : Colors.black26,
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 2,
+          Positioned(
+            right: -10,
+            child: Icon(
+              LucideIcons.gift,
+              size: 110,
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.05),
             ),
           ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Column(
             children: [
               Text(
-                widget.walletBalance.toStringAsFixed(0),
+                'YOUR WALLET BALANCE',
                 style: GoogleFonts.gelasio(
                   textStyle: const TextStyle(inherit: true),
-                  color: isDark ? Colors.white : Color(0xFF0C312B),
-                  fontSize: 48,
+                  color: isDark ? Colors.white24 : Colors.black26,
+                  fontSize: 10,
                   fontWeight: FontWeight.w700,
+                  letterSpacing: 2,
                 ),
               ),
-              const SizedBox(width: 8),
-              Text(
-                'PTS',
-                style: GoogleFonts.inter(
-                  textStyle: const TextStyle(inherit: true),
-                  color: isDark ? Colors.white38 : Color(0xFF155A4F),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.walletBalance.toStringAsFixed(0),
+                    style: GoogleFonts.gelasio(
+                      textStyle: const TextStyle(inherit: true),
+                      color: isDark ? Colors.white : Color(0xFF0C312B),
+                      fontSize: 48,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'PTS',
+                    style: GoogleFonts.inter(
+                      textStyle: const TextStyle(inherit: true),
+                      color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              'VALUE: ₹${widget.walletBalance.toStringAsFixed(0)}',
-              style: GoogleFonts.inter(
-                textStyle: const TextStyle(inherit: true),
-                color: isDark ? Colors.white : Color(0xFF155A4F),
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1,
+        ],
+      ),
+    );
+  }
+
+  // ── Catalog reward (web parity: thumbnail, copy, points badge, stock) ──
+  Widget _buildRewardCard(dynamic reward, bool isDark) {
+    final id = _rs(reward, ['_id', 'id']);
+    final title = _rs(reward, ['title', 'name'], 'REWARD');
+    final desc = _rs(reward, ['description', 'subtitle', 'desc']);
+    final points = _rewardPoints(reward);
+    final stock = _rewardStock(reward);
+    final image = _rewardImage(reward);
+
+    final ink = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = isDark ? Colors.white38 : const Color(0xFF155A4F);
+    final isSelected = _selectedOption == id;
+    final affordable = points <= widget.walletBalance;
+
+    return GestureDetector(
+      onTap: () => setState(() => _selectedOption = id),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 15),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(
+            color: isSelected ? ink : ink.withOpacity(0.05),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: SizedBox(
+                width: 64,
+                height: 64,
+                child: image.isEmpty
+                    ? Container(
+                        color: ink.withOpacity(0.05),
+                        child: Icon(
+                          LucideIcons.package,
+                          size: 22,
+                          color: muted,
+                        ),
+                      )
+                    : CachedNetworkImage(
+                        imageUrl: image,
+                        fit: BoxFit.cover,
+                        memCacheWidth: 200,
+                        placeholder: (c, u) =>
+                            Container(color: ink.withOpacity(0.05)),
+                        errorWidget: (c, u, e) => Container(
+                          color: ink.withOpacity(0.05),
+                          child: Icon(
+                            LucideIcons.package,
+                            size: 22,
+                            color: muted,
+                          ),
+                        ),
+                      ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      textStyle: const TextStyle(inherit: true),
+                      color: ink,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  if (desc.isNotEmpty) ...[
+                    const SizedBox(height: 3),
+                    Text(
+                      desc,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        textStyle: const TextStyle(inherit: true),
+                        color: muted,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                  if (stock != null) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      'STOCK: $stock LEFT',
+                      style: GoogleFonts.inter(
+                        textStyle: const TextStyle(inherit: true),
+                        color: muted,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: ink.withOpacity(0.04),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(color: ink.withOpacity(0.12)),
+              ),
+              child: Text(
+                '$points pts',
+                style: GoogleFonts.inter(
+                  textStyle: const TextStyle(inherit: true),
+                  color: affordable ? ink : const Color(0xFFC65B46),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -231,7 +508,9 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.05,
+                ),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -301,7 +580,9 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.05,
+              ),
             ),
           ),
           child: TextField(
@@ -361,7 +642,9 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.1),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.1,
+              ),
             ),
           ),
           alignment: Alignment.center,
@@ -380,9 +663,11 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
   }
 
   Widget _buildConfirmButton(bool isDark) {
+    // A catalog reward carries its own fixed cost, so no amount is typed.
+    final catalogMode = _rewards.isNotEmpty;
     final isEnabled =
         _selectedOption != null &&
-        _amountController.text.isNotEmpty &&
+        (catalogMode || _amountController.text.isNotEmpty) &&
         !_isLoading;
     return GestureDetector(
       onTap: isEnabled
@@ -390,9 +675,20 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
               setState(() => _isLoading = true);
               try {
                 final apiClient = ref.read(apiClientProvider);
+                final selected = catalogMode
+                    ? _rewards.firstWhere(
+                        (r) => _rs(r, ['_id', 'id']) == _selectedOption,
+                        orElse: () => null,
+                      )
+                    : null;
                 final response = await apiClient.redeemPoints({
-                  'points': _amountController.text,
+                  'points': catalogMode
+                      ? _rewardPoints(selected).toString()
+                      : _amountController.text,
                   'optionId': _selectedOption,
+                  // Catalog redemptions are keyed by reward id; both keys are
+                  // sent so whichever the API expects is present.
+                  if (catalogMode) 'rewardId': _selectedOption,
                 });
 
                 if (response.data['status'] == true) {

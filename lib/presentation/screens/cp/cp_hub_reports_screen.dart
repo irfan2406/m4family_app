@@ -21,7 +21,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
   List<dynamic> _reports = const [];
   bool _loading = true;
 
-  static const Color _gold = Color(0xFFC5A35B);
+  static const Color _gold = Color(0xFF0C312B);
   static const years = ['2024', '2023', '2022'];
 
   @override
@@ -138,11 +138,11 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
       case 'CSV':
         return const Color(0xFF163A2C); // green — spreadsheets
       case 'DOC':
-        return const Color(0xFFC5A35B); // indigo — docs
+        return const Color(0xFF0C312B); // indigo — docs
       case 'IMG':
-        return const Color(0xFFC5A35B); // amber — images
+        return const Color(0xFF0C312B); // amber — images
       default:
-        return const Color(0xFFC5A35B); // blue — pdf
+        return const Color(0xFF0C312B); // blue — pdf
     }
   }
 

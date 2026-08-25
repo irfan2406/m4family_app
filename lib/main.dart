@@ -84,6 +84,7 @@ import 'package:m4_mobile/presentation/screens/cp/cp_booking_start_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_payment_plan_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_booking_confirmation_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_token_payment_screen.dart';
+import 'package:m4_mobile/presentation/screens/profile/referral_redeem_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_referral_redeem_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_payment_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_elite_screen.dart';
@@ -643,6 +644,17 @@ final GoRouter _router = GoRouter(
       path: '/investor/referral/closed',
       builder: (context, state) => const InvestorReferralClosedScreen(),
     ),
+    GoRoute(
+      // The investor rewards screen pushed this before the route existed, which
+      // threw "no routes for location". It reuses the shared redeem screen; the
+      // caller passes the point balance as `extra`.
+      path: '/investor/referral/redeem',
+      builder: (context, state) => ReferralRedeemScreen(
+        walletBalance: state.extra is num
+            ? (state.extra as num).toDouble()
+            : 0,
+      ),
+    ),
     // Investor settings / security / profile subroutes
     GoRoute(
       path: '/investor/cp',
@@ -1023,7 +1035,11 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/projects',
-      builder: (context, state) => const ProjectListScreen(),
+      builder: (context, state) => Theme(
+        // Green showcase, same as the Properties tab in every shell.
+        data: M4Theme.darkTheme,
+        child: const ProjectListScreen(),
+      ),
     ),
     GoRoute(
       path: '/careers',

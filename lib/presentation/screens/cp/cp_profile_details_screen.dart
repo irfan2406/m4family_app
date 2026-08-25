@@ -24,7 +24,7 @@ class CpProfileDetailsScreen extends ConsumerStatefulWidget {
 
 class _CpProfileDetailsScreenState
     extends ConsumerState<CpProfileDetailsScreen> {
-  static const _purple = Color(0xFFC5A35B);
+  static const _purple = Color(0xFF0C312B);
 
   final _name = TextEditingController();
   final _email = TextEditingController();

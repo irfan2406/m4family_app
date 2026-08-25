@@ -29,6 +29,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _notesController = TextEditingController();
+  final _emailController = TextEditingController();
 
   String? _selectedProjectId;
   String? _employeeId;
@@ -37,6 +38,9 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
   bool _isProjectDropdownOpen = false;
   bool _isEmployeeDropdownOpen = false;
   bool _submitting = false;
+  // Web parity: the booking dialog offers VIDEO CALL / SITE VISIT.
+  String _visitType = 'Site Visit';
+  String? _otherEmployeeName;
 
   @override
   void initState() {
@@ -64,6 +68,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
     _nameController.dispose();
     _phoneController.dispose();
     _notesController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -182,7 +187,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate() ||
         _selectedProjectId == null ||
-        _employeeId == null ||
+        (_employeeId == null && _otherEmployeeName == null) ||
         _scheduledAt == null) {
       _showMessage('Please complete all fields');
       return;
@@ -207,9 +212,12 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
       final res = await apiClient.createCpVisit({
         'projectId': _selectedProjectId,
         'employeeId': _employeeId,
+        'employeeName': _otherEmployeeName,
         'visitDate': _scheduledAt!.toIso8601String(),
         'clientName': _nameController.text.trim(),
         'clientPhone': _phoneController.text.trim(),
+        'clientEmail': _emailController.text.trim(),
+        'visitType': _visitType,
         'notes': _notesController.text.trim(),
       });
 
@@ -411,6 +419,26 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 ),
                 const SizedBox(height: 24),
 
+                // Web parity: optional e-mail on the booking form.
+                _buildLabel('E-MAIL'),
+                const SizedBox(height: 12),
+                _buildTextField(
+                  controller: _emailController,
+                  hint: 'EMAIL ADDRESS',
+                  icon: LucideIcons.mail,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (v) => (v == null || v.trim().isEmpty)
+                      ? null
+                      : Validators.emailError(v),
+                ),
+                const SizedBox(height: 24),
+
+                // Web parity: VIDEO CALL / SITE VISIT segmented choice.
+                _buildLabel('VISIT TYPE *'),
+                const SizedBox(height: 12),
+                _buildVisitTypeToggle(),
+                const SizedBox(height: 24),
+
                 _buildLabel('SELECT PROJECT *'),
                 const SizedBox(height: 12),
                 projectsAsync.when(
@@ -459,6 +487,129 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
     );
   }
 
+  /// VIDEO CALL / SITE VISIT choice. Selected fills deep green with a cream
+  /// label; unselected stays on the cream card with green ink.
+  Widget _buildVisitTypeToggle() {
+    const options = ['Video Call', 'Site Visit'];
+    return Row(
+      children: [
+        for (final o in options) ...[
+          Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _visitType = o),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                height: 52,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: _visitType == o
+                      ? const Color(0xFF0C312B)
+                      : const Color(0xFFF4EFE3),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFD4CFBC)),
+                ),
+                child: Text(
+                  o.toUpperCase(),
+                  style: GoogleFonts.gelasio(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.5,
+                    color: _visitType == o
+                        ? const Color(0xFFF4EFE3)
+                        : const Color(0xFF163A2C),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          if (o != options.last) const SizedBox(width: 12),
+        ],
+      ],
+    );
+  }
+
+  /// Web parity: "+ Other (Type Name)" lets a CP hand the visit to someone who
+  /// is not in the employee list. The typed name is kept locally and submitted
+  /// as `employeeName`; `employeeId` stays null for that case.
+  Future<void> _promptOtherEmployee() async {
+    final controller = TextEditingController(text: _otherEmployeeName ?? "");
+    final name = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFFF4EFE3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Text(
+          "HANDLED BY",
+          style: GoogleFonts.gelasio(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.5,
+            color: const Color(0xFF163A2C),
+          ),
+        ),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          style: GoogleFonts.ebGaramond(
+            fontSize: 15,
+            color: const Color(0xFF163A2C),
+          ),
+          decoration: InputDecoration(
+            hintText: "Type name",
+            hintStyle: GoogleFonts.ebGaramond(
+              color: const Color(0xFF163A2C).withValues(alpha: 0.5),
+            ),
+            filled: true,
+            fillColor: const Color(0xFFF4EFE3),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Color(0xFFD4CFBC)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Color(0xFF163A2C)),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              "CANCEL",
+              style: GoogleFonts.gelasio(
+                color: const Color(0xFF163A2C),
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.2,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: Text(
+              "DONE",
+              style: GoogleFonts.gelasio(
+                color: const Color(0xFF0C312B),
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.2,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (!mounted) return;
+    if (name != null && name.isNotEmpty) {
+      setState(() {
+        _otherEmployeeName = name;
+        _employeeId = null;
+      });
+    }
+  }
   Widget _buildLabel(String label) {
     return Text(
       label,
@@ -716,9 +867,12 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                       ? (selectedEmployee['name'] ?? '')
                             .toString()
                             .toUpperCase()
-                      : 'SELECT EMPLOYEE',
+                      : (_otherEmployeeName ?? 'SELECT EMPLOYEE')
+                            .toUpperCase(),
                   style: GoogleFonts.inter(
-                    color: selectedEmployee.isNotEmpty
+                    color:
+                        selectedEmployee.isNotEmpty ||
+                            _otherEmployeeName != null
                         ? (isDark ? Colors.white : Color(0xFF0C312B))
                         : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
                             0.68,
@@ -762,12 +916,14 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
               ),
             ),
             child: Column(
-              children: _employees.map((emp) {
+              children: [
+                ..._employees.map((emp) {
                 final isSelected = _employeeId == emp['_id'];
                 return InkWell(
                   onTap: () {
                     setState(() {
                       _employeeId = emp['_id']?.toString();
+                      _otherEmployeeName = null;
                       _isEmployeeDropdownOpen = false;
                     });
                   },
@@ -800,7 +956,38 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     ),
                   ),
                 );
-              }).toList(),
+                }),
+                // Web parity: lets a CP name someone not in the employee list. The typed
+              // name is submitted as the handler instead of an employeeId.
+              InkWell(
+                onTap: () {
+                  setState(() => _isEmployeeDropdownOpen = false);
+                  _promptOtherEmployee();
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(
+                        color: const Color(0xFFD4CFBC).withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    '+ OTHER (TYPE NAME)',
+                    style: GoogleFonts.gelasio(
+                      color: isDark
+                          ? const Color(0xFFF4EFE3)
+                          : const Color(0xFF163A2C),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ),
+              ],
             ),
           ).animate().fadeIn(duration: 200.ms).slideY(begin: -0.05, end: 0),
       ],

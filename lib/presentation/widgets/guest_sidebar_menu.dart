@@ -1,12 +1,10 @@
 import 'package:m4_mobile/presentation/widgets/drawer_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 
 class GuestSidebarMenu extends ConsumerStatefulWidget {
@@ -435,46 +433,14 @@ class _MenuItem extends StatelessWidget {
     this.isActive = false,
   });
 
+  // Rendering is M4DrawerTile — the one row every portal uses.
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return ListTile(
-      onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-      leading: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: isActive
-              ? (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.15)
-              : (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.08),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Icon(
-          icon,
-          color: isActive
-              ? (isDark ? Colors.white : const Color(0xFFF4EFE3))
-              : (isDark
-                    ? Colors.white.withOpacity(0.4)
-                    : Colors.black.withOpacity(0.5)),
-          size: 20,
-        ),
-      ),
-      title: Text(
-        label,
-        style: GoogleFonts.inter(
-          color: isActive
-              ? (isDark ? Colors.white : const Color(0xFFF4EFE3))
-              : (isDark
-                    ? Colors.white.withOpacity(0.7)
-                    : const Color(0xFFF4EFE3).withValues(alpha: 0.92)),
-          fontSize: 16.5,
-          fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-          letterSpacing: -0.2,
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => M4DrawerTile(
+    icon: icon,
+    label: label,
+    isActive: isActive,
+    onTap: onTap,
+  );
 }
 
 class _DropdownMenuItem extends StatelessWidget {
@@ -491,57 +457,24 @@ class _DropdownMenuItem extends StatelessWidget {
     required this.subItems,
   });
 
+  // Same shared row as every other menu item, with a chevron trailing.
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      children: [
-        ListTile(
-          onTap: onToggle,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 2,
-          ),
-          leading: Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: isOpen
-                  ? (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.15)
-                  : (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.08),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              icon,
-              color: isOpen
-                  ? (isDark ? Colors.white : const Color(0xFFF4EFE3))
-                  : (isDark
-                        ? Colors.white.withOpacity(0.4)
-                        : Colors.black.withOpacity(0.5)),
-              size: 20,
-            ),
-          ),
-          title: Text(
-            label,
-            style: GoogleFonts.inter(
-              color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(
-                isOpen ? 1.0 : 0.8,
-              ),
-              fontSize: 16.5,
-              fontWeight: FontWeight.w500,
-              letterSpacing: -0.2,
-            ),
-          ),
-          trailing: Icon(
-            isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: const Color(0xFFF4EFE3),
-            size: 18,
-          ),
+  Widget build(BuildContext context) => Column(
+    children: [
+      M4DrawerTile(
+        icon: icon,
+        label: label,
+        isActive: isOpen,
+        onTap: onToggle,
+        trailing: Icon(
+          isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+          color: M4Drawer.creamGlow.withValues(alpha: isOpen ? 1.0 : 0.8),
+          size: 18,
         ),
-        if (isOpen) ...subItems,
-      ],
-    );
-  }
+      ),
+      if (isOpen) ...subItems,
+    ],
+  );
 }
 
 class _SubItem extends StatelessWidget {

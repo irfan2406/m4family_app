@@ -22,7 +22,7 @@ class CpPaymentPlanScreen extends ConsumerStatefulWidget {
 }
 
 class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
-  static const Color _gold = Color(0xFFC5A35B);
+  static const Color _gold = Color(0xFF0C312B);
 
   List<dynamic> _plans = [];
   bool _loading = true;

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,6 +24,12 @@ class SiteVisitScreen extends ConsumerStatefulWidget {
 class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  bool _prefilled = false;
+  // CP-only: the visit can be handed to one of the partner's employees. The
+  // list endpoint is CP-scoped, so it is only fetched for a CP account.
+  List<Map<String, dynamic>> _employees = [];
+  String? _employeeId;
+  bool _isCp = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
   DateTime? _selectedDate;
@@ -37,6 +44,37 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     super.initState();
     _selectedProjectId = widget.projectId;
     // Fields intentionally left empty for manual entry to match web protocol
+  }
+
+  /// Seeds the visitor fields from the signed-in account, so the form matches
+  /// the web layout without making a logged-in user retype what we already know.
+  void _prefillFromAccount() {
+    if (_prefilled) return;
+    final u = ref.read(authProvider).user;
+    if (u == null) return;
+    _prefilled = true;
+    _isCp = u['role']?.toString().toLowerCase() == 'cp';
+    if (_isCp) unawaited(_fetchEmployees());
+    _nameController.text =
+        (u['fullName'] ?? u['username'] ?? '').toString();
+    _phoneController.text = (u['phone'] ?? '').toString();
+  }
+
+  Future<void> _fetchEmployees() async {
+    try {
+      final res = await ref.read(apiClientProvider).getCpEmployees();
+      final body = res.data;
+      if (body is Map && body['data'] is List && mounted) {
+        setState(() {
+          _employees = (body['data'] as List)
+              .whereType<Map>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList();
+        });
+      }
+    } catch (_) {
+      // Non-fatal: the field simply stays empty rather than blocking booking.
+    }
   }
 
   @override
@@ -182,12 +220,16 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
         'date': DateFormat('yyyy-MM-dd').format(_selectedDate!),
         'time': _selectedTime!.format(context),
         // Web parity: user details come from the logged-in account.
-        'name':
-            authUser?['fullName']?.toString() ??
-            authUser?['username']?.toString() ??
-            'App User',
-        'phone': authUser?['phone']?.toString() ?? '',
+        'name': _nameController.text.trim().isNotEmpty
+            ? _nameController.text.trim()
+            : (authUser?['fullName']?.toString() ??
+                  authUser?['username']?.toString() ??
+                  'App User'),
+        'phone': _phoneController.text.trim().isNotEmpty
+            ? _phoneController.text.trim()
+            : (authUser?['phone']?.toString() ?? ''),
         'email': authUser?['email']?.toString() ?? '',
+        if (_employeeId != null) 'employeeId': _employeeId,
         'notes': _notesController.text.trim(),
         'visitType': _visitType,
       });
@@ -216,6 +258,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _prefillFromAccount();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_isSuccess) {
@@ -323,7 +366,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'SCHEDULE VISIT',
+              'SITE VISIT',
               style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -331,7 +374,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
               ),
             ),
             Text(
-              'PREMIUM PROTOCOL',
+              'PROTOCOL VERIFICATION',
               style: GoogleFonts.inter(
                 fontSize: 8,
                 color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.68),
@@ -402,9 +445,20 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
               ),
             ),
             const SizedBox(height: 40),
-            // Web parity: no Name/Phone/Email fields — details come from the
-            // logged-in user; the form starts at Select Property.
-            _buildFieldLabel('SELECT PROPERTY'),
+            // Web parity: the booking form asks for the visitor's name and
+            // number. Both are pre-filled from the signed-in account so a
+            // logged-in user does not retype them, and stay editable.
+            _buildFieldLabel('FULL NAME'),
+            _buildTextField(_nameController, LucideIcons.user, 'ENTER NAME'),
+            const SizedBox(height: 24),
+            _buildFieldLabel('PHONE NUMBER'),
+            _buildTextField(
+              _phoneController,
+              LucideIcons.phone,
+              '+91 XXXXX XXXXX',
+            ),
+            const SizedBox(height: 24),
+            _buildFieldLabel('SELECT PROJECT'),
             Consumer(
               builder: (context, ref, child) {
                 final projectsAsync = ref.watch(projectsProvider);
@@ -472,6 +526,11 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
               },
             ),
             const SizedBox(height: 40),
+            if (_isCp) ...[
+              _buildFieldLabel('HANDLED BY (EMPLOYEE)'),
+              _buildEmployeeField(),
+              const SizedBox(height: 24),
+            ],
             _buildFieldLabel('SCHEDULE'),
             GestureDetector(
               onTap: _selectDateTime,
@@ -600,6 +659,67 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     );
   }
 
+  /// CP-only handler picker. Same cream field treatment as the other inputs.
+  Widget _buildEmployeeField() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final selected = _employees.firstWhere(
+      (e) => e["_id"]?.toString() == _employeeId,
+      orElse: () => <String, dynamic>{},
+    );
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withOpacity(0.03)
+            : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withOpacity(0.05)
+              : const Color(0xFFD4CFBC),
+        ),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _employeeId,
+          isExpanded: true,
+          dropdownColor: isDark
+              ? const Color(0xFF141B3A)
+              : const Color(0xFFF4EFE3),
+          borderRadius: BorderRadius.circular(8),
+          icon: Icon(
+            LucideIcons.chevronDown,
+            size: 18,
+            color: isDark ? Colors.white70 : const Color(0xFF0C312B),
+          ),
+          hint: Text(
+            "SELECT EMPLOYEE",
+            style: GoogleFonts.ebGaramond(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: isDark
+                  ? Colors.white70
+                  : const Color(0xFF0C312B).withValues(alpha: 0.6),
+            ),
+          ),
+          items: _employees.map((e) {
+            return DropdownMenuItem<String>(
+              value: e["_id"]?.toString(),
+              child: Text(
+                (e["name"] ?? "").toString().toUpperCase(),
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: (v) => setState(() => _employeeId = v),
+        ),
+      ),
+    );
+  }
   Widget _buildFieldLabel(String label) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
@@ -628,21 +748,21 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withOpacity(0.03)
-            : Colors.black.withOpacity(0.04),
-        borderRadius: BorderRadius.circular(16),
+            : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isDark
               ? Colors.white.withOpacity(0.05)
-              : Colors.black.withOpacity(0.05),
+              : const Color(0xFFD4CFBC),
         ),
       ),
       child: TextField(
         controller: controller,
         maxLines: maxLines,
-        style: GoogleFonts.inter(
+        style: GoogleFonts.ebGaramond(
           fontSize: 15,
           fontWeight: FontWeight.w500,
-          color: isDark ? Colors.white : Color(0xFF155A4F),
+          color: isDark ? Colors.white : const Color(0xFF0C312B),
         ),
         decoration: InputDecoration(
           filled: false,

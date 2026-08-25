@@ -26,6 +26,9 @@ class GuestMainShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(guestNavigationProvider);
     final isDrawerOpen = ref.watch(drawerOpenProvider);
+    // The keyboard covers the floating nav pill, so while it is up the pill is
+    // hidden and the space it reserves is given back to the content.
+    final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     // Home (0) & Properties (1) are the deep-green "showcase" screens (white
     // typography); the info tabs stay cream with green typography.
@@ -55,10 +58,16 @@ class GuestMainShell extends ConsumerWidget {
           // The pill floats above the content, so tell the screens how much
           // room it takes: their scroll views add this as bottom inset and the
           // last card can scroll clear of the nav instead of hiding under it.
+          //
+          // With the keyboard up the pill is hidden, so the reserve is dropped
+          // — otherwise a focused text field sits ~92px above the keyboard with
+          // dead space under it.
           MediaQuery(
             data: MediaQuery.of(context).copyWith(
               padding: MediaQuery.of(context).padding.copyWith(
-                bottom: MediaQuery.of(context).padding.bottom + _navFootprint,
+                bottom: keyboardOpen
+                    ? MediaQuery.of(context).padding.bottom
+                    : MediaQuery.of(context).padding.bottom + _navFootprint,
               ),
             ),
             child: NavSwipe(
@@ -69,7 +78,7 @@ class GuestMainShell extends ConsumerWidget {
               child: IndexedStack(index: currentIndex, children: screens),
             ),
           ),
-          if (!isDrawerOpen)
+          if (!isDrawerOpen && !keyboardOpen)
             Align(
               alignment: Alignment.bottomCenter,
               // Under the active tab's surface theme, so the bar knows whether

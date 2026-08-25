@@ -26,8 +26,10 @@ class CpProfileSettingsScreen extends ConsumerStatefulWidget {
 
 class _CpProfileSettingsScreenState
     extends ConsumerState<CpProfileSettingsScreen> {
-  static const _purple = Color(0xFFC5A35B);
-  static const _indigo = Color(0xFF141B3A);
+  // Accent for this screen: M4 deep green (was gold, which read as yellow).
+  static const _purple = Color(0xFF0C312B);
+  // Gradient partner for the accent: mid green, not navy.
+  static const _indigo = Color(0xFF1C4535);
 
   final _first = TextEditingController();
   final _last = TextEditingController();
@@ -169,7 +171,17 @@ class _CpProfileSettingsScreenState
       final ok = patch.data is Map && (patch.data as Map)['status'] == true;
       if (ok) {
         setState(() => _avatarUrl = newUrl);
-        await ref.read(authProvider.notifier).fetchMe();
+        // Apply the new photo to the session directly. Re-fetching /me here
+        // used to be the only update path, so if that call returned a cached
+        // or stale record the avatar appeared unchanged despite the success
+        // toast.
+        final current = ref.read(authProvider).user;
+        if (current != null) {
+          final merged = Map<String, dynamic>.from(current);
+          merged['avatarUrl'] = newUrl;
+          merged['avatar'] = newUrl;
+          ref.read(authProvider.notifier).setUser(merged);
+        }
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -246,12 +258,25 @@ class _CpProfileSettingsScreenState
         // refresh now runs in the background just to reconcile.
         final updated = (res.data as Map)['data'];
         if (updated is Map) {
-          ref
-              .read(authProvider.notifier)
-              .setUser(Map<String, dynamic>.from(updated));
+          final merged = Map<String, dynamic>.from(updated);
+          // The profile header prefers `fullName`. The backend does not always
+          // recompute it from firstName/lastName, so a rename appeared to save
+          // (success toast, PATCH 200) while the header kept the old name.
+          // Rebuild it from what was just submitted.
+          final first = _first.text.trim();
+          final last = _last.text.trim();
+          final rebuilt = [first, last].where((p) => p.isNotEmpty).join(' ');
+          if (rebuilt.isNotEmpty) {
+            merged['fullName'] = rebuilt;
+            merged['firstName'] = first;
+            merged['lastName'] = last;
+          }
+          ref.read(authProvider.notifier).setUser(merged);
         }
         _toast('Profile updated successfully', success: true);
-        unawaited(ref.read(authProvider.notifier).fetchMe());
+        // No background fetchMe here: /me can return a stale `fullName`, which
+        // would immediately overwrite the rename we just applied and make the
+        // save look like it did nothing.
       } else {
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()

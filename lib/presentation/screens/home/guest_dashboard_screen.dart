@@ -1633,7 +1633,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         Text(
                           'FEATURED PROPERTY',
                           style: GoogleFonts.inter(
-                            color: const Color(0xFFC5A35B),
+                            color: const Color(0xFFF4EFE3),
                             fontSize: 9,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 2.5,
@@ -1885,7 +1885,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ProjectListScreen(),
+                      builder: (context) => Theme(
+                        data: M4Theme.darkTheme,
+                        child: const ProjectListScreen(guestMode: true),
+                      ),
                     ),
                   ),
                 ),

@@ -20,6 +20,9 @@ class M4Theme {
   static const Color goldDeep = Color(0xFFA8863F);
 
   /// Warm cream used for text / surfaces on the green theme.
+  /// "Living the" in the wordmark — sampled from the web (#65AEA0).
+  static const Color taglineAccent = Color(0xFF65AEA0);
+
   static const Color cream = Color(0xFFF4EFE3);
   static const Color creamMuted = Color(0xFFFBF7EF);
 
@@ -35,7 +38,7 @@ class M4Theme {
   // LIGHT (:root) — CREAM
   // ===================================================================
   static const Color lightBackground = Color(0xFFD4CFBC); // Figma cream page #D4CFBC
-  static const Color lightForeground = Color(0xFF15271E); // dark green-black
+  static const Color lightForeground = Color(0xFF0C312B); // Figma green ink
 
   /// Figma typography colours (M4 Web reference). Headings sit at [figmaHeading]
   /// and body copy at [figmaBody] on the light / cream surfaces. Dark and green
@@ -157,7 +160,9 @@ class M4Theme {
                     fontSize: 26,
                     height: 1.15,
                     fontWeight: FontWeight.w400,
-                    color: fg.withValues(alpha: 0.78),
+                    // Web colour, not a tint of the foreground — every portal
+                    // renders this on the green showcase surface.
+                    color: taglineAccent,
                   ),
                 ),
                 TextSpan(

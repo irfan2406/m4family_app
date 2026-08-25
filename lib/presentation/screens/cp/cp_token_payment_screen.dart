@@ -370,7 +370,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                             children: [
                               const Icon(
                                 LucideIcons.shieldCheck,
-                                color: Color(0xFFC5A35B),
+                                color: Color(0xFF0C312B),
                                 size: 14,
                               ),
                               const SizedBox(width: 8),
@@ -379,7 +379,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                                 style: GoogleFonts.inter(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w600,
-                                  color: const Color(0xFFC5A35B),
+                                  color: const Color(0xFF0C312B),
                                   letterSpacing: 1,
                                 ),
                               ),

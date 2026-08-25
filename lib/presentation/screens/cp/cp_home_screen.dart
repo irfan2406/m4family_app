@@ -585,7 +585,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     double errorIconSize = 64,
   }) {
     Widget errorBox() => Container(
-      color: const Color(0xFF141B3A),
+      color: const Color(0xFF1C4535),
       child: Center(
         child: Icon(errorIcon, color: Colors.white24, size: errorIconSize),
       ),
@@ -954,7 +954,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           ),
                           child: const Icon(
                             LucideIcons.arrowRight,
-                            color: Colors.black,
+                            color: const Color(0xFF0C312B),
                             size: 18,
                           ),
                         ),
@@ -992,7 +992,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         width: 288,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
@@ -1494,8 +1494,11 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          const ProjectListScreen(cpCatalogMode: true),
+                      // Green showcase, same as the Properties tab in the shell.
+                      builder: (context) => Theme(
+                        data: M4Theme.darkTheme,
+                        child: const ProjectListScreen(cpCatalogMode: true),
+                      ),
                     ),
                   ),
                 ),
@@ -1764,7 +1767,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               hintStyle: GoogleFonts.inter(
                 color: hasError
                     ? errorColor.withValues(alpha: 0.75)
-                    : (isDark ? Colors.white54 : Colors.black45),
+                    : (isDark ? Colors.white54 : const Color(0xFF0C312B).withValues(alpha: 0.5)),
                 fontSize: 13,
               ),
               contentPadding: const EdgeInsets.symmetric(

@@ -63,7 +63,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
     final scheme = Theme.of(context).colorScheme;
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
-    const purple = Color(0xFFC5A35B); // web hue
+    const purple = Color(0xFF0C312B); // web hue
 
     final totalLeads = _asDouble(_data?['totalLeads']);
     final totalConv = _asDouble(_data?['totalConversions']);
@@ -175,7 +175,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   scheme,
                   label: 'Residential Luxury',
                   value: 25,
-                  color: const Color(0xFFC5A35B),
+                  color: const Color(0xFF0C312B),
                 ),
                 _allocRow(
                   scheme,
@@ -271,7 +271,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: selected == r
-                        ? const Color(0xFFC5A35B)
+                        ? const Color(0xFF0C312B)
                         : Colors.transparent,
                   ),
                   child: Text(

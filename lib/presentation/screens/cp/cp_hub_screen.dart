@@ -198,7 +198,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                         title: 'Reports',
                         icon: LucideIcons.fileText,
                         bg: const Color(0x1A60A5FA),
-                        fg: const Color(0xFFC5A35B),
+                        fg: const Color(0xFF0C312B),
                         onTap: () => context.push('/cp/hub/reports'),
                         scheme: scheme,
                       ),

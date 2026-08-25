@@ -980,7 +980,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           'FEATURED PROPERTY',
                                           // Was 9px — too small to read.
                                           style: GoogleFonts.gelasio(
-                                            color: const Color(0xFFC5A35B),
+                                            color: const Color(0xFFF4EFE3),
                                             fontSize: 11,
                                             fontWeight: FontWeight.w700,
                                             letterSpacing: 2,
@@ -1208,70 +1208,76 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   const SizedBox(height: 28),
                   Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
+                      // Investor parity: a 3% translucent lift over the page
+                      // rather than a solid surface panel, so the card reads as
+                      // the same colour in both portals.
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.03),
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.1),
+                        ).colorScheme.onSurface.withOpacity(0.08),
                       ),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24),
                       child: Column(
                         children: <Widget>[
-                          IntrinsicHeight(
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: _EngageCell(
-                                    icon: LucideIcons.building2,
-                                    title: 'EXPLORE PROJECTS',
-                                    desc: 'Browse our portfolio of properties',
-                                    onTap: () =>
-                                        ref
-                                                .read(
-                                                  navigationProvider.notifier,
-                                                )
-                                                .state =
-                                            1,
-                                  ),
+                          // No IntrinsicHeight: it measures wrapping Text as a
+                          // single line, then forces that height on the row —
+                          // the 2-line title + 3-line desc of REGISTER INTEREST
+                          // overflowed by 20px. A plain Row sizes to the tallest
+                          // cell correctly. Cells have no background or divider,
+                          // so equal heights are not needed visually.
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Expanded(
+                                child: _EngageCell(
+                                  icon: LucideIcons.building2,
+                                  title: 'EXPLORE PROJECTS',
+                                  desc: 'Browse our portfolio of properties',
+                                  onTap: () =>
+                                      ref
+                                              .read(navigationProvider.notifier)
+                                              .state =
+                                          1,
                                 ),
-                                Expanded(
-                                  child: _EngageCell(
-                                    icon: LucideIcons.layoutGrid,
-                                    title: 'BOOK A VIEWING',
-                                    desc:
-                                        'Schedule a visit to our show apartment',
-                                    onTap: _scrollToInquiry,
-                                  ),
+                              ),
+                              Expanded(
+                                child: _EngageCell(
+                                  icon: LucideIcons.layoutGrid,
+                                  title: 'BOOK A VIEWING',
+                                  desc:
+                                      'Schedule a visit to our show apartment',
+                                  onTap: _scrollToInquiry,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          IntrinsicHeight(
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: _EngageCell(
-                                    icon: LucideIcons.image,
-                                    title: 'MEDIA GALLERY',
-                                    desc:
-                                        'Watch films and view property renders',
-                                    onTap: () => context.push('/media'),
-                                  ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Expanded(
+                                child: _EngageCell(
+                                  icon: LucideIcons.image,
+                                  title: 'MEDIA GALLERY',
+                                  desc: 'Watch films and view property renders',
+                                  onTap: () => context.push('/media'),
                                 ),
-                                Expanded(
-                                  child: _EngageCell(
-                                    icon: LucideIcons.user,
-                                    title: 'REGISTER INTEREST',
-                                    desc:
-                                        'Register your interest in our properties',
-                                    onTap: _scrollToInquiry,
-                                  ),
+                              ),
+                              Expanded(
+                                child: _EngageCell(
+                                  icon: LucideIcons.user,
+                                  title: 'REGISTER INTEREST',
+                                  desc:
+                                      'Register your interest in our properties',
+                                  onTap: _scrollToInquiry,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -1677,14 +1683,12 @@ class _QuickAction extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.05),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.08,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.08),
                   ),
                 ),
                 child: Icon(
@@ -1734,13 +1738,15 @@ class _EngageCell extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Icon in a bordered circle (web: w-10 h-10 rounded-full border)
+            // Icon in a bordered circle (web: w-10 h-10 rounded-full border).
+            // Fill/border alphas match the investor connect grid.
             Container(
               width: 44,
               height: 44,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: scheme.onSurface.withOpacity(0.12)),
+                color: scheme.onSurface.withOpacity(0.05),
+                border: Border.all(color: scheme.onSurface.withOpacity(0.1)),
               ),
               child: Icon(icon, color: scheme.onSurface, size: 20),
             ),
@@ -1760,12 +1766,13 @@ class _EngageCell extends StatelessWidget {
             Text(
               desc,
               textAlign: TextAlign.center,
-              // Was 10.5px / 65% (then 12 / 82%) — still read as faint grey.
-              // Now near-solid foreground at a proper body size.
+              // Muted to 50%, matching the investor connect grid exactly.
+              // (Previously 95% — a deliberate earlier bump that made this
+              // portal's copy read far heavier than the other portals'.)
               style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: scheme.onSurface.withOpacity(0.95),
+                color: scheme.onSurface.withOpacity(0.5),
                 height: 1.4,
               ),
             ),
@@ -1822,9 +1829,8 @@ class _QuickFilterSheet extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.1,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.1),
                   ),
                   child: Icon(
                     LucideIcons.x,
@@ -1907,14 +1913,12 @@ class _FilterSection extends StatelessWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.05,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.05),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.05,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.05),
                     ),
                   ),
                   child: Text(
@@ -2007,14 +2011,15 @@ class _PremiumInputField extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   // Web parity: white field with a soft shadow.
-                  color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
+                  color: isDark
+                      ? Colors.white.withOpacity(0.04)
+                      : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: hasError
                         ? _errorColor
-                        : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                            0.08,
-                          ),
+                        : (isDark ? Colors.white : Color(0xFF0C312B))
+                              .withOpacity(0.08),
                     width: hasError ? 1.5 : 1,
                   ),
                   boxShadow: isDark
@@ -2106,16 +2111,22 @@ class _PremiumDropdownField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.03),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.03,
+              ),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.05,
+                ),
               ),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButtonFormField<String>(
                 value: value,
-                dropdownColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                dropdownColor: isDark
+                    ? const Color(0xFF141B3A)
+                    : const Color(0xFFF4EFE3),
                 style: GoogleFonts.inter(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 13,
@@ -2175,10 +2186,14 @@ class _PremiumFormField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.03),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.03,
+              ),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.05,
+                ),
               ),
             ),
             child: Row(
@@ -2235,12 +2250,11 @@ class _GlassSearchField extends StatelessWidget {
               const SizedBox(width: 15),
               Expanded(
                 child: TextField(
-                  cursorColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                  cursorColor: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Theme.of(context).colorScheme.onSurface,
                   onChanged: onChanged,
-                  style: GoogleFonts.inter(
-                    color: Colors.black,
-                    fontSize: 15,
-                  ),
+                  style: GoogleFonts.inter(color: Colors.black, fontSize: 15),
                   decoration: InputDecoration(
                     hintText: 'Search residences...',
                     hintStyle: GoogleFonts.inter(
@@ -2362,7 +2376,9 @@ class _UpdateCard extends StatelessWidget {
           color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.04),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.05,
+            ),
           ),
         ),
         padding: const EdgeInsets.all(16),
