@@ -275,7 +275,9 @@ class _BookingOptionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.03)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark
@@ -322,9 +324,8 @@ class _BookingOptionCard extends StatelessWidget {
                     opt['desc'] as String,
                     style: GoogleFonts.inter(
                       fontSize: 9,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                        alpha: 0.68,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withValues(alpha: 0.68),
                       fontWeight: FontWeight.bold,
                       height: 1.4,
                     ),

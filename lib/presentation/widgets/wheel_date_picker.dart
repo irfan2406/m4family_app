@@ -227,7 +227,9 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1,
-                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            color: isDark
+                                ? const Color(0xFF0C312B)
+                                : const Color(0xFFF4EFE3),
                           ),
                         ),
                       ),

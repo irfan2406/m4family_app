@@ -45,8 +45,9 @@ class GuestMainShell extends ConsumerWidget {
 
     // Nav pill follows the active tab's surface: green on the showcase tabs,
     // cream on the info tabs, navy in dark mode.
-    final ThemeData navTheme =
-        currentIndex <= 1 ? M4Theme.darkTheme : M4Theme.lightTheme;
+    final ThemeData navTheme = currentIndex <= 1
+        ? M4Theme.darkTheme
+        : M4Theme.lightTheme;
 
     return Scaffold(
       backgroundColor: navTheme.scaffoldBackgroundColor,
@@ -112,4 +113,3 @@ const List<IconData> _guestIcons = <IconData>[
 
 /// Height the floating pill occupies: the bar plus its bottom float margin.
 const double _navFootprint = M4Nav.height + M4Nav.bottomInset + 4;
-

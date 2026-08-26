@@ -95,13 +95,28 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
       }
       final projectsFuture = ref.read(projectsProvider.future);
       final communitiesFuture = apiClient.getCommunities();
-      final projects = await projectsFuture;
-      final communitiesRes = await communitiesFuture;
+      // Awaited independently. Both used to sit under one try, so when the
+      // projects call failed (it is the bloated multi-MB catalog and can time
+      // out) the already-successful communities response was discarded with it
+      // and the Communities tab rendered empty.
+      List<dynamic> projects = const [];
+      try {
+        projects = await projectsFuture;
+      } catch (_) {
+        projects = const [];
+      }
+      List<dynamic> communities = const [];
+      try {
+        final communitiesRes = await communitiesFuture;
+        communities = communitiesRes.data['data'] ?? const [];
+      } catch (_) {
+        communities = const [];
+      }
 
       if (mounted) {
         setState(() {
           _projects = projects;
-          _communities = communitiesRes.data['data'] ?? [];
+          _communities = communities;
 
           // Media tab mirrors web: flatten each project's heroImages (or its
           // single heroImage) into one media item per image.
@@ -312,7 +327,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         ),
                         child: Icon(
                           LucideIcons.menu,
-                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Theme.of(context).colorScheme.onSurface,
                           size: 24,
                         ),
                       ),
@@ -343,167 +360,141 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Builder(
                     builder: (context) {
-                                // Web parity: the hero cycles the FEATURED
-                                // project's 3 media slides, not different projects.
-                                final featured = _projects.isNotEmpty
-                                    ? _projects[0]
-                                    : null;
-                                final mainImage = _getImg(
-                                  featured,
-                                  _heroIndex % 3,
-                                );
+                      // Web parity: the hero cycles the FEATURED
+                      // project's 3 media slides, not different projects.
+                      final featured = _projects.isNotEmpty
+                          ? _projects[0]
+                          : null;
+                      final mainImage = _getImg(featured, _heroIndex % 3);
 
-                                return Stack(
-                                  children: [
-                                    AspectRatio(
-                                      aspectRatio: 4 / 3,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            32,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withValues(
-                                                alpha: 0.15,
-                                              ),
-                                              blurRadius: 30,
-                                              offset: const Offset(0, 15),
-                                            ),
-                                          ],
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            32,
-                                          ),
-                                          child: AnimatedSwitcher(
-                                            duration: const Duration(
-                                              milliseconds: 800,
-                                            ),
-                                            transitionBuilder:
-                                                (
-                                                  Widget child,
-                                                  Animation<double> animation,
-                                                ) {
-                                                  return FadeTransition(
-                                                    opacity: animation,
-                                                    child: child,
-                                                  );
-                                                },
-                                            child: _buildProjectImage(
-                                              mainImage.toString(),
-                                              key: ValueKey<int>(_heroIndex),
-                                              width: double.infinity,
-                                              height: double.infinity,
-                                              errorIcon: LucideIcons.image,
-                                              errorIconSize: 50,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-
-                                    // Play tour button — only the first slide is
-                                    // the "video" (web parity).
-                                    if ((_heroIndex % 3) == 0)
-                                      Positioned.fill(
-                                        child: Center(
-                                          child: Container(
-                                            width: 56,
-                                            height: 56,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white.withValues(
-                                                alpha: 0.3,
-                                              ),
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                color: Colors.white.withValues(
-                                                  alpha: 0.6,
-                                                ),
-                                                width: 1.5,
-                                              ),
-                                            ),
-                                            child: const Icon(
-                                              LucideIcons.play,
-                                              color: Colors.white,
-                                              size: 22,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-
-                                    // Artistic Impression Badge
-                                    Positioned(
-                                      top: 16,
-                                      right: 16,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withValues(
-                                            alpha: 0.4,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            4,
-                                          ),
-                                          border: Border.all(
-                                            color: Colors.white.withValues(
-                                              alpha: 0.1,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Text(
-                                          'ARTISTIC IMPRESSION',
-                                          style: GoogleFonts.gelasio(
-                                            color: Colors.white,
-                                            fontSize: 7,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 1.5,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-
-                                    // Pagination Dots
-                                    Positioned(
-                                      bottom: 24,
-                                      left: 0,
-                                      right: 0,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: List.generate(3, (index) {
-                                          final isSelected =
-                                              (_heroIndex % 3) == index;
-                                          return AnimatedContainer(
-                                            duration: const Duration(
-                                              milliseconds: 300,
-                                            ),
-                                            margin: const EdgeInsets.symmetric(
-                                              horizontal: 4,
-                                            ),
-                                            width: isSelected ? 32 : 24,
-                                            height: 4,
-                                            decoration: BoxDecoration(
-                                              color: isSelected
-                                                  ? Colors.black
-                                                  : Colors.white.withValues(
-                                                      alpha: 0.5,
-                                                    ),
-                                              borderRadius:
-                                                  BorderRadius.circular(2),
-                                            ),
-                                          );
-                                        }),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
+                      return Stack(
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 4 / 3,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(32),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.15),
+                                    blurRadius: 30,
+                                    offset: const Offset(0, 15),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(32),
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 800),
+                                  transitionBuilder:
+                                      (
+                                        Widget child,
+                                        Animation<double> animation,
+                                      ) {
+                                        return FadeTransition(
+                                          opacity: animation,
+                                          child: child,
+                                        );
+                                      },
+                                  child: _buildProjectImage(
+                                    mainImage.toString(),
+                                    key: ValueKey<int>(_heroIndex),
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    errorIcon: LucideIcons.image,
+                                    errorIconSize: 50,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
+
+                          // Play tour button — only the first slide is
+                          // the "video" (web parity).
+                          if ((_heroIndex % 3) == 0)
+                            Positioned.fill(
+                              child: Center(
+                                child: Container(
+                                  width: 56,
+                                  height: 56,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.3),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.6,
+                                      ),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    LucideIcons.play,
+                                    color: Colors.white,
+                                    size: 22,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          // Artistic Impression Badge
+                          Positioned(
+                            top: 16,
+                            right: 16,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.4),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                ),
+                              ),
+                              child: Text(
+                                'ARTISTIC IMPRESSION',
+                                style: GoogleFonts.gelasio(
+                                  color: Colors.white,
+                                  fontSize: 7,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Pagination Dots
+                          Positioned(
+                            bottom: 24,
+                            left: 0,
+                            right: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(3, (index) {
+                                final isSelected = (_heroIndex % 3) == index;
+                                return AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  width: isSelected ? 32 : 24,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? Colors.black
+                                        : Colors.white.withValues(alpha: 0.5),
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                );
+                              }),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
@@ -603,6 +594,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         final bytes = base64Decode(base64Str);
         return Image.memory(
           bytes,
+          cacheWidth: 1080,
           key: key,
           width: width,
           height: height,
@@ -707,8 +699,12 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                               tab.toUpperCase(),
                               style: GoogleFonts.gelasio(
                                 color: isSelected
-                                    ? (isDark ? Colors.white : Color(0xFF0C312B))
-                                    : (isDark ? Colors.white : Color(0xFF0C312B))
+                                    ? (isDark
+                                          ? Colors.white
+                                          : Color(0xFF0C312B))
+                                    : (isDark
+                                              ? Colors.white
+                                              : Color(0xFF0C312B))
                                           .withValues(alpha: 0.68),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
@@ -721,7 +717,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                 width: 24,
                                 height: 2,
                                 decoration: BoxDecoration(
-                                  color: isDark ? Colors.white : Color(0xFF0C312B),
+                                  color: isDark
+                                      ? Colors.white
+                                      : Color(0xFF0C312B),
                                   borderRadius: BorderRadius.circular(1),
                                 ),
                               ),
@@ -1129,7 +1127,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           Text(
                             'READ MORE',
                             style: GoogleFonts.gelasio(
-                              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                              color: isDark
+                                  ? const Color(0xFF0C312B)
+                                  : const Color(0xFFF4EFE3),
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 2,
@@ -1139,7 +1139,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           Icon(
                             LucideIcons.chevronRight,
                             size: 14,
-                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            color: isDark
+                                ? const Color(0xFF0C312B)
+                                : const Color(0xFFF4EFE3),
                           ),
                         ],
                       ),
@@ -1341,9 +1343,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                        alpha: 0.1,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withValues(alpha: 0.1),
                     ),
                   ),
                   child: Icon(
@@ -1377,7 +1378,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       child: Text(
                         'READ MORE',
                         style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          color: isDark
+                              ? const Color(0xFF0C312B)
+                              : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w700,
                           fontSize: 12,
                           letterSpacing: 3,
@@ -1400,9 +1403,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                        alpha: 0.1,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withValues(alpha: 0.1),
                     ),
                   ),
                   child: Icon(
@@ -1697,7 +1699,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     : Text(
                         'SUBMIT INTEREST',
                         style: GoogleFonts.inter(
-                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          color: isDark
+                              ? const Color(0xFF0C312B)
+                              : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w400,
                           letterSpacing: 2,
                         ),
@@ -1755,7 +1759,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   ],
           ),
           child: TextField(
-            cursorColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
+            cursorColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Theme.of(context).colorScheme.onSurface,
             controller: controller,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
@@ -1767,7 +1773,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               hintStyle: GoogleFonts.inter(
                 color: hasError
                     ? errorColor.withValues(alpha: 0.75)
-                    : (isDark ? Colors.white54 : const Color(0xFF0C312B).withValues(alpha: 0.5)),
+                    : (isDark
+                          ? Colors.white54
+                          : const Color(0xFF0C312B).withValues(alpha: 0.5)),
                 fontSize: 13,
               ),
               contentPadding: const EdgeInsets.symmetric(

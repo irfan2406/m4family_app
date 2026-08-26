@@ -252,7 +252,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       TextButton(
                         onPressed: () => context.push('/cp/projects'),
                         style: TextButton.styleFrom(
-                          foregroundColor: Colors.black,
+                          foregroundColor: const Color(0xFF0C312B),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 0,
                             vertical: 10,
@@ -558,7 +558,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
-        color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+        color: isDark
+            ? scheme.onSurface.withValues(alpha: 0.03)
+            : const Color(0xFFF4EFE3),
         border: Border.all(
           color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55),
         ),
@@ -1213,14 +1215,14 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                           style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            color: const Color(0xFF0C312B),
                           ),
                         ),
                         const SizedBox(width: 8),
                         const Icon(
                           LucideIcons.arrowRight,
                           size: 16,
-                          color: Colors.black,
+                          color: const Color(0xFF0C312B),
                         ),
                       ],
                     ),

@@ -233,7 +233,9 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                               Theme.of(context).brightness ==
                                                   Brightness.light
                                               ? Colors.white.withOpacity(0.5)
-                                              : Colors.black.withOpacity(0.5),
+                                              : const Color(
+                                                  0xFF0C312B,
+                                                ).withOpacity(0.5),
                                           offset: const Offset(0, 1),
                                           blurRadius: 4,
                                         ),
@@ -254,7 +256,9 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                               Theme.of(context).brightness ==
                                                   Brightness.light
                                               ? Colors.white.withOpacity(0.5)
-                                              : Colors.black.withOpacity(0.5),
+                                              : const Color(
+                                                  0xFF0C312B,
+                                                ).withOpacity(0.5),
                                           offset: const Offset(0, 1),
                                           blurRadius: 4,
                                         ),
@@ -884,9 +888,8 @@ class _ProjectSelectionStep extends ConsumerWidget {
                   border: Border.all(
                     color: isSelected
                         ? Theme.of(context).colorScheme.onBackground
-                        : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                            0.1,
-                          ),
+                        : (isDark ? Colors.white : Color(0xFF0C312B))
+                              .withOpacity(0.1),
                   ),
                 ),
                 child: Text(
@@ -1165,9 +1168,8 @@ class _SpaceSelectionStep extends ConsumerWidget {
                     border: Border.all(
                       color: isSelected
                           ? scheme.onSurface
-                          : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                              0.1,
-                            ),
+                          : (isDark ? Colors.white : Color(0xFF0C312B))
+                                .withOpacity(0.1),
                     ),
                     boxShadow: isSelected
                         ? [
@@ -1948,7 +1950,9 @@ class _SummaryRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.09),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.09,
+            ),
           ),
         ),
       ),
@@ -2072,7 +2076,7 @@ class _PremiumMaterialsSection extends StatelessWidget {
                           child: const Center(
                             child: Icon(
                               LucideIcons.image,
-                              color: Colors.black12,
+                              color: Color(0x1F0C312B),
                             ),
                           ),
                         ),

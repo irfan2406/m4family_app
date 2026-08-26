@@ -276,7 +276,9 @@ class _InvestorPortfolioScreenState
         style: GoogleFonts.gelasio(
           fontSize: 11,
           fontWeight: FontWeight.w700,
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            alpha: 0.5,
+          ),
           letterSpacing: 3,
         ),
       ),
@@ -285,7 +287,9 @@ class _InvestorPortfolioScreenState
 
   // ─── Summary card ────────────────────────────────────────────────────────────
   Widget _buildSummaryCard(bool isDark) {
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
 
     final count = _holdings.length.toString().padLeft(2, '0');
 
@@ -495,7 +499,9 @@ class _InvestorPortfolioScreenState
   }) {
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -559,7 +565,9 @@ class _InvestorPortfolioScreenState
   Widget _buildAllocationCard(bool isDark) {
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -679,7 +687,9 @@ class _InvestorPortfolioScreenState
   Widget _buildHoldingCard(dynamic holding, bool isDark) {
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -734,9 +744,8 @@ class _InvestorPortfolioScreenState
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            (isDark ? Colors.black : const Color(0xFFF4EFE3)).withValues(
-                              alpha: 0.9,
-                            ),
+                            (isDark ? Colors.black : const Color(0xFFF4EFE3))
+                                .withValues(alpha: 0.9),
                           ],
                         ),
                       ),
@@ -851,7 +860,9 @@ class _InvestorPortfolioScreenState
                                 style: GoogleFonts.gelasio(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
-                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                  color: isDark
+                                      ? const Color(0xFF0C312B)
+                                      : const Color(0xFFF4EFE3),
                                   letterSpacing: 1.5,
                                 ),
                               ),
@@ -859,7 +870,9 @@ class _InvestorPortfolioScreenState
                               Icon(
                                 LucideIcons.maximize2,
                                 size: 13,
-                                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                color: isDark
+                                    ? const Color(0xFF0C312B)
+                                    : const Color(0xFFF4EFE3),
                               ),
                             ],
                           ),
@@ -877,16 +890,17 @@ class _InvestorPortfolioScreenState
   }
 
   Widget _buildImage(String? url, bool isDark) {
-    final placeholderBg = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-      alpha: 0.05,
-    );
+    final placeholderBg = (isDark ? Colors.white : Color(0xFF0C312B))
+        .withValues(alpha: 0.05);
     if (url == null || url.isEmpty) {
       return Container(
         color: placeholderBg,
         child: Icon(
           LucideIcons.building2,
           size: 48,
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.15),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            alpha: 0.15,
+          ),
         ),
       );
     }
@@ -900,7 +914,9 @@ class _InvestorPortfolioScreenState
         child: Icon(
           LucideIcons.building2,
           size: 48,
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.15),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            alpha: 0.15,
+          ),
         ),
       ),
     );
@@ -1159,7 +1175,9 @@ class _InvestorPortfolioScreenState
                                 Icon(
                                   LucideIcons.shieldCheck,
                                   size: 16,
-                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                  color: isDark
+                                      ? const Color(0xFF0C312B)
+                                      : const Color(0xFFF4EFE3),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
@@ -1167,7 +1185,9 @@ class _InvestorPortfolioScreenState
                                   style: GoogleFonts.gelasio(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w700,
-                                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                    color: isDark
+                                        ? const Color(0xFF0C312B)
+                                        : const Color(0xFFF4EFE3),
                                     letterSpacing: 2,
                                   ),
                                 ),
@@ -1190,7 +1210,9 @@ class _InvestorPortfolioScreenState
 
   // ─── Empty / error states ────────────────────────────────────────────────────
   Widget _buildEmptyState(bool isDark) {
-    final faint = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.55);
+    final faint = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.55,
+    );
     return Padding(
       padding: const EdgeInsets.only(top: 32),
       child: Center(
@@ -1236,7 +1258,9 @@ class _InvestorPortfolioScreenState
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    color: isDark
+                        ? const Color(0xFF0C312B)
+                        : const Color(0xFFF4EFE3),
                     letterSpacing: 2,
                   ),
                 ),
@@ -1285,7 +1309,9 @@ class _InvestorPortfolioScreenState
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    color: isDark
+                        ? const Color(0xFF0C312B)
+                        : const Color(0xFFF4EFE3),
                     letterSpacing: 2,
                   ),
                 ),

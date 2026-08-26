@@ -298,9 +298,8 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     final card = isDark
         ? const Color(0xFFF4EFE3).withValues(alpha: 0.03)
         : const Color(0xFFEDE5D6);
-    final border = (isDark ? const Color(0xFFF4EFE3) : Color(0xFF0C312B)).withValues(
-      alpha: isDark ? 0.08 : 0.06,
-    );
+    final border = (isDark ? const Color(0xFFF4EFE3) : Color(0xFF0C312B))
+        .withValues(alpha: isDark ? 0.08 : 0.06);
     // Web parity: initials on a lime accent square (no photo/gold border).
     final initials = _initials(name);
     final Widget avatarChild = Center(
@@ -309,7 +308,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
         style: GoogleFonts.gelasio(
           fontSize: 28,
           fontWeight: FontWeight.w700,
-          color: Colors.black,
+          color: const Color(0xFF0C312B),
         ),
       ),
     );
@@ -340,7 +339,9 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
-                    color: const Color(0xFFF4EFE3),  // lighter cream tile on the deeper cream card
+                    color: const Color(
+                      0xFFF4EFE3,
+                    ), // lighter cream tile on the deeper cream card
                   ),
                   child: hasPhoto
                       ? CachedNetworkImage(
@@ -499,9 +500,8 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    final border = (isDark ? const Color(0xFFF4EFE3) : Color(0xFF0C312B)).withValues(
-      alpha: isDark ? 0.08 : 0.06,
-    );
+    final border = (isDark ? const Color(0xFFF4EFE3) : Color(0xFF0C312B))
+        .withValues(alpha: isDark ? 0.08 : 0.06);
     return Material(
       color: textPrimary.withValues(alpha: 0.03),
       borderRadius: BorderRadius.circular(24),

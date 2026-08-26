@@ -491,14 +491,14 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black,
+                  color: const Color(0xFF0C312B),
                 ),
               ),
               const SizedBox(width: 4),
               const Icon(
                 LucideIcons.chevronRight,
                 size: 12,
-                color: Colors.black,
+                color: const Color(0xFF0C312B),
               ),
             ],
           ),
@@ -687,16 +687,13 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: TextField(
         onChanged: (v) => setState(() => _searchQuery = v),
-        style: GoogleFonts.inter(
-          fontSize: 15,
-          fontWeight: FontWeight.w700,
-        ),
+        style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w700),
         decoration: InputDecoration(
           hintText: 'SEARCH PROSPECTS...',
           hintStyle: GoogleFonts.gelasio(
             fontSize: 10,
             fontWeight: FontWeight.w700,
-            color: Colors.black12,
+            color: Color(0x1F0C312B),
             letterSpacing: 2,
           ),
           filled: true,
@@ -836,7 +833,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                         style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                          color: const Color(0xFF0C312B),
                           letterSpacing: 1,
                         ),
                       ),
@@ -881,7 +878,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                     const Icon(
                       LucideIcons.wallet,
                       size: 16,
-                      color: Colors.black54,
+                      color: Color(0x8A0C312B),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -902,7 +899,9 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                             style: GoogleFonts.inter(
                               fontSize: 8,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFF0C312B).withValues(alpha: 0.5),
+                              color: const Color(
+                                0xFF0C312B,
+                              ).withValues(alpha: 0.5),
                               height: 1.5,
                             ),
                           ),
@@ -925,7 +924,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       style: GoogleFonts.inter(
         fontSize: 8,
         fontWeight: FontWeight.w600,
-        color: active ? Colors.black : Colors.black12,
+        color: active ? const Color(0xFF0C312B) : Color(0x1F0C312B),
         letterSpacing: 1,
       ),
     );

@@ -345,7 +345,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
+                color: isDark
+                    ? Colors.white.withOpacity(0.02)
+                    : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: foreground.withOpacity(0.06)),
                 boxShadow: isDark
@@ -531,7 +533,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
         Container(
           height: 52,
           decoration: BoxDecoration(
-            color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
+            color: isDark
+                ? Colors.white.withOpacity(0.03)
+                : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: fg.withOpacity(0.08)),
           ),
@@ -770,7 +774,9 @@ class _UnitCard extends ConsumerWidget {
                             ? 'START PERSONALISATION'
                             : 'MANAGE SELECTION',
                         style: GoogleFonts.inter(
-                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          color: isDark
+                              ? const Color(0xFF0C312B)
+                              : const Color(0xFFF4EFE3),
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
@@ -780,7 +786,9 @@ class _UnitCard extends ConsumerWidget {
                       Icon(
                         LucideIcons.chevronRight,
                         size: 16,
-                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        color: isDark
+                            ? const Color(0xFF0C312B)
+                            : const Color(0xFFF4EFE3),
                       ),
                     ],
                   ),
@@ -1144,15 +1152,13 @@ class _DetailDialog {
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  style:
-                                                      GoogleFonts.inter(
-                                                        fontSize: 7,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        letterSpacing: 1.0,
-                                                        color: scheme.onSurface
-                                                            .withOpacity(0.68),
-                                                      ),
+                                                  style: GoogleFonts.inter(
+                                                    fontSize: 7,
+                                                    fontWeight: FontWeight.w600,
+                                                    letterSpacing: 1.0,
+                                                    color: scheme.onSurface
+                                                        .withOpacity(0.68),
+                                                  ),
                                                 ),
                                                 const SizedBox(height: 2),
                                                 Text(
@@ -1160,13 +1166,11 @@ class _DetailDialog {
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  style:
-                                                      GoogleFonts.inter(
-                                                        fontSize: 11,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        letterSpacing: 0.5,
-                                                      ),
+                                                  style: GoogleFonts.inter(
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.w600,
+                                                    letterSpacing: 0.5,
+                                                  ),
                                                 ),
                                               ],
                                             ),

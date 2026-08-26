@@ -255,14 +255,12 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.03,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.03),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.05,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.05),
                   ),
                 ),
                 child: Icon(
@@ -388,9 +386,8 @@ class _LogCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: (isDark ? const Color(0xFF141B3A) : Color(0xFF163A2C)).withOpacity(
-          isDark ? 0.4 : 0.05,
-        ),
+        color: (isDark ? const Color(0xFF141B3A) : Color(0xFF163A2C))
+            .withOpacity(isDark ? 0.4 : 0.05),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: foreground.withOpacity(0.05)),
       ),

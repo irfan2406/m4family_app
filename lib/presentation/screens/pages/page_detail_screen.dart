@@ -75,7 +75,9 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
             letterSpacing: 1,
           ),
         ),
-        backgroundColor: isDark ? const Color(0xFF0B1026) : Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: isDark
+            ? const Color(0xFF0B1026)
+            : Theme.of(context).scaffoldBackgroundColor,
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -240,9 +242,8 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
             decoration: BoxDecoration(
               border: Border(
                 left: BorderSide(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.2,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.2),
                   width: 2,
                 ),
               ),
@@ -267,9 +268,8 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                 Text(
                   'LAST UPDATE',
                   style: GoogleFonts.gelasio(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.3,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.3),
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 2,
@@ -280,9 +280,8 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                   children: [
                     Icon(
                       LucideIcons.calendar,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.3,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.3),
                       size: 14,
                     ),
                     const SizedBox(width: 8),
@@ -327,7 +326,9 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
           child: Text(
             paragraph.trim(),
             style: GoogleFonts.inter(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.75),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.75,
+              ),
               fontSize: 15,
               fontWeight: FontWeight.w400,
               height: 1.7,
@@ -360,14 +361,12 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      isDark ? 0.04 : 0.03,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(isDark ? 0.04 : 0.03),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.05,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.05),
                     ),
                   ),
                   child: Column(
@@ -387,7 +386,9 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                             child: Text(
                               (section['title'] ?? '').toString(),
                               style: GoogleFonts.gelasio(
-                                color: isDark ? Colors.white : Color(0xFF0C312B),
+                                color: isDark
+                                    ? Colors.white
+                                    : Color(0xFF0C312B),
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                               ),

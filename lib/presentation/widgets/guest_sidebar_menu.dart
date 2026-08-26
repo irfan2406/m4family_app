@@ -34,12 +34,12 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF141B3A) : const Color(0xFF0C312B).withValues(alpha: 0.72),
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isDark
                   ? Colors.white.withOpacity(0.08)
-                  : Colors.black.withOpacity(0.06),
+                  : const Color(0xFF0C312B).withOpacity(0.08),
             ),
           ),
           child: Column(
@@ -64,7 +64,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFFF4EFE3),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                 ),
               ),
               const SizedBox(height: 8),
@@ -73,7 +73,9 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   fontSize: 13,
-                  color: isDark ? Colors.white60 : Colors.grey[600],
+                  color: isDark
+                      ? Colors.white60
+                      : const Color(0xFF0C312B).withOpacity(0.7),
                 ),
               ),
               const SizedBox(height: 22),
@@ -88,12 +90,12 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         decoration: BoxDecoration(
                           color: isDark
                               ? Colors.white.withOpacity(0.06)
-                              : Colors.white.withValues(alpha: 0.10),
+                              : const Color(0xFF0C312B).withOpacity(0.05),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: isDark
                                 ? Colors.white.withOpacity(0.08)
-                                : Colors.black.withOpacity(0.06),
+                                : const Color(0xFF0C312B).withOpacity(0.12),
                           ),
                         ),
                         child: Text(
@@ -102,7 +104,9 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
-                            color: isDark ? Colors.white70 : Colors.grey[800],
+                            color: isDark
+                                ? Colors.white70
+                                : const Color(0xFF0C312B),
                           ),
                         ),
                       ),
@@ -172,250 +176,251 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
           border: Border(right: BorderSide(color: M4Drawer.border)),
         ),
         child: Stack(
-        children: [
-          // Figma glass panel: deep-green base, cream bloom through
-          // the middle, blue bloom low down, #0B0000 10% veil, blur 40.
-          const DrawerGlass(),
-          SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
-                  child: Text(
-                    'MENU',
-                    style: GoogleFonts.gelasio(
-                      color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(
-                        0.68,
+          children: [
+            // Figma glass panel: deep-green base, cream bloom through
+            // the middle, blue bloom low down, #0B0000 10% veil, blur 40.
+            const DrawerGlass(),
+            SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
+                    child: Text(
+                      'MENU',
+                      style: GoogleFonts.gelasio(
+                        color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
+                            .withOpacity(0.68),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 4,
                       ),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 4,
                     ),
                   ),
-                ),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    children: [
-                      _MenuItem(
-                        label: 'Home',
-                        icon: LucideIcons.home,
-                        isActive: currentPath == '/home',
-                        onTap: () => context.go('/home'),
-                      ),
-                      _MenuItem(
-                        label: 'Community',
-                        icon: LucideIcons.building2,
-                        isActive:
-                            currentPath ==
-                            '/communities',
-                        onTap: () => context.push('/communities'),
-                      ),
-                      _MenuItem(
-                        label: 'Properties',
-                        icon: LucideIcons.layoutGrid,
-                        isActive:
-                            currentPath == '/projects',
-                        onTap: () => context.push('/projects'),
-                      ),
-
-                      _DropdownMenuItem(
-                        label: 'Content Hub',
-                        icon: LucideIcons.bell,
-                        isOpen: _isContentOpen,
-                        onToggle: () =>
-                            setState(() => _isContentOpen = !_isContentOpen),
-                        subItems: [
-                          _SubItem(
-                            label: 'Media',
-                            icon: LucideIcons.playCircle,
-                            onTap: () {
-                              context.push('/media');
-                              Navigator.pop(context);
-                            },
-                          ),
-                          _SubItem(
-                            label: 'Highlights',
-                            icon: LucideIcons.zap,
-                            onTap: () {
-                              context.push('/highlights');
-                              Navigator.pop(context);
-                            },
-                          ),
-                          _SubItem(
-                            label: 'Events',
-                            icon: LucideIcons.calendar,
-                            onTap: () {
-                              context.push('/events');
-                              Navigator.pop(context);
-                            },
-                          ),
-                          _SubItem(
-                            label: 'Blog',
-                            icon: LucideIcons.fileText,
-                            onTap: () {
-                              context.push('/blog');
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                      ),
-
-                      _MenuItem(
-                        label: 'Custom Views',
-                        icon: LucideIcons.sparkles,
-                        isActive:
-                            currentPath ==
-                            '/custom-views',
-                        onTap: () => context.push('/custom-views'),
-                      ),
-                      _MenuItem(
-                        label: 'Who We Are',
-                        icon: LucideIcons.info,
-                        isActive:
-                            currentPath == '/about',
-                        onTap: () => context.push('/about'),
-                      ),
-
-                      _DropdownMenuItem(
-                        label: 'Connect',
-                        icon: LucideIcons.share2,
-                        isOpen: _isConnectOpen,
-                        onToggle: () =>
-                            setState(() => _isConnectOpen = !_isConnectOpen),
-                        subItems: [
-                          _SubItem(
-                            label: 'CP Login',
-                            icon: LucideIcons.logIn,
-                            onTap: () {
-                              context.push('/auth/cp/login?from=guest');
-                              Navigator.pop(context);
-                            },
-                          ),
-                          _SubItem(
-                            label: 'Investor Login',
-                            icon: LucideIcons.logIn,
-                            onTap: () {
-                              context.push('/investor/login');
-                              Navigator.pop(context);
-                            },
-                          ),
-                          _SubItem(
-                            label: 'Customer Login',
-                            icon: LucideIcons.logIn,
-                            onTap: () {
-                              context.push('/login?step=1');
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                      ),
-
-                      _MenuItem(
-                        label: 'Careers',
-                        icon: LucideIcons.briefcase,
-                        isActive:
-                            currentPath == '/careers',
-                        onTap: () => context.push('/careers'),
-                      ),
-                      _MenuItem(
-                        label: 'Contact',
-                        icon: LucideIcons.phone,
-                        isActive:
-                            currentPath == '/contact',
-                        onTap: () => context.push('/contact'),
-                      ),
-
-                      const SizedBox(height: 32),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 14),
-                        child: Text(
-                          'QUICK ACTIONS',
-                          style: GoogleFonts.gelasio(
-                            color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
-                                .withOpacity(0.6),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 3,
-                          ),
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      children: [
+                        _MenuItem(
+                          label: 'Home',
+                          icon: LucideIcons.home,
+                          isActive: currentPath == '/home',
+                          onTap: () => context.go('/home'),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      _QuickActionItem(
-                        label: 'Enquiry',
-                        icon: LucideIcons.mail,
-                        // Go to the home page and scroll straight to its
-                        // "Register Your Interest" form.
-                        onTap: () {
-                          Navigator.of(context).pop(); // close the menu drawer
-                          ref.read(guestNavigationProvider.notifier).state = 0;
-                          ref.read(scrollToRegisterProvider.notifier).state++;
-                          context.go('/home');
-                        },
-                      ),
-                      _QuickActionItem(
-                        label: 'Call',
-                        icon: LucideIcons.phone,
-                        onTap: () => launchUrl(Uri.parse('tel:+912246018844')),
-                      ),
-                      _QuickActionItem(
-                        label: 'WhatsApp',
-                        icon: LucideIcons.messageSquare,
-                        onTap: () =>
-                            launchUrl(Uri.parse('https://wa.me/912246018844')),
-                      ),
-                      _QuickActionItem(
-                        label: 'Location',
-                        icon: LucideIcons.mapPin,
-                        onTap: () =>
-                            launchUrl(Uri.parse('https://maps.google.com')),
-                      ),
-                    ],
-                  ),
-                ),
+                        _MenuItem(
+                          label: 'Community',
+                          icon: LucideIcons.building2,
+                          isActive: currentPath == '/communities',
+                          onTap: () => context.push('/communities'),
+                        ),
+                        _MenuItem(
+                          label: 'Properties',
+                          icon: LucideIcons.layoutGrid,
+                          isActive: currentPath == '/projects',
+                          onTap: () => context.push('/projects'),
+                        ),
 
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 40),
-                  child: Container(
-                    width: double.infinity,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFC65B46).withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: const Color(0xFFC65B46).withOpacity(0.1)),
-                    ),
-                    child: InkWell(
-                      onTap: _confirmExit,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            LucideIcons.logOut,
-                            color: const Color(0xFFC65B46),
-                            size: 20,
-                          ),
-                          const SizedBox(width: 12),
-                          Text(
-                            'EXIT APP',
-                            style: GoogleFonts.inter(
-                              color: const Color(0xFFC65B46),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                              letterSpacing: 1,
+                        _DropdownMenuItem(
+                          label: 'Content Hub',
+                          icon: LucideIcons.bell,
+                          isOpen: _isContentOpen,
+                          onToggle: () =>
+                              setState(() => _isContentOpen = !_isContentOpen),
+                          subItems: [
+                            _SubItem(
+                              label: 'Media',
+                              icon: LucideIcons.playCircle,
+                              onTap: () {
+                                context.push('/media');
+                                Navigator.pop(context);
+                              },
+                            ),
+                            _SubItem(
+                              label: 'Highlights',
+                              icon: LucideIcons.zap,
+                              onTap: () {
+                                context.push('/highlights');
+                                Navigator.pop(context);
+                              },
+                            ),
+                            _SubItem(
+                              label: 'Events',
+                              icon: LucideIcons.calendar,
+                              onTap: () {
+                                context.push('/events');
+                                Navigator.pop(context);
+                              },
+                            ),
+                            _SubItem(
+                              label: 'Blog',
+                              icon: LucideIcons.fileText,
+                              onTap: () {
+                                context.push('/blog');
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        ),
+
+                        _MenuItem(
+                          label: 'Custom Views',
+                          icon: LucideIcons.sparkles,
+                          isActive: currentPath == '/custom-views',
+                          onTap: () => context.push('/custom-views'),
+                        ),
+                        _MenuItem(
+                          label: 'Who We Are',
+                          icon: LucideIcons.info,
+                          isActive: currentPath == '/about',
+                          onTap: () => context.push('/about'),
+                        ),
+
+                        _DropdownMenuItem(
+                          label: 'Connect',
+                          icon: LucideIcons.share2,
+                          isOpen: _isConnectOpen,
+                          onToggle: () =>
+                              setState(() => _isConnectOpen = !_isConnectOpen),
+                          subItems: [
+                            _SubItem(
+                              label: 'CP Login',
+                              icon: LucideIcons.logIn,
+                              onTap: () {
+                                context.push('/auth/cp/login?from=guest');
+                                Navigator.pop(context);
+                              },
+                            ),
+                            _SubItem(
+                              label: 'Investor Login',
+                              icon: LucideIcons.logIn,
+                              onTap: () {
+                                context.push('/investor/login');
+                                Navigator.pop(context);
+                              },
+                            ),
+                            _SubItem(
+                              label: 'Customer Login',
+                              icon: LucideIcons.logIn,
+                              onTap: () {
+                                context.push('/login?step=1');
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        ),
+
+                        _MenuItem(
+                          label: 'Careers',
+                          icon: LucideIcons.briefcase,
+                          isActive: currentPath == '/careers',
+                          onTap: () => context.push('/careers'),
+                        ),
+                        _MenuItem(
+                          label: 'Contact',
+                          icon: LucideIcons.phone,
+                          isActive: currentPath == '/contact',
+                          onTap: () => context.push('/contact'),
+                        ),
+
+                        const SizedBox(height: 32),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          child: Text(
+                            'QUICK ACTIONS',
+                            style: GoogleFonts.gelasio(
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFFF4EFE3))
+                                      .withOpacity(0.6),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 3,
                             ),
                           ),
-                        ],
+                        ),
+                        const SizedBox(height: 12),
+                        _QuickActionItem(
+                          label: 'Enquiry',
+                          icon: LucideIcons.mail,
+                          // Go to the home page and scroll straight to its
+                          // "Register Your Interest" form.
+                          onTap: () {
+                            Navigator.of(
+                              context,
+                            ).pop(); // close the menu drawer
+                            ref.read(guestNavigationProvider.notifier).state =
+                                0;
+                            ref.read(scrollToRegisterProvider.notifier).state++;
+                            context.go('/home');
+                          },
+                        ),
+                        _QuickActionItem(
+                          label: 'Call',
+                          icon: LucideIcons.phone,
+                          onTap: () =>
+                              launchUrl(Uri.parse('tel:+912246018844')),
+                        ),
+                        _QuickActionItem(
+                          label: 'WhatsApp',
+                          icon: LucideIcons.messageSquare,
+                          onTap: () => launchUrl(
+                            Uri.parse('https://wa.me/912246018844'),
+                          ),
+                        ),
+                        _QuickActionItem(
+                          label: 'Location',
+                          icon: LucideIcons.mapPin,
+                          onTap: () =>
+                              launchUrl(Uri.parse('https://maps.google.com')),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 12, 24, 40),
+                    child: Container(
+                      width: double.infinity,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFC65B46).withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: const Color(0xFFC65B46).withOpacity(0.1),
+                        ),
+                      ),
+                      child: InkWell(
+                        onTap: _confirmExit,
+                        borderRadius: BorderRadius.circular(20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              LucideIcons.logOut,
+                              color: const Color(0xFFC65B46),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              'EXIT APP',
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFFC65B46),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
@@ -435,12 +440,8 @@ class _MenuItem extends StatelessWidget {
 
   // Rendering is M4DrawerTile — the one row every portal uses.
   @override
-  Widget build(BuildContext context) => M4DrawerTile(
-    icon: icon,
-    label: label,
-    isActive: isActive,
-    onTap: onTap,
-  );
+  Widget build(BuildContext context) =>
+      M4DrawerTile(icon: icon, label: label, isActive: isActive, onTap: onTap);
 }
 
 class _DropdownMenuItem extends StatelessWidget {
@@ -497,16 +498,12 @@ class _SubItem extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         dense: true,
-        leading: Icon(
-          icon,
-          size: 16,
-          color:
-              color ?? (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.6),
-        ),
+        leading: Icon(icon, size: 16, color: color ?? Colors.white),
         title: Text(
           label,
           style: GoogleFonts.inter(
-            color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.85),
+            color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
+                .withOpacity(0.85),
             fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
@@ -536,19 +533,19 @@ class _QuickActionItem extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.08),
+          color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(
+            0.08,
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(
-          icon,
-          color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.5),
-          size: 18,
-        ),
+        child: Icon(icon, color: Colors.white, size: 18),
       ),
       title: Text(
         label,
         style: GoogleFonts.inter(
-          color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.8),
+          color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(
+            0.8,
+          ),
           fontSize: 16.5,
           fontWeight: FontWeight.w500,
           letterSpacing: -0.2,

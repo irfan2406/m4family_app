@@ -305,7 +305,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                 'YOUR WALLET BALANCE',
                 style: GoogleFonts.gelasio(
                   textStyle: const TextStyle(inherit: true),
-                  color: isDark ? Colors.white24 : Colors.black26,
+                  color: isDark ? Colors.white24 : Color(0x420C312B),
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 2,
@@ -568,7 +568,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             'REDEEM VOLUME',
             style: GoogleFonts.gelasio(
               textStyle: const TextStyle(inherit: true),
-              color: isDark ? Colors.white24 : Colors.black26,
+              color: isDark ? Colors.white24 : Color(0x420C312B),
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 2,
@@ -764,7 +764,9 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                   children: [
                     Icon(
                       LucideIcons.gift,
-                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      color: isDark
+                          ? const Color(0xFF0C312B)
+                          : const Color(0xFFF4EFE3),
                       size: 16,
                     ),
                     const SizedBox(width: 10),
@@ -772,7 +774,9 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                       'CONFIRM REDEMPTION',
                       style: GoogleFonts.gelasio(
                         textStyle: const TextStyle(inherit: true),
-                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        color: isDark
+                            ? const Color(0xFF0C312B)
+                            : const Color(0xFFF4EFE3),
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 2,

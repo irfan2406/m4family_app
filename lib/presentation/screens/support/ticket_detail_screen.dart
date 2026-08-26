@@ -314,8 +314,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: (_isOpen ? const Color(0xFFC5A35B) : const Color(0xFF163A2C))
-                  .withValues(alpha: 0.1),
+              color:
+                  (_isOpen ? const Color(0xFFC5A35B) : const Color(0xFF163A2C))
+                      .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: border),
             ),
@@ -324,7 +325,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
-                color: _isOpen ? const Color(0xFFC5A35B) : const Color(0xFF163A2C),
+                color: _isOpen
+                    ? const Color(0xFFC5A35B)
+                    : const Color(0xFF163A2C),
                 letterSpacing: 2,
               ),
             ),
@@ -376,7 +379,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: textPrimary == Colors.white
-                        ? Colors.black
+                        ? const Color(0xFF0C312B)
                         : Colors.white,
                     letterSpacing: 1,
                   ),
@@ -505,7 +508,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     // User bubble: solid (foreground/background inversion). Support: card style.
     final bubbleColor = isUser
         ? textPrimary
-        : (isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3));
+        : (isDark
+              ? Colors.white.withValues(alpha: 0.03)
+              : const Color(0xFFF4EFE3));
     final bubbleTextColor = isUser
         ? (isDark ? Colors.black : Colors.white)
         : textPrimary;
@@ -654,7 +659,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     return Container(
       padding: EdgeInsets.fromLTRB(
         16,
@@ -727,7 +734,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   : Icon(
                       LucideIcons.send,
                       size: 18,
-                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      color: isDark
+                          ? const Color(0xFF0C312B)
+                          : const Color(0xFFF4EFE3),
                     ),
             ),
           ),

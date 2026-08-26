@@ -200,7 +200,9 @@ class _InvestorDocumentsScreenState
   }
 
   Widget _buildHeader(bool isDark, Color textPrimary) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -321,10 +323,11 @@ class _InvestorDocumentsScreenState
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: selected
-                        ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
-                        : (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                            alpha: 0.5,
-                          ),
+                        ? (isDark
+                              ? const Color(0xFF0C312B)
+                              : const Color(0xFFF4EFE3))
+                        : (isDark ? Colors.white : Color(0xFF0C312B))
+                              .withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -366,11 +369,15 @@ class _InvestorDocumentsScreenState
     bool isDark,
     Color textPrimary,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -520,7 +527,9 @@ class _InvestorDocumentsScreenState
   }
 
   Widget _buildEmptyState(bool isDark) {
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     return Column(
       children: [
         Container(
@@ -553,7 +562,9 @@ class _InvestorDocumentsScreenState
   }
 
   Widget _buildErrorState(bool isDark, Color textPrimary) {
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -593,7 +604,9 @@ class _InvestorDocumentsScreenState
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 2,
-                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    color: isDark
+                        ? const Color(0xFF0C312B)
+                        : const Color(0xFFF4EFE3),
                   ),
                 ),
               ),
@@ -626,14 +639,18 @@ class _SquareIconButton extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.03)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: border),
         ),
         child: Icon(
           icon,
           size: 16,
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            alpha: 0.5,
+          ),
         ),
       ),
     );
@@ -660,7 +677,9 @@ class _DocumentDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -847,7 +866,9 @@ class _DocumentDetail extends StatelessWidget {
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: textPrimary,
-                        foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        foregroundColor: isDark
+                            ? Colors.black
+                            : const Color(0xFFF4EFE3),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
@@ -884,8 +905,12 @@ class _MetaTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);

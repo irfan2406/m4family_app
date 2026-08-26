@@ -144,7 +144,9 @@ class _CpBookingConfirmationScreenState
 
     if (_loading) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+        backgroundColor: isDark
+            ? const Color(0xFF141B3A)
+            : const Color(0xFFF4EFE3),
         body: const Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
@@ -152,7 +154,9 @@ class _CpBookingConfirmationScreenState
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+      backgroundColor: isDark
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFF4EFE3),
       body: Stack(
         children: [
           // Decorative background circles
@@ -376,14 +380,18 @@ class _CpBookingConfirmationScreenState
                         children: [
                           Icon(
                             LucideIcons.home,
-                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            color: isDark
+                                ? const Color(0xFF0C312B)
+                                : const Color(0xFFF4EFE3),
                             size: 18,
                           ),
                           const SizedBox(width: 14),
                           Text(
                             'BACK TO DASHBOARD',
                             style: GoogleFonts.gelasio(
-                              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                              color: isDark
+                                  ? const Color(0xFF0C312B)
+                                  : const Color(0xFFF4EFE3),
                               fontWeight: FontWeight.w700,
                               fontSize: 12,
                               letterSpacing: 2,
@@ -435,7 +443,9 @@ class _CpBookingConfirmationScreenState
       width: double.infinity,
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.02) : const Color(0xFFF4EFE3),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.02)
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: isDark
@@ -630,7 +640,9 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         height: 56,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.03)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark

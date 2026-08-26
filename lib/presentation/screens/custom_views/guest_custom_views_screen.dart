@@ -48,8 +48,7 @@ class _GuestCustomViewsScreenState
 
   // Ask the image host for a card-sized image instead of the full-res original
   // (multi-MB) — massively cuts download time for these grid thumbnails.
-  String _sized(String url, int w) =>
-      url.contains('w=') ? url : '$url&w=$w';
+  String _sized(String url, int w) => url.contains('w=') ? url : '$url&w=$w';
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +77,9 @@ class _GuestCustomViewsScreenState
           // 🔝 Premium Header
           SliverAppBar(
             pinned: true,
-            backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3),
+            backgroundColor: isDark
+                ? const Color(0xFF0B1026)
+                : const Color(0xFFF4EFE3),
             elevation: 0,
             leadingWidth: 72,
             toolbarHeight: 80,
@@ -112,9 +113,8 @@ class _GuestCustomViewsScreenState
                 Text(
                   'M4 CUSTOM SHOWCASE',
                   style: GoogleFonts.gelasio(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.68,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.68),
                     fontWeight: FontWeight.w700,
                     fontSize: 7,
                     letterSpacing: 1.5,
@@ -150,18 +150,16 @@ class _GuestCustomViewsScreenState
                   Container(
                     width: 50,
                     height: 1.5,
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.2,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.2),
                   ),
                   const SizedBox(height: 48),
                   Text(
                     'Experience the future of home personalisation. Our proprietary Custom Views suite allows you to visualise and craft your dream space before it\'s even built. Every M4 residence is a bespoke masterpiece, where your vision dictates the architecture of luxury. Beyond standard configurations, we offer a multi-sensory design experience—from haptic material selection to precision spatial planning. Our suite ensures that your digital blueprint translates into a tangible sanctuary of unparalleled refinement.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inter(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.7,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.7),
                       fontSize: 14,
                       height: 1.8,
                       fontWeight: FontWeight.w500,
@@ -278,10 +276,14 @@ class _HeaderCircleAction extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.1) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withOpacity(0.1)
+              : const Color(0xFFF4EFE3),
           shape: BoxShape.circle,
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.05,
+            ),
           ),
           boxShadow: [
             BoxShadow(

@@ -106,7 +106,9 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             Text(
               'JOIN OUR ARCHITECTURAL LEGACY',
               style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.68),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.68,
+                ),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
                 letterSpacing: 2,
@@ -114,7 +116,9 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             ),
           ],
         ),
-        backgroundColor: isDark ? const Color(0xFF0B1026) : Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: isDark
+            ? const Color(0xFF0B1026)
+            : Theme.of(context).scaffoldBackgroundColor,
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -142,14 +146,12 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.08,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.08),
                   ),
                 ),
                 child: Icon(
@@ -311,7 +313,9 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                 border: Border.all(
                   color: isActive
                       ? Colors.transparent
-                      : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.1),
+                      : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                          0.1,
+                        ),
                 ),
               ),
               alignment: Alignment.center,
@@ -319,7 +323,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                 cat,
                 style: GoogleFonts.inter(
                   color: isActive
-                      ? (isDark ? Colors.black : Colors.white)
+                      ? (isDark ? const Color(0xFF0C312B) : Colors.white)
                       : (isDark ? Colors.white60 : Color(0xFF155A4F)),
                   fontSize: 9,
                   fontWeight: FontWeight.w600,
@@ -353,10 +357,14 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         decoration: BoxDecoration(
           // Lighter, whiter "shadow box": soft white card with a faint border
           // and a subtle drop shadow (matches the reference empty state).
-          color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withOpacity(0.03)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(48),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.05,
+            ),
           ),
           boxShadow: isDark
               ? null
@@ -382,7 +390,9 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
               ),
               child: Icon(
                 LucideIcons.briefcase,
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.12),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.12,
+                ),
                 size: 40,
               ),
             ),
@@ -391,7 +401,9 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
               'NO ACTIVE VACANCIES CURRENTLY AVAILABLE',
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.72),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.72,
+                ),
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 2,
@@ -421,10 +433,14 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
           padding: const EdgeInsets.all(30),
           decoration: BoxDecoration(
             // Web parity: bigger white card (p-8, rounded-[2.5rem]) + shadow.
-            color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
+            color: isDark
+                ? Colors.white.withOpacity(0.04)
+                : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.05,
+              ),
             ),
             boxShadow: isDark
                 ? null
@@ -496,8 +512,9 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                             children: [
                               Icon(
                                 LucideIcons.mapPin,
-                                color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                    .withOpacity(0.4),
+                                color:
+                                    (isDark ? Colors.white : Color(0xFF0C312B))
+                                        .withOpacity(0.4),
                                 size: 12,
                               ),
                               const SizedBox(width: 6),
@@ -506,8 +523,11 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                                     .toString()
                                     .toUpperCase(),
                                 style: GoogleFonts.inter(
-                                  color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                      .withOpacity(0.68),
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : Color(0xFF0C312B))
+                                          .withOpacity(0.68),
                                   fontSize: 10,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 1,
@@ -528,16 +548,14 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   // Web parity: light circle (w-12) with a dark chevron (w-6).
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.05),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   LucideIcons.chevronRight,
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.7,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.7),
                   size: 24,
                 ),
               ),
@@ -564,10 +582,14 @@ class _HeaderCircleAction extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.1) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withOpacity(0.1)
+              : const Color(0xFFF4EFE3),
           shape: BoxShape.circle,
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.05,
+            ),
           ),
           boxShadow: [
             BoxShadow(

@@ -264,7 +264,7 @@ Widget _communityImagePlaceholder() => Container(
   child: Center(
     child: Icon(
       LucideIcons.building2,
-      color: Colors.black.withOpacity(0.15),
+      color: const Color(0xFF0C312B).withOpacity(0.15),
       size: 40,
     ),
   ),
@@ -281,6 +281,7 @@ Widget _communityImage(String url) {
       return Image.memory(
         base64Decode(base64Str),
         fit: BoxFit.cover,
+        cacheWidth: 1080,
         width: double.infinity,
         height: double.infinity,
         errorBuilder: (_, __, ___) => _communityImagePlaceholder(),

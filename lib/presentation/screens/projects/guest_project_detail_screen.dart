@@ -231,9 +231,8 @@ class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
                     height: 40,
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                        alpha: 0.05,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -323,7 +322,9 @@ class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
                   child: Text(
                     'CONFIRM',
                     style: GoogleFonts.gelasio(
-                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      color: isDark
+                          ? const Color(0xFF0C312B)
+                          : const Color(0xFFF4EFE3),
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 2,
@@ -565,7 +566,7 @@ class _GuestProjectDetailScreenState
           style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: isError ? Colors.white : Colors.black,
+            color: isError ? Colors.white : const Color(0xFF0C312B),
           ),
         ),
         backgroundColor: isError
@@ -815,7 +816,9 @@ class _GuestProjectDetailScreenState
       barrierColor: Colors.black.withValues(alpha: 0.6),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => Dialog(
-          backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          backgroundColor: isDark
+              ? const Color(0xFF141B3A)
+              : const Color(0xFFF4EFE3),
           // Web parity: a centered floating card with margins on every edge,
           // rounded on all corners — not a full-width bottom sheet.
           insetPadding: const EdgeInsets.symmetric(
@@ -974,7 +977,7 @@ class _GuestProjectDetailScreenState
                                           letterSpacing: 1,
                                           color: _leadType == opt[1]
                                               ? (isDark
-                                                    ? Colors.black
+                                                    ? const Color(0xFF0C312B)
                                                     : Colors.white)
                                               : (isDark
                                                     ? Colors.white54
@@ -1118,7 +1121,9 @@ class _GuestProjectDetailScreenState
                               hintStyle: GoogleFonts.inter(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w500,
-                                color: isDark ? Colors.white24 : Colors.black26,
+                                color: isDark
+                                    ? Colors.white24
+                                    : Color(0x420C312B),
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -1203,7 +1208,9 @@ class _GuestProjectDetailScreenState
                               child: Text(
                                 'CONFIRM BOOKING',
                                 style: GoogleFonts.gelasio(
-                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                  color: isDark
+                                      ? const Color(0xFF0C312B)
+                                      : const Color(0xFFF4EFE3),
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 1.5,
@@ -1564,7 +1571,9 @@ class _GuestProjectDetailScreenState
                           children: [
                             Icon(
                               LucideIcons.mapPin,
-                              color: isDark ? Colors.white70 : Color(0xFF0C312B),
+                              color: isDark
+                                  ? Colors.white70
+                                  : Color(0xFF0C312B),
                               size: 14,
                             ),
                             const SizedBox(width: 6),
@@ -1576,7 +1585,9 @@ class _GuestProjectDetailScreenState
                                       'Mazgaon')
                                   .toString(),
                               style: GoogleFonts.inter(
-                                color: isDark ? Colors.white : Color(0xFF155A4F),
+                                color: isDark
+                                    ? Colors.white
+                                    : Color(0xFF155A4F),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -1817,7 +1828,7 @@ class _GuestProjectDetailScreenState
               fontSize: 11,
               color: isDark
                   ? Colors.white.withValues(alpha: 0.78)
-                  : Colors.black.withValues(alpha: 0.78),
+                  : const Color(0xFF0C312B).withValues(alpha: 0.78),
               fontWeight: FontWeight.w600,
               height: 1.6,
               letterSpacing: 0.5,
@@ -1994,7 +2005,7 @@ class _GuestProjectDetailScreenState
                   fontWeight: FontWeight.w600,
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.8)
-                      : Colors.black.withValues(alpha: 0.8),
+                      : const Color(0xFF0C312B).withValues(alpha: 0.8),
                   letterSpacing: 0.5,
                   height: 1.2,
                 ),
@@ -2188,7 +2199,9 @@ class _GuestProjectDetailScreenState
                       child: Text(
                         'REGISTER INTEREST',
                         style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          color: isDark
+                              ? const Color(0xFF0C312B)
+                              : const Color(0xFFF4EFE3),
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 2,
@@ -2384,7 +2397,7 @@ class _InterestInput extends StatelessWidget {
           hintStyle: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white38 : Colors.black45,
+            color: isDark ? Colors.white38 : Color(0x730C312B),
             letterSpacing: 1,
           ),
           icon: icon != null
@@ -2421,7 +2434,9 @@ class _OverviewActionCard extends StatelessWidget {
         height: 140,
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isDark
@@ -2746,7 +2761,9 @@ class _MultimediaAssetCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           decoration: BoxDecoration(
-            color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.03)
+                : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(
               color: isDark
@@ -2854,7 +2871,7 @@ class _AssetButton extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 7.5,
             fontWeight: FontWeight.w600,
-            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+            color: isDark ? const Color(0xFF0C312B) : const Color(0xFFF4EFE3),
             letterSpacing: 1.0,
           ),
         ),
@@ -3039,7 +3056,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         width: 12,
                         height: 12,
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          color: isDark
+                              ? Colors.black
+                              : const Color(0xFFF4EFE3),
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: isDark ? Colors.white : Color(0xFF0C312B),
@@ -3142,7 +3161,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                       LucideIcons.image,
                                       color: isDark
                                           ? Colors.white24
-                                          : Colors.black26,
+                                          : Color(0x420C312B),
                                       size: 24,
                                     ),
                                   ),
@@ -3172,7 +3191,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                             LucideIcons.image,
                                             color: isDark
                                                 ? Colors.white24
-                                                : Colors.black26,
+                                                : Color(0x420C312B),
                                             size: 24,
                                           ),
                                         ),
@@ -3309,9 +3328,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                             ? Colors.white.withValues(
                                                 alpha: 0.85,
                                               )
-                                            : Colors.black.withValues(
-                                                alpha: 0.85,
-                                              ),
+                                            : const Color(
+                                                0xFF0C312B,
+                                              ).withValues(alpha: 0.85),
                                         letterSpacing: 1.2,
                                       ),
                                     ),
@@ -3365,14 +3384,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   ),
                   // Web parity: soft outlined chip with black text.
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                      alpha: 0.04,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                        alpha: 0.15,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withValues(alpha: 0.15),
                     ),
                   ),
                   child: Text(
@@ -3613,7 +3630,7 @@ class _FilterChip extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     color: isActive
                         ? Colors.white
-                        : Colors.black.withValues(alpha: 0.72),
+                        : const Color(0xFF0C312B).withValues(alpha: 0.72),
                     letterSpacing: 1.0,
                   ),
                 ),
@@ -3917,7 +3934,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
                           child: Text(
                             _currentStep == 3 ? 'CLOSE EXPLORER' : 'CONTINUE',
                             style: GoogleFonts.gelasio(
-                              color: Colors.black,
+                              color: const Color(0xFF0C312B),
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 1.5,

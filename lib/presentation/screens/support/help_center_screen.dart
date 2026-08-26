@@ -173,7 +173,9 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
             : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.1),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            alpha: 0.1,
+          ),
         ),
         boxShadow: isDark
             ? null
@@ -282,7 +284,9 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
             : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.1),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            alpha: 0.1,
+          ),
         ),
         boxShadow: isDark
             ? null
@@ -347,7 +351,9 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
-                foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                foregroundColor: isDark
+                    ? Colors.black
+                    : const Color(0xFFF4EFE3),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -438,9 +444,8 @@ class _FaqCategory extends StatelessWidget {
                   Divider(
                     height: 1,
                     thickness: 1,
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                      alpha: 0.07,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withValues(alpha: 0.07),
                   ),
                 _FaqRow(
                   question: questions[i]['q']!,

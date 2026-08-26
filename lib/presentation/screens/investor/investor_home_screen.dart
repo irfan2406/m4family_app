@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show compute;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -196,7 +197,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     try {
       final f = File('${Directory.systemTemp.path}/m4_guest_home_cache.json');
       if (!await f.exists()) return null;
-      final map = jsonDecode(await f.readAsString());
+      // Multi-MB payload — parse off the UI isolate (same as the guest home).
+      final map = await compute(jsonDecode, await f.readAsString());
       final list = map is Map ? map['projects'] : null;
       return (list is List && list.isNotEmpty) ? list : null;
     } catch (_) {
@@ -556,7 +558,9 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         ),
                         child: Icon(
                           LucideIcons.menu,
-                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Theme.of(context).colorScheme.onSurface,
                           size: 24,
                         ),
                       ),
@@ -835,8 +839,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                               tab.toUpperCase(),
                               style: GoogleFonts.gelasio(
                                 color: isSelected
-                                    ? (isDark ? Colors.white : Color(0xFF0C312B))
-                                    : (isDark ? Colors.white : Color(0xFF0C312B))
+                                    ? (isDark
+                                          ? Colors.white
+                                          : Color(0xFF0C312B))
+                                    : (isDark
+                                              ? Colors.white
+                                              : Color(0xFF0C312B))
                                           .withValues(alpha: 0.72),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
@@ -849,7 +857,9 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                 width: 24,
                                 height: 2,
                                 decoration: BoxDecoration(
-                                  color: isDark ? Colors.white : Color(0xFF0C312B),
+                                  color: isDark
+                                      ? Colors.white
+                                      : Color(0xFF0C312B),
                                   borderRadius: BorderRadius.circular(1),
                                 ),
                               ),
@@ -1227,7 +1237,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                             ),
                             child: const Icon(
                               LucideIcons.arrowRight,
-                              color: Colors.black,
+                              color: const Color(0xFF0C312B),
                               size: 18,
                             ),
                           ),
@@ -1378,7 +1388,9 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                             color: Colors.white,
                             shadows: [
                               Shadow(
-                                color: Colors.black.withValues(alpha: 0.45),
+                                color: const Color(
+                                  0xFF0C312B,
+                                ).withValues(alpha: 0.45),
                                 blurRadius: 12,
                                 offset: const Offset(0, 2),
                               ),
@@ -1455,9 +1467,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                        alpha: 0.1,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withValues(alpha: 0.1),
                     ),
                   ),
                   child: Icon(
@@ -1491,7 +1502,9 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       child: Text(
                         'READ MORE',
                         style: GoogleFonts.gelasio(
-                          color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
+                          color: isDark
+                              ? const Color(0xFF1C4535)
+                              : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w700,
                           fontSize: 12,
                           letterSpacing: 3,
@@ -1513,9 +1526,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                        alpha: 0.1,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withValues(alpha: 0.1),
                     ),
                   ),
                   child: Icon(
@@ -1814,7 +1826,9 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     : Text(
                         'SUBMIT INTEREST',
                         style: GoogleFonts.inter(
-                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          color: isDark
+                              ? const Color(0xFF0C312B)
+                              : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w600,
                           letterSpacing: 2,
                         ),
@@ -1873,7 +1887,9 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                   ],
           ),
           child: TextField(
-            cursorColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
+            cursorColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Theme.of(context).colorScheme.onSurface,
             controller: controller,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
@@ -1885,7 +1901,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               hintStyle: GoogleFonts.inter(
                 color: hasError
                     ? errorColor.withValues(alpha: 0.75)
-                    : (isDark ? Colors.white54 : Colors.black45),
+                    : (isDark ? Colors.white54 : Color(0x730C312B)),
                 fontSize: 13,
               ),
               contentPadding: const EdgeInsets.symmetric(

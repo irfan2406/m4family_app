@@ -274,7 +274,9 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                _StatusBadge(status: booking['status']?.toString() ?? 'Unknown'),
+                _StatusBadge(
+                  status: booking['status']?.toString() ?? 'Unknown',
+                ),
               ],
             ),
           ),
@@ -407,7 +409,9 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             textStyle: const TextStyle(inherit: true),
             fontSize: 10,
             fontWeight: FontWeight.w700,
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.72),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.72,
+            ),
             letterSpacing: 2,
           ),
         ),
@@ -560,7 +564,9 @@ class _IconButton extends StatelessWidget {
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.05,
+            ),
           ),
         ),
         child: Icon(

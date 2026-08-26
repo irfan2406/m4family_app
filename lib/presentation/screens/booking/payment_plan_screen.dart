@@ -71,7 +71,9 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
+      backgroundColor: isDark
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFD4CFBC),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -106,7 +108,9 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
               'SELECT YOUR PREFERRED SCHEDULE',
               style: GoogleFonts.inter(
                 fontSize: 8,
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.68),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.68,
+                ),
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1,
               ),
@@ -186,7 +190,9 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                           ),
                           child: Icon(
                             LucideIcons.info,
-                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            color: isDark
+                                ? const Color(0xFF0C312B)
+                                : const Color(0xFFF4EFE3),
                             size: 24,
                           ),
                         ),
@@ -201,7 +207,9 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 1.5,
-                                  color: isDark ? Colors.white : Color(0xFF0C312B),
+                                  color: isDark
+                                      ? Colors.white
+                                      : Color(0xFF0C312B),
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -209,8 +217,11 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                                 'VIEW A DETAILED SIDE-BY-SIDE COMPARISON OF ALL AVAILABLE PAYMENT SCHEDULES.',
                                 style: GoogleFonts.inter(
                                   fontSize: 8,
-                                  color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                      .withOpacity(0.68),
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : Color(0xFF0C312B))
+                                          .withOpacity(0.68),
                                   fontWeight: FontWeight.bold,
                                   height: 1.4,
                                 ),
@@ -279,7 +290,9 @@ class _PaymentPlanCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withOpacity(0.02)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(40),
           border: Border.all(
             color: isDark
@@ -333,7 +346,9 @@ class _PaymentPlanCard extends StatelessWidget {
               // Web parity: divider between the plan title and the benefit row.
               Divider(
                 height: 1,
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.08),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.08,
+                ),
               ),
               const SizedBox(height: 30),
               Row(

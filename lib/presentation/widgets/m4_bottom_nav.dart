@@ -120,8 +120,10 @@ class _M4NavTabState extends State<_M4NavTab>
     vsync: this,
     duration: const Duration(milliseconds: 100),
   );
-  late final Animation<double> _scale = Tween<double>(begin: 1, end: 0.95)
-      .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  late final Animation<double> _scale = Tween<double>(
+    begin: 1,
+    end: 0.95,
+  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
   @override
   void dispose() {

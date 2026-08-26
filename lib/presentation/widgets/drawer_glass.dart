@@ -57,10 +57,26 @@ class M4Drawer {
     final double inv = 1 - s;
     final double r = inv * lumR, g = inv * lumG, b = inv * lumB;
     return <double>[
-      r + s, g, b, 0, 0,
-      r, g + s, b, 0, 0,
-      r, g, b + s, 0, 0,
-      0, 0, 0, 1, 0,
+      r + s,
+      g,
+      b,
+      0,
+      0,
+      r,
+      g + s,
+      b,
+      0,
+      0,
+      r,
+      g,
+      b + s,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
     ];
   }
 
@@ -83,7 +99,6 @@ class M4Drawer {
     horizontal: 8,
     vertical: 3,
   );
-
 }
 
 /// The drawer's frosted panel: blur, deep-green base, cream and blue blooms,

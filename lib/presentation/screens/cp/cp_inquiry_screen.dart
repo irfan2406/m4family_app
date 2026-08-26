@@ -148,14 +148,12 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                   height: 40,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                      alpha: 0.05,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withValues(alpha: 0.05),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                        alpha: 0.1,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withValues(alpha: 0.1),
                     ),
                   ),
                   child: Icon(
@@ -242,7 +240,9 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                             TextSpan(
                               text: 'PRIVACY POLICY',
                               style: GoogleFonts.inter(
-                                color: isDark ? Colors.white : Color(0xFF155A4F),
+                                color: isDark
+                                    ? Colors.white
+                                    : Color(0xFF155A4F),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.8,
@@ -265,7 +265,9 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                   onPressed: _submitting ? null : _submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
-                    foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    foregroundColor: isDark
+                        ? Colors.black
+                        : const Color(0xFFF4EFE3),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -277,7 +279,9 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                           height: 22,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            color: isDark
+                                ? Colors.black
+                                : const Color(0xFFF4EFE3),
                           ),
                         )
                       : Text(
@@ -312,7 +316,9 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
         color: isDark ? Colors.black : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.12),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            alpha: 0.12,
+          ),
         ),
         boxShadow: isDark
             ? null
@@ -334,7 +340,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
         decoration: InputDecoration(
           hintText: label,
           hintStyle: GoogleFonts.inter(
-            color: isDark ? Colors.white54 : Colors.black45,
+            color: isDark ? Colors.white54 : Color(0x730C312B),
             fontSize: 13,
           ),
           errorStyle: GoogleFonts.inter(

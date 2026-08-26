@@ -119,8 +119,12 @@ class _InvestorEliteInvestorConnectScreenState
 
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -355,10 +359,7 @@ class _InvestorEliteInvestorConnectScreenState
       child: Center(
         child: Text(
           message,
-          style: GoogleFonts.inter(
-            color: muted,
-            fontWeight: FontWeight.w700,
-          ),
+          style: GoogleFonts.inter(color: muted, fontWeight: FontWeight.w700),
         ),
       ),
     );
@@ -714,7 +715,7 @@ class _InvestorEliteInvestorConnectScreenState
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
-                            color: Colors.black,
+                            color: const Color(0xFF0C312B),
                           ),
                         ),
                       ),

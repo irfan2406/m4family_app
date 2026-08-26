@@ -33,21 +33,22 @@ class InvestorMainShell extends ConsumerWidget {
 
     // Nav + scaffold follow the active tab's surface.
     final ThemeData navTheme = (idx == 0 || idx == 1)
-              ? M4Theme.darkTheme
-              // Investor light tabs sit on a deeper warm greige than the other
-              // portals' cream, so the cream cards read as raised surfaces.
-              : M4Theme.lightTheme.copyWith(
-                  scaffoldBackgroundColor: const Color(0xFFD4CFBC),
-                );
+        ? M4Theme.darkTheme
+        // Investor light tabs sit on a deeper warm greige than the other
+        // portals' cream, so the cream cards read as raised surfaces.
+        : M4Theme.lightTheme.copyWith(
+            scaffoldBackgroundColor: const Color(0xFFD4CFBC),
+          );
 
     return Scaffold(
       backgroundColor: navTheme.scaffoldBackgroundColor,
       drawer: const InvestorSidebarMenu(),
-      // No extendBody: Scaffold reserves the pill's slot so page content stops
-      // above it. With it enabled the last element — the white SUBMIT INTEREST
-      // button on Home — slid under the bar, and the glass blur picked up that
-      // white, washing the green pill out to a pale grey-green.
-      extendBody: false,
+      // extendBody: the body runs the full height behind the floating pill, so
+      // no reserved slot is left around it. Reserving one (extendBody: false)
+      // filled the pill's own float margins with the page background, showing
+      // as a green band around and below the bar and costing the page that
+      // height. Matches the customer/CP/guest shells.
+      extendBody: true,
       // Horizontal fling moves a tab. It sets the same provider the bottom
       // bar sets, so no second navigation path is introduced.
       body: NavSwipe(

@@ -54,7 +54,9 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
     // preferring `_me` outright - `_me` is a snapshot taken when the screen
     // opened, so on its own it kept serving the pre-save name.
     final auth = ref.watch(authProvider).user;
-    final base = _me == null ? <String, dynamic>{} : Map<String, dynamic>.from(_me!);
+    final base = _me == null
+        ? <String, dynamic>{}
+        : Map<String, dynamic>.from(_me!);
     if (auth == null) return base;
     return {...base, ...Map<String, dynamic>.from(auth)};
   }

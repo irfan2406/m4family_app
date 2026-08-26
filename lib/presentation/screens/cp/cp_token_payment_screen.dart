@@ -107,7 +107,9 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
     bool isDark,
   ) {
     final isActive = _selectedMethod == id;
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -228,9 +230,8 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     fontSize: 10,
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                      alpha: 0.68,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withValues(alpha: 0.68),
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.2,
                     height: 1.8,
@@ -248,7 +249,9 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                     child: Text(
                       'GO TO DASHBOARD',
                       style: GoogleFonts.gelasio(
-                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        color: isDark
+                            ? const Color(0xFF0C312B)
+                            : const Color(0xFFF4EFE3),
                         fontWeight: FontWeight.w700,
                         fontSize: 11,
                         letterSpacing: 2,
@@ -269,7 +272,9 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
 
     if (_isSuccess) {
       return _buildSuccessScreen(isDark);

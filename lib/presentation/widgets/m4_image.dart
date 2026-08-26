@@ -47,6 +47,7 @@ class M4Image extends ConsumerWidget {
           return Image.memory(
             bytes,
             fit: fit,
+            cacheWidth: 1080,
             width: width,
             height: height,
             errorBuilder: (context, error, stackTrace) => _buildFallback(),

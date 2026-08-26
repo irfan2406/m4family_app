@@ -300,9 +300,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                   if (members.isEmpty)
                     Text(
                       'No referrals in your network yet',
-                      style: GoogleFonts.inter(
-                        color: scheme.onSurfaceVariant,
-                      ),
+                      style: GoogleFonts.inter(color: scheme.onSurfaceVariant),
                     )
                   else
                     GridView.builder(

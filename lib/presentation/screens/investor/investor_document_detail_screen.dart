@@ -94,10 +94,7 @@ class _InvestorDocumentDetailScreenState
         SnackBar(
           content: Text(
             'Secure link not available for this document',
-            style: GoogleFonts.inter(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
+            style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 12),
           ),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
@@ -194,7 +191,9 @@ class _InvestorDocumentDetailScreenState
     bool showRetry = false,
   }) {
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
       child: Column(
@@ -256,8 +255,12 @@ class _InvestorDocumentDetailScreenState
   Widget _buildDocumentDetail(bool isDark) {
     final doc = _doc!;
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -307,9 +310,8 @@ class _InvestorDocumentDetailScreenState
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.black : const Color(0xFFF4EFE3)).withValues(
-                        alpha: 0.4,
-                      ),
+                      color: (isDark ? Colors.black : const Color(0xFFF4EFE3))
+                          .withValues(alpha: 0.4),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(LucideIcons.x, size: 18, color: textPrimary),

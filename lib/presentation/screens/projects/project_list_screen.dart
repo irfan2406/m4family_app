@@ -37,6 +37,7 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
       return Image.memory(
         bytes,
         fit: fit,
+        cacheWidth: 1080,
         errorBuilder: (_, __, ___) => errorBox(),
       );
     } catch (_) {
@@ -103,193 +104,228 @@ class ProjectListScreen extends ConsumerWidget {
               data: M4Theme.lightTheme,
               child: Builder(
                 builder: (context) {
-            final isDark = Theme.of(context).brightness == Brightness.dark;
-            return Container(
-              // Half-sheet popup: the filter list scrolls inside it rather than
-              // the sheet swallowing the screen.
-              height: MediaQuery.of(context).size.height * 0.55,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(40),
-                ),
-              ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 12),
-                  Container(
-                    width: 40,
-                    height: 4,
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
+                  return Container(
+                    // Half-sheet popup: the filter list scrolls inside it rather than
+                    // the sheet swallowing the screen.
+                    height: MediaQuery.of(context).size.height * 0.55,
                     decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(2),
+                      color: isDark
+                          ? const Color(0xFF1C4535)
+                          : const Color(0xFFF4EFE3),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(40),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
                       children: [
-                        Text(
-                          'REFINE SEARCH',
-                          style: GoogleFonts.gelasio(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(context).colorScheme.onSurface,
-                            letterSpacing: -0.5,
+                        const SizedBox(height: 12),
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                        IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: Icon(
-                            LucideIcons.x,
-                            color: Theme.of(context).colorScheme.onSurface,
-                            size: 18,
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'REFINE SEARCH',
+                                style: GoogleFonts.gelasio(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w700,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () => Navigator.pop(context),
+                                icon: Icon(
+                                  LucideIcons.x,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  size: 18,
+                                ),
+                                style: IconButton.styleFrom(
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withOpacity(0.05),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  fixedSize: const Size(40, 40),
+                                ),
+                              ),
+                            ],
                           ),
-                          style: IconButton.styleFrom(
-                            backgroundColor: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withOpacity(0.05),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                        ),
+                        const SizedBox(height: 20),
+                        Expanded(
+                          child: Consumer(
+                            builder: (context, ref, child) {
+                              final selectedLocs = ref.watch(
+                                selectedLocationsProvider,
+                              );
+                              final selectedConfigs = ref.watch(
+                                selectedConfigsProvider,
+                              );
+                              final selectedAreas = ref.watch(
+                                selectedAreasProvider,
+                              );
+                              final selectedTypes = ref.watch(
+                                selectedTypesProvider,
+                              );
+
+                              return ListView(
+                                padding: const EdgeInsets.fromLTRB(
+                                  24,
+                                  0,
+                                  24,
+                                  8,
+                                ),
+                                children: [
+                                  _FilterSection(
+                                    title: 'LOCATION',
+                                    options: locationOptions,
+                                    selectedOptions: selectedLocs,
+                                    onToggle: (val) {
+                                      final current = List<String>.from(
+                                        ref.read(selectedLocationsProvider),
+                                      );
+                                      if (current.contains(val))
+                                        current.remove(val);
+                                      else
+                                        current.add(val);
+                                      ref
+                                              .read(
+                                                selectedLocationsProvider
+                                                    .notifier,
+                                              )
+                                              .state =
+                                          current;
+                                    },
+                                  ),
+                                  const SizedBox(height: 32),
+                                  _FilterSection(
+                                    title: 'CONFIGURATION',
+                                    options: configOptions,
+                                    selectedOptions: selectedConfigs,
+                                    onToggle: (val) {
+                                      final current = List<String>.from(
+                                        ref.read(selectedConfigsProvider),
+                                      );
+                                      if (current.contains(val))
+                                        current.remove(val);
+                                      else
+                                        current.add(val);
+                                      ref
+                                              .read(
+                                                selectedConfigsProvider
+                                                    .notifier,
+                                              )
+                                              .state =
+                                          current;
+                                    },
+                                  ),
+                                  const SizedBox(height: 32),
+                                  _FilterSection(
+                                    title: 'AREA (SQ FT)',
+                                    options: areaOptions,
+                                    selectedOptions: selectedAreas,
+                                    onToggle: (val) {
+                                      final current = List<String>.from(
+                                        ref.read(selectedAreasProvider),
+                                      );
+                                      if (current.contains(val))
+                                        current.remove(val);
+                                      else
+                                        current.add(val);
+                                      ref
+                                              .read(
+                                                selectedAreasProvider.notifier,
+                                              )
+                                              .state =
+                                          current;
+                                    },
+                                  ),
+                                  const SizedBox(height: 32),
+                                  _FilterSection(
+                                    title: 'PROPERTY TYPE',
+                                    options: const [
+                                      "RESIDENTIAL",
+                                      "COMMERCIAL",
+                                    ],
+                                    selectedOptions: selectedTypes,
+                                    onToggle: (val) {
+                                      final current = List<String>.from(
+                                        ref.read(selectedTypesProvider),
+                                      );
+                                      if (current.contains(val))
+                                        current.remove(val);
+                                      else
+                                        current.add(val);
+                                      ref
+                                              .read(
+                                                selectedTypesProvider.notifier,
+                                              )
+                                              .state =
+                                          current;
+                                    },
+                                  ),
+                                  const SizedBox(height: 8),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            24,
+                            12,
+                            24,
+                            12 + MediaQuery.of(context).padding.bottom,
+                          ),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 64,
+                            child: ElevatedButton(
+                              onPressed: () => Navigator.pop(context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isDark
+                                    ? Colors.white
+                                    : Color(0xFF0C312B),
+                                foregroundColor: isDark
+                                    ? Colors.black
+                                    : const Color(0xFFF4EFE3),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              child: Text(
+                                'APPLY SEARCH MATRIX',
+                                style: GoogleFonts.gelasio(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
                             ),
-                            fixedSize: const Size(40, 40),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: Consumer(
-                      builder: (context, ref, child) {
-                        final selectedLocs = ref.watch(
-                          selectedLocationsProvider,
-                        );
-                        final selectedConfigs = ref.watch(
-                          selectedConfigsProvider,
-                        );
-                        final selectedAreas = ref.watch(selectedAreasProvider);
-                        final selectedTypes = ref.watch(selectedTypesProvider);
-
-                        return ListView(
-                          padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-                          children: [
-                            _FilterSection(
-                              title: 'LOCATION',
-                              options: locationOptions,
-                              selectedOptions: selectedLocs,
-                              onToggle: (val) {
-                                final current = List<String>.from(
-                                  ref.read(selectedLocationsProvider),
-                                );
-                                if (current.contains(val))
-                                  current.remove(val);
-                                else
-                                  current.add(val);
-                                ref
-                                        .read(
-                                          selectedLocationsProvider.notifier,
-                                        )
-                                        .state =
-                                    current;
-                              },
-                            ),
-                            const SizedBox(height: 32),
-                            _FilterSection(
-                              title: 'CONFIGURATION',
-                              options: configOptions,
-                              selectedOptions: selectedConfigs,
-                              onToggle: (val) {
-                                final current = List<String>.from(
-                                  ref.read(selectedConfigsProvider),
-                                );
-                                if (current.contains(val))
-                                  current.remove(val);
-                                else
-                                  current.add(val);
-                                ref
-                                        .read(selectedConfigsProvider.notifier)
-                                        .state =
-                                    current;
-                              },
-                            ),
-                            const SizedBox(height: 32),
-                            _FilterSection(
-                              title: 'AREA (SQ FT)',
-                              options: areaOptions,
-                              selectedOptions: selectedAreas,
-                              onToggle: (val) {
-                                final current = List<String>.from(
-                                  ref.read(selectedAreasProvider),
-                                );
-                                if (current.contains(val))
-                                  current.remove(val);
-                                else
-                                  current.add(val);
-                                ref.read(selectedAreasProvider.notifier).state =
-                                    current;
-                              },
-                            ),
-                            const SizedBox(height: 32),
-                            _FilterSection(
-                              title: 'PROPERTY TYPE',
-                              options: const ["RESIDENTIAL", "COMMERCIAL"],
-                              selectedOptions: selectedTypes,
-                              onToggle: (val) {
-                                final current = List<String>.from(
-                                  ref.read(selectedTypesProvider),
-                                );
-                                if (current.contains(val))
-                                  current.remove(val);
-                                else
-                                  current.add(val);
-                                ref.read(selectedTypesProvider.notifier).state =
-                                    current;
-                              },
-                            ),
-                            const SizedBox(height: 8),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      24,
-                      12,
-                      24,
-                      12 + MediaQuery.of(context).padding.bottom,
-                    ),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 64,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
-                          foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: Text(
-                          'APPLY SEARCH MATRIX',
-                          style: GoogleFonts.gelasio(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
+                  );
                 },
               ),
             );
@@ -345,7 +381,9 @@ class ProjectListScreen extends ConsumerWidget {
                                 }
                                 if (cpCatalogMode) {
                                   ref
-                                          .read(cpNavigationIndexProvider.notifier)
+                                          .read(
+                                            cpNavigationIndexProvider.notifier,
+                                          )
                                           .state =
                                       0;
                                 } else {
@@ -354,14 +392,21 @@ class ProjectListScreen extends ConsumerWidget {
                                   // simply ignored, so setting all is safe — and the
                                   // investor one was missing, which broke back on
                                   // the investor Properties tab.
-                                  ref.read(navigationProvider.notifier).state = 0;
-                                  ref.read(guestNavigationProvider.notifier).state =
+                                  ref.read(navigationProvider.notifier).state =
                                       0;
                                   ref
-                                      .read(
-                                        investorNavigationIndexProvider.notifier,
-                                      )
-                                      .state = 0;
+                                          .read(
+                                            guestNavigationProvider.notifier,
+                                          )
+                                          .state =
+                                      0;
+                                  ref
+                                          .read(
+                                            investorNavigationIndexProvider
+                                                .notifier,
+                                          )
+                                          .state =
+                                      0;
                                 }
                               },
                               borderRadius: BorderRadius.circular(12),
@@ -372,17 +417,25 @@ class ProjectListScreen extends ConsumerWidget {
                                 height: 40,
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                  color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                      .withOpacity(0.05),
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : Color(0xFF0C312B))
+                                          .withOpacity(0.05),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                        .withOpacity(0.08),
+                                    color:
+                                        (isDark
+                                                ? Colors.white
+                                                : Color(0xFF0C312B))
+                                            .withOpacity(0.08),
                                   ),
                                 ),
                                 child: Icon(
                                   LucideIcons.arrowLeft,
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   size: 18,
                                 ),
                               ),
@@ -415,9 +468,10 @@ class ProjectListScreen extends ConsumerWidget {
                                       style: GoogleFonts.gelasio(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w700,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurface.withOpacity(0.72),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withOpacity(0.72),
                                         letterSpacing: 1.5,
                                       ),
                                     ),
@@ -429,9 +483,10 @@ class ProjectListScreen extends ConsumerWidget {
                                       style: GoogleFonts.gelasio(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w700,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurface.withOpacity(0.72),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withOpacity(0.72),
                                         letterSpacing: 2,
                                       ),
                                     ),
@@ -465,7 +520,6 @@ class ProjectListScreen extends ConsumerWidget {
                           // Web parity: filter icon (light rounded square) to the
                           // left of the view toggle. Opens the REFINE SEARCH sheet.
                           // Guest has no refine-search filter; CP and investor keep it.
-
                           if (!guestMode) ...[
                             GestureDetector(
                               behavior: HitTestBehavior.opaque,
@@ -475,17 +529,25 @@ class ProjectListScreen extends ConsumerWidget {
                                 height: 40,
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                  color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                      .withOpacity(0.05),
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : Color(0xFF0C312B))
+                                          .withOpacity(0.05),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                        .withOpacity(0.08),
+                                    color:
+                                        (isDark
+                                                ? Colors.white
+                                                : Color(0xFF0C312B))
+                                            .withOpacity(0.08),
                                   ),
                                 ),
                                 child: Icon(
                                   LucideIcons.slidersHorizontal,
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   size: 18,
                                 ),
                               ),
@@ -502,8 +564,9 @@ class ProjectListScreen extends ConsumerWidget {
                               // No outline on the toggle: the soft fill alone
                               // holds the pair together.
                               decoration: BoxDecoration(
-                                color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                    .withOpacity(0.05),
+                                color:
+                                    (isDark ? Colors.white : Color(0xFF0C312B))
+                                        .withOpacity(0.05),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -515,7 +578,10 @@ class ProjectListScreen extends ConsumerWidget {
                                     isDark: isDark,
                                     onTap: () =>
                                         ref
-                                                .read(projectLayoutProvider.notifier)
+                                                .read(
+                                                  projectLayoutProvider
+                                                      .notifier,
+                                                )
                                                 .state =
                                             true,
                                   ),
@@ -526,7 +592,10 @@ class ProjectListScreen extends ConsumerWidget {
                                     isDark: isDark,
                                     onTap: () =>
                                         ref
-                                                .read(projectLayoutProvider.notifier)
+                                                .read(
+                                                  projectLayoutProvider
+                                                      .notifier,
+                                                )
                                                 .state =
                                             false,
                                   ),
@@ -539,7 +608,7 @@ class ProjectListScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-    
+
                 // 🎛️ Pill Tabs
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 24),
@@ -563,7 +632,9 @@ class ProjectListScreen extends ConsumerWidget {
                     ),
                   ),
                   child: Row(
-                    children: ['Ongoing', 'Upcoming', 'Completed'].map((filter) {
+                    children: ['Ongoing', 'Upcoming', 'Completed'].map((
+                      filter,
+                    ) {
                       final isSelected = currentFilter == filter;
                       return Expanded(
                         child: GestureDetector(
@@ -635,171 +706,187 @@ class ProjectListScreen extends ConsumerWidget {
                     }).toList(),
                   ),
                 ),
-    
+
                 const SizedBox(height: 24),
-    
+
                 // 🏙️ Project List
                 Expanded(
                   child: Stack(
                     children: [
                       projectsAsync.when(
-                    data: (projects) => ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(
-                        24,
-                        0,
-                        24,
-                        120,
-                      ), // Bottom padding for shell nav
-                      itemCount: filteredProjects.length,
-                      itemBuilder: (context, index) {
-                        final project = filteredProjects[index];
-                        final projectId = project['_id']?.toString() ?? '';
-                        // Thumbnail source, in order of preference. `heroImages`
-                        // is empty on every record the catalog returns, so on its
-                        // own every card fell through to one shared stock photo -
-                        // which is why the list showed the same building three
-                        // times. Fall through the project's own galleries first so
-                        // each card shows its own building.
-                        String? firstOf(String key) {
-                          final v = project[key];
-                          if (v is List && v.isNotEmpty) {
-                            final f = v.first;
-                            final str = f is Map
-                                ? (f['url'] ?? f['image'] ?? '').toString()
-                                : f.toString();
-                            return str.isEmpty ? null : str;
-                          }
-                          return null;
-                        }
+                        data: (projects) => ListView.builder(
+                          padding: const EdgeInsets.fromLTRB(
+                            24,
+                            0,
+                            24,
+                            120,
+                          ), // Bottom padding for shell nav
+                          itemCount: filteredProjects.length,
+                          itemBuilder: (context, index) {
+                            final project = filteredProjects[index];
+                            final projectId = project['_id']?.toString() ?? '';
+                            // Thumbnail source, in order of preference. `heroImages`
+                            // is empty on every record the catalog returns, so on its
+                            // own every card fell through to one shared stock photo -
+                            // which is why the list showed the same building three
+                            // times. Fall through the project's own galleries first so
+                            // each card shows its own building.
+                            String? firstOf(String key) {
+                              final v = project[key];
+                              if (v is List && v.isNotEmpty) {
+                                final f = v.first;
+                                final str = f is Map
+                                    ? (f['url'] ?? f['image'] ?? '').toString()
+                                    : f.toString();
+                                return str.isEmpty ? null : str;
+                              }
+                              return null;
+                            }
 
-                        final rawHero =
-                            firstOf('heroImages') ??
-                            firstOf('exteriorImages') ??
-                            firstOf('interiorImages') ??
-                            firstOf('media');
-                        final imageUrl = (rawHero == null || rawHero.isEmpty)
-                            ? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'
-                            : apiClient.resolveUrl(rawHero);
-                        return GestureDetector(
-                          onTap: () {
-                            if (projectId.isEmpty) return;
-                            if (cpCatalogMode) {
-                              final map = project is Map<String, dynamic>
-                                  ? project as Map<String, dynamic>
-                                  : Map<String, dynamic>.from(project as Map);
-                              context.push('/cp/projects/$projectId', extra: map);
-                              return;
-                            }
-                            final authState = ref.read(authProvider);
-                            if (authState.status == AuthStatus.authenticated) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProjectDetailScreen(
-                                    projectId: projectId,
-                                    projectData: project,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => GuestProjectDetailScreen(
-                                    projectId: projectId,
-                                    projectData: project,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          child: isGridView
-                              ? _ProjectGridItem(
-                                  project: project,
-                                  imageUrl: imageUrl,
-                                )
-                              : _ProjectListRowItem(
-                                  project: project,
-                                  imageUrl: imageUrl,
-                                ),
-                        );
-                      },
-                    ),
-                    loading: () => Center(
-                      child: CircularProgressIndicator(color: M4Theme.premiumBlue),
-                    ),
-                    error: (e, s) {
-                      final isDark =
-                          Theme.of(context).brightness == Brightness.dark;
-                      final onSurface = isDark ? Colors.white : Color(0xFF0C312B);
-                      final msg = e.toString().toLowerCase();
-                      final isTimeout =
-                          msg.contains('timeout') || msg.contains('connection');
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(32),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                LucideIcons.wifiOff,
-                                size: 38,
-                                color: onSurface.withOpacity(0.3),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                isTimeout
-                                    ? 'TAKING LONGER THAN USUAL'
-                                    : "COULDN'T LOAD PROPERTIES",
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.inter(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: onSurface,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                isTimeout
-                                    ? 'The server may be waking up. Please try again.'
-                                    : 'Please check your connection and try again.',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.inter(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
-                                  color: onSurface.withOpacity(0.5),
-                                  height: 1.5,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              GestureDetector(
-                                onTap: () => ref.invalidate(projectsProvider),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 28,
-                                    vertical: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: onSurface,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    'RETRY',
-                                    style: GoogleFonts.gelasio(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
-                                      letterSpacing: 1.5,
+                            final rawHero =
+                                firstOf('heroImages') ??
+                                firstOf('exteriorImages') ??
+                                firstOf('interiorImages') ??
+                                firstOf('media');
+                            final imageUrl =
+                                (rawHero == null || rawHero.isEmpty)
+                                ? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'
+                                : apiClient.resolveUrl(rawHero);
+                            return GestureDetector(
+                              onTap: () {
+                                if (projectId.isEmpty) return;
+                                if (cpCatalogMode) {
+                                  final map = project is Map<String, dynamic>
+                                      ? project as Map<String, dynamic>
+                                      : Map<String, dynamic>.from(
+                                          project as Map,
+                                        );
+                                  context.push(
+                                    '/cp/projects/$projectId',
+                                    extra: map,
+                                  );
+                                  return;
+                                }
+                                final authState = ref.read(authProvider);
+                                if (authState.status ==
+                                    AuthStatus.authenticated) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProjectDetailScreen(
+                                        projectId: projectId,
+                                        projectData: project,
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                                  );
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          GuestProjectDetailScreen(
+                                            projectId: projectId,
+                                            projectData: project,
+                                          ),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: isGridView
+                                  ? _ProjectGridItem(
+                                      project: project,
+                                      imageUrl: imageUrl,
+                                    )
+                                  : _ProjectListRowItem(
+                                      project: project,
+                                      imageUrl: imageUrl,
+                                    ),
+                            );
+                          },
+                        ),
+                        loading: () => Center(
+                          child: CircularProgressIndicator(
+                            color: M4Theme.premiumBlue,
                           ),
                         ),
-                      );
-                    },
+                        error: (e, s) {
+                          final isDark =
+                              Theme.of(context).brightness == Brightness.dark;
+                          final onSurface = isDark
+                              ? Colors.white
+                              : Color(0xFF0C312B);
+                          final msg = e.toString().toLowerCase();
+                          final isTimeout =
+                              msg.contains('timeout') ||
+                              msg.contains('connection');
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(32),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    LucideIcons.wifiOff,
+                                    size: 38,
+                                    color: onSurface.withOpacity(0.3),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    isTimeout
+                                        ? 'TAKING LONGER THAN USUAL'
+                                        : "COULDN'T LOAD PROPERTIES",
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: onSurface,
+                                      letterSpacing: 1,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    isTimeout
+                                        ? 'The server may be waking up. Please try again.'
+                                        : 'Please check your connection and try again.',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                      color: onSurface.withOpacity(0.5),
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  GestureDetector(
+                                    onTap: () =>
+                                        ref.invalidate(projectsProvider),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 28,
+                                        vertical: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: onSurface,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Text(
+                                        'RETRY',
+                                        style: GoogleFonts.gelasio(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w700,
+                                          color: isDark
+                                              ? const Color(0xFF0C312B)
+                                              : const Color(0xFFF4EFE3),
+                                          letterSpacing: 1.5,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -997,9 +1084,8 @@ class _ProjectListRowItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.transparent : Color(0xFF163A2C)).withOpacity(
-              isDark ? 0.3 : 0.04,
-            ),
+            color: (isDark ? Colors.transparent : Color(0xFF163A2C))
+                .withOpacity(isDark ? 0.3 : 0.04),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -1192,7 +1278,7 @@ class _FilterSection extends StatelessWidget {
                     fontSize: 9,
                     fontWeight: FontWeight.w600,
                     color: isSelected
-                        ? (isDarkMode ? Colors.black : Colors.white)
+                        ? (isDarkMode ? const Color(0xFF0C312B) : Colors.white)
                         : onSurface.withOpacity(0.85),
                     letterSpacing: 1,
                   ),

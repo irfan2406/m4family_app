@@ -384,7 +384,9 @@ class _CpProfileSettingsScreenState
                         color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withValues(alpha: 0.2),
                       ),
-                      foregroundColor: isDark ? Colors.white : Color(0xFF0C312B),
+                      foregroundColor: isDark
+                          ? Colors.white
+                          : Color(0xFF0C312B),
                     ),
                     child: Text(
                       'CANCEL',
@@ -400,8 +402,12 @@ class _CpProfileSettingsScreenState
                   child: FilledButton(
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
-                      foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      backgroundColor: isDark
+                          ? Colors.white
+                          : Color(0xFF0C312B),
+                      foregroundColor: isDark
+                          ? Colors.black
+                          : const Color(0xFFF4EFE3),
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),

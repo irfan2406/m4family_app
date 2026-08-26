@@ -174,7 +174,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         _progress = [
           {
             'phaseName': 'Foundation',
-            'status': done ? 'Completed' : (started ? 'In Progress' : 'Upcoming'),
+            'status': done
+                ? 'Completed'
+                : (started ? 'In Progress' : 'Upcoming'),
             'progressPercent': pct,
             'phaseOrder': 1,
             'images': imgs,
@@ -315,9 +317,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           backgroundColor: const Color(0xFF163A2C),
           duration: const Duration(milliseconds: 1100),
           behavior: SnackBarBehavior.fixed,
-          content: Text(
-            next ? 'Saved to favorites' : 'Removed from favorites',
-          ),
+          content: Text(next ? 'Saved to favorites' : 'Removed from favorites'),
         ),
       );
     // 3) Persist in the background (UI + toast already reflect the change).
@@ -628,7 +628,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withValues(alpha: 0.2),
                       ),
-                      foregroundColor: isDark ? Colors.white : Color(0xFF0C312B),
+                      foregroundColor: isDark
+                          ? Colors.white
+                          : Color(0xFF0C312B),
                     ),
                     child: Text(
                       'CANCEL',
@@ -644,8 +646,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   child: FilledButton(
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
-                      foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      backgroundColor: isDark
+                          ? Colors.white
+                          : Color(0xFF0C312B),
+                      foregroundColor: isDark
+                          ? Colors.black
+                          : const Color(0xFFF4EFE3),
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -1290,7 +1296,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     shadows: const [
                       Shadow(
                         blurRadius: 6,
-                        color: Colors.black,
+                        color: const Color(0xFF0C312B),
                         offset: Offset(0, 2),
                       ),
                     ],
@@ -1350,11 +1356,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         BlendMode.multiply,
                       ),
                       child: Image.asset(
-                      'assets/360-vr.png',
-                      fit: BoxFit.contain,
+                        'assets/360-vr.png',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
-                    ),
                 ),
               ),
               const SizedBox(height: 3),
@@ -1612,10 +1618,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     if (list.isEmpty) {
       return Text(
         'No amenities listed',
-        style: GoogleFonts.inter(
-          color: scheme.onSurfaceVariant,
-          fontSize: 11,
-        ),
+        style: GoogleFonts.inter(color: scheme.onSurfaceVariant, fontSize: 11),
       );
     }
     // A Wrap sizes each item to its OWN content height (icon + label) and flows
@@ -1700,12 +1703,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   const SizedBox(height: 8),
                   Text(
                     est.replaceAll(' ', '\n'),
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.gelasio(
                       fontSize: 46,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -1.5,
                       height: 1.02,
-                      color: isLight ? const Color(0xFF0C312B) : scheme.onSurface,
+                      color: isLight
+                          ? const Color(0xFF0C312B)
+                          : scheme.onSurface,
                     ),
                   ),
                 ],
@@ -1738,11 +1743,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     children: [
                       Text(
                         '$pct%',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.gelasio(
                           fontSize: 22,
                           fontWeight: FontWeight.w600,
                           // Was inheriting the theme's navy — force dark.
-                          color: isLight ? const Color(0xFF0C312B) : scheme.onSurface,
+                          color: isLight
+                              ? const Color(0xFF0C312B)
+                              : scheme.onSurface,
                         ),
                       ),
                       Text(
@@ -2043,7 +2050,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       children: [
         Text(
           '2026',
-          style: GoogleFonts.inter(
+          style: GoogleFonts.gelasio(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             color: accent,
@@ -2315,7 +2322,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           DropdownButtonFormField<String>(
             initialValue: _regEmployeeId,
             isExpanded: true,
-            dropdownColor: isLight ? const Color(0xFFF4EFE3) : const Color(0xFF141B3A),
+            dropdownColor: isLight
+                ? const Color(0xFFF4EFE3)
+                : const Color(0xFF141B3A),
             borderRadius: BorderRadius.circular(16),
             elevation: 4,
             iconEnabledColor: scheme.onSurface.withValues(alpha: 0.55),
@@ -2579,18 +2588,17 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   }
 
   Widget _videoCallSheet(ColorScheme scheme) {
-
     final isLight = scheme.brightness == Brightness.light;
     final btnBg = isLight ? const Color(0xFF0C312B) : Colors.white;
     final btnFg = isLight ? Colors.white : Colors.black;
     // M4 deep green, not black, on the light surfaces.
     final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     final media = MediaQuery.of(context);
-    // Clear the floating bottom nav (the sheet used to butt straight into it),
-    // and ride up with the keyboard when a field is focused.
-    final bottomGap = media.viewInsets.bottom > 0
-        ? media.viewInsets.bottom + 12
-        : 96.0;
+    // The Scaffold already lifts the body above the keyboard
+    // (resizeToAvoidBottomInset defaults to true), so adding viewInsets here
+    // raised the sheet by a second keyboard-height — it floated near the top
+    // and the 70% height cap clipped the form mid-way. Just a gutter now.
+    final bottomGap = media.viewInsets.bottom > 0 ? 12.0 : 96.0;
     return Positioned.fill(
       child: Material(
         color: Colors.black.withValues(alpha: 0.45),
@@ -2907,7 +2915,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             fontWeight: FontWeight.w600,
             letterSpacing: 1,
             color: selected
-                ? (isLight ? Colors.white : Colors.black)
+                ? (isLight ? Colors.white : const Color(0xFF0C312B))
                 : scheme.onSurface,
           ),
         ),

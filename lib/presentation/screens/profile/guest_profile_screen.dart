@@ -285,7 +285,9 @@ class _InfoTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.03),
+        color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+          alpha: 0.03,
+        ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark

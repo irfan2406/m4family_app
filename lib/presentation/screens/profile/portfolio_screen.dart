@@ -227,7 +227,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   Widget _buildSummaryCard(bool isDark) {
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -325,7 +327,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   Widget _buildHoldingCard(dynamic holding, bool isDark) {
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -384,9 +388,8 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            (isDark ? Colors.black : const Color(0xFFF4EFE3)).withValues(
-                              alpha: 0.9,
-                            ),
+                            (isDark ? Colors.black : const Color(0xFFF4EFE3))
+                                .withValues(alpha: 0.9),
                           ],
                         ),
                       ),
@@ -496,7 +499,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                             style: GoogleFonts.gelasio(
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
-                              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                              color: isDark
+                                  ? const Color(0xFF0C312B)
+                                  : const Color(0xFFF4EFE3),
                               letterSpacing: 2,
                             ),
                           ),
@@ -504,7 +509,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                           Icon(
                             LucideIcons.maximize2,
                             size: 14,
-                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            color: isDark
+                                ? const Color(0xFF0C312B)
+                                : const Color(0xFFF4EFE3),
                           ),
                         ],
                       ),
@@ -520,16 +527,17 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   }
 
   Widget _buildImage(String? url, bool isDark) {
-    final placeholderBg = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-      alpha: 0.05,
-    );
+    final placeholderBg = (isDark ? Colors.white : Color(0xFF0C312B))
+        .withValues(alpha: 0.05);
     if (url == null || url.isEmpty) {
       return Container(
         color: placeholderBg,
         child: Icon(
           LucideIcons.building2,
           size: 48,
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.15),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            alpha: 0.15,
+          ),
         ),
       );
     }
@@ -543,7 +551,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
         child: Icon(
           LucideIcons.building2,
           size: 48,
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.15),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            alpha: 0.15,
+          ),
         ),
       ),
     );
@@ -715,7 +725,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                                 Icon(
                                   LucideIcons.shieldCheck,
                                   size: 16,
-                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                  color: isDark
+                                      ? const Color(0xFF0C312B)
+                                      : const Color(0xFFF4EFE3),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
@@ -723,7 +735,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                                   style: GoogleFonts.gelasio(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w700,
-                                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                    color: isDark
+                                        ? const Color(0xFF0C312B)
+                                        : const Color(0xFFF4EFE3),
                                     letterSpacing: 2,
                                   ),
                                 ),
@@ -746,7 +760,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
   // ─── Empty / error states ────────────────────────────────────────────────────
   Widget _buildEmptyState(bool isDark) {
-    final faint = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.2);
+    final faint = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.2,
+    );
     return Padding(
       padding: const EdgeInsets.only(top: 48),
       child: Center(
@@ -817,7 +833,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    color: isDark
+                        ? const Color(0xFF0C312B)
+                        : const Color(0xFFF4EFE3),
                     letterSpacing: 2,
                   ),
                 ),

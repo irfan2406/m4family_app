@@ -83,7 +83,9 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   fontSize: 13,
-                  color: isDark ? Colors.white60 : const Color(0xFF0C312B).withValues(alpha: 0.78),
+                  color: isDark
+                      ? Colors.white60
+                      : const Color(0xFF0C312B).withValues(alpha: 0.78),
                 ),
               ),
               const SizedBox(height: 22),
@@ -174,137 +176,21 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
           border: Border(right: BorderSide(color: M4Drawer.border)),
         ),
         child: Stack(
-        children: [
-          // Figma glass panel: deep-green base, cream bloom through
-          // the middle, blue bloom low down, #0B0000 10% veil, blur 40.
-          const DrawerGlass(),
-          SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
-                  child: Row(
-                    children: [
-                      Text(
-                        'PARTNER MENU',
-                        style: GoogleFonts.gelasio(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 2,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Main Menu
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: [
-                      // Web parity (CPSidebar.tsx menuItems order): Dashboard,
-                      // Profile, Notifications, Properties, Custom Views,
-                      // Content Hub, Communities, Bookings, Support Hub.
-                      _SidebarItem(
-                        icon: LucideIcons.home,
-                        label: 'Dashboard',
-                        isActive: idx == 0,
-                        onTap: () => _setTab(0),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.users,
-                        label: 'Profile',
-                        isActive: idx == 4,
-                        onTap: () => _setTab(4),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.bell,
-                        label: 'Notifications',
-                        isActive: false,
-                        onTap: () => _go('/notifications'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.layoutGrid,
-                        label: 'Properties',
-                        isActive: idx == 2,
-                        onTap: () => _setTab(2),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.sparkles,
-                        label: 'Custom Views',
-                        isActive: false,
-                        onTap: () => _go('/cp/custom-views'),
-                      ),
-
-                      Theme(
-                        data: Theme.of(
-                          context,
-                        ).copyWith(dividerColor: Colors.transparent),
-                        child: ExpansionTile(
-                          iconColor: const Color(0xFFF4EFE3),
-                          collapsedIconColor: const Color(0xFFF4EFE3),
-                          onExpansionChanged: (_) {},
-                          tilePadding: EdgeInsets.zero,
-                          title: _SidebarItem(
-                            icon: LucideIcons.sparkles,
-                            label: 'Content Hub',
-                            isActive: false,
-                          ),
-                          // Web parity: sub-items navigate to their own routes
-                          // (/cp/media, /cp/highlights, /cp/events, /cp/blog) —
-                          // there is no Content Hub tab in the CP shell, so the
-                          // old setTab(9) crashed (index out of range).
-                          children: [
-                            _SubItem(
-                              label: 'Media',
-                              onTap: () => _go('/cp/media'),
-                            ),
-                            _SubItem(
-                              label: 'Highlights',
-                              onTap: () => _go('/cp/highlights'),
-                            ),
-                            _SubItem(
-                              label: 'Events',
-                              onTap: () => _go('/cp/events'),
-                            ),
-                            _SubItem(
-                              label: 'Blog',
-                              onTap: () => _go('/cp/blog'),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      _SidebarItem(
-                        icon: LucideIcons.building2,
-                        label: 'Communities',
-                        isActive: false,
-                        onTap: () => _go('/communities'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.calendar,
-                        label: 'Bookings',
-                        isActive: false,
-                        onTap: () => _go('/cp/booking/my-bookings'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.headphones,
-                        label: 'Support Hub',
-                        isActive: idx == 3,
-                        onTap: () => _setTab(3),
-                      ),
-
-                      const SizedBox(height: 24),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 8,
-                        ),
-                        child: Text(
-                          'QUICK ACTIONS',
+          children: [
+            // Figma glass panel: deep-green base, cream bloom through
+            // the middle, blue bloom low down, #0B0000 10% veil, blur 40.
+            const DrawerGlass(),
+            SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
+                    child: Row(
+                      children: [
+                        Text(
+                          'PARTNER MENU',
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
@@ -312,81 +198,197 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                             color: Colors.white,
                           ),
                         ),
-                      ),
-
-                      _SidebarItem(
-                        icon: LucideIcons.mail,
-                        label: 'Enquiry',
-                        isActive: false,
-                        // Opens the "Register Interest" form (same fields and
-                        // design as the web home #interest-form section).
-                        onTap: () => _go('/cp/booking/inquiry'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.phone,
-                        label: 'Call',
-                        isActive: false,
-                        onTap: () {
-                          _close();
-                          SupportHandlers.launchCall();
-                        },
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.messageSquare,
-                        label: 'Whatsapp',
-                        isActive: false,
-                        onTap: () {
-                          _close();
-                          SupportHandlers.launchWhatsApp();
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
-                // Logout
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: GestureDetector(
-                    onTap: _confirmLogout,
-                    child: Container(
-                      height: 56,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        // Web parity: bg-red-50 (light) / red-900/10 (dark).
-                        color: isDark
-                            ? const Color(0xFFC65B46).withOpacity(0.1)
-                            : const Color(0xFFF4EFE3),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            LucideIcons.logOut,
-                            size: 18,
-                            color: const Color(0xFFC65B46),
+                  // Main Menu
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        // Web parity (CPSidebar.tsx menuItems order): Dashboard,
+                        // Profile, Notifications, Properties, Custom Views,
+                        // Content Hub, Communities, Bookings, Support Hub.
+                        _SidebarItem(
+                          icon: LucideIcons.home,
+                          label: 'Dashboard',
+                          isActive: idx == 0,
+                          onTap: () => _setTab(0),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.users,
+                          label: 'Profile',
+                          isActive: idx == 4,
+                          onTap: () => _setTab(4),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.bell,
+                          label: 'Notifications',
+                          isActive: false,
+                          onTap: () => _go('/notifications'),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.layoutGrid,
+                          label: 'Properties',
+                          isActive: idx == 2,
+                          onTap: () => _setTab(2),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.sparkles,
+                          label: 'Custom Views',
+                          isActive: false,
+                          onTap: () => _go('/cp/custom-views'),
+                        ),
+
+                        Theme(
+                          data: Theme.of(
+                            context,
+                          ).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            iconColor: const Color(0xFFF4EFE3),
+                            collapsedIconColor: const Color(0xFFF4EFE3),
+                            onExpansionChanged: (_) {},
+                            tilePadding: EdgeInsets.zero,
+                            title: _SidebarItem(
+                              icon: LucideIcons.sparkles,
+                              label: 'Content Hub',
+                              isActive: false,
+                            ),
+                            // Web parity: sub-items navigate to their own routes
+                            // (/cp/media, /cp/highlights, /cp/events, /cp/blog) —
+                            // there is no Content Hub tab in the CP shell, so the
+                            // old setTab(9) crashed (index out of range).
+                            children: [
+                              _SubItem(
+                                label: 'Media',
+                                onTap: () => _go('/cp/media'),
+                              ),
+                              _SubItem(
+                                label: 'Highlights',
+                                onTap: () => _go('/cp/highlights'),
+                              ),
+                              _SubItem(
+                                label: 'Events',
+                                onTap: () => _go('/cp/events'),
+                              ),
+                              _SubItem(
+                                label: 'Blog',
+                                onTap: () => _go('/cp/blog'),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 10),
-                          Text(
-                            'LOGOUT',
+                        ),
+
+                        _SidebarItem(
+                          icon: LucideIcons.building2,
+                          label: 'Communities',
+                          isActive: false,
+                          onTap: () => _go('/communities'),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.calendar,
+                          label: 'Bookings',
+                          isActive: false,
+                          onTap: () => _go('/cp/booking/my-bookings'),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.headphones,
+                          label: 'Support Hub',
+                          isActive: idx == 3,
+                          onTap: () => _setTab(3),
+                        ),
+
+                        const SizedBox(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 8,
+                          ),
+                          child: Text(
+                            'QUICK ACTIONS',
                             style: GoogleFonts.gelasio(
-                              fontSize: 12,
+                              fontSize: 10,
                               fontWeight: FontWeight.w700,
-                              letterSpacing: 1.5,
-                              color: const Color(0xFFC65B46),
+                              letterSpacing: 2,
+                              color: Colors.white,
                             ),
                           ),
-                        ],
+                        ),
+
+                        _SidebarItem(
+                          icon: LucideIcons.mail,
+                          label: 'Enquiry',
+                          isActive: false,
+                          // Opens the "Register Interest" form (same fields and
+                          // design as the web home #interest-form section).
+                          onTap: () => _go('/cp/booking/inquiry'),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.phone,
+                          label: 'Call',
+                          isActive: false,
+                          onTap: () {
+                            _close();
+                            SupportHandlers.launchCall();
+                          },
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.messageSquare,
+                          label: 'Whatsapp',
+                          isActive: false,
+                          onTap: () {
+                            _close();
+                            SupportHandlers.launchWhatsApp();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Logout
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: GestureDetector(
+                      onTap: _confirmLogout,
+                      child: Container(
+                        height: 56,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          // Web parity: bg-red-50 (light) / red-900/10 (dark).
+                          color: isDark
+                              ? const Color(0xFFC65B46).withOpacity(0.1)
+                              : const Color(0xFFF4EFE3),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              LucideIcons.logOut,
+                              size: 18,
+                              color: const Color(0xFFC65B46),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'LOGOUT',
+                              style: GoogleFonts.gelasio(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.5,
+                                color: const Color(0xFFC65B46),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
@@ -407,12 +409,8 @@ class _SidebarItem extends StatelessWidget {
 
   // Rendering is M4DrawerTile — the one row every portal uses.
   @override
-  Widget build(BuildContext context) => M4DrawerTile(
-    icon: icon,
-    label: label,
-    isActive: isActive,
-    onTap: onTap,
-  );
+  Widget build(BuildContext context) =>
+      M4DrawerTile(icon: icon, label: label, isActive: isActive, onTap: onTap);
 }
 
 class _SubItem extends StatelessWidget {
@@ -435,14 +433,11 @@ class _SubItem extends StatelessWidget {
               width: 28,
               height: 28,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.05),
+                color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
+                    .withOpacity(0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
-                LucideIcons.logIn,
-                size: 14,
-                color: isDark ? Colors.white70 : Color(0xFF155A4F),
-              ),
+              child: Icon(LucideIcons.logIn, size: 14, color: Colors.white),
             ),
             const SizedBox(width: 12),
             Text(

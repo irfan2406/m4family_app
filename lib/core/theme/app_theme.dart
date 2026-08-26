@@ -37,7 +37,9 @@ class M4Theme {
   // ===================================================================
   // LIGHT (:root) — CREAM
   // ===================================================================
-  static const Color lightBackground = Color(0xFFD4CFBC); // Figma cream page #D4CFBC
+  static const Color lightBackground = Color(
+    0xFFD4CFBC,
+  ); // Figma cream page #D4CFBC
   static const Color lightForeground = Color(0xFF0C312B); // Figma green ink
 
   /// Figma typography colours (M4 Web reference). Headings sit at [figmaHeading]
@@ -46,7 +48,9 @@ class M4Theme {
   /// by design and #155A4F would be unreadable on them.
   static const Color figmaHeading = Color(0xFF0C312B);
   static const Color figmaBody = Color(0xFF155A4F);
-  static const Color lightCard = Color(0xFFF4EFE3); // warm cream card (never white)
+  static const Color lightCard = Color(
+    0xFFF4EFE3,
+  ); // warm cream card (never white)
   static const Color lightPrimary = Color(0xFF15271E); // dark green fill
   static const Color lightPrimaryFg = Color(0xFFF6F1E7); // cream on dark fill
   static const Color lightSecondary = Color(0xFFEAE1D0); // cream secondary
@@ -120,10 +124,26 @@ class M4Theme {
   /// any exported transparency-checker / noise baked into it) saturates to a
   /// clean, uniform black, and the wordmark becomes pure white.
   static const ColorFilter _taglineCrush = ColorFilter.matrix(<double>[
-    -6, 0, 0, 0, 255,
-    0, -6, 0, 0, 255,
-    0, 0, -6, 0, 255,
-    0, 0, 0, 1, 0,
+    -6,
+    0,
+    0,
+    0,
+    255,
+    0,
+    -6,
+    0,
+    0,
+    255,
+    0,
+    0,
+    -6,
+    0,
+    255,
+    0,
+    0,
+    0,
+    1,
+    0,
   ]);
 
   /// The "Living the M4 Life" wordmark, recoloured to blend with the CURRENT
@@ -208,7 +228,8 @@ class M4Theme {
     ),
     checkboxTheme: CheckboxThemeData(
       fillColor: WidgetStateProperty.resolveWith(
-        (s) => s.contains(WidgetState.selected) ? forestGreen : Colors.transparent,
+        (s) =>
+            s.contains(WidgetState.selected) ? forestGreen : Colors.transparent,
       ),
       checkColor: const WidgetStatePropertyAll(cream),
       side: const BorderSide(color: forestGreen, width: 1.5),
@@ -223,7 +244,9 @@ class M4Theme {
       thumbColor: forestGreen,
       inactiveTrackColor: Color(0x33163A2C),
     ),
-    progressIndicatorTheme: const ProgressIndicatorThemeData(color: forestGreen),
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: forestGreen,
+    ),
     colorScheme:
         const ColorScheme.light(
           primary: lightPrimary,
@@ -270,8 +293,16 @@ class M4Theme {
         fontWeight: FontWeight.w600,
         color: figmaHeading,
       ),
-      bodyLarge: GoogleFonts.inter(fontSize: 17, color: figmaBody, height: 1.42),
-      bodyMedium: GoogleFonts.inter(fontSize: 15, color: figmaBody, height: 1.42),
+      bodyLarge: GoogleFonts.inter(
+        fontSize: 17,
+        color: figmaBody,
+        height: 1.42,
+      ),
+      bodyMedium: GoogleFonts.inter(
+        fontSize: 15,
+        color: figmaBody,
+        height: 1.42,
+      ),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -345,10 +376,7 @@ class M4Theme {
         fontWeight: FontWeight.w700,
         color: lightForeground,
       ),
-      contentTextStyle: GoogleFonts.inter(
-        fontSize: 15,
-        color: lightMutedFg,
-      ),
+      contentTextStyle: GoogleFonts.inter(fontSize: 15, color: lightMutedFg),
     ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: lightCard,
@@ -359,10 +387,7 @@ class M4Theme {
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: lightForeground,
-      contentTextStyle: GoogleFonts.inter(
-        color: lightPrimaryFg,
-        fontSize: 14,
-      ),
+      contentTextStyle: GoogleFonts.inter(color: lightPrimaryFg, fontSize: 14),
       actionTextColor: goldSoft,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -448,9 +473,8 @@ class M4Theme {
         (s) => s.contains(WidgetState.selected) ? cream : Colors.white54,
       ),
       trackColor: WidgetStateProperty.resolveWith(
-        (s) => s.contains(WidgetState.selected)
-            ? gold
-            : const Color(0x33FFFFFF),
+        (s) =>
+            s.contains(WidgetState.selected) ? gold : const Color(0x33FFFFFF),
       ),
     ),
     checkboxTheme: CheckboxThemeData(
@@ -494,33 +518,32 @@ class M4Theme {
           surfaceContainerHighest: darkMuted,
           onSurfaceVariant: darkMutedFg,
         ),
-    textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme)
-        .copyWith(
-          displayLarge: GoogleFonts.gelasio(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: darkForeground,
-            letterSpacing: -0.5,
-          ),
-          displayMedium: GoogleFonts.gelasio(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: darkForeground,
-            letterSpacing: -0.5,
-          ),
-          headlineMedium: GoogleFonts.gelasio(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            color: darkForeground,
-          ),
-          titleLarge: GoogleFonts.gelasio(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: darkForeground,
-          ),
-          bodyLarge: GoogleFonts.inter(fontSize: 17, color: darkForeground),
-          bodyMedium: GoogleFonts.inter(fontSize: 15, color: darkMutedFg),
-        ),
+    textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).copyWith(
+      displayLarge: GoogleFonts.gelasio(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: darkForeground,
+        letterSpacing: -0.5,
+      ),
+      displayMedium: GoogleFonts.gelasio(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        color: darkForeground,
+        letterSpacing: -0.5,
+      ),
+      headlineMedium: GoogleFonts.gelasio(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: darkForeground,
+      ),
+      titleLarge: GoogleFonts.gelasio(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: darkForeground,
+      ),
+      bodyLarge: GoogleFonts.inter(fontSize: 17, color: darkForeground),
+      bodyMedium: GoogleFonts.inter(fontSize: 15, color: darkMutedFg),
+    ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -593,10 +616,7 @@ class M4Theme {
         fontWeight: FontWeight.w700,
         color: darkForeground,
       ),
-      contentTextStyle: GoogleFonts.inter(
-        fontSize: 15,
-        color: darkMutedFg,
-      ),
+      contentTextStyle: GoogleFonts.inter(fontSize: 15, color: darkMutedFg),
     ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: darkCard,
@@ -607,10 +627,7 @@ class M4Theme {
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: darkCard,
-      contentTextStyle: GoogleFonts.inter(
-        color: darkForeground,
-        fontSize: 14,
-      ),
+      contentTextStyle: GoogleFonts.inter(color: darkForeground, fontSize: 14),
       actionTextColor: gold,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),

@@ -89,10 +89,7 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
         ),
         title: Text(
           'Wallet & history',
-          style: GoogleFonts.inter(
-            fontWeight: FontWeight.w500,
-            fontSize: 16,
-          ),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 16),
         ),
       ),
       body: _loading

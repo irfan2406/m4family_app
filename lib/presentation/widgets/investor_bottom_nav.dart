@@ -24,10 +24,6 @@ class InvestorBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return M4BottomNav(
-      icons: _icons,
-      currentIndex: currentIndex,
-      onTap: onTap,
-    );
+    return M4BottomNav(icons: _icons, currentIndex: currentIndex, onTap: onTap);
   }
 }

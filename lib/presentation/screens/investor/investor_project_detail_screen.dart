@@ -171,10 +171,7 @@ class _InvestorProjectDetailScreenState
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
+          style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold),
         ),
         backgroundColor: M4Theme.premiumBlue,
         behavior: SnackBarBehavior.floating,
@@ -196,9 +193,7 @@ class _InvestorProjectDetailScreenState
           backgroundColor: const Color(0xFF163A2C),
           duration: const Duration(milliseconds: 1100),
           behavior: SnackBarBehavior.fixed,
-          content: Text(
-            next ? 'Saved to favorites' : 'Removed from favorites',
-          ),
+          content: Text(next ? 'Saved to favorites' : 'Removed from favorites'),
         ),
       );
   }
@@ -443,7 +438,9 @@ class _InvestorProjectDetailScreenState
                             style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
-                              color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                              color: isDark
+                                  ? Colors.white38
+                                  : Color(0xFF155A4F),
                               letterSpacing: 1,
                             ),
                           ),
@@ -508,7 +505,9 @@ class _InvestorProjectDetailScreenState
                             style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
-                              color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                              color: isDark
+                                  ? Colors.white38
+                                  : Color(0xFF155A4F),
                               letterSpacing: 1,
                             ),
                           ),
@@ -554,7 +553,7 @@ class _InvestorProjectDetailScreenState
                                             fontWeight: FontWeight.w600,
                                             color: localType == t
                                                 ? (isDark
-                                                      ? Colors.black
+                                                      ? const Color(0xFF0C312B)
                                                       : Colors.white)
                                                 : (isDark
                                                       ? Colors.white38
@@ -632,7 +631,7 @@ class _InvestorProjectDetailScreenState
                                       color: scheduledAt == null
                                           ? (isDark
                                                 ? Colors.white24
-                                                : Colors.black26)
+                                                : Color(0x420C312B))
                                           : (isDark
                                                 ? Colors.white
                                                 : Color(0xFF0C312B)),
@@ -691,7 +690,9 @@ class _InvestorProjectDetailScreenState
                               hintStyle: GoogleFonts.inter(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
-                                color: isDark ? Colors.white24 : Colors.black26,
+                                color: isDark
+                                    ? Colors.white24
+                                    : Color(0x420C312B),
                                 letterSpacing: 1,
                               ),
                             ),
@@ -724,7 +725,9 @@ class _InvestorProjectDetailScreenState
                               child: Text(
                                 _submitting ? 'SUBMITTING...' : ctaLabel,
                                 style: GoogleFonts.gelasio(
-                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                  color: isDark
+                                      ? const Color(0xFF0C312B)
+                                      : const Color(0xFFF4EFE3),
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 2,
@@ -852,9 +855,8 @@ class _InvestorProjectDetailScreenState
                   Icon(
                     LucideIcons.building2,
                     size: 56,
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                      alpha: 0.3,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withValues(alpha: 0.3),
                   ),
                   const SizedBox(height: 20),
                   Text(
@@ -873,9 +875,8 @@ class _InvestorProjectDetailScreenState
                     style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                        alpha: 0.5,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withValues(alpha: 0.5),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -901,7 +902,9 @@ class _InvestorProjectDetailScreenState
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          color: isDark
+                              ? const Color(0xFF0C312B)
+                              : const Color(0xFFF4EFE3),
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -970,6 +973,7 @@ class _InvestorProjectDetailScreenState
         return Image.memory(
           bytes,
           fit: fit,
+          cacheWidth: 1080,
           gaplessPlayback: true,
           errorBuilder: (_, __, ___) => Container(color: Colors.black12),
         );
@@ -1068,17 +1072,19 @@ class _InvestorProjectDetailScreenState
                     ),
                     const SizedBox(width: 8),
                     _SquareAction(
-                      icon: _isFavorited
-                          ? Icons.favorite
-                          : LucideIcons.heart,
-                      color: _isFavorited ? Colors.red : null,
-                      onTap: _toggleFavorite,
-                    ).animate(key: ValueKey(_isFavorited)).scaleXY(
-                      begin: 0.6,
-                      end: 1.0,
-                      duration: 320.ms,
-                      curve: Curves.elasticOut,
-                    ),
+                          icon: _isFavorited
+                              ? Icons.favorite
+                              : LucideIcons.heart,
+                          color: _isFavorited ? Colors.red : null,
+                          onTap: _toggleFavorite,
+                        )
+                        .animate(key: ValueKey(_isFavorited))
+                        .scaleXY(
+                          begin: 0.6,
+                          end: 1.0,
+                          duration: 320.ms,
+                          curve: Curves.elasticOut,
+                        ),
                   ],
                 ),
               ],
@@ -1451,7 +1457,9 @@ class _InvestorProjectDetailScreenState
                                 child: Center(
                                   child: Icon(
                                     LucideIcons.layoutGrid,
-                                    color: isDark ? Colors.white : Color(0xFF0C312B),
+                                    color: isDark
+                                        ? Colors.white
+                                        : Color(0xFF0C312B),
                                     size: 28,
                                   ),
                                 ),
@@ -1469,7 +1477,9 @@ class _InvestorProjectDetailScreenState
                               style: GoogleFonts.inter(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
-                                color: isDark ? Colors.white : Color(0xFF155A4F),
+                                color: isDark
+                                    ? Colors.white
+                                    : Color(0xFF155A4F),
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -1484,7 +1494,9 @@ class _InvestorProjectDetailScreenState
                               style: GoogleFonts.inter(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
-                                color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                                color: isDark
+                                    ? Colors.white38
+                                    : Color(0xFF155A4F),
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -1688,7 +1700,9 @@ class _InvestorProjectDetailScreenState
                               style: GoogleFonts.inter(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
-                                color: isDark ? Colors.white : Color(0xFF155A4F),
+                                color: isDark
+                                    ? Colors.white
+                                    : Color(0xFF155A4F),
                                 decoration: TextDecoration.underline,
                               ),
                             ),
@@ -1709,7 +1723,9 @@ class _InvestorProjectDetailScreenState
                             child: CustomPaint(
                               painter: _DashedCirclePainter(
                                 progress: overall.toDouble() / 100,
-                                color: isDark ? Colors.white : Color(0xFF0C312B),
+                                color: isDark
+                                    ? Colors.white
+                                    : Color(0xFF0C312B),
                                 backgroundColor:
                                     (isDark ? Colors.white : Color(0xFF0C312B))
                                         .withValues(alpha: 0.22),
@@ -1725,7 +1741,9 @@ class _InvestorProjectDetailScreenState
                                 style: GoogleFonts.gelasio(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w700,
-                                  color: isDark ? Colors.white : Color(0xFF0C312B),
+                                  color: isDark
+                                      ? Colors.white
+                                      : Color(0xFF0C312B),
                                 ),
                               ),
                               Text(
@@ -1733,8 +1751,11 @@ class _InvestorProjectDetailScreenState
                                 style: GoogleFonts.inter(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
-                                  color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                      .withValues(alpha: 0.85),
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : Color(0xFF0C312B))
+                                          .withValues(alpha: 0.85),
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -1778,7 +1799,9 @@ class _InvestorProjectDetailScreenState
                                     ? const Color(0xFF0B1026)
                                     : const Color(0xFFF4EFE3),
                                 border: Border.all(
-                                  color: isDark ? Colors.white : Color(0xFF0C312B),
+                                  color: isDark
+                                      ? Colors.white
+                                      : Color(0xFF0C312B),
                                   width: 2,
                                 ),
                               ),
@@ -1849,7 +1872,9 @@ class _InvestorProjectDetailScreenState
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.03)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(24),
           // Same card frame as the guest portal phase card (subtle in dark so
           // it doesn't show as a bright edge behind the image).
@@ -2347,7 +2372,9 @@ class _InvestorProjectDetailScreenState
                                 style: GoogleFonts.inter(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
-                                  color: isDark ? Colors.white : Color(0xFF155A4F),
+                                  color: isDark
+                                      ? Colors.white
+                                      : Color(0xFF155A4F),
                                 ),
                               ),
                             ),
@@ -2365,7 +2392,9 @@ class _InvestorProjectDetailScreenState
                                   style: GoogleFonts.inter(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
-                                    color: isDark ? Colors.white : Color(0xFF155A4F),
+                                    color: isDark
+                                        ? Colors.white
+                                        : Color(0xFF155A4F),
                                     letterSpacing: 0.5,
                                   ),
                                 ),
@@ -2473,7 +2502,9 @@ class _InvestorProjectDetailScreenState
                             style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
-                              color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                              color: isDark
+                                  ? Colors.white38
+                                  : Color(0xFF155A4F),
                               letterSpacing: 1,
                             ),
                           ),
@@ -2509,7 +2540,9 @@ class _InvestorProjectDetailScreenState
                         style: GoogleFonts.gelasio(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          color: isDark
+                              ? const Color(0xFF0C312B)
+                              : const Color(0xFFF4EFE3),
                           letterSpacing: 2,
                         ),
                       ),
@@ -2598,7 +2631,9 @@ class _InvestorProjectDetailScreenState
                               style: GoogleFonts.inter(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
-                                color: isDark ? Colors.white : Color(0xFF155A4F),
+                                color: isDark
+                                    ? Colors.white
+                                    : Color(0xFF155A4F),
                                 letterSpacing: 1,
                               ),
                             ),
@@ -2663,7 +2698,9 @@ class _SquareAction extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
@@ -2790,7 +2827,9 @@ class _IconThumb extends StatelessWidget {
         width: 64,
         height: 64,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFEDE5D6),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.03)
+              : const Color(0xFFEDE5D6),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark
@@ -2865,7 +2904,9 @@ class _ActionCard extends StatelessWidget {
         height: 140,
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.03)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isDark
@@ -2945,7 +2986,9 @@ class _AssetCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -3079,7 +3122,9 @@ class _WalkthroughCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -3157,7 +3202,9 @@ class _WalkthroughCard extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 7.5,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                  color: isDark
+                      ? const Color(0xFF0C312B)
+                      : const Color(0xFFF4EFE3),
                   letterSpacing: 1.0,
                 ),
               ),
@@ -3255,7 +3302,7 @@ class _InquiryField extends StatelessWidget {
           hintStyle: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white24 : Colors.black26,
+            color: isDark ? Colors.white24 : Color(0x420C312B),
             letterSpacing: 1,
           ),
           icon: Icon(icon, size: 14, color: M4Theme.premiumBlue),

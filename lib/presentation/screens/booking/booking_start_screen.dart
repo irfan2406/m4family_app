@@ -47,7 +47,9 @@ class BookingStartScreen extends ConsumerWidget {
     ];
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
+      backgroundColor: isDark
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFD4CFBC),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -135,9 +137,8 @@ class BookingStartScreen extends ConsumerWidget {
                     'INTERESTED IN ${projectTitle.toUpperCase()}?\nCHOOSE HOW YOU\'D LIKE TO PROCEED.',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.6,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.6),
                       fontWeight: FontWeight.w700,
                       letterSpacing: 2.5,
                       height: 1.8,
@@ -216,7 +217,9 @@ class BookingStartScreen extends ConsumerWidget {
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                color: isDark ? Colors.white : Color(0xFF0C312B),
+                                color: isDark
+                                    ? Colors.white
+                                    : Color(0xFF0C312B),
                                 borderRadius: BorderRadius.circular(12),
                                 boxShadow: [
                                   BoxShadow(
@@ -228,7 +231,9 @@ class BookingStartScreen extends ConsumerWidget {
                               ),
                               child: Icon(
                                 LucideIcons.info,
-                                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                color: isDark
+                                    ? const Color(0xFF0C312B)
+                                    : const Color(0xFFF4EFE3),
                                 size: 20,
                               ),
                             ),
@@ -243,7 +248,9 @@ class BookingStartScreen extends ConsumerWidget {
                                       fontSize: 9,
                                       fontWeight: FontWeight.w600,
                                       color:
-                                          (isDark ? Colors.white : Color(0xFF0C312B))
+                                          (isDark
+                                                  ? Colors.white
+                                                  : Color(0xFF0C312B))
                                               .withOpacity(0.7),
                                       letterSpacing: 0.5,
                                       height: 1.6,
@@ -313,7 +320,9 @@ class _BookingOptionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withOpacity(0.02)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark
@@ -364,9 +373,8 @@ class _BookingOptionCard extends StatelessWidget {
                     opt['desc'],
                     style: GoogleFonts.inter(
                       fontSize: 9,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.68,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.68),
                       fontWeight: FontWeight.bold,
                       height: 1.4,
                     ),

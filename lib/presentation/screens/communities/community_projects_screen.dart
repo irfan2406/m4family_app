@@ -97,7 +97,9 @@ class _CommunityProjectsListScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     final apiClient = ref.watch(apiClientProvider);
 
     return Scaffold(
@@ -383,7 +385,10 @@ class _ProjectCard extends StatelessWidget {
               placeholder: (context, url) => Container(color: Colors.black12),
               errorWidget: (context, url, error) => Container(
                 color: Colors.black26,
-                child: const Icon(LucideIcons.alertCircle, color: Colors.white38),
+                child: const Icon(
+                  LucideIcons.alertCircle,
+                  color: Colors.white38,
+                ),
               ),
             ),
 
@@ -558,7 +563,7 @@ class _ProjectCard extends StatelessWidget {
                 ),
                 child: const Icon(
                   LucideIcons.arrowRight,
-                  color: Colors.black,
+                  color: const Color(0xFF0C312B),
                   size: 20,
                 ),
               ),
@@ -651,7 +656,9 @@ class _ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),

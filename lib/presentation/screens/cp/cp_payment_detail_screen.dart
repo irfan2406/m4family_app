@@ -122,7 +122,9 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
 
     return Scaffold(
       backgroundColor: bg,
@@ -294,7 +296,9 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
   }
 
   Widget _infoCard(bool isDark, Color textPrimary, Color muted) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -351,7 +355,9 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
   }
 
   Widget _idCard(bool isDark, Color textPrimary, Color muted, String fullId) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -381,7 +387,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
                 const SizedBox(height: 4),
                 Text(
                   fullId,
-                  style: GoogleFonts.robotoMono(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     letterSpacing: 0.5,
                     color: textPrimary,

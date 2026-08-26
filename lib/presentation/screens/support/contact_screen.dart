@@ -153,6 +153,12 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBody: true,
+      // As a tab this screen sits inside the shell's Scaffold, which already
+      // shrinks its body for the keyboard. Resizing here as well subtracted the
+      // keyboard height a second time, leaving a keyboard-sized empty band
+      // between the form and the keys. Only resize when pushed standalone,
+      // where this is the only Scaffold.
+      resizeToAvoidBottomInset: Navigator.of(context).canPop(),
       drawer: const ConditionalDrawer(),
       // Own nav pill ONLY when pushed standalone (from the menu). As a tab
       // inside GuestMainShell the shell already draws one — rendering both
@@ -175,9 +181,15 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           : SafeArea(
               bottom: false,
               child: SingleChildScrollView(
-                // Bottom room for the floating nav pill. The shell already
-                // releases its own nav reserve while the keyboard is up.
-                padding: const EdgeInsets.fromLTRB(40, 8, 40, 120),
+                // With the keyboard up the floating nav is hidden, so the
+                // 120px reserved for it turns into dead space between the last
+                // field and the keyboard. Collapse it to a small gutter.
+                padding: EdgeInsets.fromLTRB(
+                  40,
+                  8,
+                  40,
+                  MediaQuery.of(context).viewInsets.bottom > 0 ? 24 : 120,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -248,7 +260,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
               style: GoogleFonts.gelasio(
                 fontSize: 9,
                 fontWeight: FontWeight.w700,
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.68),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.68,
+                ),
                 letterSpacing: 3.5,
               ),
             ),
@@ -293,13 +307,13 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     ).animate().fadeIn(delay: 80.ms);
   }
 
-  // Was a blue→gold gradient (ShaderMask) in light mode; now solid — near-black
+  // Was a blue→gold gradient (ShaderMask) in light mode; now solid — M4 green
   // on light, white on dark so it stays readable in both.
   Widget _introText(String text, TextStyle style, bool isDark) {
     return Text(
       text,
       style: style.copyWith(
-        color: isDark ? Colors.white.withOpacity(0.9) : Colors.black,
+        color: isDark ? Colors.white.withOpacity(0.9) : const Color(0xFF0C312B),
       ),
     );
   }
@@ -388,6 +402,15 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       maxLines: maxLines,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
+      // Single-line fields advance to the next one, so filling a field brings
+      // the following field up above the keyboard instead of leaving the user
+      // to scroll. The multiline Message field keeps its newline key.
+      textInputAction: maxLines > 1
+          ? TextInputAction.newline
+          : TextInputAction.next,
+      onSubmitted: maxLines > 1
+          ? null
+          : (_) => FocusScope.of(context).nextFocus(),
       style: GoogleFonts.inter(
         color: isDark ? Colors.white : Color(0xFF155A4F),
         fontSize: 15,
@@ -402,7 +425,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           fontWeight: FontWeight.w500,
         ),
         filled: true,
-        fillColor: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
+        fillColor: isDark
+            ? Colors.white.withOpacity(0.03)
+            : const Color(0xFFF4EFE3),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20,
           vertical: 18,
@@ -415,7 +440,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0C312B), width: 1.6),
+          borderSide: BorderSide(
+            color: isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0C312B),
+            width: 1.6,
+          ),
         ),
       ),
     );
@@ -437,7 +465,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.3),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.3,
+                ),
                 width: 1.5,
               ),
             ),
@@ -456,9 +486,8 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.7,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.7),
                 ),
                 children: [
                   const TextSpan(text: "I've read and agree to the "),
@@ -593,9 +622,8 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   Text(
                     sub,
                     style: GoogleFonts.inter(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.5,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.5),
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
@@ -639,7 +667,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
+        color: isDark
+            ? Colors.white.withOpacity(0.03)
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.06),
@@ -665,12 +695,13 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                 height: 48,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withOpacity(0.05) : const Color(0xFFF4EFE3),
+                  color: isDark
+                      ? Colors.white.withOpacity(0.05)
+                      : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.08,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.08),
                   ),
                   boxShadow: isDark
                       ? null
@@ -809,7 +840,8 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         mapConfig['google_maps_url'] ??
         'https://maps.google.com/?q=M4+Aura+Heights';
     final query =
-        (mapConfig['address'] ?? 'M4 Aura Heights, Grant Road, Mumbai').toString();
+        (mapConfig['address'] ?? 'M4 Aura Heights, Grant Road, Mumbai')
+            .toString();
     return M4MapView(
       query: query,
       onOpen: () => _launchUrl(mapsUrl),
@@ -822,7 +854,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
   Widget _buildDirectContact(String email, String phone, bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
+        color: isDark
+            ? Colors.white.withOpacity(0.03)
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.06),
@@ -850,7 +884,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           Divider(
             height: 1,
             thickness: 1,
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.06),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.06,
+            ),
           ),
           _contactRow(
             icon: LucideIcons.phone,
@@ -885,12 +921,13 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                 height: 48,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withOpacity(0.05) : const Color(0xFFF4EFE3),
+                  color: isDark
+                      ? Colors.white.withOpacity(0.05)
+                      : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.08,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.08),
                   ),
                   boxShadow: isDark
                       ? null

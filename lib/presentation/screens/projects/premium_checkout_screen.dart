@@ -72,7 +72,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
         content: Text(
           'Welcome to M4 Elite! Your membership is now active.',
           style: GoogleFonts.inter(
-            color: Colors.black,
+            color: const Color(0xFF0C312B),
             fontWeight: FontWeight.w700,
             fontSize: 13,
           ),
@@ -122,8 +122,12 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
   // ─────────────────────────── STEP 1 · DETAILS ───────────────────────────
   Widget _buildDetails(bool isDark) {
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -166,7 +170,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                                   style: GoogleFonts.inter(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.black,
+                                    color: const Color(0xFF0C312B),
                                     letterSpacing: 0.5,
                                   ),
                                 ),
@@ -373,7 +377,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                       style: GoogleFonts.inter(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: const Color(0xFF0C312B),
                       ),
                     ),
                   ),
@@ -392,10 +396,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
       children: [
         const Icon(LucideIcons.checkCircle2, size: 16, color: _gold),
         const SizedBox(width: 8),
-        Text(
-          label,
-          style: GoogleFonts.inter(fontSize: 12, color: muted),
-        ),
+        Text(label, style: GoogleFonts.inter(fontSize: 12, color: muted)),
       ],
     );
   }
@@ -473,7 +474,9 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
   // ────────────────────────── STEP 2 · PROCESSING ─────────────────────────
   Widget _buildProcessing(bool isDark) {
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
 
     return Center(
           child: Column(
@@ -530,7 +533,9 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
   // ─────────────────────────── STEP 3 · SUCCESS ───────────────────────────
   Widget _buildSuccess(bool isDark) {
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -575,7 +580,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                     child: const Icon(
                       LucideIcons.checkCircle2,
                       size: 64,
-                      color: Colors.black,
+                      color: const Color(0xFF0C312B),
                     ),
                   ).animate().scale(
                     begin: const Offset(0, 0),
@@ -639,7 +644,9 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            color: isDark
+                                ? const Color(0xFF0C312B)
+                                : const Color(0xFFF4EFE3),
                           ),
                         ),
                       ),

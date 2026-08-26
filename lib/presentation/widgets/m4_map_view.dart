@@ -123,11 +123,7 @@ class _M4MapViewState extends State<M4MapView> {
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Icon(
-                      LucideIcons.externalLink,
-                      size: 12,
-                      color: ink,
-                    ),
+                    const Icon(LucideIcons.externalLink, size: 12, color: ink),
                   ],
                 ),
               ),

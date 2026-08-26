@@ -34,10 +34,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
       SnackBar(
         content: Text(
           'Checkout coming soon',
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
+          style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold),
         ),
         backgroundColor: M4Theme.premiumBlue,
         behavior: SnackBarBehavior.floating,
@@ -51,9 +48,13 @@ class PremiumUpsellScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     const subtle = Color(0xFFF4EFE3);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -262,7 +263,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                         child: const Icon(
                                           LucideIcons.check,
                                           size: 12,
-                                          color: Colors.black,
+                                          color: const Color(0xFF0C312B),
                                         ),
                                       ),
                                     ],
@@ -484,7 +485,9 @@ class _CircleAction extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : const Color(0xFFF4EFE3),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(

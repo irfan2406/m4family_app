@@ -187,14 +187,12 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.04,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.04),
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.05,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.05),
                   ),
                 ),
                 child: Row(
@@ -243,12 +241,17 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                      .withOpacity(0.05),
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : Color(0xFF0C312B))
+                                          .withOpacity(0.05),
                                   borderRadius: BorderRadius.circular(6),
                                   border: Border.all(
                                     color:
-                                        (isDark ? Colors.white : Color(0xFF0C312B))
+                                        (isDark
+                                                ? Colors.white
+                                                : Color(0xFF0C312B))
                                             .withOpacity(0.1),
                                   ),
                                 ),
@@ -256,7 +259,9 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                                   portal,
                                   style: GoogleFonts.inter(
                                     color:
-                                        (isDark ? Colors.white : Color(0xFF0C312B))
+                                        (isDark
+                                                ? Colors.white
+                                                : Color(0xFF0C312B))
                                             .withOpacity(0.72),
                                     fontSize: 8,
                                     fontWeight: FontWeight.w600,
@@ -272,8 +277,11 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                               Text(
                                 'DYNAMIC CONTENT',
                                 style: GoogleFonts.inter(
-                                  color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                      .withOpacity(0.72),
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : Color(0xFF0C312B))
+                                          .withOpacity(0.72),
                                   fontSize: 9,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 1,

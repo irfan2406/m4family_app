@@ -126,10 +126,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.inter(
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-          ),
+          style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 12),
         ),
         backgroundColor: isError ? Colors.redAccent : const Color(0xFF163A2C),
         behavior: SnackBarBehavior.floating,
@@ -163,7 +160,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             Text(
               (widget.job['department'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.68),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.68,
+                ),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
                 letterSpacing: 2,
@@ -171,7 +170,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             ),
           ],
         ),
-        backgroundColor: isDark ? const Color(0xFF0B1026) : Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: isDark
+            ? const Color(0xFF0B1026)
+            : Theme.of(context).scaffoldBackgroundColor,
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -191,14 +192,12 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.08,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.08),
                   ),
                 ),
                 child: Icon(
@@ -344,9 +343,8 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                   foregroundPainter: _DashedRRectPainter(
                     color: _resumeFile != null
                         ? (isDark ? Colors.white : Color(0xFF0C312B))
-                        : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                            0.28,
-                          ),
+                        : (isDark ? Colors.white : Color(0xFF0C312B))
+                              .withOpacity(0.28),
                     radius: 40,
                   ),
                   child: Container(
@@ -391,7 +389,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                                 : LucideIcons.rocket,
                             color: _resumeFile != null
                                 ? Colors.white
-                                : (isDark ? Colors.black : Colors.white),
+                                : (isDark
+                                      ? const Color(0xFF0C312B)
+                                      : Colors.white),
                             size: 30,
                           ),
                         ),
@@ -431,7 +431,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                   onPressed: _isSubmitting ? null : _submitApplication,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
-                    foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    foregroundColor: isDark
+                        ? Colors.black
+                        : const Color(0xFFF4EFE3),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
                     ),
@@ -515,7 +517,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: GoogleFonts.inter(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.72),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.72,
+            ),
             fontWeight: FontWeight.bold,
             fontSize: 13,
           ),
@@ -528,7 +532,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
             borderSide: BorderSide(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.06),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.06,
+              ),
             ),
           ),
           focusedBorder: OutlineInputBorder(

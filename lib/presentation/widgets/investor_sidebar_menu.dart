@@ -90,7 +90,9 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   fontSize: 13,
-                  color: isDark ? Colors.white60 : const Color(0xFF0C312B).withValues(alpha: 0.78),
+                  color: isDark
+                      ? Colors.white60
+                      : const Color(0xFF0C312B).withValues(alpha: 0.78),
                 ),
               ),
               const SizedBox(height: 22),
@@ -180,150 +182,20 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
           border: Border(right: BorderSide(color: M4Drawer.border)),
         ),
         child: Stack(
-        children: [
-          // Frosted deep-green glass with the cream and blue blooms.
-          const DrawerGlass(),
-          SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
-                  child: Row(
-                    children: [
-                      Text(
-                        'INVESTOR MENU',
-                        style: GoogleFonts.gelasio(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 2,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Main Menu
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: [
-                      // Web parity: the investor menu mirrors the web nav —
-                      // Home, Communities, Properties, Content Hub (dropdown),
-                      // Custom Views (dropdown), Notifications, Who we are,
-                      // Contact Us, Careers.
-                      _SidebarItem(
-                        icon: LucideIcons.home,
-                        label: 'Home',
-                        isActive: idx == 0,
-                        onTap: () => _setTab(0),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.building2,
-                        label: 'Communities',
-                        isActive: false,
-                        onTap: () => _go('/investor/communities'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.layoutGrid,
-                        label: 'Properties',
-                        isActive: idx == 1,
-                        onTap: () => _setTab(1),
-                      ),
-                      _SidebarDropdown(
-                        icon: LucideIcons.bell,
-                        label: 'Content Hub',
-                        isOpen: _isContentOpen,
-                        onToggle: () =>
-                            setState(() => _isContentOpen = !_isContentOpen),
-                        subItems: [
-                          _SidebarSubItem(
-                            icon: LucideIcons.playCircle,
-                            label: 'Media',
-                            onTap: () => _go('/investor/media'),
-                          ),
-                          _SidebarSubItem(
-                            icon: LucideIcons.zap,
-                            label: 'Highlights',
-                            onTap: () => _go('/investor/highlights'),
-                          ),
-                          _SidebarSubItem(
-                            icon: LucideIcons.calendar,
-                            label: 'Events',
-                            onTap: () => _go('/investor/events'),
-                          ),
-                          _SidebarSubItem(
-                            icon: LucideIcons.fileText,
-                            label: 'Blog',
-                            onTap: () => _go('/investor/blog'),
-                          ),
-                        ],
-                      ),
-                      _SidebarDropdown(
-                        icon: LucideIcons.sparkles,
-                        label: 'Custom Views',
-                        isOpen: _isCustomViewsOpen,
-                        onToggle: () => setState(
-                          () => _isCustomViewsOpen = !_isCustomViewsOpen,
-                        ),
-                        subItems: [
-                          _SidebarSubItem(
-                            icon: LucideIcons.sparkles,
-                            label: 'Custom Views',
-                            onTap: () => _go('/investor/custom-views'),
-                          ),
-                          _SidebarSubItem(
-                            icon: LucideIcons.star,
-                            label: 'My Custom Views',
-                            onTap: () => _go('/investor/my-custom-views'),
-                          ),
-                        ],
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.bell,
-                        label: 'Notifications',
-                        isActive: false,
-                        onTap: () => _go('/investor/notifications'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.info,
-                        label: 'Who we are',
-                        isActive: false,
-                        onTap: () => _go('/investor/about'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.headphones,
-                        label: 'Contact Us',
-                        isActive: false,
-                        onTap: () => _go('/investor/contact'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.briefcase,
-                        label: 'Careers',
-                        isActive: false,
-                        onTap: () => _go('/investor/careers'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.trendingUp,
-                        label: 'Investor Relations',
-                        isActive: false,
-                        onTap: () {
-                          _close();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const InvestorRelationsScreen(),
-                            ),
-                          );
-                        },
-                      ),
-
-                      // Quick Actions (web parity)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
-                        child: Text(
-                          'QUICK ACTIONS',
+          children: [
+            // Frosted deep-green glass with the cream and blue blooms.
+            const DrawerGlass(),
+            SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
+                    child: Row(
+                      children: [
+                        Text(
+                          'INVESTOR MENU',
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
@@ -331,95 +203,226 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                             color: Colors.white,
                           ),
                         ),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.mail,
-                        label: 'Enquiry',
-                        isActive: false,
-                        onTap: () {
-                          ref
-                                  .read(
-                                    investorNavigationIndexProvider.notifier,
-                                  )
-                                  .state =
-                              0;
-                          ref
-                              .read(
-                                investorInquiryScrollTriggerProvider.notifier,
-                              )
-                              .state++;
-                          _close();
-                        },
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.phone,
-                        label: 'Call',
-                        isActive: false,
-                        onTap: SupportHandlers.launchCall,
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.messageSquare,
-                        label: 'Whatsapp',
-                        isActive: false,
-                        onTap: SupportHandlers.launchWhatsApp,
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.users,
-                        label: 'Referral',
-                        isActive: false,
-                        onTap: () => _go('/investor/referral'),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
+                  // Main Menu
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        // Web parity: the investor menu mirrors the web nav —
+                        // Home, Communities, Properties, Content Hub (dropdown),
+                        // Custom Views (dropdown), Notifications, Who we are,
+                        // Contact Us, Careers.
+                        _SidebarItem(
+                          icon: LucideIcons.home,
+                          label: 'Home',
+                          isActive: idx == 0,
+                          onTap: () => _setTab(0),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.building2,
+                          label: 'Communities',
+                          isActive: false,
+                          onTap: () => _go('/investor/communities'),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.layoutGrid,
+                          label: 'Properties',
+                          isActive: idx == 1,
+                          onTap: () => _setTab(1),
+                        ),
+                        _SidebarDropdown(
+                          icon: LucideIcons.bell,
+                          label: 'Content Hub',
+                          isOpen: _isContentOpen,
+                          onToggle: () =>
+                              setState(() => _isContentOpen = !_isContentOpen),
+                          subItems: [
+                            _SidebarSubItem(
+                              icon: LucideIcons.playCircle,
+                              label: 'Media',
+                              onTap: () => _go('/investor/media'),
+                            ),
+                            _SidebarSubItem(
+                              icon: LucideIcons.zap,
+                              label: 'Highlights',
+                              onTap: () => _go('/investor/highlights'),
+                            ),
+                            _SidebarSubItem(
+                              icon: LucideIcons.calendar,
+                              label: 'Events',
+                              onTap: () => _go('/investor/events'),
+                            ),
+                            _SidebarSubItem(
+                              icon: LucideIcons.fileText,
+                              label: 'Blog',
+                              onTap: () => _go('/investor/blog'),
+                            ),
+                          ],
+                        ),
+                        _SidebarDropdown(
+                          icon: LucideIcons.sparkles,
+                          label: 'Custom Views',
+                          isOpen: _isCustomViewsOpen,
+                          onToggle: () => setState(
+                            () => _isCustomViewsOpen = !_isCustomViewsOpen,
+                          ),
+                          subItems: [
+                            _SidebarSubItem(
+                              icon: LucideIcons.sparkles,
+                              label: 'Custom Views',
+                              onTap: () => _go('/investor/custom-views'),
+                            ),
+                            _SidebarSubItem(
+                              icon: LucideIcons.star,
+                              label: 'My Custom Views',
+                              onTap: () => _go('/investor/my-custom-views'),
+                            ),
+                          ],
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.bell,
+                          label: 'Notifications',
+                          isActive: false,
+                          onTap: () => _go('/investor/notifications'),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.info,
+                          label: 'Who we are',
+                          isActive: false,
+                          onTap: () => _go('/investor/about'),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.headphones,
+                          label: 'Contact Us',
+                          isActive: false,
+                          onTap: () => _go('/investor/contact'),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.briefcase,
+                          label: 'Careers',
+                          isActive: false,
+                          onTap: () => _go('/investor/careers'),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.trendingUp,
+                          label: 'Investor Relations',
+                          isActive: false,
+                          onTap: () {
+                            _close();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const InvestorRelationsScreen(),
+                              ),
+                            );
+                          },
+                        ),
 
-                // Logout
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: GestureDetector(
-                    onTap: _confirmLogout,
-                    child: Container(
-                      height: 56,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFC65B46).withValues(alpha: 0.14),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            LucideIcons.logOut,
-                            size: 18,
-                            color: const Color(0xFFC65B46),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            'LOGOUT',
+                        // Quick Actions (web parity)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
+                          child: Text(
+                            'QUICK ACTIONS',
                             style: GoogleFonts.gelasio(
-                              fontSize: 12,
+                              fontSize: 10,
                               fontWeight: FontWeight.w700,
-                              letterSpacing: 1.5,
-                              color: const Color(0xFFC65B46),
+                              letterSpacing: 2,
+                              color: Colors.white,
                             ),
                           ),
-                        ],
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.mail,
+                          label: 'Enquiry',
+                          isActive: false,
+                          onTap: () {
+                            ref
+                                    .read(
+                                      investorNavigationIndexProvider.notifier,
+                                    )
+                                    .state =
+                                0;
+                            ref
+                                .read(
+                                  investorInquiryScrollTriggerProvider.notifier,
+                                )
+                                .state++;
+                            _close();
+                          },
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.phone,
+                          label: 'Call',
+                          isActive: false,
+                          onTap: SupportHandlers.launchCall,
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.messageSquare,
+                          label: 'Whatsapp',
+                          isActive: false,
+                          onTap: SupportHandlers.launchWhatsApp,
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.users,
+                          label: 'Referral',
+                          isActive: false,
+                          onTap: () => _go('/investor/referral'),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Logout
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: GestureDetector(
+                      onTap: _confirmLogout,
+                      child: Container(
+                        height: 56,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: const Color(
+                            0xFFC65B46,
+                          ).withValues(alpha: 0.14),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              LucideIcons.logOut,
+                              size: 18,
+                              color: const Color(0xFFC65B46),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'LOGOUT',
+                              style: GoogleFonts.gelasio(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.5,
+                                color: const Color(0xFFC65B46),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
         ),
       ),
     );
@@ -471,7 +474,6 @@ class _SidebarDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         _SidebarItem(
@@ -481,9 +483,7 @@ class _SidebarDropdown extends StatelessWidget {
           onTap: onToggle,
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withValues(
-              alpha: 0.4,
-            ),
+            color: Colors.white,
             size: 16,
           ),
         ),
@@ -523,14 +523,11 @@ class _SidebarSubItem extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withValues(
-                  alpha: 0.05,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
+                    .withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Center(
-                child: Icon(icon, size: 15, color: fg.withValues(alpha: 0.7)),
-              ),
+              child: Center(child: Icon(icon, size: 15, color: Colors.white)),
             ),
             const SizedBox(width: 12),
             Expanded(

@@ -515,9 +515,8 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     // guarantees the full-width track renders when the fill is 0.
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                        alpha: isDark ? 0.28 : 0.18,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withValues(alpha: isDark ? 0.28 : 0.18),
                     ),
                     child: TweenAnimationBuilder<double>(
                       tween: Tween(begin: 0, end: paymentProgress / 100.0),
@@ -594,9 +593,8 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     color: onSurf.withValues(alpha: 0.03),
                     borderRadius: BorderRadius.circular(999),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                        alpha: 0.06,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withValues(alpha: 0.06),
                     ),
                   ),
                   child: Text(
@@ -847,8 +845,11 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                 color: scheme.surface,
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                      .withValues(alpha: 0.10),
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : Color(0xFF0C312B))
+                                          .withValues(alpha: 0.10),
                                 ),
                               ),
                               child: Icon(

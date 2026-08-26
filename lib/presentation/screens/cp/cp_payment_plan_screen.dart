@@ -364,7 +364,9 @@ class _PaymentPlanCard extends StatelessWidget {
     final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
       alpha: 0.68,
     );
-    final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final cardBg = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = popular
         ? M4Theme.premiumBlue.withValues(alpha: 0.4)
         : (isDark
@@ -470,9 +472,8 @@ class _PaymentPlanCard extends StatelessWidget {
                   const SizedBox(height: 28),
                   Divider(
                     height: 1,
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                      alpha: 0.06,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withValues(alpha: 0.06),
                   ),
                   const SizedBox(height: 24),
                   Row(

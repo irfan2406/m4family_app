@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show compute;
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -16,7 +17,9 @@ Future<List<dynamic>?> _loadCachedProjects() async {
   try {
     final f = _homeCacheFile;
     if (!await f.exists()) return null;
-    final map = jsonDecode(await f.readAsString());
+    // Multi-MB payload: decode on a background isolate so the first
+    // frames are not blocked by parsing base64-laden JSON.
+    final map = await compute(jsonDecode, await f.readAsString());
     final list = map is Map ? map['projects'] : null;
     return (list is List && list.isNotEmpty) ? list : null;
   } catch (_) {
@@ -38,12 +41,12 @@ Future<void> _saveCachedProjects(List<dynamic> projects) async {
     final f = _homeCacheFile;
     Map<String, dynamic> map = {};
     if (await f.exists()) {
-      final decoded = jsonDecode(await f.readAsString());
+      final decoded = await compute(jsonDecode, await f.readAsString());
       if (decoded is Map) map = Map<String, dynamic>.from(decoded);
     }
     // Merge — the guest home owns the communities/media slices of this file.
     map['projects'] = projects;
-    await f.writeAsString(jsonEncode(map));
+    await f.writeAsString(await compute(jsonEncode, map));
   } catch (_) {
     // Best-effort cache; never surface to the UI.
   }

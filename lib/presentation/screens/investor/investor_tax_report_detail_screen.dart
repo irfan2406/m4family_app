@@ -122,7 +122,9 @@ class _InvestorTaxReportDetailScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
 
     return Scaffold(
       backgroundColor: bg,
@@ -270,7 +272,9 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _overviewCard(bool isDark, Color textPrimary, Color muted, Color red) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -340,7 +344,9 @@ class _InvestorTaxReportDetailScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.03),
+        color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+          alpha: 0.03,
+        ),
         borderRadius: BorderRadius.circular(7),
         border: Border.all(color: border),
       ),
@@ -441,7 +447,9 @@ class _InvestorTaxReportDetailScreenState
     required IconData icon,
     required Color iconColor,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -489,7 +497,9 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _descriptionCard(bool isDark, Color textPrimary, Color muted) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -604,7 +614,7 @@ class _InvestorTaxReportDetailScreenState
         icon: const Icon(LucideIcons.download, size: 16),
         style: ElevatedButton.styleFrom(
           backgroundColor: gold,
-          foregroundColor: Colors.black,
+          foregroundColor: const Color(0xFF0C312B),
           padding: const EdgeInsets.symmetric(vertical: 16),
           elevation: 0,
           shape: RoundedRectangleBorder(

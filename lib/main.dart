@@ -650,9 +650,7 @@ final GoRouter _router = GoRouter(
       // caller passes the point balance as `extra`.
       path: '/investor/referral/redeem',
       builder: (context, state) => ReferralRedeemScreen(
-        walletBalance: state.extra is num
-            ? (state.extra as num).toDouble()
-            : 0,
+        walletBalance: state.extra is num ? (state.extra as num).toDouble() : 0,
       ),
     ),
     // Investor settings / security / profile subroutes

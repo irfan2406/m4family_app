@@ -94,8 +94,12 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -241,7 +245,9 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.05),
+              (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+                alpha: 0.05,
+              ),
               Colors.transparent,
             ],
           ),

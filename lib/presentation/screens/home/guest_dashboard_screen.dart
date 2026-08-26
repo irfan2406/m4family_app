@@ -521,7 +521,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         ),
                         child: Icon(
                           LucideIcons.menu,
-                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Theme.of(context).colorScheme.onSurface,
                           size: 24,
                         ),
                       ),
@@ -660,7 +662,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                       child: const Center(
                                         child: Icon(
                                           LucideIcons.play,
-                                          color: Colors.black87,
+                                          color: Color(0xDD0C312B),
                                           size: 26,
                                         ),
                                       ),
@@ -833,7 +835,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                             border: Border(
                               bottom: BorderSide(
                                 color: isSelected
-                                    ? (isDark ? Colors.white : Color(0xFF0C312B))
+                                    ? (isDark
+                                          ? Colors.white
+                                          : Color(0xFF0C312B))
                                     : Colors.transparent,
                                 width: 2,
                               ),
@@ -1138,7 +1142,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           ),
                           child: const Icon(
                             LucideIcons.arrowRight,
-                            color: Colors.black,
+                            color: const Color(0xFF0C312B),
                             size: 18,
                           ),
                         ),
@@ -1714,9 +1718,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.1,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.1),
                     ),
                   ),
                   child: Icon(
@@ -1747,7 +1750,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       child: Text(
                         'READ MORE',
                         style: GoogleFonts.inter(
-                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          color: isDark
+                              ? const Color(0xFF0C312B)
+                              : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                           letterSpacing: 3,
@@ -1770,9 +1775,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.1,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.1),
                     ),
                   ),
                   child: Icon(
@@ -1820,7 +1824,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           color: isDark ? Colors.black : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.05,
+            ),
           ),
         ),
         child: Icon(
@@ -1858,7 +1864,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 : Colors.black.withOpacity(0.02),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.08),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.08,
+              ),
             ),
             boxShadow: [
               BoxShadow(
@@ -1936,12 +1944,13 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.05,
+                ),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.1,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.1),
                 ),
               ),
               child: Icon(
@@ -1966,7 +1975,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               desc,
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.68),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.68,
+                ),
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
@@ -2071,7 +2082,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     : Text(
                         'SUBMIT INTEREST',
                         style: GoogleFonts.inter(
-                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          color: isDark
+                              ? const Color(0xFF0C312B)
+                              : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w400,
                           letterSpacing: 2,
                         ),
@@ -2112,7 +2125,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             border: Border.all(
               color: hasError
                   ? errorColor
-                  : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.12),
+                  : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                      0.12,
+                    ),
               width: hasError ? 1.5 : 1,
             ),
             boxShadow: isDark
@@ -2126,7 +2141,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   ],
           ),
           child: TextField(
-            cursorColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
+            cursorColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Theme.of(context).colorScheme.onSurface,
             controller: controller,
             onChanged: onChanged,
             keyboardType: keyboardType,
@@ -2138,7 +2155,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               hintStyle: GoogleFonts.inter(
                 color: hasError
                     ? errorColor.withOpacity(0.75)
-                    : (isDark ? Colors.white54 : Colors.black45),
+                    : (isDark ? Colors.white54 : Color(0x730C312B)),
                 fontSize: 13,
               ),
               contentPadding: const EdgeInsets.symmetric(

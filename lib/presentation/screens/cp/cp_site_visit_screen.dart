@@ -99,9 +99,8 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.15,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.15),
                   borderRadius: BorderRadius.circular(99),
                 ),
               ),
@@ -141,7 +140,9 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                         color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withOpacity(0.2),
                       ),
-                      foregroundColor: isDark ? Colors.white : Color(0xFF0C312B),
+                      foregroundColor: isDark
+                          ? Colors.white
+                          : Color(0xFF0C312B),
                     ),
                     child: Text(
                       'CANCEL',
@@ -157,8 +158,12 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   child: FilledButton(
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
-                      foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      backgroundColor: isDark
+                          ? Colors.white
+                          : Color(0xFF0C312B),
+                      foregroundColor: isDark
+                          ? Colors.black
+                          : const Color(0xFFF4EFE3),
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -537,9 +542,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFFF4EFE3),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           "HANDLED BY",
           style: GoogleFonts.gelasio(
@@ -553,13 +556,13 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.words,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 15,
             color: const Color(0xFF163A2C),
           ),
           decoration: InputDecoration(
             hintText: "Type name",
-            hintStyle: GoogleFonts.ebGaramond(
+            hintStyle: GoogleFonts.inter(
               color: const Color(0xFF163A2C).withValues(alpha: 0.5),
             ),
             filled: true,
@@ -610,6 +613,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
       });
     }
   }
+
   Widget _buildLabel(String label) {
     return Text(
       label,
@@ -666,23 +670,21 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
         decoration: InputDecoration(
           hintText: hint.toUpperCase(),
           hintStyle: GoogleFonts.inter(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.68),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.68,
+            ),
             fontSize: 13,
             fontWeight: FontWeight.bold,
           ),
           prefixIcon: icon != null
               ? Icon(
                   icon,
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.6,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.6),
                   size: 18,
                 )
               : null,
-          errorStyle: GoogleFonts.inter(
-            color: Colors.redAccent,
-            fontSize: 10,
-          ),
+          errorStyle: GoogleFonts.inter(color: Colors.redAccent, fontSize: 10),
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
@@ -716,8 +718,12 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isProjectDropdownOpen
-                    ? (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.2)
-                    : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.06),
+                    ? (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                        0.2,
+                      )
+                    : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                        0.06,
+                      ),
               ),
               boxShadow: isDark
                   ? null
@@ -739,9 +745,8 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   style: GoogleFonts.inter(
                     color: selectedProject != null
                         ? (isDark ? Colors.white : Color(0xFF0C312B))
-                        : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                            0.68,
-                          ),
+                        : (isDark ? Colors.white : Color(0xFF0C312B))
+                              .withOpacity(0.68),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1,
@@ -751,9 +756,8 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   _isProjectDropdownOpen
                       ? LucideIcons.chevronUp
                       : LucideIcons.chevronDown,
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.6,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.6),
                   size: 18,
                 ),
               ],
@@ -777,7 +781,9 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                       ),
                     ],
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.05,
+                ),
               ),
             ),
             child: Column(
@@ -798,9 +804,8 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     ),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                              0.05,
-                            )
+                          ? (isDark ? Colors.white : Color(0xFF0C312B))
+                                .withOpacity(0.05)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -846,8 +851,12 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isEmployeeDropdownOpen
-                    ? (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.2)
-                    : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.06),
+                    ? (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                        0.2,
+                      )
+                    : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                        0.06,
+                      ),
               ),
               boxShadow: isDark
                   ? null
@@ -867,16 +876,14 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                       ? (selectedEmployee['name'] ?? '')
                             .toString()
                             .toUpperCase()
-                      : (_otherEmployeeName ?? 'SELECT EMPLOYEE')
-                            .toUpperCase(),
+                      : (_otherEmployeeName ?? 'SELECT EMPLOYEE').toUpperCase(),
                   style: GoogleFonts.inter(
                     color:
                         selectedEmployee.isNotEmpty ||
                             _otherEmployeeName != null
                         ? (isDark ? Colors.white : Color(0xFF0C312B))
-                        : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                            0.68,
-                          ),
+                        : (isDark ? Colors.white : Color(0xFF0C312B))
+                              .withOpacity(0.68),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1,
@@ -886,9 +893,8 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   _isEmployeeDropdownOpen
                       ? LucideIcons.chevronUp
                       : LucideIcons.chevronDown,
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.6,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.6),
                   size: 18,
                 ),
               ],
@@ -912,20 +918,58 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                       ),
                     ],
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.05,
+                ),
               ),
             ),
             child: Column(
               children: [
                 ..._employees.map((emp) {
-                final isSelected = _employeeId == emp['_id'];
-                return InkWell(
+                  final isSelected = _employeeId == emp['_id'];
+                  return InkWell(
+                    onTap: () {
+                      setState(() {
+                        _employeeId = emp['_id']?.toString();
+                        _otherEmployeeName = null;
+                        _isEmployeeDropdownOpen = false;
+                      });
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? (isDark ? Colors.white : Color(0xFF0C312B))
+                                  .withOpacity(0.05)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        '${(emp['name'] ?? '').toString().toUpperCase()}${emp['phone'] != null ? ' (${emp['phone']})' : ''}',
+                        style: GoogleFonts.inter(
+                          color: isSelected
+                              ? (isDark ? Colors.white : Color(0xFF0C312B))
+                              : (isDark ? Colors.white70 : Color(0xFF0C312B)),
+                          fontSize: 11,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w600,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+                // Web parity: lets a CP name someone not in the employee list. The typed
+                // name is submitted as the handler instead of an employeeId.
+                InkWell(
                   onTap: () {
-                    setState(() {
-                      _employeeId = emp['_id']?.toString();
-                      _otherEmployeeName = null;
-                      _isEmployeeDropdownOpen = false;
-                    });
+                    setState(() => _isEmployeeDropdownOpen = false);
+                    _promptOtherEmployee();
                   },
                   child: Container(
                     width: double.infinity,
@@ -934,59 +978,25 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                       vertical: 14,
                     ),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                              0.05,
-                            )
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(10),
+                      border: Border(
+                        top: BorderSide(
+                          color: const Color(0xFFD4CFBC).withValues(alpha: 0.6),
+                        ),
+                      ),
                     ),
                     child: Text(
-                      '${(emp['name'] ?? '').toString().toUpperCase()}${emp['phone'] != null ? ' (${emp['phone']})' : ''}',
-                      style: GoogleFonts.inter(
-                        color: isSelected
-                            ? (isDark ? Colors.white : Color(0xFF0C312B))
-                            : (isDark ? Colors.white70 : Color(0xFF0C312B)),
+                      '+ OTHER (TYPE NAME)',
+                      style: GoogleFonts.gelasio(
+                        color: isDark
+                            ? const Color(0xFFF4EFE3)
+                            : const Color(0xFF163A2C),
                         fontSize: 11,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.w600,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1,
                       ),
                     ),
                   ),
-                );
-                }),
-                // Web parity: lets a CP name someone not in the employee list. The typed
-              // name is submitted as the handler instead of an employeeId.
-              InkWell(
-                onTap: () {
-                  setState(() => _isEmployeeDropdownOpen = false);
-                  _promptOtherEmployee();
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(
-                        color: const Color(0xFFD4CFBC).withValues(alpha: 0.6),
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    '+ OTHER (TYPE NAME)',
-                    style: GoogleFonts.gelasio(
-                      color: isDark
-                          ? const Color(0xFFF4EFE3)
-                          : const Color(0xFF163A2C),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1,
-                    ),
-                  ),
                 ),
-              ),
               ],
             ),
           ).animate().fadeIn(duration: 200.ms).slideY(begin: -0.05, end: 0),
@@ -1010,7 +1020,9 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.06),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.06,
+            ),
           ),
           boxShadow: isDark
               ? null
@@ -1026,7 +1038,9 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
           children: [
             Icon(
               icon,
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.6),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.6,
+              ),
               size: 18,
             ),
             const SizedBox(width: 12),
@@ -1035,7 +1049,9 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 text,
                 style: GoogleFonts.inter(
                   color: isPlaceholder
-                      ? (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.68)
+                      ? (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                          0.68,
+                        )
                       : (isDark ? Colors.white : Color(0xFF0C312B)),
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
@@ -1044,7 +1060,9 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             ),
             Icon(
               LucideIcons.chevronRight,
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.45),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.45,
+              ),
               size: 16,
             ),
           ],
@@ -1097,7 +1115,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   Icon(
                     LucideIcons.send,
                     color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.black
+                        ? const Color(0xFF0C312B)
                         : Colors.white,
                     size: 16,
                   ),

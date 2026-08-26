@@ -164,8 +164,12 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final accent = isDark ? scheme.primary : Colors.black;
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -277,7 +281,9 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.6,
-              color: selected ? (isDark ? Colors.black : Colors.white) : muted,
+              color: selected
+                  ? (isDark ? const Color(0xFF0C312B) : Colors.white)
+                  : muted,
             ),
           ),
         ),
@@ -541,10 +547,14 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
   void _showMoreActions(String title, String url) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+      backgroundColor: isDark
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFF4EFE3),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),

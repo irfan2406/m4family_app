@@ -148,7 +148,7 @@ class _InvestorSettingsScreenState
           style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: Colors.black,
+            color: const Color(0xFF0C312B),
           ),
         ),
       ),
@@ -173,7 +173,10 @@ class _InvestorSettingsScreenState
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Sign out', style: TextStyle(color: Color(0xFFC65B46))),
+            child: const Text(
+              'Sign out',
+              style: TextStyle(color: Color(0xFFC65B46)),
+            ),
           ),
         ],
       ),
@@ -434,7 +437,7 @@ class _InvestorSettingsScreenState
                         style: GoogleFonts.gelasio(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black,
+                          color: const Color(0xFF0C312B),
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -471,7 +474,9 @@ class _InvestorSettingsScreenState
     TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
       alpha: isDark ? 0.08 : 0.06,
     );
@@ -575,7 +580,9 @@ class _InvestorSettingsScreenState
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
       alpha: isDark ? 0.08 : 0.06,
     );
@@ -648,13 +655,19 @@ class _InvestorSettingsScreenState
           alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFC65B46).withValues(alpha: 0.2)),
+            border: Border.all(
+              color: const Color(0xFFC65B46).withValues(alpha: 0.2),
+            ),
             color: const Color(0xFFC65B46).withValues(alpha: 0.05),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(LucideIcons.logOut, size: 16, color: Color(0xFFC65B46)),
+              const Icon(
+                LucideIcons.logOut,
+                size: 16,
+                color: Color(0xFFC65B46),
+              ),
               const SizedBox(width: 8),
               Text(
                 'SIGN OUT ON ALL DEVICES',

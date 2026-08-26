@@ -1149,7 +1149,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               color:
                                   Theme.of(context).brightness ==
                                       Brightness.dark
-                                  ? Colors.black
+                                  ? const Color(0xFF0C312B)
                                   : Colors.white,
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
@@ -1448,7 +1448,7 @@ class _CategoryChip extends StatelessWidget {
           label,
           style: GoogleFonts.gelasio(
             color: isActive
-                ? (isDark ? Colors.black : Colors.white)
+                ? (isDark ? const Color(0xFF0C312B) : Colors.white)
                 : (isDark ? Colors.white38 : Color(0xFF155A4F)),
             fontSize: 10,
             fontWeight: FontWeight.bold,
@@ -1865,7 +1865,9 @@ class _QuickFilterSheet extends StatelessWidget {
                 child: Text(
                   'SHOW RESULTS',
                   style: GoogleFonts.gelasio(
-                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    color: isDark
+                        ? const Color(0xFF0C312B)
+                        : const Color(0xFFF4EFE3),
                     fontWeight: FontWeight.w700,
                     fontSize: 12,
                     letterSpacing: 1.5,
@@ -2254,11 +2256,14 @@ class _GlassSearchField extends StatelessWidget {
                       ? Colors.white
                       : Theme.of(context).colorScheme.onSurface,
                   onChanged: onChanged,
-                  style: GoogleFonts.inter(color: Colors.black, fontSize: 15),
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF0C312B),
+                    fontSize: 15,
+                  ),
                   decoration: InputDecoration(
                     hintText: 'Search residences...',
                     hintStyle: GoogleFonts.inter(
-                      color: Colors.black45,
+                      color: Color(0x730C312B),
                       fontSize: 13,
                     ),
                     filled: false,
@@ -2302,7 +2307,7 @@ class _GlassIconButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: Colors.white.withOpacity(0.4)),
             ),
-            child: Icon(icon, color: Colors.black, size: 20),
+            child: Icon(icon, color: const Color(0xFF0C312B), size: 20),
           ),
         ),
       ),
@@ -2681,7 +2686,7 @@ class _CommunityCard extends StatelessWidget {
                           ),
                           child: const Icon(
                             LucideIcons.arrowRight,
-                            color: Colors.black,
+                            color: const Color(0xFF0C312B),
                             size: 18,
                           ),
                         ),

@@ -190,7 +190,9 @@ class _InvestorInstallmentsScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -363,7 +365,9 @@ class _InvestorInstallmentsScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.02),
+        color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+          alpha: 0.02,
+        ),
         border: Border(bottom: BorderSide(color: border)),
       ),
       child: Row(
@@ -479,7 +483,9 @@ class _InvestorInstallmentsScreenState
     required Color muted,
   }) {
     final color = _statusColor(item.status);
-    final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final cardBg = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
 
     return Container(
       padding: const EdgeInsets.all(16),

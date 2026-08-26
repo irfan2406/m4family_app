@@ -291,9 +291,13 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.08),
+          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            alpha: 0.08,
+          ),
         ),
-        color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(alpha: 0.02),
+        color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+          alpha: 0.02,
+        ),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -304,9 +308,8 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
               decoration: BoxDecoration(
                 border: Border.symmetric(
                   horizontal: BorderSide(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                      alpha: 0.1,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withValues(alpha: 0.1),
                   ),
                 ),
               ),
@@ -350,9 +353,8 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
                   style: GoogleFonts.inter(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                      alpha: 0.68,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withValues(alpha: 0.68),
                   ),
                 ),
                 _wheel(

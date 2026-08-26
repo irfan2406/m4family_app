@@ -79,7 +79,9 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                           color: const Color(0xFFC5A35B).withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: const Color(0xFFC5A35B).withValues(alpha: 0.35),
+                            color: const Color(
+                              0xFFC5A35B,
+                            ).withValues(alpha: 0.35),
                           ),
                         ),
                         child: const Icon(
@@ -129,7 +131,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                   ],
                   Text(
                     'CHANNEL\nPARTNER',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.gelasio(
                       fontSize: 46,
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
@@ -263,7 +265,10 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                 gradient: const LinearGradient(
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
-                                  colors: [Color(0xFFF4EFE3), Color(0xFFF4EFE3)],
+                                  colors: [
+                                    Color(0xFFF4EFE3),
+                                    Color(0xFFF4EFE3),
+                                  ],
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -297,9 +302,9 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                             Container(
                                               padding: const EdgeInsets.all(6),
                                               decoration: BoxDecoration(
-                                                color: const Color(0xFF0C312B).withOpacity(
-                                                  0.2,
-                                                ),
+                                                color: const Color(
+                                                  0xFF0C312B,
+                                                ).withOpacity(0.2),
                                                 shape: BoxShape.circle,
                                               ),
                                               child: const Icon(

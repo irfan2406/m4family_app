@@ -118,9 +118,7 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
           ? Center(
               child: Text(
                 _error!,
-                style: GoogleFonts.inter(
-                  color: scheme.onSurfaceVariant,
-                ),
+                style: GoogleFonts.inter(color: scheme.onSurfaceVariant),
               ),
             )
           : RefreshIndicator(

@@ -203,7 +203,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                     child: const Icon(
                       LucideIcons.x,
                       size: 18,
-                      color: Colors.black,
+                      color: const Color(0xFF0C312B),
                     ),
                   ),
                 ),
@@ -251,7 +251,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1,
-                          color: active ? Colors.white : Colors.black,
+                          color: active
+                              ? Colors.white
+                              : const Color(0xFF0C312B),
                         ),
                       ),
                     ),
@@ -908,9 +910,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                                         style: GoogleFonts.inter(
                                           fontSize: 10,
                                           fontWeight: FontWeight.w500,
-                                          color: Colors.black.withValues(
-                                            alpha: 0.68,
-                                          ),
+                                          color: const Color(
+                                            0xFF0C312B,
+                                          ).withValues(alpha: 0.68),
                                           letterSpacing: 1,
                                         ),
                                       ),
@@ -925,7 +927,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                                           style: GoogleFonts.inter(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
-                                            color: Colors.black,
+                                            color: const Color(0xFF0C312B),
                                             letterSpacing: 0.2,
                                           ),
                                         ),
@@ -1029,7 +1031,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black,
+                    color: const Color(0xFF0C312B),
                     letterSpacing: 0.2,
                     height: 1.25,
                   ),

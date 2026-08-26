@@ -175,7 +175,9 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.05,
+              ),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
@@ -237,7 +239,9 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                     fontSize: 9,
                     fontWeight: FontWeight.w500,
                     color: _selectedFilter == f
-                        ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
+                        ? (isDark
+                              ? const Color(0xFF0C312B)
+                              : const Color(0xFFF4EFE3))
                         : (isDark ? Colors.white54 : Color(0xFF155A4F)),
                   ),
                   selectedColor: isDark ? Colors.white : Color(0xFF0C312B),
@@ -290,7 +294,9 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.05,
+            ),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -323,7 +329,9 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
               width: 3,
               height: 3,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.2),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.2,
+                ),
                 shape: BoxShape.circle,
               ),
             ),
@@ -382,7 +390,9 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             textStyle: const TextStyle(inherit: true),
             fontSize: 10,
             fontWeight: FontWeight.w700,
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.72),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.72,
+            ),
             letterSpacing: 2,
           ),
         ),
@@ -411,10 +421,14 @@ class _DocumentDetailSheet extends StatelessWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.05,
+              ),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.05,
+                ),
               ),
             ),
             child: Icon(
@@ -533,7 +547,7 @@ class _DetailRow extends StatelessWidget {
               Icon(
                 icon,
                 size: 16,
-                color: color ?? (isDark ? Colors.white24 : Colors.black26),
+                color: color ?? (isDark ? Colors.white24 : Color(0x420C312B)),
               ),
               const SizedBox(width: 12),
               Text(
@@ -603,9 +617,8 @@ class _ActionButton extends StatelessWidget {
             side: isPrimary
                 ? BorderSide.none
                 : BorderSide(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.05,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.05),
                   ),
           ),
         ),
@@ -634,7 +647,9 @@ class _IconButton extends StatelessWidget {
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.05,
+            ),
           ),
         ),
         child: Icon(

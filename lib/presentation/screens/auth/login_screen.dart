@@ -285,7 +285,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              foregroundColor: const Color(0xFF0C312B),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -296,7 +296,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
-                      color: Colors.black,
+                      color: Color(0xFF0C312B),
                       strokeWidth: 2,
                     ),
                   )
@@ -508,7 +508,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              foregroundColor: const Color(0xFF0C312B),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -603,7 +603,9 @@ class _PremiumButton extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isPrimary ? Colors.black : (iconColor ?? Colors.white54),
+              color: isPrimary
+                  ? const Color(0xFF0C312B)
+                  : (iconColor ?? Colors.white54),
               size: 20,
             ),
             const SizedBox(width: 16),
@@ -612,7 +614,7 @@ class _PremiumButton extends StatelessWidget {
               style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: isPrimary ? Colors.black : Colors.white,
+                color: isPrimary ? const Color(0xFF0C312B) : Colors.white,
                 letterSpacing: 2,
               ),
             ),

@@ -52,13 +52,12 @@ class _MainShellState extends ConsumerState<MainShell> {
     final currentIndex = ref.watch(navigationProvider);
     // Home (0) & Projects (1) are the deep-green "showcase" screens (white
     // typography); other tabs stay cream with green typography.
-    Widget showcase(int i, Widget child) => (i <= 1)
-        ? Theme(data: M4Theme.darkTheme, child: child)
-        : child;
+    Widget showcase(int i, Widget child) =>
+        (i <= 1) ? Theme(data: M4Theme.darkTheme, child: child) : child;
 
-    final ThemeData navTheme =
-        currentIndex <= 1 ? M4Theme.darkTheme : M4Theme.lightTheme;
-
+    final ThemeData navTheme = currentIndex <= 1
+        ? M4Theme.darkTheme
+        : M4Theme.lightTheme;
 
     return PopScope(
       canPop: currentIndex == 0,
@@ -92,13 +91,13 @@ class _MainShellState extends ConsumerState<MainShell> {
                 count: _screens.length,
                 onIndexChanged: (i) =>
                     ref.read(navigationProvider.notifier).state = i,
-                  child: IndexedStack(
-                      index: currentIndex,
-                      children: [
-                        for (int i = 0; i < _screens.length; i++)
-                          showcase(i, _screens[i]),
-                      ],
-                    ),
+                child: IndexedStack(
+                  index: currentIndex,
+                  children: [
+                    for (int i = 0; i < _screens.length; i++)
+                      showcase(i, _screens[i]),
+                  ],
+                ),
               ),
             ),
             if (!_isDrawerOpen)

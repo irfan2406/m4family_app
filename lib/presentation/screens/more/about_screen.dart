@@ -112,7 +112,9 @@ class _AboutScreenState extends State<AboutScreen> {
                                     ? Colors.black
                                     : (isDark
                                           ? Colors.white10
-                                          : Color(0xFF163A2C).withOpacity(0.05)),
+                                          : Color(
+                                              0xFF163A2C,
+                                            ).withOpacity(0.05)),
                               ),
                               boxShadow: isActive
                                   ? [
@@ -128,7 +130,9 @@ class _AboutScreenState extends State<AboutScreen> {
                               _tabs[index]['icon'],
                               color: isActive
                                   ? Colors.white
-                                  : (isDark ? Colors.white38 : Color(0xFF155A4F)),
+                                  : (isDark
+                                        ? Colors.white38
+                                        : Color(0xFF155A4F)),
                               size: 20,
                             ),
                           ),
@@ -140,7 +144,9 @@ class _AboutScreenState extends State<AboutScreen> {
                               fontWeight: FontWeight.w600,
                               color: isActive
                                   ? (isDark ? Colors.white : Color(0xFF0C312B))
-                                  : (isDark ? Colors.white24 : Colors.black26),
+                                  : (isDark
+                                        ? Colors.white24
+                                        : Color(0x420C312B)),
                               letterSpacing: 1,
                             ),
                           ),
@@ -262,7 +268,9 @@ class _AboutScreenState extends State<AboutScreen> {
               child: Container(
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
+                  color: isDark
+                      ? Colors.white.withOpacity(0.02)
+                      : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(40),
                   border: Border.all(
                     color: isDark
@@ -287,7 +295,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       'Renowned for delivering homes that blend contemporary design with timeless aesthetics, every development we undertake is a testament to our commitment to quality and institutional standards.',
                       style: GoogleFonts.inter(
                         fontSize: 13,
-                        color: isDark ? Colors.white38 : Colors.black45,
+                        color: isDark ? Colors.white38 : Color(0x730C312B),
                         height: 1.8,
                         fontWeight: FontWeight.w600,
                       ),

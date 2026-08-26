@@ -44,8 +44,11 @@ class AppToast {
     _show(msg, background: errorColor, icon: Icons.error_outline);
   }
 
-  static void success(String message) =>
-      _show(message, background: successColor, icon: Icons.check_circle_outline);
+  static void success(String message) => _show(
+    message,
+    background: successColor,
+    icon: Icons.check_circle_outline,
+  );
 
   static void info(String message) =>
       _show(message, background: infoColor, icon: Icons.info_outline);

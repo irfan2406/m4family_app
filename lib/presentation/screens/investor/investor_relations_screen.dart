@@ -135,10 +135,7 @@ class _InvestorRelationsScreenState
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.inter(
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-          ),
+          style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 12),
         ),
         backgroundColor: isError ? Colors.redAccent : const Color(0xFF163A2C),
         behavior: SnackBarBehavior.floating,
@@ -169,7 +166,9 @@ class _InvestorRelationsScreenState
             Text(
               'M4 FAMILY DEVELOPMENTS',
               style: GoogleFonts.gelasio(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.5),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.5,
+                ),
                 fontWeight: FontWeight.w700,
                 fontSize: 11,
                 letterSpacing: 4,
@@ -177,7 +176,9 @@ class _InvestorRelationsScreenState
             ),
           ],
         ),
-        backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3),
+        backgroundColor: isDark
+            ? const Color(0xFF0B1026)
+            : const Color(0xFFF4EFE3),
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -269,9 +270,8 @@ class _InvestorRelationsScreenState
                   child: Text(
                     paragraph,
                     style: GoogleFonts.inter(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.6,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.6),
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       height: 1.6,
@@ -297,14 +297,20 @@ class _InvestorRelationsScreenState
           color: isDark ? Colors.white : null,
           colorBlendMode: isDark ? BlendMode.saturation : null,
           placeholder: (_, __) => Container(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.05,
+            ),
           ),
           errorWidget: (_, __, ___) => Container(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.05,
+            ),
             child: Center(
               child: Icon(
                 LucideIcons.image,
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.24),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.24,
+                ),
                 size: 40,
               ),
             ),
@@ -370,7 +376,9 @@ class _InvestorRelationsScreenState
         Text(
           'PREFERRED MODE OF CONTACT:',
           style: GoogleFonts.gelasio(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.54),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.54,
+            ),
             fontSize: 11,
             fontWeight: FontWeight.w700,
             letterSpacing: 2,
@@ -467,7 +475,9 @@ class _InvestorRelationsScreenState
         Text(
           'FOR ANY INVESTOR RELATION RELATED QUESTIONS OR QUERIES PLEASE CONTACT VIA BELOW EMAIL',
           style: GoogleFonts.gelasio(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.72),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.72,
+            ),
             fontSize: 11,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
@@ -514,10 +524,14 @@ class _InvestorRelationsScreenState
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.04),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.04,
+              ),
               borderRadius: BorderRadius.circular(28),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.05,
+                ),
               ),
             ),
             child: Row(
@@ -531,7 +545,9 @@ class _InvestorRelationsScreenState
                   ),
                   child: Icon(
                     icon,
-                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    color: isDark
+                        ? const Color(0xFF0C312B)
+                        : const Color(0xFFF4EFE3),
                     size: 24,
                   ),
                 ),
@@ -603,7 +619,9 @@ class _InvestorRelationsScreenState
           fontSize: 14,
         ),
         filled: true,
-        fillColor: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.04),
+        fillColor: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+          0.04,
+        ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 24,
           vertical: 20,
@@ -649,7 +667,9 @@ class _InvestorRelationsScreenState
           fontSize: 14,
         ),
         filled: true,
-        fillColor: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.04),
+        fillColor: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+          0.04,
+        ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 24,
           vertical: 20,
@@ -698,14 +718,18 @@ class _InvestorRelationsScreenState
                   ? (isDark ? Colors.white : Color(0xFF0C312B))
                   : Colors.transparent,
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.3),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.3,
+                ),
               ),
               borderRadius: BorderRadius.circular(6),
             ),
             child: value
                 ? Icon(
                     LucideIcons.check,
-                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    color: isDark
+                        ? const Color(0xFF0C312B)
+                        : const Color(0xFFF4EFE3),
                     size: 14,
                   )
                 : null,
@@ -715,7 +739,9 @@ class _InvestorRelationsScreenState
             child: Text(
               label,
               style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.6),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.6,
+                ),
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),

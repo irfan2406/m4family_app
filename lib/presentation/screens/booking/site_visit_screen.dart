@@ -55,8 +55,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     _prefilled = true;
     _isCp = u['role']?.toString().toLowerCase() == 'cp';
     if (_isCp) unawaited(_fetchEmployees());
-    _nameController.text =
-        (u['fullName'] ?? u['username'] ?? '').toString();
+    _nameController.text = (u['fullName'] ?? u['username'] ?? '').toString();
     _phoneController.text = (u['phone'] ?? '').toString();
   }
 
@@ -111,9 +110,8 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.15,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.15),
                   borderRadius: BorderRadius.circular(99),
                 ),
               ),
@@ -153,7 +151,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                         color: (isDark ? Colors.white : Color(0xFF0C312B))
                             .withOpacity(0.2),
                       ),
-                      foregroundColor: isDark ? Colors.white : Color(0xFF0C312B),
+                      foregroundColor: isDark
+                          ? Colors.white
+                          : Color(0xFF0C312B),
                     ),
                     child: Text(
                       'CANCEL',
@@ -169,8 +169,12 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   child: FilledButton(
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
-                      foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      backgroundColor: isDark
+                          ? Colors.white
+                          : Color(0xFF0C312B),
+                      foregroundColor: isDark
+                          ? Colors.black
+                          : const Color(0xFFF4EFE3),
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -263,7 +267,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
 
     if (_isSuccess) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
+        backgroundColor: isDark
+            ? const Color(0xFF141B3A)
+            : const Color(0xFFD4CFBC),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(40),
@@ -279,7 +285,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   ),
                   child: Icon(
                     LucideIcons.checkCircle2,
-                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    color: isDark
+                        ? const Color(0xFF0C312B)
+                        : const Color(0xFFF4EFE3),
                     size: 50,
                   ),
                 ),
@@ -326,7 +334,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                       child: Text(
                         'BACK TO PROJECT',
                         style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          color: isDark
+                              ? const Color(0xFF0C312B)
+                              : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w700,
                           fontSize: 10,
                           letterSpacing: 2,
@@ -343,7 +353,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
+      backgroundColor: isDark
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFD4CFBC),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -377,7 +389,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
               'PROTOCOL VERIFICATION',
               style: GoogleFonts.inter(
                 fontSize: 8,
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.68),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.68,
+                ),
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1,
               ),
@@ -395,12 +409,13 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
               decoration: BoxDecoration(
                 // Web parity: bg-primary/5 + border-primary/10 + shadow-sm —
                 // a light tinted card with a soft shadow (not a solid black box).
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.04),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.04,
+                ),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.08,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.08),
                 ),
                 boxShadow: isDark
                     ? null
@@ -423,7 +438,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                     ),
                     child: Icon(
                       LucideIcons.info,
-                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      color: isDark
+                          ? const Color(0xFF0C312B)
+                          : const Color(0xFFF4EFE3),
                       size: 20,
                     ),
                   ),
@@ -486,7 +503,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                           isExpanded: true,
                           icon: Icon(
                             LucideIcons.chevronDown,
-                            color: isDark ? Colors.white24 : Colors.black26,
+                            color: isDark ? Colors.white24 : Color(0x420C312B),
                             size: 18,
                           ),
                           dropdownColor: isDark
@@ -502,7 +519,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                                 style: GoogleFonts.inter(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: isDark ? Colors.white : Color(0xFF155A4F),
+                                  color: isDark
+                                      ? Colors.white
+                                      : Color(0xFF155A4F),
                                 ),
                               ),
                             );
@@ -517,10 +536,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                       const Center(child: CupertinoActivityIndicator()),
                   error: (e, s) => Text(
                     'Error loading projects',
-                    style: GoogleFonts.inter(
-                      fontSize: 10,
-                      color: Colors.red,
-                    ),
+                    style: GoogleFonts.inter(fontSize: 10, color: Colors.red),
                   ),
                 );
               },
@@ -566,14 +582,14 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: _selectedDate == null
-                            ? (isDark ? Colors.white24 : Colors.black26)
+                            ? (isDark ? Colors.white24 : Color(0x420C312B))
                             : (isDark ? Colors.white : Color(0xFF0C312B)),
                       ),
                     ),
                     const Spacer(),
                     Icon(
                       LucideIcons.chevronRight,
-                      color: isDark ? Colors.white24 : Colors.black26,
+                      color: isDark ? Colors.white24 : Color(0x420C312B),
                       size: 16,
                     ),
                   ],
@@ -599,9 +615,8 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.1,
-                      ),
+                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                          .withOpacity(0.1),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -613,7 +628,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
-                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            color: isDark
+                                ? Colors.black
+                                : const Color(0xFFF4EFE3),
                             strokeWidth: 2,
                           ),
                         )
@@ -623,7 +640,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                             Text(
                               'SECURE BOOKING',
                               style: GoogleFonts.gelasio(
-                                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                color: isDark
+                                    ? const Color(0xFF0C312B)
+                                    : const Color(0xFFF4EFE3),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 10,
                                 letterSpacing: 2,
@@ -632,7 +651,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                             const SizedBox(width: 12),
                             Icon(
                               LucideIcons.send,
-                              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                              color: isDark
+                                  ? const Color(0xFF0C312B)
+                                  : const Color(0xFFF4EFE3),
                               size: 16,
                             ),
                           ],
@@ -647,7 +668,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 8,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white24 : Colors.black26,
+                  color: isDark ? Colors.white24 : Color(0x420C312B),
                   letterSpacing: 0.5,
                 ),
               ),
@@ -694,7 +715,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
           ),
           hint: Text(
             "SELECT EMPLOYEE",
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 15,
               fontWeight: FontWeight.w500,
               color: isDark
@@ -707,7 +728,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
               value: e["_id"]?.toString(),
               child: Text(
                 (e["name"] ?? "").toString().toUpperCase(),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
                   color: isDark ? Colors.white : const Color(0xFF0C312B),
@@ -720,6 +741,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       ),
     );
   }
+
   Widget _buildFieldLabel(String label) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
@@ -759,7 +781,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       child: TextField(
         controller: controller,
         maxLines: maxLines,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w500,
           color: isDark ? Colors.white : const Color(0xFF0C312B),
@@ -772,15 +794,16 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
           hintText: hint,
           hintStyle: GoogleFonts.inter(
             fontSize: 12,
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.68),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.68,
+            ),
             fontWeight: FontWeight.bold,
           ),
           icon: maxLines == 1
               ? Icon(
                   icon,
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.4,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.4),
                   size: 18,
                 )
               : null,

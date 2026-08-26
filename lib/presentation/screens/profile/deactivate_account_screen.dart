@@ -83,12 +83,16 @@ class _DeactivateAccountScreenState
             ),
             onPressed: () => context.pop(),
             style: IconButton.styleFrom(
-              backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+              backgroundColor: isDark
+                  ? const Color(0xFF141B3A)
+                  : const Color(0xFFF4EFE3),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               side: BorderSide(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.05,
+                ),
               ),
             ),
           ),
@@ -110,7 +114,7 @@ class _DeactivateAccountScreenState
               'PURGE PROTOCOL',
               style: GoogleFonts.gelasio(
                 textStyle: const TextStyle(inherit: true),
-                color: isDark ? Colors.white24 : Colors.black26,
+                color: isDark ? Colors.white24 : Color(0x420C312B),
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 2,
@@ -187,12 +191,13 @@ class _DeactivateAccountScreenState
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                color: isDark
+                    ? const Color(0xFF141B3A)
+                    : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.05),
                 ),
               ),
               child: Column(
@@ -233,7 +238,9 @@ class _DeactivateAccountScreenState
                             item.toUpperCase(),
                             style: GoogleFonts.inter(
                               textStyle: const TextStyle(inherit: true),
-                              color: isDark ? Colors.white60 : Color(0xFF155A4F),
+                              color: isDark
+                                  ? Colors.white60
+                                  : Color(0xFF155A4F),
                               fontSize: 9,
                               fontWeight: FontWeight.w500,
                             ),
@@ -251,12 +258,13 @@ class _DeactivateAccountScreenState
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                color: isDark
+                    ? const Color(0xFF141B3A)
+                    : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.05),
                 ),
               ),
               child: Column(
@@ -358,7 +366,9 @@ class _DeactivateAccountScreenState
                               'I acknowledge that this protocol will erase my entire digital legacy within M4. Final & irreversible.',
                               style: GoogleFonts.inter(
                                 textStyle: const TextStyle(inherit: true),
-                                color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                                color: isDark
+                                    ? Colors.white38
+                                    : Color(0xFF155A4F),
                                 fontSize: 9,
                                 fontWeight: FontWeight.w500,
                                 height: 1.5,
@@ -438,7 +448,7 @@ class _DeactivateAccountScreenState
                 'ABORT PROTOCOL',
                 style: GoogleFonts.gelasio(
                   textStyle: const TextStyle(inherit: true),
-                  color: isDark ? Colors.white30 : Colors.black26,
+                  color: isDark ? Colors.white30 : Color(0x420C312B),
                   fontSize: 9,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 2,

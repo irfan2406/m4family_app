@@ -550,7 +550,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             ),
             Icon(
               LucideIcons.chevronRight,
-              color: isDark ? Colors.white12 : Colors.black12,
+              color: isDark ? Colors.white12 : Color(0x1F0C312B),
               size: 18,
             ),
           ],
@@ -721,7 +721,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.5,
                                     color: isActive
-                                        ? (isDark ? Colors.black : Colors.white)
+                                        ? (isDark
+                                              ? const Color(0xFF0C312B)
+                                              : Colors.white)
                                         : (isDark
                                               ? Colors.white54
                                               : Color(0xFF155A4F)),
@@ -776,10 +778,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                     fontWeight: FontWeight.w700,
                                     letterSpacing: 1.5,
                                     color: active
-                                        ? (isDark ? Colors.black : Colors.white)
+                                        ? (isDark
+                                              ? const Color(0xFF0C312B)
+                                              : Colors.white)
                                         : (isDark
                                               ? Colors.white54
-                                              : Colors.black45),
+                                              : Color(0x730C312B)),
                                   ),
                                 ),
                               ),
@@ -963,7 +967,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: isDark
-                                  ? Colors.black
+                                  ? const Color(0xFF0C312B)
                                   : const Color(0xFFF4EFE3),
                               letterSpacing: 1,
                             ),
@@ -972,7 +976,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                           Icon(
                             LucideIcons.arrowUpRight,
                             color: isDark
-                                ? Colors.black
+                                ? const Color(0xFF0C312B)
                                 : const Color(0xFFF4EFE3),
                             size: 14,
                           ),
@@ -986,7 +990,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       'OUR ADVISOR WILL CONTACT YOU WITHIN 24 HOURS',
                       style: GoogleFonts.inter(
                         fontSize: 7,
-                        color: isDark ? Colors.white24 : Colors.black26,
+                        color: isDark ? Colors.white24 : Color(0x420C312B),
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -1175,7 +1179,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               focusedBorder: InputBorder.none,
               icon: Icon(
                 icon,
-                color: isDark ? Colors.white24 : Colors.black26,
+                color: isDark ? Colors.white24 : Color(0x420C312B),
                 size: 16,
               ),
               contentPadding: const EdgeInsets.symmetric(vertical: 16),
@@ -1893,7 +1897,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 .toUpperCase(),
             style: GoogleFonts.inter(
               fontSize: 12,
-              color: isDark ? Colors.white.withOpacity(0.9) : Colors.black,
+              color: isDark
+                  ? Colors.white.withOpacity(0.9)
+                  : const Color(0xFF0C312B),
               height: 1.8,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.2,
@@ -2401,7 +2407,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     child: Text(
                       'BOOK YOUR UNIT NOW',
                       style: GoogleFonts.gelasio(
-                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        color: isDark
+                            ? const Color(0xFF0C312B)
+                            : const Color(0xFFF4EFE3),
                         fontWeight: FontWeight.w700,
                         fontSize: 10,
                         letterSpacing: 2,
@@ -2785,7 +2793,9 @@ class _Badge extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 8,
           fontWeight: FontWeight.w600,
-          color: color != null ? Colors.white : Colors.black.withOpacity(0.7),
+          color: color != null
+              ? Colors.white
+              : const Color(0xFF0C312B).withOpacity(0.7),
           letterSpacing: 1.0,
         ),
       ),
@@ -2834,7 +2844,7 @@ class _OverviewPremiumCard extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: const Color(0xFF0C312B),
               letterSpacing: 1,
             ),
           ),
@@ -2844,7 +2854,7 @@ class _OverviewPremiumCard extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 8,
               fontWeight: FontWeight.bold,
-              color: Colors.black.withOpacity(0.72),
+              color: const Color(0xFF0C312B).withOpacity(0.72),
             ),
           ),
         ],
@@ -2870,7 +2880,9 @@ class _BottomIconAction extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.black.withOpacity(0.05)),
         ),
-        child: Center(child: Icon(icon, color: Colors.black, size: 20)),
+        child: Center(
+          child: Icon(icon, color: const Color(0xFF0C312B), size: 20),
+        ),
       ),
     );
   }
@@ -2941,7 +2953,7 @@ class _LocationLandmark extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white24 : Colors.black26,
+                    color: isDark ? Colors.white24 : Color(0x420C312B),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -3009,7 +3021,7 @@ class _FloorPlanItem extends StatelessWidget {
                       LucideIcons.image,
                       color: isDark
                           ? Colors.white.withOpacity(0.1)
-                          : Colors.black.withOpacity(0.1),
+                          : const Color(0xFF0C312B).withOpacity(0.1),
                     ),
                   ),
                 ),
@@ -3040,7 +3052,7 @@ class _FloorPlanItem extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white24 : Colors.black26,
+                          color: isDark ? Colors.white24 : Color(0x420C312B),
                           letterSpacing: 1,
                         ),
                       ),
@@ -3136,14 +3148,14 @@ class _InventoryItem extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                          color: const Color(0xFF0C312B),
                         ),
                       ),
                       Text(
                         '${unit['type']} • ${unit['area']} SQFT',
                         style: GoogleFonts.inter(
                           fontSize: 11,
-                          color: Colors.black.withOpacity(0.72),
+                          color: const Color(0xFF0C312B).withOpacity(0.72),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -3165,7 +3177,7 @@ class _InventoryItem extends StatelessWidget {
                       'EXCL. TAXES',
                       style: GoogleFonts.inter(
                         fontSize: 8,
-                        color: Colors.black.withOpacity(0.72),
+                        color: const Color(0xFF0C312B).withOpacity(0.72),
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
                       ),
@@ -3189,7 +3201,7 @@ class _InventoryItem extends StatelessWidget {
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 2,
-                    color: Colors.black,
+                    color: const Color(0xFF0C312B),
                   ),
                 ),
               ),
@@ -3239,7 +3251,7 @@ class _ConstructionUpdateCard extends StatelessWidget {
                     child: Center(
                       child: Icon(
                         LucideIcons.image,
-                        color: Colors.black.withOpacity(0.1),
+                        color: const Color(0xFF0C312B).withOpacity(0.1),
                       ),
                     ),
                   ),
@@ -3266,7 +3278,7 @@ class _ConstructionUpdateCard extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                          color: const Color(0xFF0C312B),
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -3276,7 +3288,7 @@ class _ConstructionUpdateCard extends StatelessWidget {
                       update['date']?.toString() ?? '',
                       style: GoogleFonts.inter(
                         fontSize: 10,
-                        color: Colors.black.withOpacity(0.72),
+                        color: const Color(0xFF0C312B).withOpacity(0.72),
                       ),
                     ),
                   ],
@@ -3286,7 +3298,7 @@ class _ConstructionUpdateCard extends StatelessWidget {
                   update['description'] ?? '',
                   style: GoogleFonts.inter(
                     fontSize: 11,
-                    color: Colors.black.withOpacity(0.6),
+                    color: const Color(0xFF0C312B).withOpacity(0.6),
                     height: 1.5,
                   ),
                 ),
@@ -3371,14 +3383,14 @@ class _DocumentItem extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                      color: const Color(0xFF0C312B),
                     ),
                   ),
                   Text(
                     '$type • $size',
                     style: GoogleFonts.inter(
                       fontSize: 9,
-                      color: Colors.black.withOpacity(0.72),
+                      color: const Color(0xFF0C312B).withOpacity(0.72),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -3387,7 +3399,7 @@ class _DocumentItem extends StatelessWidget {
             ),
             Icon(
               LucideIcons.download,
-              color: Colors.black.withOpacity(0.24),
+              color: const Color(0xFF0C312B).withOpacity(0.24),
               size: 18,
             ),
           ],
@@ -3456,7 +3468,7 @@ class _FilterChip extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     color: isActive
                         ? Colors.white
-                        : Colors.black.withOpacity(0.72),
+                        : const Color(0xFF0C312B).withOpacity(0.72),
                     letterSpacing: 1.0,
                   ),
                 ),
@@ -3884,7 +3896,9 @@ class _MultimediaAssetCard extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: 8,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        color: isDark
+                            ? const Color(0xFF0C312B)
+                            : const Color(0xFFF4EFE3),
                       ),
                     ),
                   ),
@@ -3908,7 +3922,9 @@ class _MultimediaAssetCard extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: 8,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        color: isDark
+                            ? const Color(0xFF0C312B)
+                            : const Color(0xFFF4EFE3),
                       ),
                     ),
                   ),
@@ -4053,7 +4069,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           fontSize: 8,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
-                          color: isDark ? Colors.white38 : Colors.black45,
+                          color: isDark ? Colors.white38 : Color(0x730C312B),
                         ),
                       ),
                     ],

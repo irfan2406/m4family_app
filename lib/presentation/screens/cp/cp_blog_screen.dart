@@ -141,7 +141,9 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                         child: Icon(
                           LucideIcons.fileText,
                           size: 20,
-                          color: isLight ? Colors.black : scheme.primary,
+                          color: isLight
+                              ? const Color(0xFF0C312B)
+                              : scheme.primary,
                         ),
                       ),
                       const SizedBox(width: 14),
@@ -151,7 +153,9 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 3,
-                          color: isLight ? Colors.black : scheme.primary,
+                          color: isLight
+                              ? const Color(0xFF0C312B)
+                              : scheme.primary,
                         ),
                       ),
                     ],
@@ -164,7 +168,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                       fontWeight: FontWeight.w700,
                       letterSpacing: -1,
                       height: 1.0,
-                      color: isLight ? Colors.black : Colors.white,
+                      color: isLight ? const Color(0xFF0C312B) : Colors.white,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -203,7 +207,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                     style: GoogleFonts.gelasio(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: isLight ? Colors.black : Colors.white,
+                      color: isLight ? const Color(0xFF0C312B) : Colors.white,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -351,7 +355,9 @@ class _BlogCard extends ConsumerWidget {
                           fontWeight: FontWeight.w600,
                           height: 1.15,
                           letterSpacing: -0.3,
-                          color: isLight ? Colors.black : Colors.white,
+                          color: isLight
+                              ? const Color(0xFF0C312B)
+                              : Colors.white,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -363,14 +369,18 @@ class _BlogCard extends ConsumerWidget {
                               fontSize: 9,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1,
-                              color: isLight ? Colors.black : scheme.primary,
+                              color: isLight
+                                  ? const Color(0xFF0C312B)
+                                  : scheme.primary,
                             ),
                           ),
                           const Spacer(),
                           Icon(
                             LucideIcons.arrowRight,
                             size: 14,
-                            color: isLight ? Colors.black : scheme.primary,
+                            color: isLight
+                                ? const Color(0xFF0C312B)
+                                : scheme.primary,
                           ),
                         ],
                       ),

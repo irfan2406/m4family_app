@@ -657,7 +657,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -1084,13 +1086,13 @@ class _M4VideoControlsState extends State<_M4VideoControls> {
               width: 22,
               child: icon == null
                   ? null
-                  : Icon(icon, size: 18, color: Colors.black87),
+                  : Icon(icon, size: 18, color: Color(0xDD0C312B)),
             ),
             const SizedBox(width: 10),
             Text(
               label,
               style: GoogleFonts.inter(
-                color: Colors.black87,
+                color: Color(0xDD0C312B),
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),

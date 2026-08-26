@@ -93,14 +93,12 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.05),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.1,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.1),
                   ),
                 ),
                 child: Icon(
@@ -198,14 +196,12 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                    0.03,
-                  ),
+                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      .withOpacity(0.03),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.05,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.05),
                   ),
                 ),
                 child: Row(
@@ -249,7 +245,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       style: GoogleFonts.inter(
         fontSize: 10,
         fontWeight: FontWeight.w600,
-        color: isDark ? Colors.white24 : Colors.black45,
+        color: isDark ? Colors.white24 : Color(0x730C312B),
         letterSpacing: 1,
       ),
     ).animate().fadeIn().slideX(begin: -0.1);
@@ -273,10 +269,12 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.03),
+        fillColor: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+          0.03,
+        ),
         hintText: hint,
         hintStyle: GoogleFonts.inter(
-          color: isDark ? Colors.white24 : Colors.black26,
+          color: isDark ? Colors.white24 : Color(0x420C312B),
           fontSize: 12,
           fontWeight: FontWeight.w700,
         ),
@@ -287,13 +285,17 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.05,
+            ),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.05,
+            ),
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -320,12 +322,16 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.03),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.03,
+              ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isCategoryOpen
                     ? const Color(0xFFC5A35B)
-                    : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+                    : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                        0.05,
+                      ),
               ),
             ),
             child: Row(
@@ -348,7 +354,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                   _isCategoryOpen
                       ? LucideIcons.chevronUp
                       : LucideIcons.chevronDown,
-                  color: isDark ? Colors.white24 : Colors.black26,
+                  color: isDark ? Colors.white24 : Color(0x420C312B),
                   size: 16,
                 ),
               ],
@@ -365,12 +371,13 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                  color: isDark
+                      ? const Color(0xFF141B3A)
+                      : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.05,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.05),
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -439,12 +446,16 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.03),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.03,
+              ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isPriorityOpen
                     ? const Color(0xFFC5A35B)
-                    : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+                    : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                        0.05,
+                      ),
               ),
             ),
             child: Row(
@@ -467,7 +478,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                   _isPriorityOpen
                       ? LucideIcons.chevronUp
                       : LucideIcons.chevronDown,
-                  color: isDark ? Colors.white24 : Colors.black26,
+                  color: isDark ? Colors.white24 : Color(0x420C312B),
                   size: 16,
                 ),
               ],
@@ -484,12 +495,13 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                  color: isDark
+                      ? const Color(0xFF141B3A)
+                      : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.05,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.05),
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -572,10 +584,14 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 40),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.02),
+              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                0.02,
+              ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.05,
+                ),
               ),
             ),
             child: Column(
@@ -583,14 +599,13 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                      0.03,
-                    ),
+                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        .withOpacity(0.03),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     LucideIcons.paperclip,
-                    color: isDark ? Colors.white24 : Colors.black26,
+                    color: isDark ? Colors.white24 : Color(0x420C312B),
                     size: 20,
                   ),
                 ),
@@ -598,7 +613,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 Text(
                   'ADD FILES (PDF, JPG)',
                   style: GoogleFonts.inter(
-                    color: isDark ? Colors.white24 : Colors.black26,
+                    color: isDark ? Colors.white24 : Color(0x420C312B),
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1,
@@ -616,7 +631,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+                  0.05,
+                ),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -672,7 +689,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
+              0.05,
+            ),
             blurRadius: 30,
             offset: const Offset(0, 10),
           ),
@@ -711,7 +730,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                   const SizedBox(width: 12),
                   Icon(
                     LucideIcons.send,
-                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    color: isDark
+                        ? const Color(0xFF0C312B)
+                        : const Color(0xFFF4EFE3),
                     size: 16,
                   ),
                 ],

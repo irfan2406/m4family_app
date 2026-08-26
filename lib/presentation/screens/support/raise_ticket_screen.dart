@@ -129,7 +129,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
     const amber = Color(0xFFC5A35B);
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+      backgroundColor: isDark
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFF4EFE3),
       extendBody: true,
       // Web parity: persistent bottom nav (this screen is pushed over the shell,
       // so a tab tap returns to the shell and selects that tab).
@@ -367,7 +369,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                         onPressed: _submitting ? null : _submit,
                         style: FilledButton.styleFrom(
                           backgroundColor: onSurface,
-                          foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          foregroundColor: isDark
+                              ? Colors.black
+                              : const Color(0xFFF4EFE3),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -378,7 +382,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                  color: isDark
+                                      ? Colors.black
+                                      : const Color(0xFFF4EFE3),
                                 ),
                               )
                             : Row(
