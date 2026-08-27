@@ -979,12 +979,11 @@ class _CpProfileSettingsScreenState
         border: Border.all(
           color: scheme.outlineVariant.withValues(alpha: 0.45),
         ),
-        // White card in light mode; solid neutral near-black in dark (matches
-        // the Performance Tracker / home cards) — the old translucent fill let
-        // the navy page show through and read as a muddy tint.
+        // M4 card surface, not pure white (the palette defines lightCard as
+        // "warm cream card (never white)"); solid neutral near-black in dark.
         color: Theme.of(context).brightness == Brightness.dark
             ? const Color(0xFF141B3A)
-            : Colors.white,
+            : const Color(0xFFF4EFE3),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(

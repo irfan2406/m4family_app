@@ -18,8 +18,9 @@ class InvestorLoginScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
-  static const _gold = Colors.white;
-  static const _amber = Colors.white;
+  // Surfaces use the M4 cream, never pure white.
+  static const _gold = Color(0xFFF4EFE3);
+  static const _amber = Color(0xFFF4EFE3);
   static const _deepGreen = Color(0xFF0C312B);
 
   final _emailController = TextEditingController();
@@ -429,9 +430,9 @@ class _FeaturePill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.4),
+        color: Colors.white.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -509,17 +510,17 @@ class _Field extends StatelessWidget {
             prefixIcon: Icon(icon, color: Colors.white54),
             suffixIcon: suffix,
             filled: true,
-            fillColor: Colors.black.withValues(alpha: 0.4),
+            fillColor: Colors.white.withValues(alpha: 0.06),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
-                color: Colors.white.withValues(alpha: 0.12),
+                color: Colors.white.withValues(alpha: 0.16),
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
-                color: Colors.white.withValues(alpha: 0.12),
+                color: Colors.white.withValues(alpha: 0.16),
               ),
             ),
             focusedBorder: OutlineInputBorder(

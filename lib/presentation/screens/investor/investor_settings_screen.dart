@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
@@ -148,7 +147,8 @@ class _InvestorSettingsScreenState
           style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: const Color(0xFF0C312B),
+            // Green snackbar background -> white text (was invisible).
+            color: Colors.white,
           ),
         ),
       ),
@@ -203,7 +203,7 @@ class _InvestorSettingsScreenState
       return Scaffold(
         backgroundColor: bg,
         body: const Center(
-          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+          child: CircularProgressIndicator(color: Color(0xFF0C312B)),
         ),
       );
     }
@@ -240,7 +240,7 @@ class _InvestorSettingsScreenState
                       style: GoogleFonts.gelasio(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: M4Theme.premiumBlue,
+                        color: Color(0xFF0C312B),
                         letterSpacing: 1.5,
                       ),
                     ),
@@ -418,7 +418,7 @@ class _InvestorSettingsScreenState
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: M4Theme.premiumBlue,
+                    color: Color(0xFF0C312B),
                   ),
                 )
               : Material(
@@ -437,7 +437,9 @@ class _InvestorSettingsScreenState
                         style: GoogleFonts.gelasio(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF0C312B),
+                          // On the green button, so white (it was the same
+                          // green as the button and read as an empty pill).
+                          color: Colors.white,
                           letterSpacing: 1.5,
                         ),
                       ),

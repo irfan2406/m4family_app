@@ -72,24 +72,6 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                           ),
                         ),
                       ),
-                      // Web parity: purple lock badge in the top-right corner.
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFC5A35B).withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: const Color(
-                              0xFFC5A35B,
-                            ).withValues(alpha: 0.35),
-                          ),
-                        ),
-                        child: const Icon(
-                          LucideIcons.lock,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -127,12 +109,12 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 24),
                   ],
                   Text(
                     'CHANNEL\nPARTNER',
                     style: GoogleFonts.gelasio(
-                      fontSize: 46,
+                      fontSize: 36,
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
                       height: 1.05,
