@@ -182,15 +182,6 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             children: [
               Row(
                 children: [
-                  Container(
-                    width: 4,
-                    height: 4,
-                    decoration: const BoxDecoration(
-                      color: Colors.purple,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
                   Text(
                     'SUCCESS PIPELINE',
                     style: GoogleFonts.gelasio(
@@ -201,16 +192,6 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 2),
-              Text(
-                'STATEMENT & PULSE',
-                style: GoogleFonts.gelasio(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                  color: scheme.onSurface.withValues(alpha: 0.68),
-                  letterSpacing: 2,
-                ),
               ),
             ],
           ),
@@ -231,21 +212,23 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
 
   Widget _buildStatBar(ColorScheme scheme, NumberFormat fmt) {
     final s = _summary ?? {};
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          // Web parity: Briefcase/Award/Wallet/Calendar with blue / purple /
-          // emerald / amber tints.
-          _statBox(
+    // All four fit the viewport, so no sideways scrolling to reach VISITS.
+    return Row(
+      children: [
+        // Web parity: Briefcase/Award/Wallet/Calendar with blue / purple /
+        // emerald / amber tints.
+        Expanded(
+          child: _statBox(
             LucideIcons.briefcase,
             'BOOKINGS',
             '${s['totalTrackers'] ?? 0}',
             const Color(0xFF0C312B),
             scheme,
           ),
-          const SizedBox(width: 10),
-          _statBox(
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _statBox(
             LucideIcons.award,
             'COMMISSION',
             fmt.format((s['totalCommission'] ?? 0) as num),
@@ -253,24 +236,28 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             scheme.onSurface,
             scheme,
           ),
-          const SizedBox(width: 10),
-          _statBox(
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _statBox(
             LucideIcons.wallet,
             'SETTLED',
             fmt.format(1000),
             const Color(0xFF163A2C),
             scheme,
           ),
-          const SizedBox(width: 10),
-          _statBox(
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _statBox(
             LucideIcons.calendar,
             'VISITS',
             '${_meetings.length}',
             const Color(0xFF0C312B),
             scheme,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -282,8 +269,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
     ColorScheme scheme,
   ) {
     return Container(
-      width: 100,
-      padding: const EdgeInsets.symmetric(vertical: 14),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
       decoration: BoxDecoration(
         color: scheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -293,31 +279,38 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
         children: [
           // Web parity: colored icon in a tinted rounded tile.
           Container(
-            width: 32,
-            height: 32,
+            width: 28,
+            height: 28,
             decoration: BoxDecoration(
               color: iconColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(9),
             ),
-            child: Center(child: Icon(icon, color: iconColor, size: 16)),
+            child: Center(child: Icon(icon, color: iconColor, size: 14)),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 7),
           Text(
             label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
             style: GoogleFonts.inter(
-              fontSize: 12,
+              fontSize: 9.5,
               fontWeight: FontWeight.w600,
               color: scheme.onSurface.withValues(alpha: 0.68),
-              letterSpacing: 1,
+              letterSpacing: 0.3,
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            value,
-            style: GoogleFonts.inter(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w600,
-              color: scheme.onSurface,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              value,
+              maxLines: 1,
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: scheme.onSurface,
+              ),
             ),
           ),
         ],

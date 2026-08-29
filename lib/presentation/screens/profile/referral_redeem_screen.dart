@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 
@@ -22,7 +21,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
   bool _isLoading = false;
   final TextEditingController _amountController = TextEditingController();
 
-  /// Catalog from GET /api/rewards — the same list the web's "REDEMPTION
+  /// Catalog from GET /api/rewards/catalog — the list the web's "REDEMPTION
   /// CATALOG" renders. Empty means we fall back to the fixed options below so
   /// the screen is never blank if the call fails.
   List<dynamic> _rewards = [];
@@ -34,70 +33,27 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
     _fetchCatalog();
   }
 
-  /// GET /api/rewards answers 404 for an authenticated user, so the catalog
-  /// route is still unknown. These are tried in order until one returns a list;
-  /// the winner is logged so it can be pinned as the single call.
-  static const _catalogCandidates = [
-    '/api/rewards',
-    '/api/rewards/catalog',
-    '/api/rewards/list',
-    '/api/rewards/all',
-    '/api/rewards/available',
-    '/api/rewards/active',
-    '/api/rewards/items',
-    '/api/user/rewards/catalog',
-    '/api/user/referrals/rewards',
-    '/api/user/referrals/catalog',
-    '/api/loyalty/rewards',
-    '/api/redemption/catalog',
-    '/api/admin/rewards',
-  ];
-
   List<dynamic>? _extractList(dynamic body) {
     if (body is List) return body;
     if (body is Map) {
       for (final k in ['data', 'rewards', 'items', 'results', 'catalog']) {
         final v = body[k];
         if (v is List) return v;
-        if (v is Map && v['rewards'] is List) return v['rewards'] as List;
       }
     }
     return null;
   }
 
   Future<void> _fetchCatalog() async {
-    final api = ref.read(apiClientProvider);
-    for (final path in _catalogCandidates) {
-      try {
-        final res = await api.dio.get(
-          path,
-          options: Options(validateStatus: (_) => true),
-        );
-        if (res.statusCode != 200) {
-          if (kDebugMode) debugPrint('M4 catalog $path -> ${res.statusCode}');
-          continue;
-        }
-        final list = _extractList(res.data);
-        if (list == null || list.isEmpty) {
-          if (kDebugMode) debugPrint('M4 catalog $path -> 200 but no list');
-          continue;
-        }
-        _rewards = list;
-        if (kDebugMode) {
-          debugPrint('M4 catalog FOUND $path (${list.length} items)');
-          if (list.first is Map) {
-            debugPrint(
-              'M4 reward keys: ${(list.first as Map).keys.join(', ')}',
-            );
-            debugPrint('M4 reward sample: ${list.first}');
-          }
-        }
-        break;
-      } catch (e) {
-        if (kDebugMode) debugPrint('M4 catalog $path -> error $e');
-      }
+    try {
+      final res = await ref.read(apiClientProvider).getRewardsCatalog();
+      final list = _extractList(res.data);
+      if (list != null && list.isNotEmpty) _rewards = list;
+    } catch (e) {
+      debugPrint('Reward catalog unavailable: $e');
+    } finally {
+      if (mounted) setState(() => _loadingCatalog = false);
     }
-    if (mounted) setState(() => _loadingCatalog = false);
   }
 
   // The catalog payload is authored in the CMS, so field names are read
@@ -114,7 +70,10 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
   }
 
   int _rewardPoints(dynamic reward) {
+    // `requiredPoints` is what the catalog actually returns; the rest are
+    // kept as fallbacks in case the CMS shape changes.
     final raw = _rs(reward, [
+      'requiredPoints',
       'points',
       'pointsCost',
       'pointsRequired',

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 /// Web `/support/logs` (`app/(user)/support/logs/page.tsx`) — "Operational Logs
@@ -19,6 +21,71 @@ class SupportTicketsScreen extends ConsumerStatefulWidget {
 class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
   final _searchController = TextEditingController();
   String? _selectedType;
+
+  /// Live logs. Seeded with the mock set so the first frame is never empty,
+  /// then replaced by whatever GET /api/logs returns for this account.
+  List<Map<String, dynamic>> _logs = _mockLogs;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchLogs();
+  }
+
+  /// The payload is CMS/server shaped, so every field is read leniently rather
+  /// than assumed — a missing key falls back instead of blanking the card.
+  static String _s(dynamic m, List<String> keys, [String fallback = '']) {
+    if (m is! Map) return fallback;
+    for (final k in keys) {
+      final v = m[k];
+      if (v == null) continue;
+      final t = v.toString().trim();
+      if (t.isNotEmpty && t != 'null') return t;
+    }
+    return fallback;
+  }
+
+  Future<void> _fetchLogs() async {
+    try {
+      final res = await ref.read(apiClientProvider).getOperationalLogs();
+      final body = res.data;
+      final raw = body is Map
+          ? (body['data'] ?? body['logs'] ?? body['items'] ?? body['results'])
+          : body;
+      if (raw is! List || raw.isEmpty) return;
+
+      if (kDebugMode && raw.first is Map) {
+        debugPrint('M4 log keys: ${(raw.first as Map).keys.join(', ')}');
+      }
+
+      final mapped = <Map<String, dynamic>>[];
+      for (final e in raw) {
+        if (e is! Map) continue;
+        final details = e['details'] ?? e['meta'] ?? e['data'];
+        mapped.add({
+          'id': _s(e, ['id', 'logId', 'reference', 'refId', '_id'], 'LOG'),
+          'type': _s(e, ['type', 'category', 'logType'], 'SYSTEM'),
+          'title': _s(e, ['title', 'subject', 'event', 'name'], 'LOG ENTRY'),
+          'description': _s(e, ['description', 'message', 'summary', 'body']),
+          'status': _s(e, ['status', 'state'], 'COMPLETED'),
+          'actor': _s(e, [
+            'actor',
+            'performedBy',
+            'user',
+            'createdBy',
+          ], 'SYSTEM'),
+          'date': _s(e, ['date', 'createdAt', 'timestamp', 'updatedAt']),
+          'details': details is Map
+              ? Map<String, dynamic>.from(details)
+              : <String, dynamic>{},
+        });
+      }
+      if (mapped.isNotEmpty && mounted) setState(() => _logs = mapped);
+    } catch (e) {
+      // Keep the seeded list; the page must never dead-end on a failed call.
+      debugPrint('Operational logs unavailable: $e');
+    }
+  }
 
   // Web parity: the same mock audit logs the web page renders.
   static const List<Map<String, dynamic>> _mockLogs = [
@@ -137,7 +204,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
   ];
 
   List<String> get _logTypes =>
-      _mockLogs.map((l) => l['type'] as String).toSet().toList();
+      _logs.map((l) => l['type'] as String).toSet().toList();
 
   @override
   void dispose() {
@@ -157,7 +224,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
   }
 
   void _showFilterSheet(ColorScheme scheme) {
-    const sheetBg = Color(0xFF141B3A);
+    // Web parity: the filter sheet is a light surface, not the navy panel.
+    const sheetBg = Color(0xFFF4EFE3);
+    const ink = Color(0xFF0C312B);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -181,32 +250,38 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
+                    color: ink.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(99),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
-              // Close button (top-right).
-              Align(
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(ctx),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFF4EFE3),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      LucideIcons.x,
-                      size: 18,
-                      color: const Color(0xFF0C312B),
+              // Web parity: title on the left, close button on the right.
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'FILTER LOGS',
+                    style: GoogleFonts.gelasio(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: ink,
                     ),
                   ),
-                ),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(ctx),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: ink.withValues(alpha: 0.06),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(LucideIcons.x, size: 18, color: ink),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               Text(
@@ -215,7 +290,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 2,
-                  color: Colors.white.withValues(alpha: 0.68),
+                  color: ink.withValues(alpha: 0.68),
                 ),
               ),
               const SizedBox(height: 16),
@@ -237,13 +312,11 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                     child: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: active ? const Color(0xFF141B3A) : Colors.white,
+                        color: active ? ink : const Color(0xFFFBF7EF),
                         borderRadius: BorderRadius.circular(18),
-                        border: active
-                            ? Border.all(
-                                color: Colors.white.withValues(alpha: 0.2),
-                              )
-                            : null,
+                        border: Border.all(
+                          color: active ? ink : ink.withValues(alpha: 0.10),
+                        ),
                       ),
                       child: Text(
                         t.toUpperCase(),
@@ -251,9 +324,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1,
-                          color: active
-                              ? Colors.white
-                              : const Color(0xFF0C312B),
+                          color: active ? Colors.white : ink,
                         ),
                       ),
                     ),
@@ -273,7 +344,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
     final scheme = Theme.of(context).colorScheme;
 
     final query = _searchController.text.toLowerCase().trim();
-    final filtered = _mockLogs.where((log) {
+    final filtered = _logs.where((log) {
       final matchesQuery =
           query.isEmpty ||
           (log['title'] as String).toLowerCase().contains(query) ||
@@ -772,9 +843,11 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
     final statusColor = _statusColor(log['status'] as String);
     final details = (log['details'] as Map).cast<String, dynamic>();
 
-    const sheetBg = Color(0xFF141B3A);
-    const labelGrey = Color(0xFFF4EFE3);
-    const summaryText = Color(0xFFF4EFE3);
+    // Web parity: the log detail is a light page, not the navy panel.
+    const sheetBg = Color(0xFFF4EFE3);
+    const ink = Color(0xFF0C312B);
+    const labelGrey = Color(0x9E0C312B);
+    const summaryText = Color(0xCC0C312B);
 
     // Full-screen page (web parity — the log detail is its own page, not a
     // half-height sheet).
@@ -801,22 +874,36 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                             vertical: 11,
                           ),
                           decoration: BoxDecoration(
-                            // Web parity: `bg-card` renders as a light/white pill
-                            // with grey `text-[#666]` text on the dark modal.
-                            color: const Color(0xFFF4EFE3),
+                            // Web parity: a light bordered pill with dark text.
+                            color: const Color(0xFFFBF7EF),
                             borderRadius: BorderRadius.circular(99),
+                            border: Border.all(
+                              color: ink.withValues(alpha: 0.12),
+                            ),
                           ),
                           child: Text(
                             '${log['id']} • ${(log['type'] as String).toUpperCase()}',
                             style: GoogleFonts.gelasio(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFFF4EFE3),
+                              color: ink,
                               letterSpacing: 2,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 36),
+                        const SizedBox(height: 18),
+                        // Web parity: the log title sits under the id pill.
+                        Text(
+                          (log['title'] as String).toUpperCase(),
+                          style: GoogleFonts.gelasio(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w700,
+                            height: 1.15,
+                            color: ink,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
                         IntrinsicHeight(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -840,24 +927,39 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                           ),
                         ),
                         const SizedBox(height: 36),
-                        Text(
-                          'LOG SUMMARY',
-                          style: GoogleFonts.gelasio(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: labelGrey,
-                            letterSpacing: 2,
-                          ),
+                        // Web parity: a small muted icon before the label.
+                        Row(
+                          children: [
+                            const Icon(
+                              LucideIcons.info,
+                              size: 13,
+                              color: labelGrey,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'LOG SUMMARY',
+                              style: GoogleFonts.gelasio(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: labelGrey,
+                                letterSpacing: 2,
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(26),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.03),
+                            color: const Color(
+                              0xFF0C312B,
+                            ).withValues(alpha: 0.04),
                             borderRadius: BorderRadius.circular(28),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.14),
+                              color: const Color(
+                                0xFF0C312B,
+                              ).withValues(alpha: 0.10),
                             ),
                           ),
                           child: Text(
@@ -872,20 +974,33 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                           ),
                         ),
                         const SizedBox(height: 36),
-                        Text(
-                          'STRUCTURAL DATA',
-                          style: GoogleFonts.gelasio(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: labelGrey,
-                            letterSpacing: 2,
-                          ),
+                        Row(
+                          children: [
+                            const Icon(
+                              LucideIcons.history,
+                              size: 13,
+                              color: labelGrey,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'STRUCTURAL DATA',
+                              style: GoogleFonts.gelasio(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: labelGrey,
+                                letterSpacing: 2,
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
                         Container(
                           decoration: BoxDecoration(
-                            color: const Color(0xFFC5A35B),
+                            color: const Color(0xFFFBF7EF),
                             borderRadius: BorderRadius.circular(26),
+                            border: Border.all(
+                              color: ink.withValues(alpha: 0.10),
+                            ),
                           ),
                           clipBehavior: Clip.antiAlias,
                           child: Column(
@@ -894,7 +1009,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                                 if (i > 0)
                                   Divider(
                                     height: 1,
-                                    color: Colors.black.withValues(alpha: 0.08),
+                                    color: ink.withValues(alpha: 0.08),
                                   ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -956,14 +1071,11 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       child: ElevatedButton(
                         onPressed: () => Navigator.pop(ctx),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF141B3A),
+                          backgroundColor: ink,
                           foregroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18),
-                            side: BorderSide(
-                              color: Colors.white.withValues(alpha: 0.08),
-                            ),
                           ),
                         ),
                         child: Text(
@@ -996,8 +1108,12 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4EFE3),
+        // Card fill, not the page fill — they matched and the boxes vanished.
+        color: const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: const Color(0xFF0C312B).withValues(alpha: 0.10),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1007,7 +1123,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFFF4EFE3),
+              color: const Color(0xFF0C312B).withValues(alpha: 0.62),
               letterSpacing: 1.5,
             ),
           ),

@@ -542,17 +542,28 @@ class ApiClient {
     return dio.get('/api/user/referrals/dashboard');
   }
 
+  /// Create a customer referral. `/api/referral` did not exist (the server
+  /// answered "Cannot POST /api/referral"), so every submission failed. The
+  /// user referral router is `/api/user/referrals`, matching its /dashboard
+  /// and /redeem siblings and the CP/investor create endpoints.
   Future<Response> submitReferral(Map<String, dynamic> data) async {
-    return dio.post('/api/referral', data: data);
+    return dio.post('/api/user/referrals', data: data);
   }
 
   Future<Response> redeemPoints(Map<String, dynamic> data) async {
     return dio.post('/api/user/referrals/redeem', data: data);
   }
 
+  /// Operational / audit logs behind the web's "Full Audit History" page.
+  /// Scoped server-side by the caller's token, so each portal gets its own
+  /// records rather than one shared set.
+  Future<Response> getOperationalLogs() async {
+    return dio.get('/api/logs');
+  }
+
   /// Redemption catalog shown on the web's "REDEEM REWARDS" page.
   Future<Response> getRewardsCatalog() async {
-    return dio.get('/api/rewards');
+    return dio.get('/api/rewards/catalog');
   }
 
   // Site Visits & Bookings

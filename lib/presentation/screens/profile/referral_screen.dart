@@ -764,334 +764,357 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 ),
                 border: Border.all(color: foreground.withOpacity(0.1)),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'REFER FRIEND',
-                    style: GoogleFonts.gelasio(
-                      color: foreground,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'REFER FRIEND',
+                      style: GoogleFonts.gelasio(
+                        color: foreground,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'ADD TO YOUR SUCCESS MATRIX',
-                    style: GoogleFonts.gelasio(
-                      color: foreground.withOpacity(0.72),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 3,
+                    const SizedBox(height: 8),
+                    Text(
+                      'ADD TO YOUR SUCCESS MATRIX',
+                      style: GoogleFonts.gelasio(
+                        color: foreground.withOpacity(0.72),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 3,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 48),
+                    const SizedBox(height: 48),
 
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'SELECT PROJECT',
-                        style: GoogleFonts.inter(
-                          color: foreground.withOpacity(0.72),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      GestureDetector(
-                        onTap: () => setModalState(
-                          () => isProjectDropdownOpen = !isProjectDropdownOpen,
-                        ),
-                        child: Container(
-                          height: 56,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: foreground.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: foreground.withOpacity(0.1),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                selectedProjectName.isEmpty
-                                    ? 'CHOOSE PROJECT'
-                                    : selectedProjectName.toUpperCase(),
-                                style: GoogleFonts.inter(
-                                  color: selectedProjectName.isEmpty
-                                      ? foreground.withOpacity(0.72)
-                                      : foreground,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const Spacer(),
-                              Icon(
-                                isProjectDropdownOpen
-                                    ? LucideIcons.chevronUp
-                                    : LucideIcons.chevronDown,
-                                color: foreground.withOpacity(0.4),
-                                size: 16,
-                              ),
-                            ],
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'SELECT PROJECT',
+                          style: GoogleFonts.inter(
+                            color: foreground.withOpacity(0.72),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1,
                           ),
                         ),
-                      ),
-                      if (isProjectDropdownOpen) ...[
-                        const SizedBox(height: 4),
-                        Container(
-                          constraints: const BoxConstraints(maxHeight: 200),
-                          decoration: BoxDecoration(
-                            color: theme.cardColor,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
+                        const SizedBox(height: 8),
+                        GestureDetector(
+                          onTap: () => setModalState(
+                            () =>
+                                isProjectDropdownOpen = !isProjectDropdownOpen,
+                          ),
+                          child: Container(
+                            height: 56,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            decoration: BoxDecoration(
                               color: foreground.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: foreground.withOpacity(0.1),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  selectedProjectName.isEmpty
+                                      ? 'CHOOSE PROJECT'
+                                      : selectedProjectName.toUpperCase(),
+                                  style: GoogleFonts.inter(
+                                    color: selectedProjectName.isEmpty
+                                        ? foreground.withOpacity(0.72)
+                                        : foreground,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Icon(
+                                  isProjectDropdownOpen
+                                      ? LucideIcons.chevronUp
+                                      : LucideIcons.chevronDown,
+                                  color: foreground.withOpacity(0.4),
+                                  size: 16,
+                                ),
+                              ],
                             ),
                           ),
-                          child: Consumer(
-                            builder: (context, ref, child) {
-                              final projectsAsync = ref.watch(projectsProvider);
-                              return projectsAsync.when(
-                                data: (projects) {
-                                  if (projects.isEmpty) {
-                                    return Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(20),
-                                        child: Text(
-                                          'No projects available',
-                                          style: TextStyle(
-                                            color: foreground.withOpacity(0.72),
+                        ),
+                        if (isProjectDropdownOpen) ...[
+                          const SizedBox(height: 4),
+                          Container(
+                            constraints: const BoxConstraints(maxHeight: 200),
+                            decoration: BoxDecoration(
+                              color: theme.cardColor,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: foreground.withOpacity(0.05),
+                              ),
+                            ),
+                            child: Consumer(
+                              builder: (context, ref, child) {
+                                final projectsAsync = ref.watch(
+                                  projectsProvider,
+                                );
+                                return projectsAsync.when(
+                                  data: (projects) {
+                                    if (projects.isEmpty) {
+                                      return Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(20),
+                                          child: Text(
+                                            'No projects available',
+                                            style: TextStyle(
+                                              color: foreground.withOpacity(
+                                                0.72,
+                                              ),
+                                            ),
                                           ),
+                                        ),
+                                      );
+                                    }
+                                    return SingleChildScrollView(
+                                      child: Column(
+                                        children: projects.map((p) {
+                                          final name =
+                                              p['title'] ??
+                                              p['name'] ??
+                                              'UNKNOWN PROJECT';
+                                          final isSelected =
+                                              selectedProjectId == p['_id'];
+                                          return GestureDetector(
+                                            onTap: () => setModalState(() {
+                                              selectedProjectName = name;
+                                              selectedProjectId =
+                                                  p['_id'] ?? '';
+                                              isProjectDropdownOpen = false;
+                                            }),
+                                            child: Container(
+                                              width: double.infinity,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 20,
+                                                    vertical: 16,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: isSelected
+                                                    ? theme.colorScheme.primary
+                                                          .withOpacity(0.1)
+                                                    : Colors.transparent,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Text(
+                                                name.toString().toUpperCase(),
+                                                style: GoogleFonts.inter(
+                                                  color: isSelected
+                                                      ? theme
+                                                            .colorScheme
+                                                            .primary
+                                                      : foreground.withOpacity(
+                                                          0.6,
+                                                        ),
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    );
+                                  },
+                                  loading: () => Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: foreground,
+                                      ),
+                                    ),
+                                  ),
+                                  error: (e, s) => const Padding(
+                                    padding: EdgeInsets.all(20),
+                                    child: Text(
+                                      'Failed to load projects',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
+                    _buildInputField(
+                      'FRIEND NAME',
+                      'FULL NAME',
+                      nameController,
+                    ),
+                    const SizedBox(height: 24),
+                    _buildInputField(
+                      'MOBILE NUMBER',
+                      'XXXXX XXXXX',
+                      phoneController,
+                      isPhone: true,
+                    ),
+                    const SizedBox(height: 24),
+                    // Web parity: the web form carries an optional email.
+                    _buildInputField(
+                      'EMAIL (OPTIONAL)',
+                      'friend@example.com',
+                      emailController,
+                      isEmail: true,
+                    ),
+                    const SizedBox(height: 48),
+
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: isLoading
+                          ? null
+                          : () async {
+                              final email = emailController.text.trim();
+                              final vErr =
+                                  Validators.nameError(
+                                    nameController.text,
+                                    field: 'friend name',
+                                  ) ??
+                                  Validators.phoneError(phoneController.text) ??
+                                  // Optional: only validated when filled in.
+                                  (email.isEmpty
+                                      ? null
+                                      : Validators.emailError(email));
+                              if (selectedProjectName.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Please select a project.'),
+                                    backgroundColor: Colors.redAccent,
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                                return;
+                              }
+                              if (vErr != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(vErr),
+                                    backgroundColor: Colors.redAccent,
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                                return;
+                              }
+                              setModalState(() => isLoading = true);
+                              try {
+                                final apiClient = ref.read(apiClientProvider);
+                                final response = await apiClient.submitReferral({
+                                  // projectId, like the CP and investor forms
+                                  // — the server keys off the ObjectId, not the
+                                  // title. projectName is kept alongside it.
+                                  'projectId': selectedProjectId,
+                                  'projectName': selectedProjectName,
+                                  'referralName': nameController.text.trim(),
+                                  'referralPhone': phoneController.text.trim(),
+                                  // Same key the investor referral form posts.
+                                  if (email.isNotEmpty) 'referralEmail': email,
+                                });
+
+                                if (response.data['status'] == true ||
+                                    response.statusCode == 200 ||
+                                    response.statusCode == 201) {
+                                  if (mounted) {
+                                    Navigator.pop(context);
+                                    _fetchReferralData();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Referral recorded successfully!',
+                                        ),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: const Color(
+                                          0xFFC65B46,
+                                        ),
+                                        content: Text(
+                                          response.data['message'] ??
+                                              'Submission failed.',
                                         ),
                                       ),
                                     );
                                   }
-                                  return SingleChildScrollView(
-                                    child: Column(
-                                      children: projects.map((p) {
-                                        final name =
-                                            p['title'] ??
-                                            p['name'] ??
-                                            'UNKNOWN PROJECT';
-                                        final isSelected =
-                                            selectedProjectId == p['_id'];
-                                        return GestureDetector(
-                                          onTap: () => setModalState(() {
-                                            selectedProjectName = name;
-                                            selectedProjectId = p['_id'] ?? '';
-                                            isProjectDropdownOpen = false;
-                                          }),
-                                          child: Container(
-                                            width: double.infinity,
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 20,
-                                              vertical: 16,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: isSelected
-                                                  ? theme.colorScheme.primary
-                                                        .withOpacity(0.1)
-                                                  : Colors.transparent,
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            child: Text(
-                                              name.toString().toUpperCase(),
-                                              style: GoogleFonts.inter(
-                                                color: isSelected
-                                                    ? theme.colorScheme.primary
-                                                    : foreground.withOpacity(
-                                                        0.6,
-                                                      ),
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  );
-                                },
-                                loading: () => Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: foreground,
-                                    ),
-                                  ),
-                                ),
-                                error: (e, s) => const Padding(
-                                  padding: EdgeInsets.all(20),
-                                  child: Text(
-                                    'Failed to load projects',
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-                  _buildInputField('FRIEND NAME', 'FULL NAME', nameController),
-                  const SizedBox(height: 24),
-                  _buildInputField(
-                    'MOBILE NUMBER',
-                    'XXXXX XXXXX',
-                    phoneController,
-                    isPhone: true,
-                  ),
-                  const SizedBox(height: 24),
-                  // Web parity: the web form carries an optional email.
-                  _buildInputField(
-                    'EMAIL (OPTIONAL)',
-                    'friend@example.com',
-                    emailController,
-                    isEmail: true,
-                  ),
-                  const SizedBox(height: 48),
-
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: isLoading
-                        ? null
-                        : () async {
-                            final email = emailController.text.trim();
-                            final vErr =
-                                Validators.nameError(
-                                  nameController.text,
-                                  field: 'friend name',
-                                ) ??
-                                Validators.phoneError(phoneController.text) ??
-                                // Optional: only validated when filled in.
-                                (email.isEmpty
-                                    ? null
-                                    : Validators.emailError(email));
-                            if (selectedProjectName.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Please select a project.'),
-                                  backgroundColor: Colors.redAccent,
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                              return;
-                            }
-                            if (vErr != null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(vErr),
-                                  backgroundColor: Colors.redAccent,
-                                  duration: const Duration(seconds: 2),
-                                ),
-                              );
-                              return;
-                            }
-                            setModalState(() => isLoading = true);
-                            try {
-                              final apiClient = ref.read(apiClientProvider);
-                              final response = await apiClient.submitReferral({
-                                'projectName': selectedProjectName,
-                                'referralName': nameController.text,
-                                'referralPhone': phoneController.text,
-                                // Same key the investor referral form posts.
-                                if (email.isNotEmpty) 'referralEmail': email,
-                              });
-
-                              if (response.data['status'] == true ||
-                                  response.statusCode == 200 ||
-                                  response.statusCode == 201) {
+                                }
+                              } catch (e) {
                                 if (mounted) {
-                                  Navigator.pop(context);
-                                  _fetchReferralData();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
+                                      backgroundColor: Color(0xFFC65B46),
                                       content: Text(
-                                        'Referral recorded successfully!',
-                                      ),
-                                      backgroundColor: Colors.green,
-                                    ),
-                                  );
-                                }
-                              } else {
-                                if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      backgroundColor: const Color(0xFFC65B46),
-                                      content: Text(
-                                        response.data['message'] ??
-                                            'Submission failed.',
+                                        'Submission error. Check your connection.',
                                       ),
                                     ),
                                   );
                                 }
+                              } finally {
+                                if (mounted)
+                                  setModalState(() => isLoading = false);
                               }
-                            } catch (e) {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    backgroundColor: Color(0xFFC65B46),
-                                    content: Text(
-                                      'Submission error. Check your connection.',
-                                    ),
-                                  ),
-                                );
-                              }
-                            } finally {
-                              if (mounted)
-                                setModalState(() => isLoading = false);
-                            }
-                          },
-                    child: Container(
-                      width: double.infinity,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.onSurface,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.colorScheme.onSurface.withOpacity(0.2),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      alignment: Alignment.center,
-                      child: isLoading
-                          ? CircularProgressIndicator(
-                              color: theme.colorScheme.surface,
-                              strokeWidth: 2,
-                            )
-                          : Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
+                            },
+                      child: Container(
+                        width: double.infinity,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.onSurface,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.2,
                               ),
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  'SUBMIT LEAD VERIFICATION',
-                                  maxLines: 1,
-                                  style: GoogleFonts.gelasio(
-                                    color: theme.colorScheme.surface,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 2,
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: isLoading
+                            ? CircularProgressIndicator(
+                                color: theme.colorScheme.surface,
+                                strokeWidth: 2,
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    'SUBMIT LEAD VERIFICATION',
+                                    maxLines: 1,
+                                    style: GoogleFonts.gelasio(
+                                      color: theme.colorScheme.surface,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 2,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },

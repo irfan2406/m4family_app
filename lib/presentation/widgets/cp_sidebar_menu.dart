@@ -162,7 +162,6 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
   @override
   Widget build(BuildContext context) {
     final idx = ref.watch(cpNavigationIndexProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Drawer(
       width: M4Drawer.panelWidth(context),
@@ -355,11 +354,14 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         height: 56,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          // Web parity: bg-red-50 (light) / red-900/10 (dark).
-                          color: isDark
-                              ? const Color(0xFFC65B46).withOpacity(0.1)
-                              : const Color(0xFFF4EFE3),
+                          // Same treatment as the guest drawer's exit button:
+                          // a coral tint with a coral hairline, not a solid
+                          // cream pill.
+                          color: const Color(0xFFC65B46).withOpacity(0.12),
                           borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: const Color(0xFFC65B46).withOpacity(0.1),
+                          ),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
