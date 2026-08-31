@@ -41,7 +41,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
     // ambient brightness: the drawer can be opened from a green "showcase"
     // screen, whose theme reports Brightness.dark, and that would flip the
     // menu to tones it never used in light mode.
-    final bool isDark = false;
+    const bool isDark = false;
     final confirmed = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -353,13 +353,13 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                             _close();
                           },
                         ),
-                        _SidebarItem(
+                        const _SidebarItem(
                           icon: LucideIcons.phone,
                           label: 'Call',
                           isActive: false,
                           onTap: SupportHandlers.launchCall,
                         ),
-                        _SidebarItem(
+                        const _SidebarItem(
                           icon: LucideIcons.messageSquare,
                           label: 'Whatsapp',
                           isActive: false,

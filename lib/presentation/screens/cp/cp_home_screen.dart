@@ -265,7 +265,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     if (_loading) {
       return Material(
         color: Theme.of(context).scaffoldBackgroundColor,
-        child: Center(
+        child: const Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
       );
@@ -610,6 +610,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         ? src
         : ref.read(apiClientProvider).resolveUrl(src);
     return CachedNetworkImage(
+      memCacheWidth: 1080,
       key: key,
       imageUrl: url,
       width: width,
@@ -655,7 +656,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   child: Text(
                     'Who We Are',
                     style: GoogleFonts.inter(
-                      color: isDark ? Colors.white : Color(0xFF155A4F),
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
                     ),
@@ -701,10 +702,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                 color: isSelected
                                     ? (isDark
                                           ? Colors.white
-                                          : Color(0xFF0C312B))
+                                          : const Color(0xFF0C312B))
                                     : (isDark
                                               ? Colors.white
-                                              : Color(0xFF0C312B))
+                                              : const Color(0xFF0C312B))
                                           .withValues(alpha: 0.68),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
@@ -719,7 +720,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                 decoration: BoxDecoration(
                                   color: isDark
                                       ? Colors.white
-                                      : Color(0xFF0C312B),
+                                      : const Color(0xFF0C312B),
                                   borderRadius: BorderRadius.circular(1),
                                 ),
                               ),
@@ -993,7 +994,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
               alpha: 0.08,
             ),
           ),
@@ -1084,7 +1085,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.gelasio(
                         fontSize: 18,
-                        color: isDark ? Colors.white : Color(0xFF0C312B),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -1094,8 +1095,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         Icon(
                           LucideIcons.mapPin,
                           size: 12,
-                          color: (isDark ? Colors.white : Color(0xFF0C312B))
-                              .withValues(alpha: 0.5),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withValues(alpha: 0.5),
                         ),
                         const SizedBox(width: 6),
                         Expanded(
@@ -1107,8 +1109,11 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.5,
-                              color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                  .withValues(alpha: 0.68),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withValues(alpha: 0.68),
                             ),
                           ),
                         ),
@@ -1118,7 +1123,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     Container(
                       height: 44,
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Color(0xFF0C312B),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -1343,13 +1348,13 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
                           .withValues(alpha: 0.1),
                     ),
                   ),
                   child: Icon(
                     LucideIcons.arrowLeft,
-                    color: isDark ? Colors.white : Color(0xFF0C312B),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                     size: 20,
                   ),
                 ),
@@ -1364,7 +1369,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   child: Container(
                     height: 56,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Color(0xFF0C312B),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
@@ -1403,13 +1408,13 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
                           .withValues(alpha: 0.1),
                     ),
                   ),
                   child: Icon(
                     LucideIcons.arrowRight,
-                    color: isDark ? Colors.white : Color(0xFF0C312B),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                     size: 20,
                   ),
                 ),
@@ -1425,13 +1430,17 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
-        Icon(icon, color: isDark ? Colors.white : Color(0xFF0C312B), size: 24),
+        Icon(
+          icon,
+          color: isDark ? Colors.white : const Color(0xFF0C312B),
+          size: 24,
+        ),
         const SizedBox(height: 8),
         Text(
           label,
           textAlign: TextAlign.center,
           style: GoogleFonts.gelasio(
-            color: isDark ? Colors.white : Color(0xFF0C312B),
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
             fontSize: 9,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
@@ -1467,9 +1476,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 : Colors.black.withValues(alpha: 0.02),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                alpha: 0.08,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withValues(alpha: 0.08),
             ),
             boxShadow: [
               BoxShadow(
@@ -1548,19 +1556,17 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                  alpha: 0.05,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.05),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                    alpha: 0.1,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.1),
                 ),
               ),
               child: Icon(
                 icon,
-                color: isDark ? Colors.white : Color(0xFF0C312B),
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
                 size: 20,
               ),
             ),
@@ -1569,7 +1575,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               title,
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
-                color: isDark ? Colors.white : Color(0xFF155A4F),
+                color: isDark ? Colors.white : const Color(0xFF155A4F),
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
                 letterSpacing: 1,
@@ -1580,9 +1586,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               desc,
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                  alpha: 0.68,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.68),
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
@@ -1603,7 +1608,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         Text(
           'REGISTER YOUR\nINTEREST',
           style: GoogleFonts.gelasio(
-            color: isDark ? Colors.white : Color(0xFF0C312B),
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
             fontSize: 32,
             fontWeight: FontWeight.w400,
             letterSpacing: -1,
@@ -1616,6 +1621,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           _nameController,
           keyboardType: TextInputType.name,
           inputFormatters: Validators.nameFormatters,
+          hint: 'Enter Full Name',
           errorText: _nameError,
           // Clear the red state as soon as they start typing.
           onChanged: (v) {
@@ -1628,6 +1634,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           _emailController,
           keyboardType: TextInputType.emailAddress,
           inputFormatters: Validators.emailFormatters,
+          hint: 'Enter Email Address',
           errorText: _emailError,
           onChanged: (v) {
             if (_emailError != null) setState(() => _emailError = null);
@@ -1639,14 +1646,19 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           _phoneController,
           keyboardType: TextInputType.phone,
           inputFormatters: Validators.phoneFormatters,
-          hint: '+91',
+          hint: 'Enter Mobile Number',
           errorText: _phoneError,
           onChanged: (v) {
             if (_phoneError != null) setState(() => _phoneError = null);
           },
         ),
         const SizedBox(height: 16),
-        _buildLuxuryInput('Message', _messageController, isLong: true),
+        _buildLuxuryInput(
+          'Message',
+          _messageController,
+          isLong: true,
+          hint: 'Enter Message',
+        ),
         const SizedBox(height: 24),
         Row(
           children: [
@@ -1657,7 +1669,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 _agreedToTerms = val ?? false;
                 if (_agreedToTerms) _termsError = false;
               }),
-              activeColor: isDark ? Colors.white : Color(0xFF0C312B),
+              activeColor: isDark ? Colors.white : const Color(0xFF0C312B),
               checkColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
               side: BorderSide(
                 color: _termsError
@@ -1672,7 +1684,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 style: GoogleFonts.inter(
                   color: _termsError
                       ? const Color(0xFFC65B46)
-                      : (isDark ? Colors.white54 : Color(0xFF155A4F)),
+                      : (isDark ? Colors.white54 : const Color(0xFF155A4F)),
                   fontSize: 11,
                   letterSpacing: 1,
                 ),
@@ -1688,7 +1700,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             onTap: _submitting ? () {} : _submitInterest,
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : Color(0xFF0C312B),
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
@@ -1743,9 +1755,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             border: Border.all(
               color: hasError
                   ? errorColor
-                  : (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                      alpha: 0.12,
-                    ),
+                  : (isDark ? Colors.white : const Color(0xFF0C312B))
+                        .withValues(alpha: 0.12),
               width: hasError ? 1.5 : 1,
             ),
             boxShadow: isDark
@@ -1766,7 +1777,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
             onChanged: onChanged,
-            style: TextStyle(color: isDark ? Colors.white : Color(0xFF0C312B)),
+            style: TextStyle(
+              color: isDark ? Colors.white : const Color(0xFF0C312B),
+            ),
             maxLines: isLong ? 5 : 1,
             decoration: InputDecoration(
               hintText: hint ?? label,
@@ -1776,7 +1789,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     : (isDark
                           ? Colors.white54
                           : const Color(0xFF0C312B).withValues(alpha: 0.5)),
-                fontSize: 13,
+                fontSize: 12,
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 24,

@@ -92,7 +92,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
   @override
   Widget build(BuildContext context) {
     final currentStep = ref.watch(customViewsStepProvider);
-    final isSubmitted = false;
+    const isSubmitted = false;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -176,7 +176,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                 child: Column(
                   children: [
                     // Banner Section (always visible, exactly as Web CP)
-                    Container(
+                    SizedBox(
                       height: 200,
                       width: double.infinity,
                       child: Stack(
@@ -315,8 +315,8 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                     const SizedBox(height: 24),
 
                     // Journey Steps Track (4 steps with icons, exactly as Web CP)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -708,7 +708,11 @@ class _ProjectSelectionStep extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                Icon(LucideIcons.checkCircle2, color: Colors.green, size: 20),
+                const Icon(
+                  LucideIcons.checkCircle2,
+                  color: Colors.green,
+                  size: 20,
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -881,14 +885,13 @@ class _ProjectSelectionStep extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? Theme.of(context).colorScheme.onBackground
-                      : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                          0.04,
-                        ),
+                      : (isDark ? Colors.white : const Color(0xFF0C312B))
+                            .withOpacity(0.04),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
                         ? Theme.of(context).colorScheme.onBackground
-                        : (isDark ? Colors.white : Color(0xFF0C312B))
+                        : (isDark ? Colors.white : const Color(0xFF0C312B))
                               .withOpacity(0.1),
                   ),
                 ),
@@ -918,13 +921,13 @@ class _ProjectSelectionStep extends ConsumerWidget {
               top: BorderSide(color: scheme.onSurface.withValues(alpha: 0.08)),
             ),
           ),
-          child: Row(
+          child: const Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Expanded(
                 child: _UnitDetailField(
                   label: 'UNIT NUMBER',
-                  hint: 'e.g. 101',
+                  hint: 'Enter Unit Number',
                   field: _UnitField.number,
                 ),
               ),
@@ -932,7 +935,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
               Expanded(
                 child: _UnitDetailField(
                   label: 'BLOCK / TOWER',
-                  hint: 'e.g. A',
+                  hint: 'Enter Block or Tower',
                   field: _UnitField.block,
                 ),
               ),
@@ -940,7 +943,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
               Expanded(
                 child: _UnitDetailField(
                   label: 'WING',
-                  hint: 'e.g. B',
+                  hint: 'Enter Wing',
                   field: _UnitField.wing,
                 ),
               ),
@@ -1027,7 +1030,7 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
         Container(
           height: 44,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
               alpha: 0.03,
             ),
             borderRadius: BorderRadius.circular(12),
@@ -1051,7 +1054,7 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
               focusedBorder: InputBorder.none,
               hintText: widget.hint,
               hintStyle: GoogleFonts.inter(
-                fontSize: 12,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
                 color: scheme.onSurface.withValues(alpha: 0.68),
               ),
@@ -1168,7 +1171,7 @@ class _SpaceSelectionStep extends ConsumerWidget {
                     border: Border.all(
                       color: isSelected
                           ? scheme.onSurface
-                          : (isDark ? Colors.white : Color(0xFF0C312B))
+                          : (isDark ? Colors.white : const Color(0xFF0C312B))
                                 .withOpacity(0.1),
                     ),
                     boxShadow: isSelected
@@ -1950,9 +1953,8 @@ class _SummaryRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-              0.09,
-            ),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.09),
           ),
         ),
       ),
@@ -2058,7 +2060,7 @@ class _PremiumMaterialsSection extends StatelessWidget {
             separatorBuilder: (context, index) => const SizedBox(width: 16),
             itemBuilder: (context, index) {
               final mat = materials[index];
-              return Container(
+              return SizedBox(
                 width: 120, // Arch shape mimicking web
                 child: Stack(
                   fit: StackFit.expand,
@@ -2204,7 +2206,7 @@ class _ConsultationSection extends ConsumerWidget {
                 const SizedBox(height: 32),
                 _buildField(
                   context,
-                  'FULL NAME',
+                  'Enter Full Name',
                   LucideIcons.user,
                   nameController,
                   keyboardType: TextInputType.name,
@@ -2212,7 +2214,7 @@ class _ConsultationSection extends ConsumerWidget {
                 ),
                 _buildField(
                   context,
-                  'PHONE NUMBER',
+                  'Enter Mobile Number',
                   LucideIcons.phone,
                   phoneController,
                   keyboardType: TextInputType.phone,
@@ -2220,7 +2222,7 @@ class _ConsultationSection extends ConsumerWidget {
                 ),
                 _buildField(
                   context,
-                  'EMAIL (OPTIONAL)',
+                  'Enter Email Address (Optional)',
                   LucideIcons.mail,
                   emailController,
                   keyboardType: TextInputType.emailAddress,

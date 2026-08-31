@@ -287,14 +287,18 @@ final filteredProjectsProvider = Provider<List<dynamic>>((ref) {
             matchesArea;
       }).toList();
 
-      // Web parity: render in creation order (oldest → newest). The web list
-      // shows CLÉDOR → CLEDOR ELITE → DING DONG; the raw API order the app got
-      // was newest-first. Sort by createdAt (fallback Mongo _id, which encodes
-      // creation time) ascending to match the web's serial order.
+      // Web parity: newest first. The catalog already returns createdAt
+      // DESCENDING (Skyline Heights → Cledor → skai → Clédor → Ocean View →
+      // M4 Aura Heights) and the web CP list renders exactly that order, so a
+      // newly added project lands at the top. This used to sort ASCENDING to
+      // match an older web build; the live web now shows the reverse, which
+      // is why the app listed CLÉDOR first where the web starts at SKYLINE
+      // HEIGHTS. Sort explicitly rather than trusting arrival order, keyed on
+      // createdAt (falling back to the Mongo _id, which encodes create time).
       filtered.sort((a, b) {
         final ka = (a['createdAt'] ?? a['_id'] ?? '').toString();
         final kb = (b['createdAt'] ?? b['_id'] ?? '').toString();
-        return ka.compareTo(kb);
+        return kb.compareTo(ka);
       });
       return filtered;
     },

@@ -484,9 +484,9 @@ class _CpReferralRedeemScreenState
               color: scheme.onSurface,
             ),
             decoration: InputDecoration(
-              hintText: '0000',
+              hintText: 'Enter Amount',
               hintStyle: GoogleFonts.gelasio(
-                fontSize: 26,
+                fontSize: 25,
                 fontWeight: FontWeight.w700,
                 color: scheme.onSurface.withValues(alpha: 0.62),
               ),

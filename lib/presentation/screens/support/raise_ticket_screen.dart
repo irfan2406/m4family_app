@@ -125,7 +125,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final onSurface = isDark ? Colors.white : Color(0xFF0C312B);
+    final onSurface = isDark ? Colors.white : const Color(0xFF0C312B);
     const amber = Color(0xFFC5A35B);
 
     return Scaffold(
@@ -249,7 +249,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                           color: onSurface,
                         ),
                         decoration: _inputDecoration(
-                          'E.g. Payment receipt',
+                          'Enter Subject',
                           onSurface,
                         ),
                       ),
@@ -318,7 +318,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                           color: onSurface,
                         ),
                         decoration: _inputDecoration(
-                          'Describe your issue...',
+                          'Enter Issue Description',
                           onSurface,
                         ),
                       ),
@@ -445,7 +445,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
       InputDecoration(
         hintText: hint,
         hintStyle: GoogleFonts.inter(
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: FontWeight.w700,
           color: onSurface.withOpacity(0.68),
         ),

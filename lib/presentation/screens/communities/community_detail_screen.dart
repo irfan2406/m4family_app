@@ -48,6 +48,7 @@ Widget _communityProjectImage(String url) {
     }
   }
   return CachedNetworkImage(
+    memCacheWidth: 1080,
     imageUrl: url,
     fit: BoxFit.cover,
     placeholder: (context, u) => Container(color: Colors.black12),
@@ -259,7 +260,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
                         .withOpacity(0.08),
                   ),
                 ),
@@ -272,7 +273,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                   children: [
                     Icon(
                       LucideIcons.arrowLeft,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
                           .withOpacity(0.7),
                       size: 20,
                     ),
@@ -280,7 +281,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                     Text(
                       'COMMUNITIES',
                       style: GoogleFonts.gelasio(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.7),
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
@@ -305,6 +306,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                   fit: StackFit.expand,
                   children: [
                     CachedNetworkImage(
+                      memCacheWidth: 1080,
                       imageUrl: heroImageUrl,
                       fit: BoxFit.cover,
                       placeholder: (context, url) =>
@@ -402,12 +404,13 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.05),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: (isDark ? Colors.white : Color(0xFF0C312B))
-                              .withOpacity(0.1),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.1),
                         ),
                       ),
                       child: Row(
@@ -415,7 +418,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.white : Color(0xFF0C312B),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF0C312B),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -430,7 +435,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                 .toString()
                                 .toUpperCase(),
                             style: GoogleFonts.inter(
-                              color: isDark ? Colors.white : Color(0xFF155A4F),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF155A4F),
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1,
@@ -458,7 +465,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         widget.community['description'] ??
                         '',
                     style: GoogleFonts.inter(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
                           .withOpacity(0.6),
                       fontSize: 14,
                       height: 1.8,
@@ -489,12 +496,18 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         height: cell + 30,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                .withOpacity(0.04),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.04),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                  .withOpacity(0.06),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withOpacity(0.06),
                             ),
                           ),
                           child: Column(
@@ -507,7 +520,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                   color:
                                       (isDark
                                               ? Colors.white
-                                              : Color(0xFF0C312B))
+                                              : const Color(0xFF0C312B))
                                           .withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
@@ -515,7 +528,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                   _getIcon(benefit['icon']),
                                   color: isDark
                                       ? Colors.white
-                                      : Color(0xFF0C312B),
+                                      : const Color(0xFF0C312B),
                                   size: 24,
                                 ),
                               ),
@@ -533,7 +546,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                     color:
                                         (isDark
                                                 ? Colors.white
-                                                : Color(0xFF0C312B))
+                                                : const Color(0xFF0C312B))
                                             .withOpacity(0.7),
                                     fontSize: 8,
                                     fontWeight: FontWeight.w600,
@@ -582,8 +595,11 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           child: Text(
                             'VIEW ALL',
                             style: GoogleFonts.gelasio(
-                              color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                  .withOpacity(0.68),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withOpacity(0.68),
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 2,
@@ -752,7 +768,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                       ),
                       const SizedBox(height: 30),
                       _buildInput(
-                        'Full Name *',
+                        'Enter Full Name',
                         _nameController,
                         keyboardType: TextInputType.name,
                         inputFormatters: Validators.nameFormatters,
@@ -762,7 +778,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         children: [
                           Expanded(
                             child: _buildInput(
-                              'Email Address *',
+                              'Enter Email Address',
                               _emailController,
                               keyboardType: TextInputType.emailAddress,
                               inputFormatters: Validators.emailFormatters,
@@ -771,7 +787,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: _buildInput(
-                              'Phone Number *',
+                              'Enter Mobile Number',
                               _phoneController,
                               keyboardType: TextInputType.phone,
                               inputFormatters: Validators.phoneFormatters,
@@ -783,7 +799,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                       _buildProjectDropdown(),
                       const SizedBox(height: 12),
                       _buildInput(
-                        'Your Location (e.g. Dubai, UAE) *',
+                        'Enter City and Country',
                         _locationController,
                       ),
                       const SizedBox(height: 20),
@@ -797,7 +813,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isDark
                                 ? Colors.white
-                                : Color(0xFF0C312B),
+                                : const Color(0xFF0C312B),
                             foregroundColor: isDark
                                 ? Colors.black
                                 : Colors.white,
@@ -826,8 +842,11 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         child: Text(
                           'EXCLUSIVE GUEST PREVIEW - LIMITED OPPORTUNITIES',
                           style: GoogleFonts.gelasio(
-                            color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                .withOpacity(0.68),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.68),
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 2,
@@ -882,10 +901,14 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+        color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+          0.05,
+        ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.05,
+          ),
         ),
       ),
       child: TextField(
@@ -893,7 +916,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
         keyboardType: keyboardType,
         inputFormatters: inputFormatters,
         style: GoogleFonts.inter(
-          color: isDark ? Colors.white : Color(0xFF155A4F),
+          color: isDark ? Colors.white : const Color(0xFF155A4F),
           fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
@@ -902,11 +925,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
-          hintText: hint.toUpperCase(),
+          hintText: hint,
           hintStyle: GoogleFonts.gelasio(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-              0.68,
-            ),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.68),
             fontSize: 10,
             fontWeight: FontWeight.w700,
             letterSpacing: 2,
@@ -957,7 +979,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
 
   Widget _buildProjectDropdown() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : Color(0xFF0C312B);
+    final textColor = isDark ? Colors.white : const Color(0xFF0C312B);
     final closedLabel = _selectedProject == 'Any'
         ? 'Any Project / Property'
         : _selectedProject;
@@ -1068,7 +1090,7 @@ class _SectionHeader extends StatelessWidget {
             Container(
               width: 4,
               height: 40,
-              color: isDark ? Colors.white : Color(0xFF0C312B),
+              color: isDark ? Colors.white : const Color(0xFF0C312B),
             ),
             const SizedBox(width: 20),
             Expanded(
@@ -1080,7 +1102,7 @@ class _SectionHeader extends StatelessWidget {
                     // display line (it wraps), not a light title-case one.
                     title.toUpperCase(),
                     style: GoogleFonts.gelasio(
-                      color: isDark ? Colors.white : Color(0xFF0C312B),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.5,
@@ -1092,7 +1114,7 @@ class _SectionHeader extends StatelessWidget {
                     Text(
                       subtitle.toUpperCase(),
                       style: GoogleFonts.gelasio(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.68),
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
@@ -1155,15 +1177,20 @@ class CommunityProjectsScreen extends ConsumerWidget {
                       children: [
                         Icon(
                           LucideIcons.arrowLeft,
-                          color: isDark ? Colors.white : Color(0xFF0C312B),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF0C312B),
                           size: 20,
                         ),
                         const SizedBox(width: 10),
                         Text(
                           'BACK',
                           style: GoogleFonts.gelasio(
-                            color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                .withOpacity(0.68),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.68),
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 2,
@@ -1178,7 +1205,9 @@ class CommunityProjectsScreen extends ConsumerWidget {
                       Text(
                         'M4 FAMILY',
                         style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.white : Color(0xFF0C312B),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF0C312B),
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -1,
@@ -1187,8 +1216,9 @@ class CommunityProjectsScreen extends ConsumerWidget {
                       Text(
                         'COMMUNITY PORTFOLIO',
                         style: GoogleFonts.inter(
-                          color: (isDark ? Colors.white : Color(0xFF0C312B))
-                              .withOpacity(0.68),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.68),
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
@@ -1245,6 +1275,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                         fit: StackFit.expand,
                         children: [
                           CachedNetworkImage(
+                            memCacheWidth: 1080,
                             imageUrl: apiClient.resolveUrl(
                               project['heroImage'] ?? project['image'],
                             ),

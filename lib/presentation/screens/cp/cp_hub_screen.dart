@@ -1140,6 +1140,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             children: [
               if (bg != null && bg.isNotEmpty)
                 CachedNetworkImage(
+                  memCacheWidth: 1080,
                   imageUrl: bg,
                   fit: BoxFit.cover,
                   errorWidget: (_, __, ___) =>

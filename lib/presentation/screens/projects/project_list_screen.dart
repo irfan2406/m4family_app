@@ -45,6 +45,7 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
     }
   }
   return CachedNetworkImage(
+    memCacheWidth: 1080,
     imageUrl: url,
     fit: fit,
     placeholder: (context, u) => Container(color: Colors.black12),
@@ -304,7 +305,7 @@ class ProjectListScreen extends ConsumerWidget {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: isDark
                                     ? Colors.white
-                                    : Color(0xFF0C312B),
+                                    : const Color(0xFF0C312B),
                                 foregroundColor: isDark
                                     ? Colors.black
                                     : const Color(0xFFF4EFE3),
@@ -420,14 +421,14 @@ class ProjectListScreen extends ConsumerWidget {
                                   color:
                                       (isDark
                                               ? Colors.white
-                                              : Color(0xFF0C312B))
+                                              : const Color(0xFF0C312B))
                                           .withOpacity(0.05),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color:
                                         (isDark
                                                 ? Colors.white
-                                                : Color(0xFF0C312B))
+                                                : const Color(0xFF0C312B))
                                             .withOpacity(0.08),
                                   ),
                                 ),
@@ -532,14 +533,14 @@ class ProjectListScreen extends ConsumerWidget {
                                   color:
                                       (isDark
                                               ? Colors.white
-                                              : Color(0xFF0C312B))
+                                              : const Color(0xFF0C312B))
                                           .withOpacity(0.05),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color:
                                         (isDark
                                                 ? Colors.white
-                                                : Color(0xFF0C312B))
+                                                : const Color(0xFF0C312B))
                                             .withOpacity(0.08),
                                   ),
                                 ),
@@ -565,7 +566,9 @@ class ProjectListScreen extends ConsumerWidget {
                               // holds the pair together.
                               decoration: BoxDecoration(
                                 color:
-                                    (isDark ? Colors.white : Color(0xFF0C312B))
+                                    (isDark
+                                            ? Colors.white
+                                            : const Color(0xFF0C312B))
                                         .withOpacity(0.05),
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -631,79 +634,106 @@ class ProjectListScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  child: Row(
-                    children: ['Ongoing', 'Upcoming', 'Completed'].map((
-                      filter,
-                    ) {
-                      final isSelected = currentFilter == filter;
-                      return Expanded(
-                        child: GestureDetector(
-                          onTap: () =>
-                              ref.read(projectFilterProvider.notifier).state =
-                                  filter,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              // Figma: the selected tab is a dark plate on the
-                              // green with white type — not a white chip.
-                              // Figma: the selected tab is a polished light
-                              // chip — a top-to-bottom sheen from near-white
-                              // into warm grey, so the surface catches light
-                              // instead of reading as flat paint.
-                              gradient: isSelected
-                                  ? const LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Color(0xFFFDFCF9),
-                                        Color(0xFFDCD9D0),
-                                      ],
-                                    )
-                                  : null,
-                              color: isSelected ? null : Colors.transparent,
-                              borderRadius: BorderRadius.circular(16),
-                              // Lifted inside the track: soft shadow beneath,
-                              // bright hairline on the edge for the highlight.
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(
-                                          isDark ? 0.30 : 0.16,
-                                        ),
-                                        blurRadius: 12,
-                                        spreadRadius: -2,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ]
-                                  : null,
-                              border: isSelected
-                                  ? Border.all(
-                                      color: Colors.white.withOpacity(0.6),
-                                      width: 0.8,
-                                    )
-                                  : null,
-                            ),
-                            child: Text(
-                              filter.toUpperCase(),
-                              style: GoogleFonts.inter(
-                                fontSize: 10,
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.bold,
-                                color: isSelected
-                                    ? const Color(0xFF15271E)
-                                    : Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface.withOpacity(0.55),
-                                letterSpacing: 1,
+                  // The selected plate is ONE widget that slides between the
+                  // three slots, rather than three chips cross-fading in
+                  // place — that cross-fade is what made switching read as
+                  // abrupt. AnimatedPositioned glides the plate and the
+                  // labels ease their weight/colour over the same curve.
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      const filters = ['Ongoing', 'Upcoming', 'Completed'];
+                      const duration = Duration(milliseconds: 280);
+                      final index = filters
+                          .indexOf(currentFilter)
+                          .clamp(0, filters.length - 1);
+                      final tabWidth = constraints.maxWidth / filters.length;
+                      return Stack(
+                        // Tight constraints come down from the 38pt track, so
+                        // expand keeps the label row full-height and centred
+                        // exactly where the old per-tab chips put it.
+                        fit: StackFit.expand,
+                        children: [
+                          AnimatedPositioned(
+                            duration: duration,
+                            curve: Curves.easeOutCubic,
+                            left: tabWidth * index,
+                            top: 0,
+                            bottom: 0,
+                            width: tabWidth,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                // Figma: the selected tab is a polished light
+                                // chip — a top-to-bottom sheen from near-white
+                                // into warm grey, so the surface catches light
+                                // instead of reading as flat paint.
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Color(0xFFFDFCF9),
+                                    Color(0xFFDCD9D0),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                                // Lifted inside the track: soft shadow
+                                // beneath, bright hairline on the edge.
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(
+                                      isDark ? 0.30 : 0.16,
+                                    ),
+                                    blurRadius: 12,
+                                    spreadRadius: -2,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.6),
+                                  width: 0.8,
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                          Row(
+                            children: filters.map((filter) {
+                              final isSelected = currentFilter == filter;
+                              return Expanded(
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () =>
+                                      ref
+                                              .read(
+                                                projectFilterProvider.notifier,
+                                              )
+                                              .state =
+                                          filter,
+                                  child: Center(
+                                    child: AnimatedDefaultTextStyle(
+                                      duration: duration,
+                                      curve: Curves.easeOutCubic,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 10,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w600
+                                            : FontWeight.bold,
+                                        color: isSelected
+                                            ? const Color(0xFF15271E)
+                                            : Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface
+                                                  .withOpacity(0.55),
+                                        letterSpacing: 1,
+                                      ),
+                                      child: Text(filter.toUpperCase()),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       );
-                    }).toList(),
+                    },
                   ),
                 ),
 
@@ -725,12 +755,24 @@ class ProjectListScreen extends ConsumerWidget {
                           itemBuilder: (context, index) {
                             final project = filteredProjects[index];
                             final projectId = project['_id']?.toString() ?? '';
-                            // Thumbnail source, in order of preference. `heroImages`
-                            // is empty on every record the catalog returns, so on its
-                            // own every card fell through to one shared stock photo -
-                            // which is why the list showed the same building three
-                            // times. Fall through the project's own galleries first so
-                            // each card shows its own building.
+                            // Thumbnail source, in order of preference. The
+                            // catalog populates `heroImage` (SINGULAR) on every
+                            // project and that is the image the web card shows;
+                            // `heroImages` (plural) is not a field the payload
+                            // has at all, so the old chain always skipped
+                            // straight to the galleries — and for a project
+                            // with no gallery (Skyline Heights, M4 Aura
+                            // Heights) all the way to one shared stock photo,
+                            // which is why those cards showed the same
+                            // building. `heroImage` is a plain string: either
+                            // an http URL or a base64 `data:` URI, both of
+                            // which _projListImage renders.
+                            String? plainOf(String key) {
+                              final v = project[key];
+                              if (v is String && v.trim().isNotEmpty) return v;
+                              return null;
+                            }
+
                             String? firstOf(String key) {
                               final v = project[key];
                               if (v is List && v.isNotEmpty) {
@@ -744,6 +786,7 @@ class ProjectListScreen extends ConsumerWidget {
                             }
 
                             final rawHero =
+                                plainOf('heroImage') ??
                                 firstOf('heroImages') ??
                                 firstOf('exteriorImages') ??
                                 firstOf('interiorImages') ??
@@ -804,7 +847,7 @@ class ProjectListScreen extends ConsumerWidget {
                             );
                           },
                         ),
-                        loading: () => Center(
+                        loading: () => const Center(
                           child: CircularProgressIndicator(
                             color: M4Theme.premiumBlue,
                           ),
@@ -814,7 +857,7 @@ class ProjectListScreen extends ConsumerWidget {
                               Theme.of(context).brightness == Brightness.dark;
                           final onSurface = isDark
                               ? Colors.white
-                              : Color(0xFF0C312B);
+                              : const Color(0xFF0C312B);
                           final msg = e.toString().toLowerCase();
                           final isTimeout =
                               msg.contains('timeout') ||
@@ -1084,14 +1127,16 @@ class _ProjectListRowItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.transparent : Color(0xFF163A2C))
+            color: (isDark ? Colors.transparent : const Color(0xFF163A2C))
                 .withOpacity(isDark ? 0.3 : 0.04),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.05,
+          ),
         ),
       ),
       child: Row(
@@ -1120,7 +1165,7 @@ class _ProjectListRowItem extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Color(0xFF155A4F),
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
                     letterSpacing: -0.5,
                   ),
                   maxLines: 1,
@@ -1309,7 +1354,7 @@ class _ViewToggleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color fg = active
         ? (isDark ? Colors.black : Colors.white)
-        : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.4);
+        : (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(0.4);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -1318,7 +1363,7 @@ class _ViewToggleButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: active
-              ? (isDark ? Colors.white : Color(0xFF0C312B))
+              ? (isDark ? Colors.white : const Color(0xFF0C312B))
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),

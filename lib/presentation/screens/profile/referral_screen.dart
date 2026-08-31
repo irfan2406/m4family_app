@@ -954,13 +954,13 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     const SizedBox(height: 24),
                     _buildInputField(
                       'FRIEND NAME',
-                      'FULL NAME',
+                      'Enter Full Name',
                       nameController,
                     ),
                     const SizedBox(height: 24),
                     _buildInputField(
                       'MOBILE NUMBER',
-                      'XXXXX XXXXX',
+                      'Enter Mobile Number',
                       phoneController,
                       isPhone: true,
                     ),
@@ -968,7 +968,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     // Web parity: the web form carries an optional email.
                     _buildInputField(
                       'EMAIL (OPTIONAL)',
-                      'friend@example.com',
+                      'Enter Email Address',
                       emailController,
                       isEmail: true,
                     ),

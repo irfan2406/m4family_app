@@ -47,8 +47,8 @@ class PremiumUpsellScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
     const subtle = Color(0xFFF4EFE3);
@@ -505,7 +505,7 @@ class _CircleAction extends StatelessWidget {
         child: Icon(
           icon,
           size: 20,
-          color: isDark ? Colors.white : Color(0xFF0C312B),
+          color: isDark ? Colors.white : const Color(0xFF0C312B),
         ),
       ),
     );

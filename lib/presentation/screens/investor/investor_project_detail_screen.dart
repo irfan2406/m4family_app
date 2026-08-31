@@ -374,7 +374,9 @@ class _InvestorProjectDetailScreenState
                       onPressed: () => Navigator.pop(sheetContext),
                       icon: Icon(
                         LucideIcons.x,
-                        color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                        color: isDark
+                            ? Colors.white38
+                            : const Color(0xFF155A4F),
                         size: 20,
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -390,7 +392,9 @@ class _InvestorProjectDetailScreenState
                           style: GoogleFonts.gelasio(
                             fontSize: 30,
                             fontWeight: FontWeight.w700,
-                            color: isDark ? Colors.white : Color(0xFF0C312B),
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF0C312B),
                             height: 1.1,
                             letterSpacing: -1.2,
                           ),
@@ -400,14 +404,16 @@ class _InvestorProjectDetailScreenState
                           'A BESPOKE SHOWCASE OF LUXURY AT ${title.toUpperCase()}.',
                           style: GoogleFonts.inter(
                             fontSize: 11,
-                            color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                            color: isDark
+                                ? Colors.white38
+                                : const Color(0xFF155A4F),
                             fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                           ),
                         ),
                         const SizedBox(height: 32),
                         _InquiryField(
-                          hint: 'FULL NAME *',
+                          hint: 'Enter Full Name',
                           controller: _nameController,
                           icon: LucideIcons.user,
                           keyboardType: TextInputType.name,
@@ -415,7 +421,7 @@ class _InvestorProjectDetailScreenState
                         ),
                         const SizedBox(height: 14),
                         _InquiryField(
-                          hint: 'EMAIL ADDRESS',
+                          hint: 'Enter Email Address',
                           controller: _emailController,
                           icon: LucideIcons.mail,
                           keyboardType: TextInputType.emailAddress,
@@ -423,7 +429,7 @@ class _InvestorProjectDetailScreenState
                         ),
                         const SizedBox(height: 14),
                         _InquiryField(
-                          hint: 'PHONE NUMBER *',
+                          hint: 'Enter Mobile Number',
                           controller: _phoneController,
                           icon: LucideIcons.phone,
                           keyboardType: TextInputType.phone,
@@ -440,7 +446,7 @@ class _InvestorProjectDetailScreenState
                               fontWeight: FontWeight.w600,
                               color: isDark
                                   ? Colors.white38
-                                  : Color(0xFF155A4F),
+                                  : const Color(0xFF155A4F),
                               letterSpacing: 1,
                             ),
                           ),
@@ -488,7 +494,7 @@ class _InvestorProjectDetailScreenState
                                           ? Colors.white
                                           : (isDark
                                                 ? Colors.white38
-                                                : Color(0xFF155A4F)),
+                                                : const Color(0xFF155A4F)),
                                     ),
                                   ),
                                 ),
@@ -507,7 +513,7 @@ class _InvestorProjectDetailScreenState
                               fontWeight: FontWeight.w600,
                               color: isDark
                                   ? Colors.white38
-                                  : Color(0xFF155A4F),
+                                  : const Color(0xFF155A4F),
                               letterSpacing: 1,
                             ),
                           ),
@@ -530,7 +536,7 @@ class _InvestorProjectDetailScreenState
                                         color: localType == t
                                             ? (isDark
                                                   ? Colors.white
-                                                  : Color(0xFF0C312B))
+                                                  : const Color(0xFF0C312B))
                                             : Colors.transparent,
                                         borderRadius: BorderRadius.circular(10),
                                         border: Border.all(
@@ -557,7 +563,9 @@ class _InvestorProjectDetailScreenState
                                                       : Colors.white)
                                                 : (isDark
                                                       ? Colors.white38
-                                                      : Color(0xFF155A4F)),
+                                                      : const Color(
+                                                          0xFF155A4F,
+                                                        )),
                                             letterSpacing: 1,
                                           ),
                                         ),
@@ -631,10 +639,10 @@ class _InvestorProjectDetailScreenState
                                       color: scheduledAt == null
                                           ? (isDark
                                                 ? Colors.white24
-                                                : Color(0x420C312B))
+                                                : const Color(0x420C312B))
                                           : (isDark
                                                 ? Colors.white
-                                                : Color(0xFF0C312B)),
+                                                : const Color(0xFF0C312B)),
                                       letterSpacing: 1,
                                     ),
                                   ),
@@ -651,7 +659,9 @@ class _InvestorProjectDetailScreenState
                           style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                            color: isDark
+                                ? Colors.white38
+                                : const Color(0xFF155A4F),
                             letterSpacing: 1,
                           ),
                         ),
@@ -678,7 +688,9 @@ class _InvestorProjectDetailScreenState
                             style: GoogleFonts.inter(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : Color(0xFF155A4F),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF155A4F),
                             ),
                             decoration: InputDecoration(
                               filled: false,
@@ -688,11 +700,11 @@ class _InvestorProjectDetailScreenState
                               hintText:
                                   'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
                               hintStyle: GoogleFonts.inter(
-                                fontSize: 11,
+                                fontSize: 10,
                                 fontWeight: FontWeight.w600,
                                 color: isDark
                                     ? Colors.white24
-                                    : Color(0x420C312B),
+                                    : const Color(0x420C312B),
                                 letterSpacing: 1,
                               ),
                             ),
@@ -718,7 +730,9 @@ class _InvestorProjectDetailScreenState
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 20),
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.white : Color(0xFF0C312B),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF0C312B),
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Center(
@@ -785,6 +799,7 @@ class _InvestorProjectDetailScreenState
               itemBuilder: (context, index) => Center(
                 child: InteractiveViewer(
                   child: CachedNetworkImage(
+                    memCacheWidth: 1080,
                     imageUrl: apiClient.resolveUrl(urls[index]),
                     fit: BoxFit.contain,
                     placeholder: (c, u) => const Center(
@@ -833,7 +848,7 @@ class _InvestorProjectDetailScreenState
     if (_isLoading) {
       return Scaffold(
         backgroundColor: bg,
-        body: Center(
+        body: const Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
       );
@@ -855,7 +870,7 @@ class _InvestorProjectDetailScreenState
                   Icon(
                     LucideIcons.building2,
                     size: 56,
-                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
                         .withValues(alpha: 0.3),
                   ),
                   const SizedBox(height: 20),
@@ -864,7 +879,7 @@ class _InvestorProjectDetailScreenState
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Color(0xFF155A4F),
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
                       letterSpacing: 1,
                     ),
                   ),
@@ -875,7 +890,7 @@ class _InvestorProjectDetailScreenState
                     style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
                           .withValues(alpha: 0.5),
                     ),
                   ),
@@ -894,7 +909,7 @@ class _InvestorProjectDetailScreenState
                         vertical: 14,
                       ),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Color(0xFF0C312B),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -985,6 +1000,7 @@ class _InvestorProjectDetailScreenState
         ? raw
         : ref.read(apiClientProvider).resolveUrl(raw);
     return CachedNetworkImage(
+      memCacheWidth: 1080,
       imageUrl: url,
       fit: fit,
       placeholder: (c, u) => Container(color: Colors.black12),
@@ -1107,7 +1123,7 @@ class _InvestorProjectDetailScreenState
           Text(
             (project['title']?.toString() ?? 'Project Name').toUpperCase(),
             style: GoogleFonts.gelasio(
-              color: isDark ? Colors.white : Color(0xFF0C312B),
+              color: isDark ? Colors.white : const Color(0xFF0C312B),
               fontSize: 32,
               height: 1.0,
               fontWeight: FontWeight.w700,
@@ -1125,9 +1141,8 @@ class _InvestorProjectDetailScreenState
                     : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                    alpha: 0.12,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.12),
                 ),
               ),
               child: Row(
@@ -1135,14 +1150,14 @@ class _InvestorProjectDetailScreenState
                 children: [
                   Icon(
                     LucideIcons.mapPin,
-                    color: isDark ? Colors.white : Color(0xFF0C312B),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                     size: 13,
                   ),
                   const SizedBox(width: 6),
                   Text(
                     location,
                     style: GoogleFonts.inter(
-                      color: isDark ? Colors.white : Color(0xFF155A4F),
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.3,
@@ -1272,7 +1287,7 @@ class _InvestorProjectDetailScreenState
               // Was the legacy gold accent (low contrast). High-contrast dark,
               // a touch larger, so the overview copy reads clearly.
               fontSize: 12.5,
-              color: isDark ? Colors.white : Color(0xFF155A4F),
+              color: isDark ? Colors.white : const Color(0xFF155A4F),
               fontWeight: FontWeight.w500,
               height: 1.65,
               letterSpacing: 0.5,
@@ -1287,7 +1302,7 @@ class _InvestorProjectDetailScreenState
                 Icon(
                   LucideIcons.indianRupee,
                   size: 16,
-                  color: isDark ? Colors.white : Color(0xFF0C312B),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -1295,7 +1310,7 @@ class _InvestorProjectDetailScreenState
                   style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                    color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                     letterSpacing: 1,
                   ),
                 ),
@@ -1305,7 +1320,7 @@ class _InvestorProjectDetailScreenState
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Color(0xFF155A4F),
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
                   ),
                 ),
               ],
@@ -1355,7 +1370,7 @@ class _InvestorProjectDetailScreenState
         style: GoogleFonts.inter(
           fontSize: 10,
           fontWeight: FontWeight.w600,
-          color: isDark ? Colors.white38 : Color(0xFF155A4F),
+          color: isDark ? Colors.white38 : const Color(0xFF155A4F),
           letterSpacing: 1,
         ),
       ),
@@ -1437,6 +1452,7 @@ class _InvestorProjectDetailScreenState
                       Expanded(
                         child: img != null && img.isNotEmpty
                             ? CachedNetworkImage(
+                                memCacheWidth: 1080,
                                 imageUrl: apiClient.resolveUrl(img),
                                 width: double.infinity,
                                 fit: BoxFit.cover,
@@ -1459,7 +1475,7 @@ class _InvestorProjectDetailScreenState
                                     LucideIcons.layoutGrid,
                                     color: isDark
                                         ? Colors.white
-                                        : Color(0xFF0C312B),
+                                        : const Color(0xFF0C312B),
                                     size: 28,
                                   ),
                                 ),
@@ -1479,7 +1495,7 @@ class _InvestorProjectDetailScreenState
                                 fontWeight: FontWeight.w600,
                                 color: isDark
                                     ? Colors.white
-                                    : Color(0xFF155A4F),
+                                    : const Color(0xFF155A4F),
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -1496,7 +1512,7 @@ class _InvestorProjectDetailScreenState
                                 fontWeight: FontWeight.w600,
                                 color: isDark
                                     ? Colors.white38
-                                    : Color(0xFF155A4F),
+                                    : const Color(0xFF155A4F),
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -1531,7 +1547,7 @@ class _InvestorProjectDetailScreenState
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 1,
-                  color: isDark ? Colors.white70 : Color(0xFF155A4F),
+                  color: isDark ? Colors.white70 : const Color(0xFF155A4F),
                 ),
               ),
             )
@@ -1591,7 +1607,9 @@ class _InvestorProjectDetailScreenState
                           style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : Color(0xFF155A4F),
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF155A4F),
                             letterSpacing: 1,
                             height: 1.2,
                           ),
@@ -1657,8 +1675,11 @@ class _InvestorProjectDetailScreenState
                             style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
-                              color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                  .withValues(alpha: 0.72),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withValues(alpha: 0.72),
                               letterSpacing: 1,
                               height: 1.35,
                             ),
@@ -1671,7 +1692,9 @@ class _InvestorProjectDetailScreenState
                               fontWeight: FontWeight.w700,
                               height: 1.0,
                               letterSpacing: -1,
-                              color: isDark ? Colors.white : Color(0xFF0C312B),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF0C312B),
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -1686,8 +1709,11 @@ class _InvestorProjectDetailScreenState
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                               height: 1.6,
-                              color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                  .withValues(alpha: 0.9),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withValues(alpha: 0.9),
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -1702,7 +1728,7 @@ class _InvestorProjectDetailScreenState
                                 fontWeight: FontWeight.w600,
                                 color: isDark
                                     ? Colors.white
-                                    : Color(0xFF155A4F),
+                                    : const Color(0xFF155A4F),
                                 decoration: TextDecoration.underline,
                               ),
                             ),
@@ -1725,9 +1751,11 @@ class _InvestorProjectDetailScreenState
                                 progress: overall.toDouble() / 100,
                                 color: isDark
                                     ? Colors.white
-                                    : Color(0xFF0C312B),
+                                    : const Color(0xFF0C312B),
                                 backgroundColor:
-                                    (isDark ? Colors.white : Color(0xFF0C312B))
+                                    (isDark
+                                            ? Colors.white
+                                            : const Color(0xFF0C312B))
                                         .withValues(alpha: 0.22),
                                 strokeWidth: 6,
                               ),
@@ -1743,7 +1771,7 @@ class _InvestorProjectDetailScreenState
                                   fontWeight: FontWeight.w700,
                                   color: isDark
                                       ? Colors.white
-                                      : Color(0xFF0C312B),
+                                      : const Color(0xFF0C312B),
                                 ),
                               ),
                               Text(
@@ -1754,7 +1782,7 @@ class _InvestorProjectDetailScreenState
                                   color:
                                       (isDark
                                               ? Colors.white
-                                              : Color(0xFF0C312B))
+                                              : const Color(0xFF0C312B))
                                           .withValues(alpha: 0.85),
                                   letterSpacing: 1,
                                 ),
@@ -1777,7 +1805,9 @@ class _InvestorProjectDetailScreenState
                         style: GoogleFonts.gelasio(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
-                          color: isDark ? Colors.white : Color(0xFF0C312B),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF0C312B),
                         ),
                       ),
                       const SizedBox(width: 14),
@@ -1787,8 +1817,11 @@ class _InvestorProjectDetailScreenState
                           children: [
                             Container(
                               height: 1,
-                              color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                  .withValues(alpha: 0.25),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withValues(alpha: 0.25),
                             ),
                             Container(
                               width: 12,
@@ -1801,7 +1834,7 @@ class _InvestorProjectDetailScreenState
                                 border: Border.all(
                                   color: isDark
                                       ? Colors.white
-                                      : Color(0xFF0C312B),
+                                      : const Color(0xFF0C312B),
                                   width: 2,
                                 ),
                               ),
@@ -1861,7 +1894,7 @@ class _InvestorProjectDetailScreenState
         : (int.tryParse('$pctRaw') ?? 0).clamp(0, 100);
     final phaseName = (phase['name'] ?? phase['phaseName'] ?? 'PHASE')
         .toString();
-    final fg = isDark ? Colors.white : Color(0xFF0C312B);
+    final fg = isDark ? Colors.white : const Color(0xFF0C312B);
 
     return GestureDetector(
       onTap: () {
@@ -1902,6 +1935,7 @@ class _InvestorProjectDetailScreenState
                 fit: StackFit.expand,
                 children: [
                   CachedNetworkImage(
+                    memCacheWidth: 1080,
                     imageUrl: imageUrl,
                     fit: BoxFit.cover,
                     placeholder: (c, u) => Container(color: Colors.black12),
@@ -2052,7 +2086,7 @@ class _InvestorProjectDetailScreenState
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 2,
-                    color: isDark ? Colors.white : Color(0xFF0C312B),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -2062,7 +2096,7 @@ class _InvestorProjectDetailScreenState
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1,
-                    color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                    color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                   ),
                 ),
               ],
@@ -2072,13 +2106,11 @@ class _InvestorProjectDetailScreenState
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                    alpha: 0.25,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.25),
                 ),
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                  alpha: 0.06,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.06),
               ),
               child: Text(
                 '${phases.length} MILESTONES',
@@ -2086,7 +2118,7 @@ class _InvestorProjectDetailScreenState
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1,
-                  color: isDark ? Colors.white : Color(0xFF155A4F),
+                  color: isDark ? Colors.white : const Color(0xFF155A4F),
                 ),
               ),
             ),
@@ -2105,7 +2137,7 @@ class _InvestorProjectDetailScreenState
           final isCompleted = status.toUpperCase() == 'COMPLETED';
           final statusColor = isCompleted
               ? Colors.green
-              : (isDark ? Colors.white : Color(0xFF0C312B));
+              : (isDark ? Colors.white : const Color(0xFF0C312B));
           return Container(
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(16),
@@ -2131,11 +2163,12 @@ class _InvestorProjectDetailScreenState
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withValues(alpha: 0.05),
                         border: Border.all(
-                          color: (isDark ? Colors.white : Color(0xFF0C312B))
-                              .withValues(alpha: 0.08),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withValues(alpha: 0.08),
                         ),
                       ),
                       child: Text(
@@ -2143,7 +2176,9 @@ class _InvestorProjectDetailScreenState
                         style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white54 : Color(0xFF155A4F),
+                          color: isDark
+                              ? Colors.white54
+                              : const Color(0xFF155A4F),
                         ),
                       ),
                     ),
@@ -2160,7 +2195,9 @@ class _InvestorProjectDetailScreenState
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.5,
-                              color: isDark ? Colors.white : Color(0xFF155A4F),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF155A4F),
                             ),
                           ),
                           const SizedBox(height: 3),
@@ -2194,7 +2231,7 @@ class _InvestorProjectDetailScreenState
                       style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Color(0xFF155A4F),
+                        color: isDark ? Colors.white : const Color(0xFF155A4F),
                       ),
                     ),
                   ],
@@ -2205,11 +2242,12 @@ class _InvestorProjectDetailScreenState
                   child: LinearProgressIndicator(
                     value: pct / 100,
                     minHeight: 6,
-                    backgroundColor: (isDark ? Colors.white : Color(0xFF0C312B))
-                        .withValues(alpha: 0.08),
+                    backgroundColor:
+                        (isDark ? Colors.white : const Color(0xFF0C312B))
+                            .withValues(alpha: 0.08),
                     // Bar is always black/white (was green when completed).
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      isDark ? Colors.white : Color(0xFF0C312B),
+                      isDark ? Colors.white : const Color(0xFF0C312B),
                     ),
                   ),
                 ),
@@ -2274,6 +2312,7 @@ class _InvestorProjectDetailScreenState
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: CachedNetworkImage(
+                    memCacheWidth: 1080,
                     imageUrl: apiClient.resolveUrl(images[index]),
                     fit: BoxFit.cover,
                     placeholder: (c, u) => Container(
@@ -2340,14 +2379,16 @@ class _InvestorProjectDetailScreenState
                           style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : Color(0xFF155A4F),
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF155A4F),
                             letterSpacing: 0.5,
                           ),
                         ),
                       ),
                       Icon(
                         LucideIcons.wallet,
-                        color: isDark ? Colors.white : Color(0xFF0C312B),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         size: 16,
                       ),
                     ],
@@ -2362,8 +2403,11 @@ class _InvestorProjectDetailScreenState
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                  .withValues(alpha: 0.08),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withValues(alpha: 0.08),
                               shape: BoxShape.circle,
                             ),
                             child: Center(
@@ -2374,7 +2418,7 @@ class _InvestorProjectDetailScreenState
                                   fontWeight: FontWeight.w600,
                                   color: isDark
                                       ? Colors.white
-                                      : Color(0xFF155A4F),
+                                      : const Color(0xFF155A4F),
                                 ),
                               ),
                             ),
@@ -2394,7 +2438,7 @@ class _InvestorProjectDetailScreenState
                                     fontWeight: FontWeight.w600,
                                     color: isDark
                                         ? Colors.white
-                                        : Color(0xFF155A4F),
+                                        : const Color(0xFF155A4F),
                                     letterSpacing: 0.5,
                                   ),
                                 ),
@@ -2405,7 +2449,7 @@ class _InvestorProjectDetailScreenState
                                     fontWeight: FontWeight.bold,
                                     color: isDark
                                         ? Colors.white38
-                                        : Color(0xFF155A4F),
+                                        : const Color(0xFF155A4F),
                                   ),
                                 ),
                               ],
@@ -2422,7 +2466,7 @@ class _InvestorProjectDetailScreenState
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -2432,7 +2476,9 @@ class _InvestorProjectDetailScreenState
                           style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : Color(0xFF155A4F),
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF155A4F),
                             letterSpacing: 1,
                           ),
                         ),
@@ -2493,7 +2539,9 @@ class _InvestorProjectDetailScreenState
                             style: GoogleFonts.inter(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: isDark ? Colors.white : Color(0xFF155A4F),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF155A4F),
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -2504,7 +2552,7 @@ class _InvestorProjectDetailScreenState
                               fontWeight: FontWeight.w600,
                               color: isDark
                                   ? Colors.white38
-                                  : Color(0xFF155A4F),
+                                  : const Color(0xFF155A4F),
                               letterSpacing: 1,
                             ),
                           ),
@@ -2531,7 +2579,7 @@ class _InvestorProjectDetailScreenState
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Color(0xFF0C312B),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
@@ -2590,6 +2638,7 @@ class _InvestorProjectDetailScreenState
                   fit: StackFit.expand,
                   children: [
                     CachedNetworkImage(
+                      memCacheWidth: 1080,
                       imageUrl:
                           'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80',
                       fit: BoxFit.cover,
@@ -2622,7 +2671,9 @@ class _InvestorProjectDetailScreenState
                           children: [
                             Icon(
                               LucideIcons.mapPin,
-                              color: isDark ? Colors.white : Color(0xFF0C312B),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF0C312B),
                               size: 12,
                             ),
                             const SizedBox(width: 8),
@@ -2633,7 +2684,7 @@ class _InvestorProjectDetailScreenState
                                 fontWeight: FontWeight.w600,
                                 color: isDark
                                     ? Colors.white
-                                    : Color(0xFF155A4F),
+                                    : const Color(0xFF155A4F),
                                 letterSpacing: 1,
                               ),
                             ),
@@ -2658,7 +2709,7 @@ class _InvestorProjectDetailScreenState
         Container(
           width: 40,
           height: 1.5,
-          color: isDark ? Colors.white : Color(0xFF0C312B),
+          color: isDark ? Colors.white : const Color(0xFF0C312B),
         ),
         const SizedBox(width: 16),
         Text(
@@ -2666,7 +2717,7 @@ class _InvestorProjectDetailScreenState
           style: GoogleFonts.gelasio(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: isDark ? Colors.white : Color(0xFF0C312B),
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
             letterSpacing: 4,
           ),
         ),
@@ -2703,7 +2754,7 @@ class _SquareAction extends StatelessWidget {
               : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
               alpha: 0.06,
             ),
           ),
@@ -2719,7 +2770,7 @@ class _SquareAction extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: color ?? (isDark ? Colors.white : Color(0xFF0C312B)),
+          color: color ?? (isDark ? Colors.white : const Color(0xFF0C312B)),
           size: 20,
         ),
       ),
@@ -2744,7 +2795,7 @@ class _MediaThumb extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+            color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
               alpha: 0.08,
             ),
           ),
@@ -2766,6 +2817,7 @@ class _MediaThumb extends StatelessWidget {
             // heavy flat overlay) with a soft bottom gradient for the label.
             if (imageUrl != null && imageUrl!.isNotEmpty)
               CachedNetworkImage(
+                memCacheWidth: 1080,
                 imageUrl: imageUrl!,
                 fit: BoxFit.cover,
                 errorWidget: (c, u, e) => Container(color: Colors.black12),
@@ -2870,7 +2922,7 @@ class _IconThumb extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 7.5,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : Color(0xFF155A4F),
+                color: isDark ? Colors.white : const Color(0xFF155A4F),
                 letterSpacing: 0.5,
               ),
             ),
@@ -2929,7 +2981,7 @@ class _ActionCard extends StatelessWidget {
             Icon(
               icon,
               // Darker so the icon reads clearly (was 38% — too faint).
-              color: isDark ? Colors.white60 : Color(0xFF155A4F),
+              color: isDark ? Colors.white60 : const Color(0xFF155A4F),
               size: 24,
             ),
             Column(
@@ -2939,7 +2991,7 @@ class _ActionCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                   // Was 8px / 38% — too small & faint. Larger + darker.
                   style: GoogleFonts.gelasio(
-                    color: isDark ? Colors.white70 : Color(0xFF155A4F),
+                    color: isDark ? Colors.white70 : const Color(0xFF155A4F),
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -2950,7 +3002,7 @@ class _ActionCard extends StatelessWidget {
                   value,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
-                    color: isDark ? Colors.white : Color(0xFF155A4F),
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     letterSpacing: -0.2,
@@ -3011,14 +3063,13 @@ class _AssetCard extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               // Neutral tint + dark icon (was the legacy gold accent).
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                alpha: 0.06,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
               icon,
-              color: isDark ? Colors.white : Color(0xFF0C312B),
+              color: isDark ? Colors.white : const Color(0xFF0C312B),
               size: 18,
             ),
           ),
@@ -3034,7 +3085,7 @@ class _AssetCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Color(0xFF155A4F),
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -3045,7 +3096,7 @@ class _AssetCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 9.5,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white60 : Color(0xFF155A4F),
+                    color: isDark ? Colors.white60 : const Color(0xFF155A4F),
                     letterSpacing: 1,
                   ),
                 ),
@@ -3078,22 +3129,21 @@ class _AssetButton extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final fg = filled
         ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
-        : (isDark ? Colors.white : Color(0xFF0C312B));
+        : (isDark ? Colors.white : const Color(0xFF0C312B));
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: filled
-              ? (isDark ? Colors.white : Color(0xFF0C312B))
+              ? (isDark ? Colors.white : const Color(0xFF0C312B))
               : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: filled
               ? null
               : Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                    alpha: 0.25,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.25),
                 ),
         ),
         child: Text(
@@ -3147,14 +3197,13 @@ class _WalkthroughCard extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               // Neutral tint + dark icon (was the legacy gold accent).
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                alpha: 0.06,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
               LucideIcons.video,
-              color: isDark ? Colors.white : Color(0xFF0C312B),
+              color: isDark ? Colors.white : const Color(0xFF0C312B),
               size: 18,
             ),
           ),
@@ -3170,7 +3219,7 @@ class _WalkthroughCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Color(0xFF155A4F),
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -3181,7 +3230,7 @@ class _WalkthroughCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 9.5,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white60 : Color(0xFF155A4F),
+                    color: isDark ? Colors.white60 : const Color(0xFF155A4F),
                     letterSpacing: 1,
                   ),
                 ),
@@ -3194,7 +3243,7 @@ class _WalkthroughCard extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : Color(0xFF0C312B),
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -3247,7 +3296,7 @@ class _RoundIcon extends StatelessWidget {
         child: Icon(
           icon,
           size: 18,
-          color: isDark ? Colors.white : Color(0xFF0C312B),
+          color: isDark ? Colors.white : const Color(0xFF0C312B),
         ),
       ),
     );
@@ -3291,7 +3340,7 @@ class _InquiryField extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.bold,
-          color: isDark ? Colors.white : Color(0xFF155A4F),
+          color: isDark ? Colors.white : const Color(0xFF155A4F),
         ),
         decoration: InputDecoration(
           filled: false,
@@ -3300,9 +3349,9 @@ class _InquiryField extends StatelessWidget {
           focusedBorder: InputBorder.none,
           hintText: hint,
           hintStyle: GoogleFonts.inter(
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white24 : Color(0x420C312B),
+            color: isDark ? Colors.white24 : const Color(0x420C312B),
             letterSpacing: 1,
           ),
           icon: Icon(icon, size: 14, color: M4Theme.premiumBlue),
@@ -3346,11 +3395,11 @@ class _DashedCirclePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.butt;
 
-    final dashAngle = (2 * 3.14159) / dashCount;
+    const dashAngle = (2 * 3.14159) / dashCount;
 
     for (int i = 0; i < dashCount; i++) {
       final startAngle = i * dashAngle;
-      final sweepAngle = dashAngle * (1 - gap);
+      const sweepAngle = dashAngle * (1 - gap);
 
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),

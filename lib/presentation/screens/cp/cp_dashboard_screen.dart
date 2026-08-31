@@ -261,6 +261,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(20),
                                     child: CachedNetworkImage(
+                                      memCacheWidth: 1080,
                                       imageUrl:
                                           'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
                                       fit: BoxFit.cover,
@@ -689,11 +690,11 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
         onChanged: (v) => setState(() => _searchQuery = v),
         style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w700),
         decoration: InputDecoration(
-          hintText: 'SEARCH PROSPECTS...',
+          hintText: 'Search Prospects',
           hintStyle: GoogleFonts.gelasio(
             fontSize: 10,
             fontWeight: FontWeight.w700,
-            color: Color(0x1F0C312B),
+            color: const Color(0x1F0C312B),
             letterSpacing: 2,
           ),
           filled: true,
@@ -924,7 +925,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       style: GoogleFonts.inter(
         fontSize: 8,
         fontWeight: FontWeight.w600,
-        color: active ? const Color(0xFF0C312B) : Color(0x1F0C312B),
+        color: active ? const Color(0xFF0C312B) : const Color(0x1F0C312B),
         letterSpacing: 1,
       ),
     );

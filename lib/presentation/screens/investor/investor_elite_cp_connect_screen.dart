@@ -269,7 +269,7 @@ class _InvestorEliteCpConnectScreenState
         ),
         textCapitalization: TextCapitalization.characters,
         decoration: InputDecoration(
-          hintText: 'SCAN VERIFIED INSTITUTIONAL PARTNERS…',
+          hintText: 'Search Partners',
           hintStyle: GoogleFonts.inter(
             fontSize: 10,
             fontWeight: FontWeight.w500,

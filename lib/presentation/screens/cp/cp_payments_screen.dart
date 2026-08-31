@@ -123,7 +123,7 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
                   TextField(
                     onChanged: (v) => setState(() => _searchQuery = v),
                     decoration: const InputDecoration(
-                      hintText: 'Search transactions...',
+                      hintText: 'Search Transactions',
                       prefixIcon: Icon(LucideIcons.search, size: 20),
                       border: OutlineInputBorder(),
                       isDense: true,

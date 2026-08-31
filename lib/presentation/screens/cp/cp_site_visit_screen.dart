@@ -77,8 +77,13 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
   // IOSDateTimePicker), instead of separate DATE/TIME fields.
   Future<void> _pickScheduleDateTime() async {
     final now = DateTime.now();
+    // No past slots. A site visit is never booked for today (the form itself
+    // promises a confirmation call within 2 hours), and `temp` already
+    // defaults to tomorrow — so floor the wheels at midnight tomorrow. This
+    // also drops the part-elapsed current month/day from the month/day lists.
+    final minSchedule = DateTime(now.year, now.month, now.day + 1);
     DateTime temp = _scheduledAt ?? now.add(const Duration(days: 1));
-    if (temp.isBefore(now)) temp = now.add(const Duration(days: 1));
+    if (temp.isBefore(minSchedule)) temp = now.add(const Duration(days: 1));
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final result = await showModalBottomSheet<DateTime>(
@@ -99,7 +104,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
                       .withOpacity(0.15),
                   borderRadius: BorderRadius.circular(99),
                 ),
@@ -114,14 +119,14 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
-                  color: isDark ? Colors.white : Color(0xFF155A4F),
+                  color: isDark ? Colors.white : const Color(0xFF155A4F),
                 ),
               ),
             ),
             const SizedBox(height: 8),
             WheelDateTimePicker(
               initial: temp,
-              minDate: now,
+              minDate: minSchedule,
               isDark: isDark,
               onChanged: (dt) => temp = dt,
             ),
@@ -137,12 +142,12 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       side: BorderSide(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.2),
                       ),
                       foregroundColor: isDark
                           ? Colors.white
-                          : Color(0xFF0C312B),
+                          : const Color(0xFF0C312B),
                     ),
                     child: Text(
                       'CANCEL',
@@ -160,7 +165,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     style: FilledButton.styleFrom(
                       backgroundColor: isDark
                           ? Colors.white
-                          : Color(0xFF0C312B),
+                          : const Color(0xFF0C312B),
                       foregroundColor: isDark
                           ? Colors.black
                           : const Color(0xFFF4EFE3),
@@ -326,27 +331,14 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             ),
           ),
         ),
-        title: Column(
-          children: [
-            Text(
-              'SITE VISIT',
-              style: GoogleFonts.inter(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
-                letterSpacing: 0,
-              ),
-            ),
-            Text(
-              'PROTOCOL VERIFICATION',
-              style: GoogleFonts.inter(
-                fontSize: 8,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                letterSpacing: 1,
-              ),
-            ),
-          ],
+        title: Text(
+          'SITE VISIT',
+          style: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface,
+            letterSpacing: 0,
+          ),
         ),
       ),
       body: Container(
@@ -400,11 +392,11 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 ).animate().fadeIn().slideY(begin: -0.1),
                 const SizedBox(height: 32),
 
-                _buildLabel('FULL NAME *'),
+                _buildLabel('FULL NAME'),
                 const SizedBox(height: 12),
                 _buildTextField(
                   controller: _nameController,
-                  hint: 'ENTER NAME',
+                  hint: 'Enter Full Name',
                   icon: LucideIcons.user,
                   keyboardType: TextInputType.name,
                   inputFormatters: Validators.nameFormatters,
@@ -412,11 +404,11 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                _buildLabel('PHONE NUMBER *'),
+                _buildLabel('PHONE NUMBER'),
                 const SizedBox(height: 12),
                 _buildTextField(
                   controller: _phoneController,
-                  hint: '+91 XXXXX XXXXX',
+                  hint: 'Enter Mobile Number',
                   icon: LucideIcons.phone,
                   keyboardType: TextInputType.phone,
                   inputFormatters: Validators.phoneFormatters,
@@ -429,7 +421,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 const SizedBox(height: 12),
                 _buildTextField(
                   controller: _emailController,
-                  hint: 'EMAIL ADDRESS',
+                  hint: 'Enter Email Address',
                   icon: LucideIcons.mail,
                   keyboardType: TextInputType.emailAddress,
                   validator: (v) => (v == null || v.trim().isEmpty)
@@ -439,12 +431,12 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 const SizedBox(height: 24),
 
                 // Web parity: VIDEO CALL / SITE VISIT segmented choice.
-                _buildLabel('VISIT TYPE *'),
+                _buildLabel('VISIT TYPE'),
                 const SizedBox(height: 12),
                 _buildVisitTypeToggle(),
                 const SizedBox(height: 24),
 
-                _buildLabel('SELECT PROJECT *'),
+                _buildLabel('SELECT PROJECT'),
                 const SizedBox(height: 12),
                 projectsAsync.when(
                   data: (projects) => _buildDropdown(projects),
@@ -458,12 +450,12 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                _buildLabel('HANDLED BY (EMPLOYEE) *'),
+                _buildLabel('HANDLED BY (EMPLOYEE)'),
                 const SizedBox(height: 12),
                 _buildEmployeeDropdown(),
                 const SizedBox(height: 24),
 
-                _buildLabel('SCHEDULE *'),
+                _buildLabel('SCHEDULE'),
                 const SizedBox(height: 12),
                 _buildPickerButton(
                   text: _scheduledAt == null
@@ -478,7 +470,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 const SizedBox(height: 12),
                 _buildTextField(
                   controller: _notesController,
-                  hint: 'Specific requirements...',
+                  hint: 'Enter Specific Requirements',
                   maxLines: 4,
                 ),
                 const SizedBox(height: 48),
@@ -561,18 +553,18 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             color: const Color(0xFF163A2C),
           ),
           decoration: InputDecoration(
-            hintText: "Type name",
+            hintText: "Enter Employee Name",
             hintStyle: GoogleFonts.inter(
               color: const Color(0xFF163A2C).withValues(alpha: 0.5),
             ),
             filled: true,
             fillColor: const Color(0xFFF4EFE3),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(20),
               borderSide: const BorderSide(color: Color(0xFFD4CFBC)),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(20),
               borderSide: const BorderSide(color: Color(0xFF163A2C)),
             ),
           ),
@@ -639,63 +631,79 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
     // Web parity: a bright "enabled-looking" card (bg-card + shadow-xl)
     // instead of a near-invisible tinted fill — InputDecoration alone can't
     // draw a drop shadow, so this wraps the field in a shadowed Container.
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.06),
-        ),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
-                  blurRadius: 24,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-      ),
-      child: TextFormField(
-        controller: controller,
-        maxLines: maxLines,
-        keyboardType: keyboardType,
-        inputFormatters: inputFormatters,
-        validator: validator,
-        style: GoogleFonts.inter(
-          color: isDark ? Colors.white : Color(0xFF155A4F),
-          fontSize: 15,
-          fontWeight: FontWeight.bold,
-        ),
-        decoration: InputDecoration(
-          hintText: hint.toUpperCase(),
-          hintStyle: GoogleFonts.inter(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-              0.68,
+    //
+    // No per-field error text is rendered. Submitting an empty form should
+    // surface only the "Please complete all fields" toast from _submit(),
+    // not a red line under every field. The FormField is still here purely
+    // so _formKey.currentState!.validate() keeps seeing these validators and
+    // keeps returning false, which is what fires that toast. The TextField
+    // deliberately has no onChanged -> the Form's onUserInteraction
+    // autovalidate never marks these fields as interacted, so nothing can
+    // turn red as the user types either.
+    return FormField<String>(
+      validator: (_) => validator?.call(controller.text),
+      builder: (field) {
+        return Container(
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.06),
             ),
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
+            boxShadow: isDark
+                ? null
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.06),
+                      blurRadius: 24,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
           ),
-          prefixIcon: icon != null
-              ? Icon(
-                  icon,
-                  color: (isDark ? Colors.white : Color(0xFF0C312B))
-                      .withOpacity(0.6),
-                  size: 18,
-                )
-              : null,
-          errorStyle: GoogleFonts.inter(color: Colors.redAccent, fontSize: 10),
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          errorBorder: InputBorder.none,
-          focusedErrorBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 20,
+          child: TextField(
+            controller: controller,
+            maxLines: maxLines,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
+            style: GoogleFonts.inter(
+              color: isDark ? Colors.white : const Color(0xFF155A4F),
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+            decoration: InputDecoration(
+              // The global inputDecorationTheme sets filled:true. With every
+              // border removed below, InputDecorator paints that fill as a
+              // plain square rect on top of the rounded Container, squaring
+              // off its corners. Opt out and let the Container draw the
+              // rounded surface.
+              filled: false,
+              hintText: hint,
+              hintStyle: GoogleFonts.inter(
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.68),
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+              prefixIcon: icon != null
+                  ? Icon(
+                      icon,
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.6),
+                      size: 18,
+                    )
+                  : null,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 20,
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     ).animate().fadeIn(delay: 100.ms);
   }
 
@@ -715,15 +723,13 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: _isProjectDropdownOpen
-                    ? (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.2,
-                      )
-                    : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.06,
-                      ),
+                    ? (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.2)
+                    : (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.06),
               ),
               boxShadow: isDark
                   ? null
@@ -744,8 +750,8 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                       : 'CHOOSE PROJECT',
                   style: GoogleFonts.inter(
                     color: selectedProject != null
-                        ? (isDark ? Colors.white : Color(0xFF0C312B))
-                        : (isDark ? Colors.white : Color(0xFF0C312B))
+                        ? (isDark ? Colors.white : const Color(0xFF0C312B))
+                        : (isDark ? Colors.white : const Color(0xFF0C312B))
                               .withOpacity(0.68),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -756,7 +762,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   _isProjectDropdownOpen
                       ? LucideIcons.chevronUp
                       : LucideIcons.chevronDown,
-                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
                       .withOpacity(0.6),
                   size: 18,
                 ),
@@ -781,9 +787,8 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                       ),
                     ],
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                  0.05,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.05),
               ),
             ),
             child: Column(
@@ -804,7 +809,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     ),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? (isDark ? Colors.white : Color(0xFF0C312B))
+                          ? (isDark ? Colors.white : const Color(0xFF0C312B))
                                 .withOpacity(0.05)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(10),
@@ -813,8 +818,10 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                       (project['title'] ?? '').toString().toUpperCase(),
                       style: GoogleFonts.inter(
                         color: isSelected
-                            ? (isDark ? Colors.white : Color(0xFF0C312B))
-                            : (isDark ? Colors.white70 : Color(0xFF0C312B)),
+                            ? (isDark ? Colors.white : const Color(0xFF0C312B))
+                            : (isDark
+                                  ? Colors.white70
+                                  : const Color(0xFF0C312B)),
                         fontSize: 11,
                         fontWeight: isSelected
                             ? FontWeight.w600
@@ -848,15 +855,13 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: _isEmployeeDropdownOpen
-                    ? (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.2,
-                      )
-                    : (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                        0.06,
-                      ),
+                    ? (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.2)
+                    : (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.06),
               ),
               boxShadow: isDark
                   ? null
@@ -881,8 +886,8 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     color:
                         selectedEmployee.isNotEmpty ||
                             _otherEmployeeName != null
-                        ? (isDark ? Colors.white : Color(0xFF0C312B))
-                        : (isDark ? Colors.white : Color(0xFF0C312B))
+                        ? (isDark ? Colors.white : const Color(0xFF0C312B))
+                        : (isDark ? Colors.white : const Color(0xFF0C312B))
                               .withOpacity(0.68),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -893,7 +898,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   _isEmployeeDropdownOpen
                       ? LucideIcons.chevronUp
                       : LucideIcons.chevronDown,
-                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
                       .withOpacity(0.6),
                   size: 18,
                 ),
@@ -918,9 +923,8 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                       ),
                     ],
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                  0.05,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.05),
               ),
             ),
             child: Column(
@@ -943,7 +947,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? (isDark ? Colors.white : Color(0xFF0C312B))
+                            ? (isDark ? Colors.white : const Color(0xFF0C312B))
                                   .withOpacity(0.05)
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(10),
@@ -952,8 +956,12 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                         '${(emp['name'] ?? '').toString().toUpperCase()}${emp['phone'] != null ? ' (${emp['phone']})' : ''}',
                         style: GoogleFonts.inter(
                           color: isSelected
-                              ? (isDark ? Colors.white : Color(0xFF0C312B))
-                              : (isDark ? Colors.white70 : Color(0xFF0C312B)),
+                              ? (isDark
+                                    ? Colors.white
+                                    : const Color(0xFF0C312B))
+                              : (isDark
+                                    ? Colors.white70
+                                    : const Color(0xFF0C312B)),
                           fontSize: 11,
                           fontWeight: isSelected
                               ? FontWeight.w600
@@ -1018,11 +1026,10 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-              0.06,
-            ),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.06),
           ),
           boxShadow: isDark
               ? null
@@ -1038,9 +1045,8 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
           children: [
             Icon(
               icon,
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                0.6,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.6),
               size: 18,
             ),
             const SizedBox(width: 12),
@@ -1049,10 +1055,9 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 text,
                 style: GoogleFonts.inter(
                   color: isPlaceholder
-                      ? (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                          0.68,
-                        )
-                      : (isDark ? Colors.white : Color(0xFF0C312B)),
+                      ? (isDark ? Colors.white : const Color(0xFF0C312B))
+                            .withOpacity(0.68)
+                      : (isDark ? Colors.white : const Color(0xFF0C312B)),
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1060,9 +1065,8 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             ),
             Icon(
               LucideIcons.chevronRight,
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                0.45,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.45),
               size: 16,
             ),
           ],

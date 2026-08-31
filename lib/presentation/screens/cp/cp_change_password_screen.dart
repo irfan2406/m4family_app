@@ -131,8 +131,8 @@ class _CpChangePasswordScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
     final card = isDark
@@ -167,7 +167,7 @@ class _CpChangePasswordScreenState
                         const SizedBox(height: 8),
                         _passwordField(
                           controller: _current,
-                          hint: 'Enter current password',
+                          hint: 'Enter Current Password',
                           obscure: !_showCurrent,
                           onToggle: () =>
                               setState(() => _showCurrent = !_showCurrent),
@@ -186,7 +186,7 @@ class _CpChangePasswordScreenState
                         const SizedBox(height: 8),
                         _passwordField(
                           controller: _newPass,
-                          hint: 'Enter new password',
+                          hint: 'Enter New Password',
                           obscure: !_showNew,
                           onToggle: () => setState(() => _showNew = !_showNew),
                           onChanged: (_) => setState(() {}),
@@ -203,7 +203,7 @@ class _CpChangePasswordScreenState
                         const SizedBox(height: 8),
                         _passwordField(
                           controller: _confirm,
-                          hint: 'Re-enter new password',
+                          hint: 'Confirm New Password',
                           obscure: !_showNew,
                           showToggle: false,
                           onChanged: (_) => setState(() {}),
@@ -367,7 +367,7 @@ class _CpChangePasswordScreenState
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: GoogleFonts.inter(
-          fontSize: 14,
+          fontSize: 13,
           fontWeight: FontWeight.w500,
           color: muted,
         ),

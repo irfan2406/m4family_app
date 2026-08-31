@@ -34,7 +34,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             Text(
               (job['title'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.inter(
-                color: isDark ? Colors.white : Color(0xFF155A4F),
+                color: isDark ? Colors.white : const Color(0xFF155A4F),
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
                 letterSpacing: 0.5,
@@ -45,9 +45,8 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             Text(
               (job['department'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                  0.68,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.68),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
                 letterSpacing: 2,
@@ -77,17 +76,17 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
                       .withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
                         .withOpacity(0.08),
                   ),
                 ),
                 child: Icon(
                   LucideIcons.arrowLeft,
-                  color: isDark ? Colors.white : Color(0xFF0C312B),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   size: 16,
                 ),
               ),
@@ -96,10 +95,10 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
         ),
         actions: [
           Builder(
-            builder: (context) => Center(
+            builder: (context) => const Center(
               child: Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: const SideMenuButton(),
+                padding: EdgeInsets.only(right: 12),
+                child: SideMenuButton(),
               ),
             ),
           ),
@@ -133,18 +132,21 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.08),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: (isDark ? Colors.white : Color(0xFF0C312B))
-                              .withOpacity(0.1),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.1),
                         ),
                       ),
                       child: Text(
                         (job['department'] ?? '').toString().toUpperCase(),
                         style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.white70 : Color(0xFF0C312B),
+                          color: isDark
+                              ? Colors.white70
+                              : const Color(0xFF0C312B),
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 2,
@@ -157,7 +159,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                     Text(
                       (job['title'] ?? '').toString().toUpperCase(),
                       style: GoogleFonts.gelasio(
-                        color: isDark ? Colors.white : Color(0xFF0C312B),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         fontWeight: FontWeight.w700,
                         fontSize: 32,
                         letterSpacing: -1.5,
@@ -216,8 +218,9 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                             : const Color(0xFFF4EFE3),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: (isDark ? Colors.white : Color(0xFF0C312B))
-                              .withOpacity(0.08),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.08),
                         ),
                         boxShadow: isDark
                             ? null
@@ -281,7 +284,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                                 decoration: BoxDecoration(
                                   color: isDark
                                       ? Colors.white
-                                      : Color(0xFF0C312B),
+                                      : const Color(0xFF0C312B),
                                   borderRadius: BorderRadius.circular(10),
                                   boxShadow: [
                                     BoxShadow(
@@ -359,7 +362,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
+              backgroundColor: isDark ? Colors.white : const Color(0xFF0C312B),
               foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -392,7 +395,9 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     return Text(
       title,
       style: GoogleFonts.gelasio(
-        color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.9),
+        color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+          0.9,
+        ),
         fontSize: 10,
         fontWeight: FontWeight.w700,
         letterSpacing: 3,
@@ -427,9 +432,8 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             child: Text(
               text,
               style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                  0.8,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.8),
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 height: 1.5,
@@ -453,9 +457,8 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             width: 6,
             height: 6,
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                alpha: 0.5,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withValues(alpha: 0.5),
               shape: BoxShape.circle,
             ),
           ),
@@ -463,9 +466,8 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             child: Text(
               text,
               style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                  alpha: 0.8,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.8),
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 height: 1.5,
@@ -481,10 +483,14 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.04),
+        color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+          0.04,
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.05),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.05,
+          ),
         ),
       ),
       child: Column(
@@ -494,14 +500,13 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                0.05,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.05),
               shape: BoxShape.circle,
             ),
             child: Icon(
               LucideIcons.heart,
-              color: isDark ? Colors.white70 : Color(0xFF0C312B),
+              color: isDark ? Colors.white70 : const Color(0xFF0C312B),
               size: 14,
             ),
           ),
@@ -509,7 +514,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
           Text(
             text.toUpperCase(),
             style: GoogleFonts.inter(
-              color: isDark ? Colors.white : Color(0xFF155A4F),
+              color: isDark ? Colors.white : const Color(0xFF155A4F),
               fontSize: 10,
               fontWeight: FontWeight.w600,
               letterSpacing: 1,
@@ -531,7 +536,9 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             ? Colors.white.withOpacity(0.05)
             : const Color(0xFFF4EFE3),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.1),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.1,
+          ),
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: isDark
@@ -549,7 +556,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
         children: [
           Icon(
             icon,
-            color: isDark ? Colors.white : Color(0xFF0C312B),
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
             size: 15,
           ),
           const SizedBox(width: 8),
@@ -559,7 +566,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.inter(
-                color: isDark ? Colors.white : Color(0xFF155A4F),
+                color: isDark ? Colors.white : const Color(0xFF155A4F),
                 fontSize: 10,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 1.2,
@@ -583,7 +590,9 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
       return Text(
         'Details for this role will be shared during the interview process.',
         style: style.copyWith(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.9),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.9,
+          ),
         ),
       );
     }
@@ -610,7 +619,9 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.08),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.08,
+          ),
         ),
         boxShadow: isDark
             ? null
@@ -663,19 +674,17 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             height: 48,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                0.05,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.05),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                  0.08,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.08),
               ),
             ),
             child: Icon(
               icon,
-              color: isDark ? Colors.white : Color(0xFF0C312B),
+              color: isDark ? Colors.white : const Color(0xFF0C312B),
               size: 18,
             ),
           ),
@@ -699,7 +708,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                 Text(
                   value,
                   style: GoogleFonts.inter(
-                    color: isDark ? Colors.white : Color(0xFF155A4F),
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                     letterSpacing: -0.2,

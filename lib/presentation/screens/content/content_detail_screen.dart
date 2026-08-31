@@ -620,7 +620,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         color = const Color(0xFFC5A35B);
         break;
       case 'ENDED':
-        color = isDark ? Colors.white38 : Color(0xFF155A4F);
+        color = isDark ? Colors.white38 : const Color(0xFF155A4F);
         break;
       case 'CANCELLED':
         color = const Color(0xFFC65B46);
@@ -707,7 +707,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                  color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                   letterSpacing: 1.5,
                 ),
               ),
@@ -717,7 +717,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white : Color(0xFF155A4F),
+                  color: isDark ? Colors.white : const Color(0xFF155A4F),
                   letterSpacing: -0.2,
                 ),
               ),
@@ -791,7 +791,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                      color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                       letterSpacing: 1.5,
                     ),
                   ),
@@ -801,7 +801,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Color(0xFF155A4F),
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
                       letterSpacing: -0.2,
                     ),
                   ),
@@ -851,7 +851,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white : Color(0xFF155A4F),
+                  color: isDark ? Colors.white : const Color(0xFF155A4F),
                   letterSpacing: 1,
                 ),
               ),
@@ -1086,13 +1086,13 @@ class _M4VideoControlsState extends State<_M4VideoControls> {
               width: 22,
               child: icon == null
                   ? null
-                  : Icon(icon, size: 18, color: Color(0xDD0C312B)),
+                  : Icon(icon, size: 18, color: const Color(0xDD0C312B)),
             ),
             const SizedBox(width: 10),
             Text(
               label,
               style: GoogleFonts.inter(
-                color: Color(0xDD0C312B),
+                color: const Color(0xDD0C312B),
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),

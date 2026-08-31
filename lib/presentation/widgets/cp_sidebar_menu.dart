@@ -34,7 +34,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
     // ambient brightness: the drawer can be opened from a green "showcase"
     // screen, whose theme reports Brightness.dark, and that would flip the
     // menu to tones it never used in light mode.
-    final bool isDark = false;
+    const bool isDark = false;
     final confirmed = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -249,7 +249,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                             collapsedIconColor: const Color(0xFFF4EFE3),
                             onExpansionChanged: (_) {},
                             tilePadding: EdgeInsets.zero,
-                            title: _SidebarItem(
+                            title: const _SidebarItem(
                               icon: LucideIcons.sparkles,
                               label: 'Content Hub',
                               isActive: false,
@@ -439,7 +439,11 @@ class _SubItem extends StatelessWidget {
                     .withOpacity(0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(LucideIcons.logIn, size: 14, color: Colors.white),
+              child: const Icon(
+                LucideIcons.logIn,
+                size: 14,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(width: 12),
             Text(

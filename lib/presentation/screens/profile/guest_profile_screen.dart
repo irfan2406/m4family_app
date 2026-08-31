@@ -15,7 +15,7 @@ class GuestProfileScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final Color bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final Color textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final Color textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
     final Color textMuted = isDark
         ? Colors.white.withValues(alpha: 0.5)
         : Colors.black.withValues(alpha: 0.5);
@@ -39,9 +39,8 @@ class GuestProfileScreen extends ConsumerWidget {
               height: 220,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                  alpha: 0.04,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.04),
               ),
             ),
           ),
@@ -186,8 +185,8 @@ class GuestProfileScreen extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        Row(
-                          children: const [
+                        const Row(
+                          children: [
                             Expanded(
                               child: _InfoTile(
                                 title: 'EXCLUSIVE ACCESS',
@@ -278,14 +277,14 @@ class _InfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final Color textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
     final Color textMuted = isDark
         ? Colors.white.withValues(alpha: 0.5)
         : Colors.black.withValues(alpha: 0.5);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+        color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
           alpha: 0.03,
         ),
         borderRadius: BorderRadius.circular(20),
@@ -338,9 +337,9 @@ class _PrimaryButton extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final Color fg = filled
         ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
-        : (isDark ? Colors.white : Color(0xFF0C312B));
+        : (isDark ? Colors.white : const Color(0xFF0C312B));
     final Color bg = filled
-        ? (isDark ? Colors.white : Color(0xFF0C312B))
+        ? (isDark ? Colors.white : const Color(0xFF0C312B))
         : Colors.transparent;
     return _ScaleTap(
       onTap: onTap,
@@ -408,7 +407,7 @@ class _CircleButton extends StatelessWidget {
         child: Icon(
           icon,
           size: 20,
-          color: isDark ? Colors.white : Color(0xFF0C312B),
+          color: isDark ? Colors.white : const Color(0xFF0C312B),
         ),
       ),
     );

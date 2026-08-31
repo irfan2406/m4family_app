@@ -348,9 +348,9 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                       fontWeight: FontWeight.w700,
                     ),
                     decoration: InputDecoration(
-                      hintText: 'SEARCH PROSPECT...',
+                      hintText: 'Search Prospects',
                       hintStyle: GoogleFonts.gelasio(
-                        fontSize: 12,
+                        fontSize: 11,
                         fontWeight: FontWeight.w700,
                         color: scheme.onSurface.withValues(alpha: 0.62),
                         letterSpacing: 1.5,

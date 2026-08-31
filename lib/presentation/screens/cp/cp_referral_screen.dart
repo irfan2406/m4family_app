@@ -692,7 +692,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   const SizedBox(height: 10),
                   _buildTextField(
                     phoneCtrl,
-                    '+91 XXXXX XXXXX',
+                    'Enter Mobile Number',
                     scheme,
                     isDark,
                     isPhone: true,
@@ -849,7 +849,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: GoogleFonts.inter(
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: FontWeight.w500,
             color: scheme.onSurface.withValues(alpha: 0.62),
           ),

@@ -124,8 +124,8 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.68,
     );
     final card = isDark

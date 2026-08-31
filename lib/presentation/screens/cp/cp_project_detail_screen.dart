@@ -274,6 +274,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ? s
         : ref.read(apiClientProvider).resolveUrl(s);
     return CachedNetworkImage(
+      memCacheWidth: 1080,
       imageUrl: url,
       fit: fit,
       errorWidget: (_, __, ___) => fallback,
@@ -582,9 +583,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                    alpha: 0.15,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(99),
                 ),
               ),
@@ -598,7 +598,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
-                  color: isDark ? Colors.white : Color(0xFF155A4F),
+                  color: isDark ? Colors.white : const Color(0xFF155A4F),
                 ),
               ),
             ),
@@ -625,12 +625,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       side: BorderSide(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withValues(alpha: 0.2),
                       ),
                       foregroundColor: isDark
                           ? Colors.white
-                          : Color(0xFF0C312B),
+                          : const Color(0xFF0C312B),
                     ),
                     child: Text(
                       'CANCEL',
@@ -648,7 +648,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     style: FilledButton.styleFrom(
                       backgroundColor: isDark
                           ? Colors.white
-                          : Color(0xFF0C312B),
+                          : const Color(0xFF0C312B),
                       foregroundColor: isDark
                           ? Colors.black
                           : const Color(0xFFF4EFE3),
@@ -1266,10 +1266,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           height: 66,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.7),
-              width: 2,
-            ),
+            // No border: a 2px ring insets the child, leaving a white strip
+            // down all four sides of the photo. Dropping it lets the image
+            // fill the full 66x66 tile edge to edge. The 360 tile keeps its
+            // outline — it is cream-on-cream and would vanish without one.
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.35),
@@ -2378,7 +2378,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             const SizedBox(height: 8),
             _cpField(
               controller: _regEmployeeEntered,
-              hint: 'TYPE EMPLOYEE NAME HERE',
+              hint: 'Enter Employee Name',
               scheme: scheme,
             ),
           ],
@@ -2387,7 +2387,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           const SizedBox(height: 6),
           _cpField(
             controller: _regClientName,
-            hint: 'CLIENT NAME',
+            hint: 'Enter Client Name',
             scheme: scheme,
             errorText: _regNameError,
             // Clear the red state as soon as they start typing.
@@ -2400,7 +2400,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           const SizedBox(height: 6),
           _cpField(
             controller: _regClientPhone,
-            hint: '+91 98653 21250',
+            hint: 'Enter Mobile Number',
             scheme: scheme,
             keyboardType: TextInputType.phone,
             errorText: _regPhoneError,
@@ -2413,7 +2413,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           const SizedBox(height: 6),
           _cpField(
             controller: _regClientEmail,
-            hint: 'EMAIL ADDRESS',
+            hint: 'Enter Email Address',
             scheme: scheme,
             keyboardType: TextInputType.emailAddress,
             errorText: _regEmailError,
@@ -2426,7 +2426,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           const SizedBox(height: 6),
           _cpField(
             controller: _regLocation,
-            hint: 'CITY, COUNTRY',
+            hint: 'Enter City and Country',
             scheme: scheme,
           ),
           const SizedBox(height: 14),
@@ -2788,7 +2788,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       const SizedBox(height: 8),
                       _cpField(
                         controller: _employeeEntered,
-                        hint: 'TYPE EMPLOYEE NAME HERE',
+                        hint: 'Enter Employee Name',
                         scheme: scheme,
                       ),
                     ],
@@ -2797,7 +2797,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     const SizedBox(height: 6),
                     _cpField(
                       controller: _clientName,
-                      hint: 'CLIENT NAME',
+                      hint: 'Enter Client Name',
                       scheme: scheme,
                     ),
                     const SizedBox(height: 12),
@@ -2805,7 +2805,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     const SizedBox(height: 6),
                     _cpField(
                       controller: _clientPhone,
-                      hint: 'PHONE NUMBER',
+                      hint: 'Enter Mobile Number',
                       scheme: scheme,
                       keyboardType: TextInputType.phone,
                     ),
@@ -2814,7 +2814,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     const SizedBox(height: 6),
                     _cpField(
                       controller: _clientEmail,
-                      hint: 'EMAIL ADDRESS',
+                      hint: 'Enter Email Address',
                       scheme: scheme,
                       keyboardType: TextInputType.emailAddress,
                     ),
@@ -3206,11 +3206,11 @@ class _DashedCirclePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.butt;
 
-    final dashAngle = (2 * 3.14159) / dashCount;
+    const dashAngle = (2 * 3.14159) / dashCount;
 
     for (int i = 0; i < dashCount; i++) {
       final startAngle = i * dashAngle;
-      final sweepAngle = dashAngle * (1 - gap);
+      const sweepAngle = dashAngle * (1 - gap);
 
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),

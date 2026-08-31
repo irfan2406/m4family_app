@@ -121,8 +121,8 @@ class _InvestorTaxReportDetailScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
 
@@ -195,14 +195,12 @@ class _InvestorTaxReportDetailScreenState
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                  alpha: 0.04,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                    alpha: 0.08,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.08),
                 ),
               ),
               child: Icon(LucideIcons.download, size: 18, color: muted),
@@ -344,7 +342,7 @@ class _InvestorTaxReportDetailScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+        color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
           alpha: 0.03,
         ),
         borderRadius: BorderRadius.circular(7),

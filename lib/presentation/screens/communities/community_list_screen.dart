@@ -81,16 +81,24 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                           height: 45,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                .withOpacity(0.05),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.05),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                  .withOpacity(0.1),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withOpacity(0.1),
                             ),
                           ),
                           child: Icon(
                             LucideIcons.chevronLeft,
-                            color: isDark ? Colors.white : Color(0xFF0C312B),
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF0C312B),
                             size: 20,
                           ),
                         ),
@@ -103,7 +111,9 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                             // Web parity: header reads "M4 FAMILY / DEVELOPMENTS".
                             'M4 FAMILY',
                             style: GoogleFonts.inter(
-                              color: isDark ? Colors.white : Color(0xFF155A4F),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF155A4F),
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.3,
@@ -112,8 +122,11 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                           Text(
                             'DEVELOPMENTS',
                             style: GoogleFonts.gelasio(
-                              color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                  .withOpacity(0.55),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withOpacity(0.55),
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 3,
@@ -144,7 +157,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       // Web parity: thin elegant serif on one line (not heavy bold).
                       fontSize: 26,
                       fontWeight: FontWeight.w400,
-                      color: isDark ? Colors.white : Color(0xFF0C312B),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       letterSpacing: -0.5,
                       height: 1.1,
                     ),
@@ -160,7 +173,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       // Web parity: description is sans-serif (font-sans),
                       // muted, text-[13px] font-medium (not serif).
                       style: GoogleFonts.inter(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.78),
                         fontSize: 14.5,
                         height: 1.6,
@@ -172,7 +185,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       // Web parity: description is sans-serif (font-sans),
                       // muted, text-[13px] font-medium (not serif).
                       style: GoogleFonts.inter(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.78),
                         fontSize: 14.5,
                         height: 1.6,
@@ -188,8 +201,11 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
-                            color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                .withOpacity(0.3),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.3),
                             width: 1,
                           ),
                         ),
@@ -197,7 +213,9 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       child: Text(
                         _isExpanded ? 'Read less' : 'Read more',
                         style: GoogleFonts.inter(
-                          color: isDark ? Colors.white : Color(0xFF155A4F),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF155A4F),
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
@@ -214,9 +232,9 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
             SliverToBoxAdapter(
               child: Center(
                 child: Padding(
-                  padding: EdgeInsets.all(100.0),
+                  padding: const EdgeInsets.all(100.0),
                   child: CircularProgressIndicator(
-                    color: isDark ? Colors.white : Color(0xFF0C312B),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                   ),
                 ),
               ),
@@ -229,7 +247,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                   child: Text(
                     state.error!,
                     style: TextStyle(
-                      color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                      color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                     ),
                   ),
                 ),
@@ -292,6 +310,7 @@ Widget _communityImage(String url) {
   }
   if (url.isEmpty) return _communityImagePlaceholder();
   return CachedNetworkImage(
+    memCacheWidth: 1080,
     imageUrl: url,
     fit: BoxFit.cover,
     placeholder: (context, u) => Container(color: Colors.black12),
@@ -395,7 +414,7 @@ class _CommunityCard extends ConsumerWidget {
                     width: 55,
                     height: 55,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Color(0xFF0C312B),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(

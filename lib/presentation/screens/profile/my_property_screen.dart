@@ -68,12 +68,9 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                             if (_bookings.isEmpty)
                               _buildEmptyState(isDark)
                             else
-                              ..._bookings
-                                  .map(
-                                    (booking) =>
-                                        _buildBookingCard(booking, isDark),
-                                  )
-                                  .toList(),
+                              ..._bookings.map(
+                                (booking) => _buildBookingCard(booking, isDark),
+                              ),
                             const SizedBox(height: 100),
                           ],
                         ),
@@ -104,7 +101,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : Color(0xFF0C312B),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   letterSpacing: 2,
                 ),
               ),
@@ -400,7 +397,9 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
         Icon(
           LucideIcons.building2,
           size: 64,
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.1),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.1,
+          ),
         ),
         const SizedBox(height: 24),
         Text(
@@ -409,9 +408,8 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             textStyle: const TextStyle(inherit: true),
             fontSize: 10,
             fontWeight: FontWeight.w700,
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-              0.72,
-            ),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.72),
             letterSpacing: 2,
           ),
         ),
@@ -564,14 +562,13 @@ class _IconButton extends StatelessWidget {
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-              0.05,
-            ),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.05),
           ),
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white54 : Color(0xFF155A4F),
+          color: isDark ? Colors.white54 : const Color(0xFF155A4F),
           size: 20,
         ),
       ),

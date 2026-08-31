@@ -32,7 +32,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
     // ambient brightness: the drawer can be opened from a green "showcase"
     // screen, whose theme reports Brightness.dark, and that would flip the
     // menu to tones it never used in light mode.
-    final bool isDark = false;
+    const bool isDark = false;
     final user = authState.user;
     final role = user?['role']?.toString().toLowerCase();
     final isInvestor = role == 'investor';
@@ -295,12 +295,12 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                             Navigator.pop(context);
                           },
                         ),
-                        _SidebarItem(
+                        const _SidebarItem(
                           icon: LucideIcons.phone,
                           label: 'Call',
                           onTap: SupportHandlers.launchCall,
                         ),
-                        _SidebarItem(
+                        const _SidebarItem(
                           icon: LucideIcons.messageSquare,
                           label: 'Whatsapp',
                           onTap: SupportHandlers.launchWhatsApp,

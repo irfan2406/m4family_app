@@ -187,8 +187,8 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.62,
     );
     final border = isDark
@@ -364,7 +364,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               ),
               decoration: InputDecoration(
                 isCollapsed: true,
-                hintText: 'SEARCH BY NAME OR PHONE...',
+                hintText: 'Search Employees',
                 hintStyle: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
@@ -701,8 +701,8 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   void _openEmployeeDialog({dynamic existing}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dialogBg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.62,
     );
     final border = isDark
@@ -775,7 +775,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     decoration: InputDecoration(
                       hintText: hint,
                       hintStyle: GoogleFonts.inter(
-                        fontSize: 12,
+                        fontSize: 11,
                         fontWeight: FontWeight.w500,
                         color: muted.withValues(alpha: 0.7),
                       ),
@@ -818,19 +818,19 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    field('FULL NAME', nameCtrl, 'John Doe'),
+                    field('FULL NAME', nameCtrl, 'Enter Full Name'),
                     const SizedBox(height: 14),
                     field(
                       'PHONE NUMBER (10 DIGITS)',
                       phoneCtrl,
-                      '9876543210',
+                      'Enter 10-Digit Mobile Number',
                       phone: true,
                     ),
                     const SizedBox(height: 14),
                     field(
                       'EMAIL ADDRESS',
                       emailCtrl,
-                      'john@example.com',
+                      'Enter Email Address',
                       email: true,
                     ),
                   ],
@@ -852,7 +852,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                 FilledButton(
                   // Web parity: black save button (white in dark mode).
                   style: FilledButton.styleFrom(
-                    backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
+                    backgroundColor: isDark
+                        ? Colors.white
+                        : const Color(0xFF0C312B),
                     foregroundColor: isDark
                         ? Colors.black
                         : const Color(0xFFF4EFE3),

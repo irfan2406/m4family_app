@@ -165,6 +165,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                 fit: StackFit.expand,
                 children: [
                   CachedNetworkImage(
+                    memCacheWidth: 1080,
                     imageUrl:
                         'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80',
                     fit: BoxFit.cover,

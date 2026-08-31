@@ -71,8 +71,8 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
     final card = isDark
@@ -267,9 +267,9 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
           color: textPrimary,
         ),
         decoration: InputDecoration(
-          hintText: 'Search registered leads…',
+          hintText: 'Search Leads',
           hintStyle: GoogleFonts.inter(
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: FontWeight.w600,
             color: muted,
           ),
@@ -681,8 +681,8 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
     final card = isDark
@@ -786,7 +786,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
             const SizedBox(height: 8),
             _field(
               _name,
-              'Enter client name',
+              'Enter Client Name',
               textPrimary,
               muted,
               card,
@@ -797,7 +797,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
             const SizedBox(height: 8),
             _field(
               _mobile,
-              'Enter client mobile',
+              'Enter Client Mobile Number',
               textPrimary,
               muted,
               card,
@@ -871,7 +871,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: GoogleFonts.inter(
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: FontWeight.w600,
             color: muted,
           ),

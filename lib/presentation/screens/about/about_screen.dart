@@ -172,28 +172,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           : null,
       appBar: AppBar(
         centerTitle: true,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'WHO WE ARE',
-              style: GoogleFonts.gelasio(
-                color: isDark ? Colors.white : Color(0xFF0C312B),
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-                letterSpacing: 2,
-              ),
-            ),
-            Text(
-              'M4 FAMILY COLLECTIVE',
-              style: GoogleFonts.inter(
-                color: isDark ? Colors.white : Color(0xFF155A4F),
-                fontWeight: FontWeight.w400,
-                fontSize: 8,
-                letterSpacing: 2,
-              ),
-            ),
-          ],
+        title: Text(
+          'WHO WE ARE',
+          style: GoogleFonts.gelasio(
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            letterSpacing: 2,
+          ),
         ),
         backgroundColor: isDark
             ? const Color(0xFF0B1026)
@@ -223,17 +209,17 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
                       .withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
                         .withOpacity(0.08),
                   ),
                 ),
                 child: Icon(
                   LucideIcons.arrowLeft,
-                  color: isDark ? Colors.white : Color(0xFF0C312B),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   size: 16,
                 ),
               ),
@@ -242,10 +228,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         ),
         actions: [
           Builder(
-            builder: (context) => Center(
+            builder: (context) => const Center(
               child: Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: const SideMenuButton(),
+                padding: EdgeInsets.only(right: 12),
+                child: SideMenuButton(),
               ),
             ),
           ),
@@ -328,7 +314,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 right: stepWidth / 2,
                 child: Container(
                   height: 2,
-                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
                       .withOpacity(0.05),
                 ),
               ),
@@ -408,7 +394,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                   ? colorScheme.primary.withOpacity(0.62)
                                   : (isDark
                                         ? Colors.white60
-                                        : Color(0xFF155A4F)),
+                                        : const Color(0xFF155A4F)),
                               size: 16,
                             ),
                           ),
@@ -618,7 +604,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           Text(
                             item['title']!.toUpperCase(),
                             style: GoogleFonts.inter(
-                              color: isDark ? Colors.white : Color(0xFF155A4F),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF155A4F),
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.5,
@@ -630,7 +618,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                             style: GoogleFonts.inter(
                               color: isDark
                                   ? Colors.white70
-                                  : Color(0xFF155A4F),
+                                  : const Color(0xFF155A4F),
                               fontSize: 12,
                               height: 1.6,
                               fontWeight: FontWeight.w500,
@@ -714,7 +702,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     pillar['title'].toString().toUpperCase(),
                     style: GoogleFonts.gelasio(
-                      color: isDark ? Colors.white : Color(0xFF0C312B),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 2,
@@ -725,7 +713,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     pillar['desc'],
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inter(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
                           .withOpacity(0.68),
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
@@ -870,6 +858,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         child: Stack(
           children: [
             CachedNetworkImage(
+              memCacheWidth: 1080,
               imageUrl: ref
                   .read(apiClientProvider)
                   .resolveUrl(
@@ -883,12 +872,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Container(color: Colors.black12),
             ),
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [Colors.transparent, Colors.black26, Colors.black87],
-                  stops: const [0.0, 0.5, 1.0],
+                  stops: [0.0, 0.5, 1.0],
                 ),
               ),
             ),
@@ -939,9 +928,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             color: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                0.05,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.05),
             ),
             boxShadow: [
               BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
@@ -966,7 +954,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         Text(
           title,
           style: GoogleFonts.gelasio(
-            color: isDark ? Colors.white : Color(0xFF0C312B),
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
             fontSize: 18,
             fontWeight: FontWeight.w700,
             letterSpacing: -1,
@@ -1073,7 +1061,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     Text(
                       section['title'].toString().toUpperCase(),
                       style: GoogleFonts.inter(
-                        color: isDark ? Colors.white : Color(0xFF155A4F),
+                        color: isDark ? Colors.white : const Color(0xFF155A4F),
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.5,
@@ -1098,9 +1086,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             section['content'].toString().toUpperCase(),
             // Web parity: lighter, less heavy body copy inside the card.
             style: GoogleFonts.inter(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                0.5,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.5),
               fontSize: 11,
               fontWeight: FontWeight.w600,
               height: 1.6,
@@ -1128,6 +1115,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: CachedNetworkImage(
+            memCacheWidth: 1080,
             imageUrl: url,
             fit: BoxFit.cover,
             placeholder: (context, url) => Container(color: Colors.black12),
@@ -1325,7 +1313,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               style: GoogleFonts.inter(
                                 color: isDark
                                     ? Colors.white
-                                    : Color(0xFF155A4F),
+                                    : const Color(0xFF155A4F),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 17,
                                 letterSpacing: -0.3,
@@ -1335,7 +1323,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           IconButton(
                             icon: Icon(
                               LucideIcons.x,
-                              color: isDark ? Colors.white : Color(0xFF0C312B),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF0C312B),
                               size: 20,
                             ),
                             onPressed: () => Navigator.pop(context),
@@ -1359,7 +1349,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       _buildFieldLabel('FULL NAME'),
                       _buildTextField(
                         _nameController,
-                        'Your Name',
+                        'Enter Full Name',
                         LucideIcons.user,
                         keyboardType: TextInputType.name,
                         inputFormatters: Validators.nameFormatters,
@@ -1369,7 +1359,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       _buildFieldLabel('PHONE NUMBER'),
                       _buildTextField(
                         _phoneController,
-                        'Mobile Number',
+                        'Enter Mobile Number',
                         LucideIcons.phone,
                         keyboardType: TextInputType.phone,
                         inputFormatters: Validators.phoneFormatters,
@@ -1379,7 +1369,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       _buildFieldLabel('EMAIL ADDRESS (OPTIONAL)'),
                       _buildTextField(
                         _emailController,
-                        'Email Address',
+                        'Enter Email Address',
                         LucideIcons.mail,
                         keyboardType: TextInputType.emailAddress,
                         inputFormatters: Validators.emailFormatters,
@@ -1510,7 +1500,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isDark
                                 ? Colors.white
-                                : Color(0xFF0C312B),
+                                : const Color(0xFF0C312B),
                             foregroundColor: isDark
                                 ? Colors.black
                                 : const Color(0xFFF4EFE3),
@@ -1600,7 +1590,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           color: isDark
               ? Colors.white38
               : const Color(0xFF163A2C).withValues(alpha: 0.5),
-          fontSize: 14,
+          fontSize: 13,
           fontWeight: FontWeight.w500,
         ),
         filled: true,
@@ -1653,7 +1643,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 child: Text(
                   'BACK',
                   style: GoogleFonts.gelasio(
-                    color: isDark ? Colors.white : Color(0xFF0C312B),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                     fontWeight: FontWeight.w700,
                     fontSize: 10,
                     letterSpacing: 2,
@@ -1677,7 +1667,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
+                backgroundColor: isDark
+                    ? Colors.white
+                    : const Color(0xFF0C312B),
                 foregroundColor: isDark
                     ? Colors.black
                     : const Color(0xFFF4EFE3),

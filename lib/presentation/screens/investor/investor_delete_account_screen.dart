@@ -120,9 +120,8 @@ class _InvestorDeleteAccountScreenState
             style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                alpha: 0.7,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withValues(alpha: 0.7),
             ),
           ),
           actions: [
@@ -133,9 +132,8 @@ class _InvestorDeleteAccountScreenState
                 style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                    alpha: 0.6,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -216,8 +214,8 @@ class _InvestorDeleteAccountScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
     final card = isDark
@@ -516,9 +514,9 @@ class _InvestorDeleteAccountScreenState
               color: textPrimary,
             ),
             decoration: InputDecoration(
-              hintText: _confirmWord,
+              hintText: 'Enter $_confirmWord to Confirm',
               hintStyle: GoogleFonts.gelasio(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 3,
                 color: muted.withValues(alpha: 0.72),
@@ -583,9 +581,9 @@ class _InvestorDeleteAccountScreenState
               color: textPrimary,
             ),
             decoration: InputDecoration(
-              hintText: '••••••••',
+              hintText: 'Enter Password',
               hintStyle: GoogleFonts.inter(
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: muted.withValues(alpha: 0.72),
               ),

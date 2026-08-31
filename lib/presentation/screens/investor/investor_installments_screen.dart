@@ -189,8 +189,8 @@ class _InvestorInstallmentsScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
     final border = isDark
@@ -229,7 +229,7 @@ class _InvestorInstallmentsScreenState
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withValues(alpha: 0.04),
                         shape: BoxShape.circle,
                         border: Border.all(color: border),
@@ -365,7 +365,7 @@ class _InvestorInstallmentsScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+        color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
           alpha: 0.02,
         ),
         border: Border(bottom: BorderSide(color: border)),
@@ -450,9 +450,8 @@ class _InvestorInstallmentsScreenState
               decoration: BoxDecoration(
                 color: active
                     ? activeColor.withValues(alpha: 0.1)
-                    : (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                        alpha: 0.03,
-                      ),
+                    : (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withValues(alpha: 0.03),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: active ? activeColor.withValues(alpha: 0.3) : border,

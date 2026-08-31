@@ -38,7 +38,7 @@ class _MainShellState extends ConsumerState<MainShell> {
     const ProfileScreen(), // 3: User (Profile)
     const CommunityListScreen(), // 4: Sidebar only
     const NotificationListScreen(), // 5: Notifications (Sidebar)
-    CustomViewsScreen(), // 6: Custom Views (Sidebar)
+    const CustomViewsScreen(), // 6: Custom Views (Sidebar)
     const MyCustomViewsScreen(), // 7: My Custom Views (Sidebar)
     const SelectionLogsScreen(), // 8: Personalisation Logs
     Consumer(
@@ -70,7 +70,7 @@ class _MainShellState extends ConsumerState<MainShell> {
       child: Scaffold(
         extendBody: true,
         backgroundColor: navTheme.scaffoldBackgroundColor,
-        drawer: ConditionalDrawer(),
+        drawer: const ConditionalDrawer(),
         onDrawerChanged: (isOpen) {
           setState(() {
             _isDrawerOpen = isOpen;

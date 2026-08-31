@@ -322,7 +322,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
           label: 'REGISTERED EMAIL',
           controller: _emailController,
           icon: LucideIcons.mail,
-          hint: 'investor@institution.com',
+          hint: 'Enter Email Address',
           keyboardType: TextInputType.emailAddress,
           inputFormatters: Validators.emailFormatters,
         ),
@@ -331,7 +331,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
           label: 'SECURE PASSWORD',
           controller: _passwordController,
           icon: LucideIcons.lock,
-          hint: '••••••••••••',
+          hint: 'Enter Password',
           obscure: !_showPassword,
           suffix: IconButton(
             onPressed: () => setState(() => _showPassword = !_showPassword),

@@ -144,7 +144,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
 
     return Scaffold(
       backgroundColor: bg,

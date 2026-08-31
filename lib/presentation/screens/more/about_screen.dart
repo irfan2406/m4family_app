@@ -36,7 +36,7 @@ class _AboutScreenState extends State<AboutScreen> {
         leading: IconButton(
           icon: Icon(
             LucideIcons.chevronLeft,
-            color: isDark ? Colors.white : Color(0xFF0C312B),
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -47,7 +47,7 @@ class _AboutScreenState extends State<AboutScreen> {
               style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : Color(0xFF155A4F),
+                color: isDark ? Colors.white : const Color(0xFF155A4F),
                 letterSpacing: 1,
               ),
             ),
@@ -112,7 +112,7 @@ class _AboutScreenState extends State<AboutScreen> {
                                     ? Colors.black
                                     : (isDark
                                           ? Colors.white10
-                                          : Color(
+                                          : const Color(
                                               0xFF163A2C,
                                             ).withOpacity(0.05)),
                               ),
@@ -132,7 +132,7 @@ class _AboutScreenState extends State<AboutScreen> {
                                   ? Colors.white
                                   : (isDark
                                         ? Colors.white38
-                                        : Color(0xFF155A4F)),
+                                        : const Color(0xFF155A4F)),
                               size: 20,
                             ),
                           ),
@@ -143,10 +143,12 @@ class _AboutScreenState extends State<AboutScreen> {
                               fontSize: 7,
                               fontWeight: FontWeight.w600,
                               color: isActive
-                                  ? (isDark ? Colors.white : Color(0xFF0C312B))
+                                  ? (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
                                   : (isDark
                                         ? Colors.white24
-                                        : Color(0x420C312B)),
+                                        : const Color(0x420C312B)),
                               letterSpacing: 1,
                             ),
                           ),
@@ -242,7 +244,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       border: Border.all(
                         color: isDark
                             ? Colors.white10
-                            : Color(0xFF163A2C).withOpacity(0.05),
+                            : const Color(0xFF163A2C).withOpacity(0.05),
                       ),
                     ),
                     child: const Icon(LucideIcons.briefcase, size: 20),
@@ -253,7 +255,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Color(0xFF155A4F),
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
                       letterSpacing: -0.5,
                     ),
                   ),
@@ -275,7 +277,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   border: Border.all(
                     color: isDark
                         ? Colors.white10
-                        : Color(0xFF163A2C).withOpacity(0.05),
+                        : const Color(0xFF163A2C).withOpacity(0.05),
                   ),
                 ),
                 child: Column(
@@ -284,7 +286,9 @@ class _AboutScreenState extends State<AboutScreen> {
                       '"M4 Family, with over a decade of excellence in Mumbai\'s real estate landscape, has established itself as a trusted name in premium residential development."',
                       style: GoogleFonts.inter(
                         fontSize: 14,
-                        color: isDark ? Colors.white70 : Color(0xFF0C312B),
+                        color: isDark
+                            ? Colors.white70
+                            : const Color(0xFF0C312B),
                         height: 1.8,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.w500,
@@ -295,7 +299,9 @@ class _AboutScreenState extends State<AboutScreen> {
                       'Renowned for delivering homes that blend contemporary design with timeless aesthetics, every development we undertake is a testament to our commitment to quality and institutional standards.',
                       style: GoogleFonts.inter(
                         fontSize: 13,
-                        color: isDark ? Colors.white38 : Color(0x730C312B),
+                        color: isDark
+                            ? Colors.white38
+                            : const Color(0x730C312B),
                         height: 1.8,
                         fontWeight: FontWeight.w600,
                       ),

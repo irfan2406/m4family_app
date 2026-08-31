@@ -1335,7 +1335,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                   const SizedBox(height: 48),
                   _PremiumInputField(
-                    label: 'Full Name *',
+                    label: 'Enter Full Name',
                     controller: _nameController,
                     errorText: _nameError,
                     keyboardType: TextInputType.name,
@@ -1346,7 +1346,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     },
                   ),
                   _PremiumInputField(
-                    label: 'Email Address *',
+                    label: 'Enter Email Address',
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     inputFormatters: Validators.emailFormatters,
@@ -1358,7 +1358,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     },
                   ),
                   _PremiumInputField(
-                    label: 'Phone Number *',
+                    label: 'Enter Mobile Number',
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
                     inputFormatters: Validators.phoneFormatters,
@@ -1370,7 +1370,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     },
                   ),
                   _PremiumInputField(
-                    label: 'Message',
+                    label: 'Enter Message',
                     controller: _messageController,
                     maxLines: 3,
                   ),
@@ -1413,7 +1413,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
           ),
 
-          SliverToBoxAdapter(child: SizedBox(height: 96)),
+          const SliverToBoxAdapter(child: SizedBox(height: 96)),
         ],
       ),
     );
@@ -1435,13 +1435,14 @@ class _CategoryChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
         decoration: BoxDecoration(
           color: isActive
-              ? (isDark ? Colors.white : Color(0xFF0C312B))
+              ? (isDark ? Colors.white : const Color(0xFF0C312B))
               : (isDark
                     ? Colors.white.withOpacity(0.05)
                     : Colors.black.withOpacity(0.05)),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.1),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.1),
           ),
         ),
         child: Text(
@@ -1449,7 +1450,7 @@ class _CategoryChip extends StatelessWidget {
           style: GoogleFonts.gelasio(
             color: isActive
                 ? (isDark ? const Color(0xFF0C312B) : Colors.white)
-                : (isDark ? Colors.white38 : Color(0xFF155A4F)),
+                : (isDark ? Colors.white38 : const Color(0xFF155A4F)),
             fontSize: 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 2,
@@ -1683,11 +1684,11 @@ class _QuickAction extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
                       .withOpacity(0.05),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
                         .withOpacity(0.08),
                   ),
                 ),
@@ -1829,7 +1830,7 @@ class _QuickFilterSheet extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
                         .withOpacity(0.1),
                   ),
                   child: Icon(
@@ -1842,14 +1843,14 @@ class _QuickFilterSheet extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 35),
-          _FilterSection(
+          const _FilterSection(
             title: 'LOCATION',
-            options: const ['SOUTH MUMBAI', 'WORLI', 'BANDRA', 'JUHU', 'POWAI'],
+            options: ['SOUTH MUMBAI', 'WORLI', 'BANDRA', 'JUHU', 'POWAI'],
           ),
           const SizedBox(height: 30),
-          _FilterSection(
+          const _FilterSection(
             title: 'PROPERTY TYPE',
-            options: const ['RESIDENTIAL', 'COMMERCIAL'],
+            options: ['RESIDENTIAL', 'COMMERCIAL'],
           ),
           const SizedBox(height: 50),
           GestureDetector(
@@ -1858,7 +1859,7 @@ class _QuickFilterSheet extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 20),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : Color(0xFF0C312B),
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Center(
@@ -1915,11 +1916,11 @@ class _FilterSection extends StatelessWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
                         .withOpacity(0.05),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
                           .withOpacity(0.05),
                     ),
                   ),
@@ -1949,7 +1950,7 @@ class _SliderNavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final foreground = isDark ? Colors.white : Color(0xFF0C312B);
+    final foreground = isDark ? Colors.white : const Color(0xFF0C312B);
 
     return GestureDetector(
       onTap: onTap,
@@ -2020,7 +2021,7 @@ class _PremiumInputField extends StatelessWidget {
                   border: Border.all(
                     color: hasError
                         ? _errorColor
-                        : (isDark ? Colors.white : Color(0xFF0C312B))
+                        : (isDark ? Colors.white : const Color(0xFF0C312B))
                               .withOpacity(0.08),
                     width: hasError ? 1.5 : 1,
                   ),
@@ -2058,7 +2059,7 @@ class _PremiumInputField extends StatelessWidget {
                           : Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.82),
-                      fontSize: 14.5,
+                      fontSize: 13.5,
                       fontWeight: FontWeight.w600,
                     ),
                     filled: false,
@@ -2113,14 +2114,12 @@ class _PremiumDropdownField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                0.03,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                  0.05,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.05),
               ),
             ),
             child: DropdownButtonHideUnderline(
@@ -2188,14 +2187,12 @@ class _PremiumFormField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                0.03,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                  0.05,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.05),
               ),
             ),
             child: Row(
@@ -2261,10 +2258,10 @@ class _GlassSearchField extends StatelessWidget {
                     fontSize: 15,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Search residences...',
+                    hintText: 'Search Residences',
                     hintStyle: GoogleFonts.inter(
-                      color: Color(0x730C312B),
-                      fontSize: 13,
+                      color: const Color(0x730C312B),
+                      fontSize: 12,
                     ),
                     filled: false,
                     border: InputBorder.none,
@@ -2378,12 +2375,13 @@ class _UpdateCard extends StatelessWidget {
         width: 280,
         margin: const EdgeInsets.only(left: 20, right: 10),
         decoration: BoxDecoration(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.04),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.04,
+          ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-              0.05,
-            ),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.05),
           ),
         ),
         padding: const EdgeInsets.all(16),
@@ -2393,6 +2391,7 @@ class _UpdateCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(25),
               child: CachedNetworkImage(
+                memCacheWidth: 1080,
                 imageUrl: imageUrl,
                 height: 120,
                 width: double.infinity,

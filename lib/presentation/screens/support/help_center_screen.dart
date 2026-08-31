@@ -173,7 +173,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
             : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
             alpha: 0.1,
           ),
         ),
@@ -197,10 +197,10 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
-          hintText: 'SEARCH FOR HELP...',
+          hintText: 'Search Help Topics',
           hintStyle: GoogleFonts.inter(
             color: scheme.onSurface.withValues(alpha: 0.68),
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: FontWeight.w500,
             letterSpacing: 0.5,
           ),
@@ -284,7 +284,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
             : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
             alpha: 0.1,
           ),
         ),
@@ -350,7 +350,9 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
+                backgroundColor: isDark
+                    ? Colors.white
+                    : const Color(0xFF0C312B),
                 foregroundColor: isDark
                     ? Colors.black
                     : const Color(0xFFF4EFE3),
@@ -422,9 +424,8 @@ class _FaqCategory extends StatelessWidget {
             // Web parity: a clean, visible thin outline border — the FAQ groups
             // read as outlined cards, not soft-shadow "floating" cards.
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                alpha: 0.1,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withValues(alpha: 0.1),
             ),
             boxShadow: isDark
                 ? null
@@ -444,7 +445,7 @@ class _FaqCategory extends StatelessWidget {
                   Divider(
                     height: 1,
                     thickness: 1,
-                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
                         .withValues(alpha: 0.07),
                   ),
                 _FaqRow(

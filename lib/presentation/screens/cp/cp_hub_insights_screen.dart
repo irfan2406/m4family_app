@@ -82,7 +82,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
     final leads = _data?['totalLeads'] ?? 0;
     final books = _data?['totalConversions'] ?? 0;
 
-    final fallback = const [
+    const fallback = [
       {
         'category': 'Market Trend',
         'title': 'Commercial Real Estate in 2024: A Bullish Outlook',

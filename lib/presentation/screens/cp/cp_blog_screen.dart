@@ -110,8 +110,8 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                 ),
               ],
             ),
-            actions: [
-              const Padding(
+            actions: const [
+              Padding(
                 padding: EdgeInsets.only(right: 20),
                 child: SideMenuButton(),
               ),
@@ -292,6 +292,7 @@ class _BlogCard extends ConsumerWidget {
                     width: 92,
                     height: 92,
                     child: CachedNetworkImage(
+                      memCacheWidth: 1080,
                       imageUrl: imageUrl,
                       fit: BoxFit.cover,
                       placeholder: (_, __) =>

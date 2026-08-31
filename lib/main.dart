@@ -331,7 +331,7 @@ final GoRouter _router = GoRouter(
     // --- CP breadth (reuse existing screens + new CP profile/security screens) ---
     GoRoute(
       path: '/cp/notifications',
-      builder: (context, state) => NotificationListScreen(),
+      builder: (context, state) => const NotificationListScreen(),
     ),
     GoRoute(
       path: '/cp/communities',
@@ -415,11 +415,11 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/cp/customization',
-      builder: (context, state) => MyCustomViewsScreen(),
+      builder: (context, state) => const MyCustomViewsScreen(),
     ),
     GoRoute(
       path: '/cp/customization/detail',
-      builder: (context, state) => MyCustomViewsScreen(),
+      builder: (context, state) => const MyCustomViewsScreen(),
     ),
     GoRoute(
       // Web parity: CP custom-views renders the "Interactive Living /
@@ -720,7 +720,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/investor/notifications',
-      builder: (context, state) => NotificationListScreen(),
+      builder: (context, state) => const NotificationListScreen(),
     ),
     GoRoute(
       path: '/investor/search',
@@ -734,7 +734,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/investor/my-custom-views',
-      builder: (context, state) => MyCustomViewsScreen(),
+      builder: (context, state) => const MyCustomViewsScreen(),
     ),
     GoRoute(
       path: '/investor/about',
@@ -947,11 +947,11 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/my-custom-views',
-      builder: (context, state) => MyCustomViewsScreen(),
+      builder: (context, state) => const MyCustomViewsScreen(),
     ),
     GoRoute(
       path: '/profile/custom-requests',
-      builder: (context, state) => SelectionLogsScreen(),
+      builder: (context, state) => const SelectionLogsScreen(),
     ),
     GoRoute(
       path: '/support/schedule-visit',
@@ -971,24 +971,27 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/profile/legal-vault',
-      builder: (context, state) => LegalVaultScreen(),
+      builder: (context, state) => const LegalVaultScreen(),
     ),
     GoRoute(
       path: '/profile/deactivate',
-      builder: (context, state) => DeactivateAccountScreen(),
+      builder: (context, state) => const DeactivateAccountScreen(),
     ),
-    GoRoute(path: '/support', builder: (context, state) => SupportScreen()),
+    GoRoute(
+      path: '/support',
+      builder: (context, state) => const SupportScreen(),
+    ),
     GoRoute(
       path: '/support/contact',
       builder: (context, state) => const ContactScreen(),
     ),
     GoRoute(
       path: '/notifications',
-      builder: (context, state) => NotificationListScreen(),
+      builder: (context, state) => const NotificationListScreen(),
     ),
     GoRoute(
       path: '/media',
-      builder: (context, state) => GuestContentHubScreen(
+      builder: (context, state) => const GuestContentHubScreen(
         title: 'MEDIA\nGALLERY',
         subtitle: 'Stay updated with our latest multimedia releases.',
         typeIcon: LucideIcons.play,

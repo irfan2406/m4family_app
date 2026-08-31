@@ -196,7 +196,7 @@ class _InvestorSettingsScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
 
     if (_loading) {
@@ -240,7 +240,7 @@ class _InvestorSettingsScreenState
                       style: GoogleFonts.gelasio(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF0C312B),
+                        color: const Color(0xFF0C312B),
                         letterSpacing: 1.5,
                       ),
                     ),
@@ -351,7 +351,7 @@ class _InvestorSettingsScreenState
   }
 
   Widget _buildHeader(bool isDark, Color textPrimary, Color muted) {
-    final border = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final border = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.06,
     );
     return Container(
@@ -479,7 +479,7 @@ class _InvestorSettingsScreenState
     final card = isDark
         ? Colors.white.withValues(alpha: 0.03)
         : const Color(0xFFF4EFE3);
-    final border = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final border = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: isDark ? 0.08 : 0.06,
     );
     final fieldColor = enabled ? textPrimary : muted;
@@ -585,7 +585,7 @@ class _InvestorSettingsScreenState
     final card = isDark
         ? Colors.white.withValues(alpha: 0.03)
         : const Color(0xFFF4EFE3);
-    final border = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final border = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: isDark ? 0.08 : 0.06,
     );
 
@@ -676,7 +676,7 @@ class _InvestorSettingsScreenState
                 style: GoogleFonts.gelasio(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFFC65B46),
+                  color: const Color(0xFFC65B46),
                   letterSpacing: 2,
                 ),
               ),

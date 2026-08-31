@@ -386,7 +386,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               style: GoogleFonts.gelasio(
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : Color(0xFF0C312B),
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
                 height: 0.9,
                 letterSpacing: -1.5,
               ),
@@ -396,7 +396,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               'INTERESTED IN ${project?['title']?.toString().toUpperCase() ?? 'PROJECT'}?\nCHOOSE HOW YOU\'D LIKE TO PROCEED.',
               style: GoogleFonts.gelasio(
                 fontSize: 9,
-                color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                 fontWeight: FontWeight.w700,
                 letterSpacing: 2,
               ),
@@ -464,7 +464,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                         fontSize: 8,
                         color: isDark
                             ? Colors.white70
-                            : Color(0xFF0C312B).withOpacity(0.8),
+                            : const Color(0xFF0C312B).withOpacity(0.8),
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
                         height: 1.4,
@@ -532,7 +532,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Color(0xFF155A4F),
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -541,7 +541,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     desc,
                     style: GoogleFonts.inter(
                       fontSize: 9,
-                      color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                      color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -550,7 +550,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             ),
             Icon(
               LucideIcons.chevronRight,
-              color: isDark ? Colors.white12 : Color(0x1F0C312B),
+              color: isDark ? Colors.white12 : const Color(0x1F0C312B),
               size: 18,
             ),
           ],
@@ -619,7 +619,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       onPressed: () => Navigator.pop(context),
                       icon: Icon(
                         LucideIcons.x,
-                        color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                        color: isDark
+                            ? Colors.white38
+                            : const Color(0xFF155A4F),
                         size: 20,
                       ),
                       padding: EdgeInsets.zero,
@@ -635,7 +637,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     style: GoogleFonts.gelasio(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : Color(0xFF0C312B),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       letterSpacing: -0.5,
                     ),
                   ),
@@ -649,7 +651,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                         : 'INQUIRY FOR ${projectTitle.toUpperCase()}',
                     style: GoogleFonts.inter(
                       fontSize: 10,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
                           .withOpacity(0.6),
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
@@ -666,7 +668,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       style: GoogleFonts.inter(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.72),
                         letterSpacing: 1,
                       ),
@@ -699,7 +701,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                   color: isActive
                                       ? (isDark
                                             ? Colors.white
-                                            : Color(0xFF0C312B))
+                                            : const Color(0xFF0C312B))
                                       : (isDark
                                             ? Colors.white.withOpacity(0.03)
                                             : Colors.black.withOpacity(0.04)),
@@ -708,7 +710,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                     color: isActive
                                         ? (isDark
                                               ? Colors.white
-                                              : Color(0xFF0C312B))
+                                              : const Color(0xFF0C312B))
                                         : (isDark
                                               ? Colors.white.withOpacity(0.1)
                                               : Colors.black.withOpacity(0.08)),
@@ -726,7 +728,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                               : Colors.white)
                                         : (isDark
                                               ? Colors.white54
-                                              : Color(0xFF155A4F)),
+                                              : const Color(0xFF155A4F)),
                                   ),
                                 ),
                               ),
@@ -743,12 +745,13 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.04),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: (isDark ? Colors.white : Color(0xFF0C312B))
-                              .withOpacity(0.08),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.08),
                         ),
                       ),
                       child: Row(
@@ -766,7 +769,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                   color: active
                                       ? (isDark
                                             ? Colors.white
-                                            : Color(0xFF0C312B))
+                                            : const Color(0xFF0C312B))
                                       : Colors.transparent,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -783,7 +786,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                               : Colors.white)
                                         : (isDark
                                               ? Colors.white54
-                                              : Color(0x730C312B)),
+                                              : const Color(0x730C312B)),
                                   ),
                                 ),
                               ),
@@ -809,12 +812,16 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                           vertical: 18,
                         ),
                         decoration: BoxDecoration(
-                          color: (isDark ? Colors.white : Color(0xFF0C312B))
-                              .withOpacity(0.03),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.03),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                .withOpacity(0.08),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.08),
                           ),
                         ),
                         child: Row(
@@ -822,7 +829,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                             Icon(
                               LucideIcons.calendar,
                               size: 16,
-                              color: isDark ? Colors.white : Color(0xFF0C312B),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF0C312B),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -835,7 +844,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                   fontWeight: FontWeight.w600,
                                   color: isDark
                                       ? Colors.white
-                                      : Color(0xFF155A4F),
+                                      : const Color(0xFF155A4F),
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -843,8 +852,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                             Icon(
                               LucideIcons.chevronRight,
                               size: 16,
-                              color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                  .withOpacity(0.4),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withOpacity(0.4),
                             ),
                           ],
                         ),
@@ -877,33 +889,41 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       style: GoogleFonts.inter(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
-                        color: isDark ? Colors.white : Color(0xFF155A4F),
+                        color: isDark ? Colors.white : const Color(0xFF155A4F),
                       ),
                       decoration: InputDecoration(
                         hintText:
                             'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
                         hintStyle: GoogleFonts.inter(
-                          fontSize: 11,
+                          fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          color: (isDark ? Colors.white : Color(0xFF0C312B))
-                              .withOpacity(0.72),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.72),
                         ),
                         filled: true,
-                        fillColor: (isDark ? Colors.white : Color(0xFF0C312B))
-                            .withOpacity(0.03),
+                        fillColor:
+                            (isDark ? Colors.white : const Color(0xFF0C312B))
+                                .withOpacity(0.03),
                         contentPadding: const EdgeInsets.all(16),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(
-                            color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                .withOpacity(0.08),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.08),
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(
-                            color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                .withOpacity(0.08),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.08),
                           ),
                         ),
                       ),
@@ -943,12 +963,15 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Color(0xFF0C312B),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                .withOpacity(0.1),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.1),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           ),
@@ -990,7 +1013,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       'OUR ADVISOR WILL CONTACT YOU WITHIN 24 HOURS',
                       style: GoogleFonts.inter(
                         fontSize: 7,
-                        color: isDark ? Colors.white24 : Color(0x420C312B),
+                        color: isDark
+                            ? Colors.white24
+                            : const Color(0x420C312B),
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -1012,7 +1037,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       style: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.w700,
-        color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.72),
+        color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+          0.72,
+        ),
         letterSpacing: 1.5,
       ),
     );
@@ -1047,7 +1074,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
-                    color: isDark ? Colors.white : Color(0xFF155A4F),
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
                   ),
                 ),
               ),
@@ -1070,12 +1097,13 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                           borderRadius: BorderRadius.circular(16),
                         ),
                         side: BorderSide(
-                          color: (isDark ? Colors.white : Color(0xFF0C312B))
-                              .withOpacity(0.2),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.2),
                         ),
                         foregroundColor: isDark
                             ? Colors.white
-                            : Color(0xFF0C312B),
+                            : const Color(0xFF0C312B),
                       ),
                       child: Text(
                         'CANCEL',
@@ -1095,7 +1123,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                         minimumSize: const Size.fromHeight(52),
                         backgroundColor: isDark
                             ? Colors.white
-                            : Color(0xFF0C312B),
+                            : const Color(0xFF0C312B),
                         foregroundColor: isDark
                             ? Colors.black
                             : const Color(0xFFF4EFE3),
@@ -1145,7 +1173,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           style: GoogleFonts.inter(
             fontSize: 10,
             fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white54 : Color(0xFF155A4F),
+            color: isDark ? Colors.white54 : const Color(0xFF155A4F),
             letterSpacing: 1,
           ),
         ),
@@ -1170,7 +1198,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             style: GoogleFonts.inter(
               fontSize: 15,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Color(0xFF155A4F),
+              color: isDark ? Colors.white : const Color(0xFF155A4F),
             ),
             decoration: InputDecoration(
               filled: false,
@@ -1179,7 +1207,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               focusedBorder: InputBorder.none,
               icon: Icon(
                 icon,
-                color: isDark ? Colors.white24 : Color(0x420C312B),
+                color: isDark ? Colors.white24 : const Color(0x420C312B),
                 size: 16,
               ),
               contentPadding: const EdgeInsets.symmetric(vertical: 16),
@@ -1273,7 +1301,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   child: IconButton(
                     icon: Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.black26,
                         shape: BoxShape.circle,
                       ),
@@ -1298,7 +1326,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   child: IconButton(
                     icon: Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.black26,
                         shape: BoxShape.circle,
                       ),
@@ -1380,8 +1408,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_isLoading && project == null) {
-      return Scaffold(
-        backgroundColor: const Color(0xFF0C312B),
+      return const Scaffold(
+        backgroundColor: Color(0xFF0C312B),
         body: Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
@@ -1479,7 +1507,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
   // Web parity: the project title + location pill sit BELOW the hero, in large
   // dark serif on the page background (not overlaid on the image).
   Widget _buildTitleSection(dynamic project, bool isDark) {
-    final onSurface = isDark ? Colors.white : Color(0xFF0C312B);
+    final onSurface = isDark ? Colors.white : const Color(0xFF0C312B);
     final locName =
         ((project?['location'] is Map
                 ? project?['location']?['name']
@@ -1644,39 +1672,39 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   Widget _buildMediaQuickActions(dynamic project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
-    final heroImages = project?['heroImages'] as List?;
-    final firstHero = (heroImages != null && heroImages.isNotEmpty)
-        ? heroImages[0]
-        : '';
-    final heroUrl = apiClient.resolveUrl(
-      project?['heroImage'] ?? project?['coverImage'] ?? firstHero,
-    );
-    // Web parity: distinct exterior/interior thumbnails, not the same hero twice.
+    // A photo tile is rendered only when the catalog actually holds images
+    // for it. Skyline Heights ships `exteriorImages: []` and
+    // `interiorImages: []`, so both tiles fell back to the hero — the same
+    // picture shown twice, labelled EXTERIOR and INTERIOR, opening an empty
+    // gallery on tap. Projects that do have galleries (Cledor, Clédor, Ocean
+    // View) are untouched, and the tiles come back on their own once images
+    // are uploaded. The 360 tile is an icon rather than a photo, so it always
+    // stays.
     final exteriorImages = project?['exteriorImages'] as List?;
     final interiorImages = project?['interiorImages'] as List?;
-    final extUrl = (exteriorImages != null && exteriorImages.isNotEmpty)
-        ? apiClient.resolveUrl(exteriorImages[0])
-        : heroUrl;
-    final intUrl = (interiorImages != null && interiorImages.isNotEmpty)
-        ? apiClient.resolveUrl(interiorImages[0])
-        : heroUrl;
+    final hasExterior = exteriorImages != null && exteriorImages.isNotEmpty;
+    final hasInterior = interiorImages != null && interiorImages.isNotEmpty;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         children: [
-          _HeroMediaThumb(
-            label: 'EXTERIOR',
-            imageUrl: extUrl,
-            onTap: () => _openHeroGallery(project, 'EXTERIOR'),
-          ),
-          const SizedBox(width: 12),
-          _HeroMediaThumb(
-            label: 'INTERIOR',
-            imageUrl: intUrl,
-            onTap: () => _openHeroGallery(project, 'INTERIOR'),
-          ),
-          const SizedBox(width: 12),
+          if (hasExterior) ...[
+            _HeroMediaThumb(
+              label: 'EXTERIOR',
+              imageUrl: apiClient.resolveUrl(exteriorImages[0]),
+              onTap: () => _openHeroGallery(project, 'EXTERIOR'),
+            ),
+            const SizedBox(width: 12),
+          ],
+          if (hasInterior) ...[
+            _HeroMediaThumb(
+              label: 'INTERIOR',
+              imageUrl: apiClient.resolveUrl(interiorImages[0]),
+              onTap: () => _openHeroGallery(project, 'INTERIOR'),
+            ),
+            const SizedBox(width: 12),
+          ],
           _HeroMediaThumb(
             label: '360° VIEW',
             isVR: true,
@@ -1697,7 +1725,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         Container(
           width: 24,
           height: 1,
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.55),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.55,
+          ),
         ),
         const SizedBox(width: 12),
         Text(
@@ -1705,7 +1735,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           style: GoogleFonts.gelasio(
             fontSize: 11,
             fontWeight: FontWeight.w700,
-            color: isDark ? Colors.white : Color(0xFF0C312B),
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
             letterSpacing: 3,
           ),
         ),
@@ -1731,9 +1761,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           style: GoogleFonts.inter(
             // Was 11 / 60% — small & faint. Bigger + darker.
             fontSize: 12.5,
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-              0.78,
-            ),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.78),
             height: 1.7,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.2,
@@ -1849,16 +1878,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       children: [
         _buildSectionHeader('Plans'),
         const SizedBox(height: 24),
-        ...plans
-            .map(
-              (plan) => _FloorPlanItem(
-                plan: plan,
-                imageUrl: apiClient.resolveUrl(plan['image']?.toString()),
-                onLaunch: _launchAction,
-                onView: _showMediaLightbox,
-              ),
-            )
-            .toList(),
+        ...plans.map(
+          (plan) => _FloorPlanItem(
+            plan: plan,
+            imageUrl: apiClient.resolveUrl(plan['image']?.toString()),
+            onLaunch: _launchAction,
+            onView: _showMediaLightbox,
+          ),
+        ),
       ],
     );
   }
@@ -1918,7 +1945,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : Color(0xFF155A4F),
+                color: isDark ? Colors.white : const Color(0xFF155A4F),
                 decoration: TextDecoration.underline,
               ),
             ),
@@ -2166,11 +2193,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _SectionHeader(title: 'CONSTRUCTION PROGRESS'),
-              const _Badge(text: 'LIVE TRACKING', isOutline: true),
+              _Badge(text: 'LIVE TRACKING', isOutline: true),
             ],
           ),
           const SizedBox(height: 24),
@@ -2188,7 +2215,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           ),
 
           const SizedBox(height: 32),
-          _SectionHeader(title: 'RECENT LOGS'),
+          const _SectionHeader(title: 'RECENT LOGS'),
           const SizedBox(height: 20),
           if (_updates.isEmpty)
             const _EmptyTabContent(
@@ -2196,16 +2223,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   'Site logs will appear once construction reaches next milestone',
             )
           else
-            ..._updates
-                .map(
-                  (update) => _ConstructionUpdateCard(
-                    update: update,
-                    imageUrl: ref
-                        .read(apiClientProvider)
-                        .resolveUrl(update['image']?.toString()),
-                  ),
-                )
-                .toList(),
+            ..._updates.map(
+              (update) => _ConstructionUpdateCard(
+                update: update,
+                imageUrl: ref
+                    .read(apiClientProvider)
+                    .resolveUrl(update['image']?.toString()),
+              ),
+            ),
         ],
       ),
     );
@@ -2244,7 +2269,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionHeader(title: 'ARCHITECTURAL PLANNING'),
+          const _SectionHeader(title: 'ARCHITECTURAL PLANNING'),
           const SizedBox(height: 24),
           if (project?['plans'] != null &&
               (project['plans'] as List).isNotEmpty)
@@ -2281,16 +2306,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               onLaunch: _launchAction,
             )
           else
-            ...docs
-                .map(
-                  (doc) => _DocumentItem(
-                    title: doc['name'] ?? 'Document',
-                    size: doc['size'] ?? 'N/A',
-                    type: doc['type'] ?? 'GENERAL',
-                    onLaunch: _launchAction,
-                  ),
-                )
-                .toList(),
+            ...docs.map(
+              (doc) => _DocumentItem(
+                title: doc['name'] ?? 'Document',
+                size: doc['size'] ?? 'N/A',
+                type: doc['type'] ?? 'GENERAL',
+                onLaunch: _launchAction,
+              ),
+            ),
         ],
       ),
     );
@@ -2400,7 +2423,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   width: double.infinity,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white : Color(0xFF0C312B),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                     borderRadius: BorderRadius.circular(24),
                   ),
                   child: Center(
@@ -2931,7 +2954,7 @@ class _LocationLandmark extends StatelessWidget {
             ),
             child: Icon(
               icon,
-              color: isDark ? Colors.white38 : Color(0xFF155A4F),
+              color: isDark ? Colors.white38 : const Color(0xFF155A4F),
               size: 20,
             ),
           ),
@@ -2945,7 +2968,7 @@ class _LocationLandmark extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Color(0xFF155A4F),
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
                   ),
                 ),
                 Text(
@@ -2953,7 +2976,7 @@ class _LocationLandmark extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white24 : Color(0x420C312B),
+                    color: isDark ? Colors.white24 : const Color(0x420C312B),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -2987,7 +3010,7 @@ class _FloorPlanItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark
             ? const Color(0xFF141B3A)
-            : Color(0xFF163A2C).withOpacity(0.04),
+            : const Color(0xFF163A2C).withOpacity(0.04),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -3041,7 +3064,7 @@ class _FloorPlanItem extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Color(0xFF155A4F),
+                        color: isDark ? Colors.white : const Color(0xFF155A4F),
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -3052,7 +3075,9 @@ class _FloorPlanItem extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white24 : Color(0x420C312B),
+                          color: isDark
+                              ? Colors.white24
+                              : const Color(0x420C312B),
                           letterSpacing: 1,
                         ),
                       ),
@@ -3063,7 +3088,7 @@ class _FloorPlanItem extends StatelessWidget {
                 onTap: () => onLaunch('Downloading Floor Plan...', imageUrl),
                 child: Icon(
                   LucideIcons.download,
-                  color: isDark ? Colors.white38 : Color(0xFF155A4F),
+                  color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                   size: 18,
                 ),
               ),
@@ -3087,7 +3112,7 @@ class _EmptyTabContent extends StatelessWidget {
         textAlign: TextAlign.center,
         style: GoogleFonts.inter(
           fontSize: 12,
-          color: isDark ? Colors.white38 : Color(0xFF155A4F),
+          color: isDark ? Colors.white38 : const Color(0xFF155A4F),
         ),
       ),
     );
@@ -3134,7 +3159,7 @@ class _InventoryItem extends StatelessWidget {
                   ),
                   child: Icon(
                     LucideIcons.home,
-                    color: isDark ? Colors.white : Color(0xFF0C312B),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                     size: 20,
                   ),
                 ),
@@ -3566,7 +3591,7 @@ class _SocialIconButton extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white : Color(0xFF0C312B),
+          color: isDark ? Colors.white : const Color(0xFF0C312B),
           size: 20,
         ),
       ),
@@ -3722,7 +3747,9 @@ class _HeroMediaThumb extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 7,
                           fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Color(0xFF155A4F),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF155A4F),
                         ),
                       ),
                     ],
@@ -3819,7 +3846,7 @@ class _MultimediaAssetCard extends StatelessWidget {
             ),
             child: Icon(
               icon,
-              color: isDark ? Colors.white : Color(0xFF0C312B),
+              color: isDark ? Colors.white : const Color(0xFF0C312B),
               size: 18,
             ),
           ),
@@ -3833,7 +3860,7 @@ class _MultimediaAssetCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Color(0xFF155A4F),
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -3844,7 +3871,7 @@ class _MultimediaAssetCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white60 : Color(0xFF155A4F),
+                    color: isDark ? Colors.white60 : const Color(0xFF155A4F),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -3873,7 +3900,7 @@ class _MultimediaAssetCard extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 8,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Color(0xFF155A4F),
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
                     ),
                   ),
                 ),
@@ -3888,7 +3915,7 @@ class _MultimediaAssetCard extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Color(0xFF0C312B),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -3914,7 +3941,7 @@ class _MultimediaAssetCard extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Color(0xFF0C312B),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -3992,7 +4019,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       style: GoogleFonts.inter(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Color(0xFF155A4F),
+                        color: isDark ? Colors.white : const Color(0xFF155A4F),
                         letterSpacing: 1,
                       ),
                     ),
@@ -4001,7 +4028,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       estimatedCompletion.toUpperCase(),
                       style: GoogleFonts.gelasio(
                         fontSize: 40,
-                        color: isDark ? Colors.white : Color(0xFF0C312B),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         height: 1,
                       ),
                     ),
@@ -4010,7 +4037,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       'As the project progresses, significant milestones are reached, showcasing our team\'s dedication and expertise. We are steadily moving closer to our completion goal, ensuring quality and safety at every step. Each phase is handled with precision to meet our luxury standards and timeline.',
                       style: GoogleFonts.inter(
                         fontSize: 11,
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.6),
                         height: 1.6,
                         fontWeight: FontWeight.w500,
@@ -4028,7 +4055,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Color(0xFF155A4F),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF155A4F),
                         ),
                       ),
                     ),
@@ -4049,8 +4078,10 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     size: 100,
                     strokeWidth: 6,
                     dashCount: 56,
-                    activeColor: isDark ? Colors.white : Color(0xFF0C312B),
-                    trackColor: isDark ? Colors.white : Color(0xFF0C312B),
+                    activeColor: isDark
+                        ? Colors.white
+                        : const Color(0xFF0C312B),
+                    trackColor: isDark ? Colors.white : const Color(0xFF0C312B),
                   ),
                   Column(
                     mainAxisSize: MainAxisSize.min,
@@ -4060,7 +4091,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         style: GoogleFonts.gelasio(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
-                          color: isDark ? Colors.white : Color(0xFF0C312B),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF0C312B),
                         ),
                       ),
                       Text(
@@ -4069,7 +4102,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           fontSize: 8,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
-                          color: isDark ? Colors.white38 : Color(0x730C312B),
+                          color: isDark
+                              ? Colors.white38
+                              : const Color(0x730C312B),
                         ),
                       ),
                     ],
@@ -4091,7 +4126,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     style: GoogleFonts.gelasio(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : Color(0xFF0C312B),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -4104,7 +4139,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           ? const Color(0xFF141B3A)
                           : const Color(0xFFF4EFE3),
                       border: Border.all(
-                        color: isDark ? Colors.white : Color(0xFF0C312B),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         width: 2,
                       ),
                     ),
@@ -4112,7 +4147,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   Expanded(
                     child: Container(
                       height: 1,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
                           .withOpacity(0.2),
                     ),
                   ),
@@ -4211,10 +4246,10 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                       : s == 'in progress'
                                       ? (isDark
                                             ? Colors.white
-                                            : Color(0xFF0C312B))
+                                            : const Color(0xFF0C312B))
                                       : (isDark
                                             ? Colors.white24
-                                            : Color(
+                                            : const Color(
                                                 0xFF163A2C,
                                               ).withOpacity(0.12));
                                   final fg = s == 'completed'
@@ -4223,7 +4258,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                       ? (isDark ? Colors.black : Colors.white)
                                       : (isDark
                                             ? Colors.white70
-                                            : Color(0xFF0C312B));
+                                            : const Color(0xFF0C312B));
                                   return Container(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 10,
@@ -4288,13 +4323,13 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                         backgroundColor:
                                             (isDark
                                                     ? Colors.white
-                                                    : Color(0xFF0C312B))
+                                                    : const Color(0xFF0C312B))
                                                 .withOpacity(0.12),
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
                                               isDark
                                                   ? Colors.white
-                                                  : Color(0xFF0C312B),
+                                                  : const Color(0xFF0C312B),
                                             ),
                                       ),
                                     ),
@@ -4305,7 +4340,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                         fontWeight: FontWeight.w600,
                                         color: isDark
                                             ? Colors.white
-                                            : Color(0xFF0C312B),
+                                            : const Color(0xFF0C312B),
                                       ),
                                     ),
                                   ],
@@ -4325,7 +4360,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                       color:
                                           (isDark
                                                   ? Colors.white
-                                                  : Color(0xFF0C312B))
+                                                  : const Color(0xFF0C312B))
                                               .withOpacity(0.8),
                                       letterSpacing: 2,
                                     ),
@@ -4358,7 +4393,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     style: GoogleFonts.gelasio(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : Color(0xFF0C312B),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       letterSpacing: 4,
                     ),
                   ),
@@ -4368,7 +4403,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w700,
-                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
                           .withOpacity(0.5),
                       letterSpacing: 1.5,
                     ),
@@ -4381,11 +4416,11 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   vertical: 7,
                 ),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
                       .withOpacity(0.05),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
                         .withOpacity(0.15),
                   ),
                 ),
@@ -4394,7 +4429,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : Color(0xFF0C312B),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -4409,7 +4444,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
                       .withOpacity(0.12),
                 ),
               ),
@@ -4419,7 +4454,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   style: GoogleFonts.gelasio(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
-                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
                         .withOpacity(0.35),
                     letterSpacing: 1.5,
                   ),
@@ -4442,7 +4477,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   final dotColor = s == 'completed'
                       ? const Color(0xFF163A2C)
                       : s == 'in progress'
-                      ? (isDark ? Colors.white : Color(0xFF0C312B))
+                      ? (isDark ? Colors.white : const Color(0xFF0C312B))
                       : (isDark ? Colors.white38 : Colors.black26);
                   return Container(
                     width: 240,
@@ -4454,7 +4489,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           : Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.08),
                       ),
                     ),
@@ -4478,7 +4513,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                         color:
                                             (isDark
                                                     ? Colors.white
-                                                    : Color(0xFF0C312B))
+                                                    : const Color(0xFF0C312B))
                                                 .withOpacity(0.15),
                                       ),
                                     ),
@@ -4490,7 +4525,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                         color:
                                             (isDark
                                                     ? Colors.white
-                                                    : Color(0xFF0C312B))
+                                                    : const Color(0xFF0C312B))
                                                 .withOpacity(0.72),
                                       ),
                                     ),
@@ -4515,7 +4550,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                             fontWeight: FontWeight.w600,
                                             color: isDark
                                                 ? Colors.white
-                                                : Color(0xFF0C312B),
+                                                : const Color(0xFF0C312B),
                                             letterSpacing: 1,
                                           ),
                                         ),
@@ -4539,7 +4574,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                                 color:
                                                     (isDark
                                                             ? Colors.white
-                                                            : Color(0xFF0C312B))
+                                                            : const Color(
+                                                                0xFF0C312B,
+                                                              ))
                                                         .withOpacity(0.5),
                                                 letterSpacing: 1.5,
                                               ),
@@ -4560,7 +4597,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                 fontWeight: FontWeight.w700,
                                 color: isDark
                                     ? Colors.white
-                                    : Color(0xFF0C312B),
+                                    : const Color(0xFF0C312B),
                                 letterSpacing: -0.5,
                               ),
                             ),
@@ -4573,10 +4610,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                             value: (pct / 100).clamp(0.0, 1.0),
                             minHeight: 6,
                             backgroundColor:
-                                (isDark ? Colors.white : Color(0xFF0C312B))
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
                                     .withOpacity(0.08),
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              isDark ? Colors.white : Color(0xFF0C312B),
+                              isDark ? Colors.white : const Color(0xFF0C312B),
                             ),
                           ),
                         ),
@@ -4762,7 +4801,7 @@ class _CircleAction extends StatelessWidget {
         child: Icon(
           icon,
           size: 20,
-          color: color ?? (isDark ? Colors.white : Color(0xFF0C312B)),
+          color: color ?? (isDark ? Colors.white : const Color(0xFF0C312B)),
         ),
       ),
     );

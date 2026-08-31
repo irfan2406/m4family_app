@@ -153,7 +153,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    Icon(LucideIcons.pieChart, size: 16, color: purple),
+                    const Icon(LucideIcons.pieChart, size: 16, color: purple),
                     const SizedBox(width: 8),
                     Text(
                       'Asset Allocation',

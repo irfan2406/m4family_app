@@ -106,7 +106,7 @@ class _InvestorReferralScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
 
     return Scaffold(
       backgroundColor: bg,
@@ -121,14 +121,14 @@ class _InvestorReferralScreenState
               child: _loading
                   ? Center(
                       child: CircularProgressIndicator(
-                        color: isDark ? Colors.white : Color(0xFF0C312B),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                       ),
                     )
                   : _error && _wallet == null && _referrals.isEmpty
                   ? _buildErrorState(isDark, textPrimary)
                   : RefreshIndicator(
                       onRefresh: _load,
-                      color: isDark ? Colors.white : Color(0xFF0C312B),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       backgroundColor: isDark
                           ? const Color(0xFF141B3A)
                           : const Color(0xFFF4EFE3),
@@ -268,7 +268,7 @@ class _InvestorReferralScreenState
                     letterSpacing: 3,
                     // Was the gold accent — plain ink now (white on dark, since
                     // black there would be unreadable).
-                    color: isDark ? Colors.white : Color(0xFF0C312B),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -579,7 +579,7 @@ class _InvestorReferralScreenState
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     // Was the gold accent — plain ink now.
-                    color: isDark ? Colors.white : Color(0xFF0C312B),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                   ),
                 ),
                 if (code != null && code.isNotEmpty) ...[
@@ -592,7 +592,7 @@ class _InvestorReferralScreenState
                       letterSpacing: 1,
                       // Was _gold — slightly muted ink so it still reads as
                       // secondary next to the name above it.
-                      color: (isDark ? Colors.white : Color(0xFF0C312B))
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
                           .withValues(alpha: 0.65),
                     ),
                   ),
@@ -775,7 +775,7 @@ class _InvestorReferralScreenState
                 ),
                 decoration: BoxDecoration(
                   // Was the gold accent — matches the app's black CTA style.
-                  color: isDark ? Colors.white : Color(0xFF0C312B),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Text(
@@ -889,7 +889,7 @@ class _InvestorReferralScreenState
                                   strokeWidth: 2,
                                   color: isDark
                                       ? Colors.white
-                                      : Color(0xFF0C312B),
+                                      : const Color(0xFF0C312B),
                                 ),
                               ),
                             ),
@@ -963,7 +963,7 @@ class _InvestorReferralScreenState
                     const SizedBox(height: 10),
                     _formField(
                       nameCtrl,
-                      'FULL NAME',
+                      'Enter Full Name',
                       isDark,
                       textPrimary,
                       type: TextInputType.name,
@@ -975,7 +975,7 @@ class _InvestorReferralScreenState
                     const SizedBox(height: 10),
                     _formField(
                       phoneCtrl,
-                      '+91 XXXXX XXXXX',
+                      'Enter Mobile Number',
                       isDark,
                       textPrimary,
                       type: TextInputType.phone,
@@ -987,7 +987,7 @@ class _InvestorReferralScreenState
                     const SizedBox(height: 10),
                     _formField(
                       emailCtrl,
-                      'email@example.com',
+                      'Enter Email Address',
                       isDark,
                       textPrimary,
                       type: TextInputType.emailAddress,
@@ -1135,7 +1135,7 @@ class _InvestorReferralScreenState
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: GoogleFonts.inter(
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: FontWeight.w700,
             color: textPrimary.withValues(alpha: 0.72),
           ),

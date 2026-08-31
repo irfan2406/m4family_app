@@ -342,9 +342,8 @@ class _CpProfileSettingsScreenState
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                    alpha: 0.15,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(99),
                 ),
               ),
@@ -358,7 +357,7 @@ class _CpProfileSettingsScreenState
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
-                  color: isDark ? Colors.white : Color(0xFF155A4F),
+                  color: isDark ? Colors.white : const Color(0xFF155A4F),
                 ),
               ),
             ),
@@ -381,12 +380,12 @@ class _CpProfileSettingsScreenState
                         borderRadius: BorderRadius.circular(16),
                       ),
                       side: BorderSide(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withValues(alpha: 0.2),
                       ),
                       foregroundColor: isDark
                           ? Colors.white
-                          : Color(0xFF0C312B),
+                          : const Color(0xFF0C312B),
                     ),
                     child: Text(
                       'CANCEL',
@@ -404,7 +403,7 @@ class _CpProfileSettingsScreenState
                     style: FilledButton.styleFrom(
                       backgroundColor: isDark
                           ? Colors.white
-                          : Color(0xFF0C312B),
+                          : const Color(0xFF0C312B),
                       foregroundColor: isDark
                           ? Colors.black
                           : const Color(0xFFF4EFE3),

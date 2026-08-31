@@ -149,7 +149,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             Text(
               (widget.job['title'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.inter(
-                color: isDark ? Colors.white : Color(0xFF155A4F),
+                color: isDark ? Colors.white : const Color(0xFF155A4F),
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
                 letterSpacing: 0.5,
@@ -160,9 +160,8 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             Text(
               (widget.job['department'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                  0.68,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.68),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
                 letterSpacing: 2,
@@ -192,17 +191,17 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B))
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
                       .withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF0C312B))
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
                         .withOpacity(0.08),
                   ),
                 ),
                 child: Icon(
                   LucideIcons.arrowLeft,
-                  color: isDark ? Colors.white : Color(0xFF0C312B),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   size: 16,
                 ),
               ),
@@ -211,10 +210,10 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
         ),
         actions: [
           Builder(
-            builder: (context) => Center(
+            builder: (context) => const Center(
               child: Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: const SideMenuButton(),
+                padding: EdgeInsets.only(right: 12),
+                child: SideMenuButton(),
               ),
             ),
           ),
@@ -254,8 +253,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       child: Text(
                         'APPLYING FOR',
                         style: GoogleFonts.inter(
-                          color: (isDark ? Colors.white : Color(0xFF0C312B))
-                              .withOpacity(0.6),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.6),
                           fontSize: 8,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1,
@@ -267,7 +267,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       (widget.job['title'] ?? '').toString().toUpperCase(),
                       textAlign: TextAlign.center,
                       style: GoogleFonts.gelasio(
-                        color: isDark ? Colors.white : Color(0xFF0C312B),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         fontWeight: FontWeight.w700,
                         fontSize: 22,
                         letterSpacing: -1,
@@ -299,7 +299,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
               const SizedBox(height: 12),
               _buildTextField(
                 controller: _fullNameController,
-                hint: 'JOHN DOE',
+                hint: 'Enter Full Name',
               ),
               const SizedBox(height: 32),
 
@@ -307,7 +307,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
               const SizedBox(height: 12),
               _buildTextField(
                 controller: _phoneController,
-                hint: '+1 234 567 890',
+                hint: 'Enter Mobile Number',
                 isPhone: true,
               ),
               const SizedBox(height: 32),
@@ -316,7 +316,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
               const SizedBox(height: 12),
               _buildTextField(
                 controller: _emailController,
-                hint: 'JOHN.DOE@M4FAMILY.COM',
+                hint: 'Enter Email Address',
                 isEmail: true,
               ),
               const SizedBox(height: 48),
@@ -342,8 +342,8 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                   // (foregroundPainter) so the full stroke is visible.
                   foregroundPainter: _DashedRRectPainter(
                     color: _resumeFile != null
-                        ? (isDark ? Colors.white : Color(0xFF0C312B))
-                        : (isDark ? Colors.white : Color(0xFF0C312B))
+                        ? (isDark ? Colors.white : const Color(0xFF0C312B))
+                        : (isDark ? Colors.white : const Color(0xFF0C312B))
                               .withOpacity(0.28),
                     radius: 40,
                   ),
@@ -373,7 +373,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                           decoration: BoxDecoration(
                             color: _resumeFile != null
                                 ? Colors.black
-                                : (isDark ? Colors.white : Color(0xFF0C312B)),
+                                : (isDark
+                                      ? Colors.white
+                                      : const Color(0xFF0C312B)),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
@@ -409,7 +411,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                             overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.gelasio(
-                              color: isDark ? Colors.white : Color(0xFF0C312B),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF0C312B),
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 2,
@@ -430,7 +434,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                 child: ElevatedButton(
                   onPressed: _isSubmitting ? null : _submitApplication,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
+                    backgroundColor: isDark
+                        ? Colors.white
+                        : const Color(0xFF0C312B),
                     foregroundColor: isDark
                         ? Colors.black
                         : const Color(0xFFF4EFE3),
@@ -467,7 +473,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       child: Text(
         text,
         style: GoogleFonts.inter(
-          color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(0.6),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.6,
+          ),
           fontSize: 12,
           fontWeight: FontWeight.w600,
           letterSpacing: 1,
@@ -510,18 +518,17 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             ? Validators.phoneFormatters
             : Validators.nameFormatters,
         style: GoogleFonts.inter(
-          color: isDark ? Colors.white : Color(0xFF155A4F),
+          color: isDark ? Colors.white : const Color(0xFF155A4F),
           fontWeight: FontWeight.bold,
           fontSize: 15,
         ),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: GoogleFonts.inter(
-            color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-              0.72,
-            ),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.72),
             fontWeight: FontWeight.bold,
-            fontSize: 13,
+            fontSize: 12,
           ),
           filled: true,
           fillColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
@@ -532,9 +539,8 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
             borderSide: BorderSide(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withOpacity(
-                0.06,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.06),
             ),
           ),
           focusedBorder: OutlineInputBorder(

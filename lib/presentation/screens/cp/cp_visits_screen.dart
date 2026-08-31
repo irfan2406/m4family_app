@@ -530,7 +530,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 fontWeight: FontWeight.bold,
               ),
               decoration: InputDecoration(
-                hintText: 'SEARCH CLIENT OR PROJECT...',
+                hintText: 'Search Visits',
                 hintStyle: GoogleFonts.inter(
                   fontSize: 9,
                   fontWeight: FontWeight.w500,

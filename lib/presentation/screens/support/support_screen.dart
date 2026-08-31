@@ -89,8 +89,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                         else
                           ...state.tickets
                               .take(3)
-                              .map((t) => _TicketPreviewItem(ticket: t))
-                              .toList(),
+                              .map((t) => _TicketPreviewItem(ticket: t)),
                       ],
                       const SizedBox(height: 120), // Bottom padding
                     ],

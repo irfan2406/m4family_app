@@ -371,6 +371,10 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   : ListView.builder(
                       padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
                       physics: const BouncingScrollPhysics(),
+                      // Build a screen's worth of rows ahead of the viewport so
+                      // fast flings have fewer build stalls. Purely a scheduling
+                      // hint — nothing renders differently.
+                      cacheExtent: 800,
                       itemCount: filtered.length,
                       itemBuilder: (context, i) =>
                           _logCard(filtered[i], scheme, i),
@@ -407,16 +411,6 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   fontWeight: FontWeight.w700,
                   color: scheme.onSurface,
                   letterSpacing: 1.5,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                'FULL AUDIT HISTORY',
-                style: GoogleFonts.gelasio(
-                  fontSize: 8,
-                  fontWeight: FontWeight.w700,
-                  color: scheme.onSurface.withValues(alpha: 0.68),
-                  letterSpacing: 2,
                 ),
               ),
             ],
@@ -457,9 +451,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   fontWeight: FontWeight.w500,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'SEARCH LOGS, TICKETS, UPD...',
+                  hintText: 'Search Records',
                   hintStyle: GoogleFonts.inter(
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.w500,
                     color: scheme.onSurface.withValues(alpha: 0.68),
                     letterSpacing: 0.3,

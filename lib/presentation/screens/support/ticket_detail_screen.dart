@@ -193,8 +193,8 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.68,
     );
     final border = isDark
@@ -694,9 +694,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   color: textPrimary,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'TYPE MESSAGE...',
+                  hintText: 'Enter Message',
                   hintStyle: GoogleFonts.inter(
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: FontWeight.w500,
                     color: muted.withValues(alpha: 0.6),
                     letterSpacing: 1,

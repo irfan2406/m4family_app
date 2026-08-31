@@ -190,8 +190,8 @@ class _InvestorDocumentDetailScreenState
     required String subtitle,
     bool showRetry = false,
   }) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
     return Padding(
@@ -203,9 +203,8 @@ class _InvestorDocumentDetailScreenState
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                alpha: 0.05,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(24),
             ),
             child: Icon(icon, size: 36, color: muted),
@@ -254,8 +253,8 @@ class _InvestorDocumentDetailScreenState
 
   Widget _buildDocumentDetail(bool isDark) {
     final doc = _doc!;
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
     final card = isDark
@@ -291,9 +290,8 @@ class _InvestorDocumentDetailScreenState
                     end: Alignment.bottomRight,
                     colors: [
                       _gold.withValues(alpha: 0.18),
-                      (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                        alpha: 0.03,
-                      ),
+                      (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withValues(alpha: 0.03),
                     ],
                   ),
                   border: Border(bottom: BorderSide(color: border)),
@@ -567,7 +565,7 @@ class _PrimaryButton extends StatelessWidget {
           ),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: isDark ? Colors.white : Color(0xFF0C312B),
+          backgroundColor: isDark ? Colors.white : const Color(0xFF0C312B),
           foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
           elevation: 0,
           shape: RoundedRectangleBorder(

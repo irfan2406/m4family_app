@@ -79,7 +79,9 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? const Color(0xFFF4EFE3) : Color(0xFF0C312B);
+    final textPrimary = isDark
+        ? const Color(0xFFF4EFE3)
+        : const Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
 
     if (_loading) {
@@ -298,7 +300,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     final card = isDark
         ? const Color(0xFFF4EFE3).withValues(alpha: 0.03)
         : const Color(0xFFEDE5D6);
-    final border = (isDark ? const Color(0xFFF4EFE3) : Color(0xFF0C312B))
+    final border = (isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0C312B))
         .withValues(alpha: isDark ? 0.08 : 0.06);
     // Web parity: initials on a lime accent square (no photo/gold border).
     final initials = _initials(name);
@@ -500,7 +502,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    final border = (isDark ? const Color(0xFFF4EFE3) : Color(0xFF0C312B))
+    final border = (isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0C312B))
         .withValues(alpha: isDark ? 0.08 : 0.06);
     return Material(
       color: textPrimary.withValues(alpha: 0.03),

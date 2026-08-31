@@ -118,8 +118,8 @@ class _InvestorEliteInvestorConnectScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
     final card = isDark
@@ -488,17 +488,20 @@ class _InvestorEliteInvestorConnectScreenState
                       width: 56,
                       height: 56,
                       child: CachedNetworkImage(
+                        memCacheWidth: 1080,
                         imageUrl: ref
                             .read(apiClientProvider)
                             .resolveUrl(p.avatar),
                         fit: BoxFit.cover,
                         placeholder: (_, __) => Container(
-                          color: (isDark ? Colors.white : Color(0xFF0C312B))
-                              .withValues(alpha: 0.06),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withValues(alpha: 0.06),
                         ),
                         errorWidget: (_, __, ___) => Container(
-                          color: (isDark ? Colors.white : Color(0xFF0C312B))
-                              .withValues(alpha: 0.06),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withValues(alpha: 0.06),
                           alignment: Alignment.center,
                           child: Icon(LucideIcons.user, color: muted, size: 24),
                         ),
@@ -578,7 +581,7 @@ class _InvestorEliteInvestorConnectScreenState
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withValues(alpha: 0.04),
                         borderRadius: BorderRadius.circular(999),
                         border: Border.all(color: border),
@@ -675,14 +678,15 @@ class _InvestorEliteInvestorConnectScreenState
                   fit: StackFit.expand,
                   children: [
                     CachedNetworkImage(
+                      memCacheWidth: 1080,
                       imageUrl: ref.read(apiClientProvider).resolveUrl(d.image),
                       fit: BoxFit.cover,
                       placeholder: (_, __) => Container(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withValues(alpha: 0.06),
                       ),
                       errorWidget: (_, __, ___) => Container(
-                        color: (isDark ? Colors.white : Color(0xFF0C312B))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withValues(alpha: 0.06),
                         alignment: Alignment.center,
                         child: Icon(LucideIcons.image, color: muted),

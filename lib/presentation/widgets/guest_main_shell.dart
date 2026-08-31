@@ -40,7 +40,7 @@ class GuestMainShell extends ConsumerWidget {
       showcase(const ProjectListScreen(guestMode: true)), // 1: Projects — green
       const AboutScreen(), // 2: About    — cream
       const CareersScreen(), // 3: Careers  — cream
-      const ContactScreen(), // 4: Contact  — cream
+      const ContactScreen(embedded: true), // 4: Contact  — cream
     ];
 
     // Nav pill follows the active tab's surface: green on the showcase tabs,

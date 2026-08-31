@@ -85,7 +85,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
 
     return Scaffold(
       backgroundColor: bg,
@@ -121,8 +121,8 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
 
   // ─────────────────────────── STEP 1 · DETAILS ───────────────────────────
   Widget _buildDetails(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
     final card = isDark
@@ -251,7 +251,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                 const SizedBox(height: 8),
                 _cardField(
                   controller: _cardController,
-                  hint: '0000 0000 0000 0000',
+                  hint: 'Enter Card Number',
                   icon: LucideIcons.creditCard,
                   isDark: isDark,
                   border: border,
@@ -273,7 +273,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                           const SizedBox(height: 8),
                           _cardField(
                             controller: _expiryController,
-                            hint: 'MM/YY',
+                            hint: 'Enter Expiry Date (MM/YY)',
                             isDark: isDark,
                             border: border,
                             textPrimary: textPrimary,
@@ -295,7 +295,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                           const SizedBox(height: 8),
                           _cardField(
                             controller: _cvvController,
-                            hint: '***',
+                            hint: 'Enter CVV',
                             icon: LucideIcons.lock,
                             isDark: isDark,
                             border: border,
@@ -447,7 +447,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
         counterText: '',
         hintText: hint,
         hintStyle: GoogleFonts.inter(
-          fontSize: 17,
+          fontSize: 16,
           fontWeight: FontWeight.w600,
           color: muted,
           letterSpacing: 0.8,
@@ -473,8 +473,8 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
 
   // ────────────────────────── STEP 2 · PROCESSING ─────────────────────────
   Widget _buildProcessing(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
 
@@ -532,8 +532,8 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
 
   // ─────────────────────────── STEP 3 · SUCCESS ───────────────────────────
   Widget _buildSuccess(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
 
@@ -635,7 +635,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                       width: double.infinity,
                       height: 52,
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Color(0xFF0C312B),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         borderRadius: BorderRadius.circular(18),
                       ),
                       child: Center(

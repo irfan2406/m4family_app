@@ -39,6 +39,7 @@ class LuxuryAmenityIcon extends StatelessWidget {
         width: size,
         height: size,
         child: CachedNetworkImage(
+          memCacheWidth: 1080,
           imageUrl: iconUrl!,
           fit: BoxFit.contain,
           placeholder: (c, u) => const SizedBox.shrink(),

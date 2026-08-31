@@ -96,8 +96,8 @@ class _CommunityProjectsListScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF0C312B);
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
     final apiClient = ref.watch(apiClientProvider);
@@ -134,8 +134,11 @@ class _CommunityProjectsListScreenState
                         decoration: BoxDecoration(
                           border: Border(
                             left: BorderSide(
-                              color: (isDark ? Colors.white : Color(0xFF0C312B))
-                                  .withValues(alpha: isDark ? 0.3 : 0.2),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withValues(alpha: isDark ? 0.3 : 0.2),
                               width: 4,
                             ),
                           ),
@@ -253,9 +256,8 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
             color: bg.withValues(alpha: 0.8),
             border: Border(
               bottom: BorderSide(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                  alpha: 0.08,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.08),
               ),
             ),
           ),
@@ -379,6 +381,7 @@ class _ProjectCard extends StatelessWidget {
           children: [
             // Hero image
             CachedNetworkImage(
+              memCacheWidth: 1080,
               imageUrl: imageUrl,
               fit: BoxFit.cover,
               fadeInDuration: const Duration(milliseconds: 400),
@@ -617,9 +620,8 @@ class _EmptyState extends StatelessWidget {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
               side: BorderSide(
-                color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                  alpha: 0.2,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.2),
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -630,7 +632,7 @@ class _EmptyState extends StatelessWidget {
               style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : Color(0xFF0C312B),
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
                 letterSpacing: 2,
               ),
             ),
@@ -656,7 +658,7 @@ class _ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final muted = (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
     return Center(
@@ -677,7 +679,7 @@ class _ErrorState extends StatelessWidget {
               style: GoogleFonts.gelasio(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : Color(0xFF0C312B),
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
                 letterSpacing: 2,
               ),
             ),
@@ -702,9 +704,8 @@ class _ErrorState extends StatelessWidget {
                   vertical: 18,
                 ),
                 side: BorderSide(
-                  color: (isDark ? Colors.white : Color(0xFF0C312B)).withValues(
-                    alpha: 0.2,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.2),
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -715,7 +716,7 @@ class _ErrorState extends StatelessWidget {
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : Color(0xFF0C312B),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   letterSpacing: 2,
                 ),
               ),

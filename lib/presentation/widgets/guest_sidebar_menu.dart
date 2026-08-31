@@ -24,7 +24,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
     // ambient brightness: the drawer can be opened from a green "showcase"
     // screen, whose theme reports Brightness.dark, and that would flip the
     // menu to tones it never used in light mode.
-    final bool isDark = false;
+    const bool isDark = false;
     final confirmed = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
