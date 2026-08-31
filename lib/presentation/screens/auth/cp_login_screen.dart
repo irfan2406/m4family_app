@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
-/// Mirrors web `app/auth/cp/login/page.tsx`: CP ID + password → `POST /auth/login`, role must be CP.
+/// Mirrors web `app/auth/cp/login/page.tsx`: mobile number + password →
+/// `POST /auth/login`, role must be CP.
 class CpLoginScreen extends ConsumerStatefulWidget {
   const CpLoginScreen({super.key});
 
@@ -14,12 +17,12 @@ class CpLoginScreen extends ConsumerStatefulWidget {
 }
 
 class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
-  final _cpIdController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    _cpIdController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -72,22 +75,6 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                           ),
                         ),
                       ),
-                      // Web parity: purple lock badge in the top-right corner.
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFC5A35B).withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: const Color(0xFFC5A35B).withValues(alpha: 0.35),
-                          ),
-                        ),
-                        child: const Icon(
-                          LucideIcons.lock,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -114,7 +101,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                             const SizedBox(width: 10),
                             Text(
                               'BACK TO GUEST PORTAL',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 color: Colors.white.withValues(alpha: 0.6),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 11,
@@ -125,12 +112,12 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 24),
                   ],
                   Text(
                     'CHANNEL\nPARTNER',
-                    style: GoogleFonts.ebGaramond(
-                      fontSize: 46,
+                    style: GoogleFonts.gelasio(
+                      fontSize: 36,
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
                       height: 1.05,
@@ -144,7 +131,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         const TextSpan(text: 'AUTHORIZED '),
                         TextSpan(
                           text: 'PARTNER',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: const Color(0xFFF4EFE3),
                             fontWeight: FontWeight.w700,
                             fontSize: 10,
@@ -154,7 +141,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         const TextSpan(text: ' ACCESS PORTAL'),
                       ],
                     ),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: Colors.white70,
@@ -162,29 +149,43 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 48),
+                  // Sign in with the mobile number rather than the CP ID.
+                  // /api/auth/login takes a single `identifier`, which the
+                  // backend resolves against phone / email / id alike (the
+                  // investor screen documents the same contract), so only the
+                  // field changes — the request shape is untouched.
                   _Field(
-                    label: 'CHANNEL PARTNER ID',
-                    controller: _cpIdController,
-                    hint: 'CP-XXXXX',
+                    label: 'MOBILE NUMBER',
+                    controller: _phoneController,
+                    hint: 'Enter Mobile Number',
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: Validators.phoneFormatters,
                   ),
                   const SizedBox(height: 24),
                   _Field(
-                    label: 'PRIVATE PASSWORD',
+                    label: 'PASSWORD',
                     controller: _passwordController,
                     obscure: true,
-                    hint: '••••••••',
+                    hint: 'Enter Password',
                   ),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
+                        // Flat link: no ripple, highlight or shadow on press.
+                        style: TextButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          elevation: 0,
+                          splashFactory: NoSplash.splashFactory,
+                        ),
                         onPressed: () => context.push(
                           '/auth/cp/forgot-password${fromGuest ? '?from=guest' : ''}',
                         ),
                         child: Text(
                           'FORGOT PASSWORD?',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
                             color: Colors.white70,
@@ -193,12 +194,19 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         ),
                       ),
                       TextButton(
+                        // Flat link: no ripple, highlight or shadow on press.
+                        style: TextButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          elevation: 0,
+                          splashFactory: NoSplash.splashFactory,
+                        ),
                         onPressed: () => context.push(
                           '/auth/cp/signup${fromGuest ? '?from=guest' : ''}',
                         ),
                         child: Text(
                           'REGISTER NOW',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFFF4EFE3),
@@ -226,7 +234,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                             onTap: loading
                                 ? null
                                 : () async {
-                                    final id = _cpIdController.text.trim();
+                                    final id = _phoneController.text.trim();
                                     final pw = _passwordController.text;
                                     if (id.isEmpty || pw.isEmpty) {
                                       ScaffoldMessenger.of(
@@ -235,7 +243,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                         const SnackBar(
                                           backgroundColor: Color(0xFFC65B46),
                                           content: Text(
-                                            'Please enter both CP ID and password',
+                                            'Please enter both mobile number and password',
                                           ),
                                         ),
                                       );
@@ -263,7 +271,10 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                 gradient: const LinearGradient(
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
-                                  colors: [Color(0xFFF4EFE3), Color(0xFFF4EFE3)],
+                                  colors: [
+                                    Color(0xFFF4EFE3),
+                                    Color(0xFFF4EFE3),
+                                  ],
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -287,26 +298,59 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                           children: [
                                             Text(
                                               'AUTHORIZE ACCESS',
-                                              style: GoogleFonts.ebGaramond(
+                                              style: GoogleFonts.inter(
                                                 color: const Color(0xFF0C312B),
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 13,
                                                 letterSpacing: 1.5,
                                               ),
                                             ),
-                                            Container(
-                                              padding: const EdgeInsets.all(6),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xFF0C312B).withOpacity(
-                                                  0.2,
-                                                ),
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: const Icon(
-                                                LucideIcons.arrowRight,
-                                                color: Colors.white,
-                                                size: 18,
-                                              ),
+                                            // The arrow sits at 20% opacity,
+                                            // which reads as a disabled
+                                            // affordance. Once the mobile number and
+                                            // password are both filled the
+                                            // circle goes solid green so the
+                                            // button looks ready to authorize.
+                                            // Listening to the two controllers
+                                            // rebuilds only this circle as the
+                                            // user types.
+                                            AnimatedBuilder(
+                                              animation: Listenable.merge([
+                                                _phoneController,
+                                                _passwordController,
+                                              ]),
+                                              builder: (context, _) {
+                                                final ready =
+                                                    _phoneController.text
+                                                        .trim()
+                                                        .isNotEmpty &&
+                                                    _passwordController
+                                                        .text
+                                                        .isNotEmpty;
+                                                return AnimatedContainer(
+                                                  duration: const Duration(
+                                                    milliseconds: 200,
+                                                  ),
+                                                  padding: const EdgeInsets.all(
+                                                    6,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: ready
+                                                        ? const Color(
+                                                            0xFF0C312B,
+                                                          )
+                                                        : const Color(
+                                                            0xFF0C312B,
+                                                          ).withOpacity(0.2),
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: const Icon(
+                                                    LucideIcons.arrowRight,
+                                                    color: Colors.white,
+                                                    size: 18,
+                                                  ),
+                                                );
+                                              },
                                             ),
                                           ],
                                         ),
@@ -322,7 +366,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                   Text(
                     'M4 FAMILY PARTNER NETWORK\nSECURE • VERIFIED • TRUSTED',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: Colors.white70,
@@ -346,12 +390,16 @@ class _Field extends StatefulWidget {
   final TextEditingController controller;
   final String? hint;
   final bool obscure;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   const _Field({
     required this.label,
     required this.controller,
     this.hint,
     this.obscure = false,
+    this.keyboardType,
+    this.inputFormatters,
   });
 
   @override
@@ -370,7 +418,7 @@ class _FieldState extends State<_Field> {
       children: [
         Text(
           widget.label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 9,
             fontWeight: FontWeight.bold,
             color: Colors.white70,
@@ -381,6 +429,8 @@ class _FieldState extends State<_Field> {
         TextField(
           controller: widget.controller,
           obscureText: _hidden,
+          keyboardType: widget.keyboardType,
+          inputFormatters: widget.inputFormatters,
           // White cursor so it's visible on the dark field (default cursor is
           // the theme primary, which is near-black here = invisible).
           cursorColor: Colors.white,

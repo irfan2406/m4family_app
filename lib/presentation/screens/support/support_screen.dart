@@ -89,8 +89,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                         else
                           ...state.tickets
                               .take(3)
-                              .map((t) => _TicketPreviewItem(ticket: t))
-                              .toList(),
+                              .map((t) => _TicketPreviewItem(ticket: t)),
                       ],
                       const SizedBox(height: 120), // Bottom padding
                     ],
@@ -170,7 +169,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
         Text(
           'SUPPORT MATRIX',
           style: GoogleFonts.gelasio(
-            fontSize: 9,
+            fontSize: 10,
             fontWeight: FontWeight.w700,
             color: scheme.onSurface,
             letterSpacing: 2,
@@ -266,8 +265,8 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           },
           child: Text(
             'VIEW ALL LOGS',
-            style: GoogleFonts.ebGaramond(
-              fontSize: 9,
+            style: GoogleFonts.inter(
+              fontSize: 10,
               fontWeight: FontWeight.w600,
               color: scheme.onSurface.withValues(alpha: 0.6),
               letterSpacing: 1.2,
@@ -291,7 +290,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
       child: Center(
         child: Text(
           'No active tickets.',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: scheme.onSurface.withValues(alpha: 0.68),
@@ -363,7 +362,7 @@ class _MatrixItem extends StatelessWidget {
             const Spacer(),
             Text(
               title,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 color: scheme.onSurface,
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
@@ -373,9 +372,9 @@ class _MatrixItem extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               subtitle.toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 color: scheme.onSurface.withValues(alpha: 0.68),
-                fontSize: 8,
+                fontSize: 10,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.8,
               ),
@@ -443,9 +442,9 @@ class _TicketPreviewItem extends StatelessWidget {
                             id.isEmpty
                                 ? '—'
                                 : id.substring(0, id.length.clamp(0, 8)),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               color: const Color(0xFFC5A35B),
-                              fontSize: 8,
+                              fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -454,7 +453,7 @@ class _TicketPreviewItem extends StatelessWidget {
                         Expanded(
                           child: Text(
                             title.toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
@@ -481,11 +480,11 @@ class _TicketPreviewItem extends StatelessWidget {
                           DateFormat(
                             'MMM d',
                           ).format(ticket.createdAt).toUpperCase(),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.62),
-                            fontSize: 9,
+                            fontSize: 10,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -505,9 +504,9 @@ class _TicketPreviewItem extends StatelessWidget {
                 ),
                 child: Text(
                   status.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: badgeFg,
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

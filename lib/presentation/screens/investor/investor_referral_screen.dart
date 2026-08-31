@@ -106,7 +106,7 @@ class _InvestorReferralScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
 
     return Scaffold(
       backgroundColor: bg,
@@ -121,14 +121,14 @@ class _InvestorReferralScreenState
               child: _loading
                   ? Center(
                       child: CircularProgressIndicator(
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                       ),
                     )
                   : _error && _wallet == null && _referrals.isEmpty
                   ? _buildErrorState(isDark, textPrimary)
                   : RefreshIndicator(
                       onRefresh: _load,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       backgroundColor: isDark
                           ? const Color(0xFF141B3A)
                           : const Color(0xFFF4EFE3),
@@ -216,7 +216,9 @@ class _InvestorReferralScreenState
   // ─── Referral Code Card ────────────────────────────────────────
   Widget _buildCodeCard(bool isDark, Color textPrimary) {
     final code = _referralCode();
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -266,7 +268,7 @@ class _InvestorReferralScreenState
                     letterSpacing: 3,
                     // Was the gold accent — plain ink now (white on dark, since
                     // black there would be unreadable).
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -320,7 +322,9 @@ class _InvestorReferralScreenState
   }
 
   Widget _statCard(String label, String value, bool isDark, Color textPrimary) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -361,7 +365,7 @@ class _InvestorReferralScreenState
   Widget _buildRedeemButton(bool isDark, Color textPrimary) {
     return GestureDetector(
       onTap: () async {
-        await context.push('/investor/referral/redeem');
+        await context.push('/investor/referral/redeem', extra: _points());
         if (mounted) _load();
       },
       child: Container(
@@ -387,14 +391,16 @@ class _InvestorReferralScreenState
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 2,
-                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                color: isDark
+                    ? const Color(0xFF0C312B)
+                    : const Color(0xFFF4EFE3),
               ),
             ),
             const SizedBox(width: 12),
             Icon(
               LucideIcons.gift,
               size: 18,
-              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+              color: isDark ? const Color(0xFF0C312B) : const Color(0xFFF4EFE3),
             ),
           ],
         ),
@@ -441,7 +447,9 @@ class _InvestorReferralScreenState
     Color textPrimary,
     VoidCallback onTap,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -520,7 +528,9 @@ class _InvestorReferralScreenState
   }
 
   Widget _referralCard(dynamic r, bool isDark, Color textPrimary) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -555,7 +565,7 @@ class _InvestorReferralScreenState
               children: [
                 Text(
                   name.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: textPrimary,
@@ -569,22 +579,21 @@ class _InvestorReferralScreenState
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     // Was the gold accent — plain ink now.
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                   ),
                 ),
                 if (code != null && code.isNotEmpty) ...[
                   const SizedBox(height: 2),
                   Text(
                     code,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1,
                       // Was _gold — slightly muted ink so it still reads as
                       // secondary next to the name above it.
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                        alpha: 0.65,
-                      ),
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withValues(alpha: 0.65),
                     ),
                   ),
                 ],
@@ -600,7 +609,7 @@ class _InvestorReferralScreenState
             ),
             child: Text(
               status.toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1,
@@ -644,7 +653,9 @@ class _InvestorReferralScreenState
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: border),
       ),
@@ -657,7 +668,7 @@ class _InvestorReferralScreenState
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: textPrimary,
@@ -666,7 +677,7 @@ class _InvestorReferralScreenState
                 const SizedBox(height: 2),
                 Text(
                   date,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: textPrimary.withValues(alpha: 0.72),
@@ -680,7 +691,7 @@ class _InvestorReferralScreenState
             children: [
               Text(
                 '${isDebit ? '-' : '+'}$amount',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: isDebit ? Colors.redAccent : const Color(0xFF163A2C),
@@ -689,7 +700,7 @@ class _InvestorReferralScreenState
               if (status.isNotEmpty)
                 Text(
                   'STATUS: ${status.toUpperCase()}',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 9,
                     fontWeight: FontWeight.w600,
                     color: textPrimary.withValues(alpha: 0.72),
@@ -711,7 +722,9 @@ class _InvestorReferralScreenState
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 40),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: border),
       ),
@@ -762,7 +775,7 @@ class _InvestorReferralScreenState
                 ),
                 decoration: BoxDecoration(
                   // Was the gold accent — matches the app's black CTA style.
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Text(
@@ -771,7 +784,9 @@ class _InvestorReferralScreenState
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 2,
-                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    color: isDark
+                        ? const Color(0xFF0C312B)
+                        : const Color(0xFFF4EFE3),
                   ),
                 ),
               ),
@@ -811,7 +826,9 @@ class _InvestorReferralScreenState
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
               ),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                color: isDark
+                    ? const Color(0xFF141B3A)
+                    : const Color(0xFFF4EFE3),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(40),
                 ),
@@ -870,7 +887,9 @@ class _InvestorReferralScreenState
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                                  color: isDark
+                                      ? Colors.white
+                                      : const Color(0xFF0C312B),
                                 ),
                               ),
                             ),
@@ -882,7 +901,7 @@ class _InvestorReferralScreenState
                             decoration: _inputBox(isDark, textPrimary),
                             child: Text(
                               'COULD NOT LOAD PROJECTS',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500,
                                 color: textPrimary.withValues(alpha: 0.72),
@@ -899,7 +918,7 @@ class _InvestorReferralScreenState
                                 value: selectedProjectId,
                                 hint: Text(
                                   'SELECT PROJECT',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
                                     color: textPrimary.withValues(alpha: 0.72),
@@ -922,7 +941,7 @@ class _InvestorReferralScreenState
                                           (p['title'] ?? p['name'] ?? 'PROJECT')
                                               .toString()
                                               .toUpperCase(),
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.inter(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w500,
                                             color: textPrimary,
@@ -944,7 +963,7 @@ class _InvestorReferralScreenState
                     const SizedBox(height: 10),
                     _formField(
                       nameCtrl,
-                      'FULL NAME',
+                      'Enter Full Name',
                       isDark,
                       textPrimary,
                       type: TextInputType.name,
@@ -956,7 +975,7 @@ class _InvestorReferralScreenState
                     const SizedBox(height: 10),
                     _formField(
                       phoneCtrl,
-                      '+91 XXXXX XXXXX',
+                      'Enter Mobile Number',
                       isDark,
                       textPrimary,
                       type: TextInputType.phone,
@@ -968,7 +987,7 @@ class _InvestorReferralScreenState
                     const SizedBox(height: 10),
                     _formField(
                       emailCtrl,
-                      'email@example.com',
+                      'Enter Email Address',
                       isDark,
                       textPrimary,
                       type: TextInputType.emailAddress,
@@ -1044,7 +1063,9 @@ class _InvestorReferralScreenState
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                  color: isDark
+                                      ? Colors.black
+                                      : const Color(0xFFF4EFE3),
                                 ),
                               )
                             : Text(
@@ -1053,7 +1074,9 @@ class _InvestorReferralScreenState
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 2,
-                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                  color: isDark
+                                      ? const Color(0xFF0C312B)
+                                      : const Color(0xFFF4EFE3),
                                 ),
                               ),
                       ),
@@ -1104,15 +1127,15 @@ class _InvestorReferralScreenState
         controller: controller,
         keyboardType: type,
         inputFormatters: inputFormatters,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w700,
           color: textPrimary,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.ebGaramond(
-            fontSize: 12,
+          hintStyle: GoogleFonts.inter(
+            fontSize: 11,
             fontWeight: FontWeight.w700,
             color: textPrimary.withValues(alpha: 0.72),
           ),

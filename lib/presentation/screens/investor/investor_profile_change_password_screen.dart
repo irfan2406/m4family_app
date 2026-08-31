@@ -134,9 +134,13 @@ class _InvestorProfileChangePasswordScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -166,7 +170,7 @@ class _InvestorProfileChangePasswordScreenState
                         const SizedBox(height: 8),
                         _passwordField(
                           controller: _current,
-                          hint: 'Enter current password',
+                          hint: 'Enter Current Password',
                           obscure: !_showCurrent,
                           onToggle: () =>
                               setState(() => _showCurrent = !_showCurrent),
@@ -185,7 +189,7 @@ class _InvestorProfileChangePasswordScreenState
                         const SizedBox(height: 8),
                         _passwordField(
                           controller: _newPass,
-                          hint: 'Enter new password',
+                          hint: 'Enter New Password',
                           obscure: !_showNew,
                           onToggle: () => setState(() => _showNew = !_showNew),
                           onChanged: (_) => setState(() {}),
@@ -202,7 +206,7 @@ class _InvestorProfileChangePasswordScreenState
                         const SizedBox(height: 8),
                         _passwordField(
                           controller: _confirm,
-                          hint: 'Re-enter new password',
+                          hint: 'Confirm New Password',
                           obscure: !_showNew,
                           showToggle: false,
                           onChanged: (_) => setState(() {}),
@@ -358,15 +362,15 @@ class _InvestorProfileChangePasswordScreenState
       controller: controller,
       obscureText: obscure,
       onChanged: onChanged,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.inter(
         fontSize: 15,
         fontWeight: FontWeight.w600,
         color: textPrimary,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.ebGaramond(
-          fontSize: 14,
+        hintStyle: GoogleFonts.inter(
+          fontSize: 13,
           fontWeight: FontWeight.w600,
           color: muted,
         ),
@@ -475,7 +479,7 @@ class _InvestorProfileChangePasswordScreenState
           const SizedBox(width: 8),
           Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: met ? green : muted,
@@ -524,7 +528,7 @@ class _InvestorProfileChangePasswordScreenState
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 2,
-                    color: Colors.black,
+                    color: const Color(0xFF0C312B),
                   ),
                 ),
         ),

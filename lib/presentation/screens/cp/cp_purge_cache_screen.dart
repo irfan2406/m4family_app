@@ -23,9 +23,9 @@ class CpPurgeCacheScreen extends ConsumerStatefulWidget {
 
 class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
   static const _red = Color(0xFFC65B46);
-  static const _amber = Color(0xFFC5A35B);
+  static const _amber = Color(0xFF0C312B);
   static const _green = Color(0xFF163A2C);
-  static const _gold = Color(0xFFC5A35B);
+  static const _gold = Color(0xFF0C312B);
 
   bool _purging = false;
   bool _done = false;
@@ -94,7 +94,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
           backgroundColor: const Color(0xFF163A2C),
           content: Text(
             'Cache purged. The app cache has been rebuilt.',
-            style: GoogleFonts.ebGaramond(fontSize: 12),
+            style: GoogleFonts.inter(fontSize: 12),
           ),
         ),
       );
@@ -105,7 +105,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
           backgroundColor: const Color(0xFFC65B46),
           content: Text(
             'Purge failed: $e',
-            style: GoogleFonts.ebGaramond(fontSize: 12),
+            style: GoogleFonts.inter(fontSize: 12),
           ),
         ),
       );
@@ -124,11 +124,13 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.68,
     );
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -149,7 +151,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
           children: [
             Text(
               'Purge Cache',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: textPrimary,
@@ -157,7 +159,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
             ),
             Text(
               'SYSTEM MAINTENANCE',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 9,
                 letterSpacing: 1.5,
                 fontWeight: FontWeight.w600,
@@ -253,7 +255,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                   'artifacts and offline render buffers. Your account and saved '
                   'data are not affected, but the workspace will rebuild its '
                   'caches on next load.',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 11,
                     height: 1.5,
                     fontWeight: FontWeight.w500,
@@ -304,7 +306,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                 children: [
                   Text(
                     s.title,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: textPrimary,
@@ -313,7 +315,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                   const SizedBox(height: 2),
                   Text(
                     s.subtitle,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       height: 1.4,
@@ -381,7 +383,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                 Expanded(
                   child: Text(
                     e.key,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: checked

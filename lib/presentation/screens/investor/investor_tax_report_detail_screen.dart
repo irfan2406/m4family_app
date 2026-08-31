@@ -84,7 +84,7 @@ class _InvestorTaxReportDetailScreenState
         backgroundColor: const Color(0xFFC65B46),
         content: Text(
           'Opening $_name...',
-          style: GoogleFonts.ebGaramond(fontSize: 12),
+          style: GoogleFonts.inter(fontSize: 12),
         ),
       ),
     );
@@ -97,7 +97,7 @@ class _InvestorTaxReportDetailScreenState
         backgroundColor: const Color(0xFFC65B46),
         content: Text(
           'Downloading $_name...',
-          style: GoogleFonts.ebGaramond(fontSize: 12),
+          style: GoogleFonts.inter(fontSize: 12),
         ),
       ),
     );
@@ -121,8 +121,10 @@ class _InvestorTaxReportDetailScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
 
     return Scaffold(
       backgroundColor: bg,
@@ -166,7 +168,7 @@ class _InvestorTaxReportDetailScreenState
               children: [
                 Text(
                   'Report Details',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                     color: textPrimary,
@@ -177,7 +179,7 @@ class _InvestorTaxReportDetailScreenState
                   _id.toUpperCase(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 11,
                     letterSpacing: 1.5,
                     fontWeight: FontWeight.w600,
@@ -193,14 +195,12 @@ class _InvestorTaxReportDetailScreenState
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                  alpha: 0.04,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                    alpha: 0.08,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.08),
                 ),
               ),
               child: Icon(LucideIcons.download, size: 18, color: muted),
@@ -222,7 +222,7 @@ class _InvestorTaxReportDetailScreenState
             const SizedBox(height: 16),
             Text(
               'Report not found',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 color: textPrimary,
@@ -233,7 +233,7 @@ class _InvestorTaxReportDetailScreenState
               'The requested tax report could not be found or you do not '
               'have access to it.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(fontSize: 12, color: muted),
+              style: GoogleFonts.inter(fontSize: 12, color: muted),
             ),
           ],
         ),
@@ -270,7 +270,9 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _overviewCard(bool isDark, Color textPrimary, Color muted, Color red) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -307,7 +309,7 @@ class _InvestorTaxReportDetailScreenState
               children: [
                 Text(
                   _name,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
                     height: 1.25,
@@ -340,13 +342,15 @@ class _InvestorTaxReportDetailScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.03),
+        color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+          alpha: 0.03,
+        ),
         borderRadius: BorderRadius.circular(7),
         border: Border.all(color: border),
       ),
       child: Text(
         label.toUpperCase(),
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 10,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,
@@ -384,7 +388,7 @@ class _InvestorTaxReportDetailScreenState
           const SizedBox(width: 6),
           Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -441,7 +445,9 @@ class _InvestorTaxReportDetailScreenState
     required IconData icon,
     required Color iconColor,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -457,7 +463,7 @@ class _InvestorTaxReportDetailScreenState
         children: [
           Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -474,7 +480,7 @@ class _InvestorTaxReportDetailScreenState
                   value,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: valueColor,
@@ -489,7 +495,9 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _descriptionCard(bool isDark, Color textPrimary, Color muted) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -510,7 +518,7 @@ class _InvestorTaxReportDetailScreenState
               const SizedBox(width: 8),
               Text(
                 'DESCRIPTION',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.2,
@@ -522,7 +530,7 @@ class _InvestorTaxReportDetailScreenState
           const SizedBox(height: 10),
           Text(
             _description,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 13,
               height: 1.55,
               fontWeight: FontWeight.w600,
@@ -553,7 +561,7 @@ class _InvestorTaxReportDetailScreenState
               'This document contains sensitive financial information. Please '
               'ensure you are in a secure environment before opening, '
               'downloading or sharing it.',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 11,
                 height: 1.5,
                 fontWeight: FontWeight.w600,
@@ -585,7 +593,7 @@ class _InvestorTaxReportDetailScreenState
         ),
         label: Text(
           'VIEW DOCUMENT',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -604,7 +612,7 @@ class _InvestorTaxReportDetailScreenState
         icon: const Icon(LucideIcons.download, size: 16),
         style: ElevatedButton.styleFrom(
           backgroundColor: gold,
-          foregroundColor: Colors.black,
+          foregroundColor: const Color(0xFF0C312B),
           padding: const EdgeInsets.symmetric(vertical: 16),
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -613,7 +621,7 @@ class _InvestorTaxReportDetailScreenState
         ),
         label: Text(
           'DOWNLOAD DOCUMENT',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,

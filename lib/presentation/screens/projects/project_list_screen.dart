@@ -1,5 +1,4 @@
-import 'package:m4_mobile/presentation/widgets/mesh_overlay.dart';
-import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
+import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -25,7 +24,7 @@ import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 /// (CachedNetworkImage can only fetch network URLs). Used by the project cards.
 Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
   Widget errorBox() => Container(
-    color: const Color(0xFF141B3A),
+    color: const Color(0xFF1C4535),
     child: const Center(
       child: Icon(LucideIcons.building2, color: Colors.white24, size: 40),
     ),
@@ -38,6 +37,7 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
       return Image.memory(
         bytes,
         fit: fit,
+        cacheWidth: 1080,
         errorBuilder: (_, __, ___) => errorBox(),
       );
     } catch (_) {
@@ -45,6 +45,7 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
     }
   }
   return CachedNetworkImage(
+    memCacheWidth: 1080,
     imageUrl: url,
     fit: fit,
     placeholder: (context, u) => Container(color: Colors.black12),
@@ -54,9 +55,18 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
 
 /// Channel Partner catalog: set [cpCatalogMode] so back + detail routes match web `/cp/projects`.
 class ProjectListScreen extends ConsumerWidget {
-  const ProjectListScreen({super.key, this.cpCatalogMode = false});
+  const ProjectListScreen({
+    super.key,
+    this.cpCatalogMode = false,
+    this.guestMode = false,
+  });
 
   final bool cpCatalogMode;
+
+  /// When shown as the guest portal's Properties tab, the drawer must be the
+  /// guest menu — the same one the guest Home uses — not the role-guessed
+  /// ConditionalDrawer, so the whole guest portal shares one menu.
+  final bool guestMode;
 
   // Retained for future use; the header filter button was removed for web
   // parity (screenshot has only the grid/list toggle and the "..." menu).
@@ -95,193 +105,228 @@ class ProjectListScreen extends ConsumerWidget {
               data: M4Theme.lightTheme,
               child: Builder(
                 builder: (context) {
-            final isDark = Theme.of(context).brightness == Brightness.dark;
-            return Container(
-              // Half-sheet popup: the filter list scrolls inside it rather than
-              // the sheet swallowing the screen.
-              height: MediaQuery.of(context).size.height * 0.55,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(40),
-                ),
-              ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 12),
-                  Container(
-                    width: 40,
-                    height: 4,
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
+                  return Container(
+                    // Half-sheet popup: the filter list scrolls inside it rather than
+                    // the sheet swallowing the screen.
+                    height: MediaQuery.of(context).size.height * 0.55,
                     decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(2),
+                      color: isDark
+                          ? const Color(0xFF1C4535)
+                          : const Color(0xFFF4EFE3),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(40),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
                       children: [
-                        Text(
-                          'REFINE SEARCH',
-                          style: GoogleFonts.gelasio(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(context).colorScheme.onSurface,
-                            letterSpacing: -0.5,
+                        const SizedBox(height: 12),
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                        IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: Icon(
-                            LucideIcons.x,
-                            color: Theme.of(context).colorScheme.onSurface,
-                            size: 18,
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'REFINE SEARCH',
+                                style: GoogleFonts.gelasio(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w700,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () => Navigator.pop(context),
+                                icon: Icon(
+                                  LucideIcons.x,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  size: 18,
+                                ),
+                                style: IconButton.styleFrom(
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withOpacity(0.05),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  fixedSize: const Size(40, 40),
+                                ),
+                              ),
+                            ],
                           ),
-                          style: IconButton.styleFrom(
-                            backgroundColor: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withOpacity(0.05),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                        ),
+                        const SizedBox(height: 20),
+                        Expanded(
+                          child: Consumer(
+                            builder: (context, ref, child) {
+                              final selectedLocs = ref.watch(
+                                selectedLocationsProvider,
+                              );
+                              final selectedConfigs = ref.watch(
+                                selectedConfigsProvider,
+                              );
+                              final selectedAreas = ref.watch(
+                                selectedAreasProvider,
+                              );
+                              final selectedTypes = ref.watch(
+                                selectedTypesProvider,
+                              );
+
+                              return ListView(
+                                padding: const EdgeInsets.fromLTRB(
+                                  24,
+                                  0,
+                                  24,
+                                  8,
+                                ),
+                                children: [
+                                  _FilterSection(
+                                    title: 'LOCATION',
+                                    options: locationOptions,
+                                    selectedOptions: selectedLocs,
+                                    onToggle: (val) {
+                                      final current = List<String>.from(
+                                        ref.read(selectedLocationsProvider),
+                                      );
+                                      if (current.contains(val))
+                                        current.remove(val);
+                                      else
+                                        current.add(val);
+                                      ref
+                                              .read(
+                                                selectedLocationsProvider
+                                                    .notifier,
+                                              )
+                                              .state =
+                                          current;
+                                    },
+                                  ),
+                                  const SizedBox(height: 32),
+                                  _FilterSection(
+                                    title: 'CONFIGURATION',
+                                    options: configOptions,
+                                    selectedOptions: selectedConfigs,
+                                    onToggle: (val) {
+                                      final current = List<String>.from(
+                                        ref.read(selectedConfigsProvider),
+                                      );
+                                      if (current.contains(val))
+                                        current.remove(val);
+                                      else
+                                        current.add(val);
+                                      ref
+                                              .read(
+                                                selectedConfigsProvider
+                                                    .notifier,
+                                              )
+                                              .state =
+                                          current;
+                                    },
+                                  ),
+                                  const SizedBox(height: 32),
+                                  _FilterSection(
+                                    title: 'AREA (SQ FT)',
+                                    options: areaOptions,
+                                    selectedOptions: selectedAreas,
+                                    onToggle: (val) {
+                                      final current = List<String>.from(
+                                        ref.read(selectedAreasProvider),
+                                      );
+                                      if (current.contains(val))
+                                        current.remove(val);
+                                      else
+                                        current.add(val);
+                                      ref
+                                              .read(
+                                                selectedAreasProvider.notifier,
+                                              )
+                                              .state =
+                                          current;
+                                    },
+                                  ),
+                                  const SizedBox(height: 32),
+                                  _FilterSection(
+                                    title: 'PROPERTY TYPE',
+                                    options: const [
+                                      "RESIDENTIAL",
+                                      "COMMERCIAL",
+                                    ],
+                                    selectedOptions: selectedTypes,
+                                    onToggle: (val) {
+                                      final current = List<String>.from(
+                                        ref.read(selectedTypesProvider),
+                                      );
+                                      if (current.contains(val))
+                                        current.remove(val);
+                                      else
+                                        current.add(val);
+                                      ref
+                                              .read(
+                                                selectedTypesProvider.notifier,
+                                              )
+                                              .state =
+                                          current;
+                                    },
+                                  ),
+                                  const SizedBox(height: 8),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            24,
+                            12,
+                            24,
+                            12 + MediaQuery.of(context).padding.bottom,
+                          ),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 64,
+                            child: ElevatedButton(
+                              onPressed: () => Navigator.pop(context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF0C312B),
+                                foregroundColor: isDark
+                                    ? Colors.black
+                                    : const Color(0xFFF4EFE3),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              child: Text(
+                                'APPLY SEARCH MATRIX',
+                                style: GoogleFonts.gelasio(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
                             ),
-                            fixedSize: const Size(40, 40),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: Consumer(
-                      builder: (context, ref, child) {
-                        final selectedLocs = ref.watch(
-                          selectedLocationsProvider,
-                        );
-                        final selectedConfigs = ref.watch(
-                          selectedConfigsProvider,
-                        );
-                        final selectedAreas = ref.watch(selectedAreasProvider);
-                        final selectedTypes = ref.watch(selectedTypesProvider);
-
-                        return ListView(
-                          padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-                          children: [
-                            _FilterSection(
-                              title: 'LOCATION',
-                              options: locationOptions,
-                              selectedOptions: selectedLocs,
-                              onToggle: (val) {
-                                final current = List<String>.from(
-                                  ref.read(selectedLocationsProvider),
-                                );
-                                if (current.contains(val))
-                                  current.remove(val);
-                                else
-                                  current.add(val);
-                                ref
-                                        .read(
-                                          selectedLocationsProvider.notifier,
-                                        )
-                                        .state =
-                                    current;
-                              },
-                            ),
-                            const SizedBox(height: 32),
-                            _FilterSection(
-                              title: 'CONFIGURATION',
-                              options: configOptions,
-                              selectedOptions: selectedConfigs,
-                              onToggle: (val) {
-                                final current = List<String>.from(
-                                  ref.read(selectedConfigsProvider),
-                                );
-                                if (current.contains(val))
-                                  current.remove(val);
-                                else
-                                  current.add(val);
-                                ref
-                                        .read(selectedConfigsProvider.notifier)
-                                        .state =
-                                    current;
-                              },
-                            ),
-                            const SizedBox(height: 32),
-                            _FilterSection(
-                              title: 'AREA (SQ FT)',
-                              options: areaOptions,
-                              selectedOptions: selectedAreas,
-                              onToggle: (val) {
-                                final current = List<String>.from(
-                                  ref.read(selectedAreasProvider),
-                                );
-                                if (current.contains(val))
-                                  current.remove(val);
-                                else
-                                  current.add(val);
-                                ref.read(selectedAreasProvider.notifier).state =
-                                    current;
-                              },
-                            ),
-                            const SizedBox(height: 32),
-                            _FilterSection(
-                              title: 'PROPERTY TYPE',
-                              options: const ["RESIDENTIAL", "COMMERCIAL"],
-                              selectedOptions: selectedTypes,
-                              onToggle: (val) {
-                                final current = List<String>.from(
-                                  ref.read(selectedTypesProvider),
-                                );
-                                if (current.contains(val))
-                                  current.remove(val);
-                                else
-                                  current.add(val);
-                                ref.read(selectedTypesProvider.notifier).state =
-                                    current;
-                              },
-                            ),
-                            const SizedBox(height: 8),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      24,
-                      12,
-                      24,
-                      12 + MediaQuery.of(context).padding.bottom,
-                    ),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 64,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                          foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: Text(
-                          'APPLY SEARCH MATRIX',
-                          style: GoogleFonts.gelasio(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
+                  );
                 },
               ),
             );
@@ -303,11 +348,15 @@ class ProjectListScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      drawer: cpCatalogMode ? const CpSidebarMenu() : const ConditionalDrawer(),
+      drawer: cpCatalogMode
+          ? const CpSidebarMenu()
+          : guestMode
+          ? const GuestSidebarMenu()
+          : const ConditionalDrawer(),
       body: Stack(
         children: [
-          // Figma parity: faint geometric mesh, behind content, on the green surface.
-          if (Theme.of(context).brightness == Brightness.dark) const MeshOverlay(),
+          // No page-level mesh: it ran to the top edge and showed through the
+          // header and nav. The texture lives on the cards only, like Figma.
           SafeArea(
             // Edge-to-edge: content runs under the gesture bar so scrolling fills
             // the screen. Trailing padding keeps the last item reachable.
@@ -333,7 +382,9 @@ class ProjectListScreen extends ConsumerWidget {
                                 }
                                 if (cpCatalogMode) {
                                   ref
-                                          .read(cpNavigationIndexProvider.notifier)
+                                          .read(
+                                            cpNavigationIndexProvider.notifier,
+                                          )
                                           .state =
                                       0;
                                 } else {
@@ -342,14 +393,21 @@ class ProjectListScreen extends ConsumerWidget {
                                   // simply ignored, so setting all is safe — and the
                                   // investor one was missing, which broke back on
                                   // the investor Properties tab.
-                                  ref.read(navigationProvider.notifier).state = 0;
-                                  ref.read(guestNavigationProvider.notifier).state =
+                                  ref.read(navigationProvider.notifier).state =
                                       0;
                                   ref
-                                      .read(
-                                        investorNavigationIndexProvider.notifier,
-                                      )
-                                      .state = 0;
+                                          .read(
+                                            guestNavigationProvider.notifier,
+                                          )
+                                          .state =
+                                      0;
+                                  ref
+                                          .read(
+                                            investorNavigationIndexProvider
+                                                .notifier,
+                                          )
+                                          .state =
+                                      0;
                                 }
                               },
                               borderRadius: BorderRadius.circular(12),
@@ -360,17 +418,25 @@ class ProjectListScreen extends ConsumerWidget {
                                 height: 40,
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                      .withOpacity(0.05),
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : const Color(0xFF0C312B))
+                                          .withOpacity(0.05),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                        .withOpacity(0.08),
+                                    color:
+                                        (isDark
+                                                ? Colors.white
+                                                : const Color(0xFF0C312B))
+                                            .withOpacity(0.08),
                                   ),
                                 ),
                                 child: Icon(
                                   LucideIcons.arrowLeft,
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   size: 18,
                                 ),
                               ),
@@ -386,7 +452,7 @@ class ProjectListScreen extends ConsumerWidget {
                                       'M4 PROPERTIES',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.inter(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                         color: Theme.of(
@@ -403,9 +469,10 @@ class ProjectListScreen extends ConsumerWidget {
                                       style: GoogleFonts.gelasio(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w700,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurface.withOpacity(0.72),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withOpacity(0.72),
                                         letterSpacing: 1.5,
                                       ),
                                     ),
@@ -417,9 +484,10 @@ class ProjectListScreen extends ConsumerWidget {
                                       style: GoogleFonts.gelasio(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w700,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurface.withOpacity(0.72),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withOpacity(0.72),
                                         letterSpacing: 2,
                                       ),
                                     ),
@@ -428,8 +496,10 @@ class ProjectListScreen extends ConsumerWidget {
                                       'M4 PROPERTIES',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.ebGaramond(
-                                        fontSize: 15,
+                                      style: GoogleFonts.inter(
+                                        // Figma sets the wordmark a touch
+                                        // larger than the app had it.
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w500,
                                         color: Theme.of(
                                           context,
@@ -450,286 +520,418 @@ class ProjectListScreen extends ConsumerWidget {
                         children: [
                           // Web parity: filter icon (light rounded square) to the
                           // left of the view toggle. Opens the REFINE SEARCH sheet.
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () => _showFilterBottomSheet(context, ref),
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                    .withOpacity(0.05),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                      .withOpacity(0.08),
+                          // Guest has no refine-search filter; CP and investor keep it.
+                          if (!guestMode) ...[
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () => _showFilterBottomSheet(context, ref),
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : const Color(0xFF0C312B))
+                                          .withOpacity(0.05),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color:
+                                        (isDark
+                                                ? Colors.white
+                                                : const Color(0xFF0C312B))
+                                            .withOpacity(0.08),
+                                  ),
+                                ),
+                                child: Icon(
+                                  LucideIcons.slidersHorizontal,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  size: 18,
                                 ),
                               ),
-                              child: Icon(
-                                LucideIcons.slidersHorizontal,
-                                color: Theme.of(context).colorScheme.onSurface,
-                                size: 18,
-                              ),
                             ),
-                          ),
-                          const SizedBox(width: 6),
+                            const SizedBox(width: 12),
+                          ],
                           // Web parity: grid / list view segmented toggle
                           // (active button filled black, matching projects/page.tsx).
-                          Container(
-                            padding: const EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                  .withOpacity(0.05),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                    .withOpacity(0.08),
+                          // CP catalog shows one fixed card layout - no grid/list switch.
+                          if (!cpCatalogMode) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.all(3),
+                              // No outline on the toggle: the soft fill alone
+                              // holds the pair together.
+                              decoration: BoxDecoration(
+                                color:
+                                    (isDark
+                                            ? Colors.white
+                                            : const Color(0xFF0C312B))
+                                        .withOpacity(0.05),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  _ViewToggleButton(
+                                    icon: LucideIcons.layoutGrid,
+                                    active: isGridView,
+                                    isDark: isDark,
+                                    onTap: () =>
+                                        ref
+                                                .read(
+                                                  projectLayoutProvider
+                                                      .notifier,
+                                                )
+                                                .state =
+                                            true,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  _ViewToggleButton(
+                                    icon: LucideIcons.list,
+                                    active: !isGridView,
+                                    isDark: isDark,
+                                    onTap: () =>
+                                        ref
+                                                .read(
+                                                  projectLayoutProvider
+                                                      .notifier,
+                                                )
+                                                .state =
+                                            false,
+                                  ),
+                                ],
                               ),
                             ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _ViewToggleButton(
-                                  icon: LucideIcons.layoutGrid,
-                                  active: isGridView,
-                                  isDark: isDark,
-                                  onTap: () =>
-                                      ref
-                                              .read(projectLayoutProvider.notifier)
-                                              .state =
-                                          true,
-                                ),
-                                const SizedBox(width: 3),
-                                _ViewToggleButton(
-                                  icon: LucideIcons.list,
-                                  active: !isGridView,
-                                  isDark: isDark,
-                                  onTap: () =>
-                                      ref
-                                              .read(projectLayoutProvider.notifier)
-                                              .state =
-                                          false,
-                                ),
-                              ],
-                            ),
-                          ),
-                        const SizedBox(width: 8),
-                        // Figma parity: drawer button sits after the grid/list toggle.
-                        const SideMenuButton(),
+                          ],
                         ],
                       ),
                     ],
                   ),
                 ),
-    
+
                 // 🎛️ Pill Tabs
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 24),
-                  height: 45,
+                  // Figma runs this control noticeably slimmer than a stock
+                  // 45pt tab bar — that lower height is what makes it read as
+                  // sleek rather than chunky.
+                  height: 38,
+                  padding: const EdgeInsets.all(3),
+                  // Figma: a soft tinted track behind the three tabs — a lift
+                  // off the green, not a drawn outline.
                   decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(20),
+                    color: isDark
+                        ? Colors.white.withOpacity(0.05)
+                        : Colors.black.withOpacity(0.04),
+                    borderRadius: BorderRadius.circular(19),
+                    // Faint outline around the track, as in the reference.
                     border: Border.all(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withOpacity(0.08),
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.08,
+                      ),
                     ),
                   ),
-                  child: Row(
-                    children: ['Ongoing', 'Upcoming', 'Completed'].map((filter) {
-                      final isSelected = currentFilter == filter;
-                      return Expanded(
-                        child: GestureDetector(
-                          onTap: () =>
-                              ref.read(projectFilterProvider.notifier).state =
-                                  filter,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? (Theme.of(context).brightness == Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              filter.toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
-                                fontSize: 10,
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.bold,
-                                color: isSelected
-                                    ? (Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.black
-                                          : Colors.white)
-                                    : Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface.withOpacity(0.55),
-                                letterSpacing: 1,
+                  // The selected plate is ONE widget that slides between the
+                  // three slots, rather than three chips cross-fading in
+                  // place — that cross-fade is what made switching read as
+                  // abrupt. AnimatedPositioned glides the plate and the
+                  // labels ease their weight/colour over the same curve.
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      const filters = ['Ongoing', 'Upcoming', 'Completed'];
+                      const duration = Duration(milliseconds: 280);
+                      final index = filters
+                          .indexOf(currentFilter)
+                          .clamp(0, filters.length - 1);
+                      final tabWidth = constraints.maxWidth / filters.length;
+                      return Stack(
+                        // Tight constraints come down from the 38pt track, so
+                        // expand keeps the label row full-height and centred
+                        // exactly where the old per-tab chips put it.
+                        fit: StackFit.expand,
+                        children: [
+                          AnimatedPositioned(
+                            duration: duration,
+                            curve: Curves.easeOutCubic,
+                            left: tabWidth * index,
+                            top: 0,
+                            bottom: 0,
+                            width: tabWidth,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                // Figma: the selected tab is a polished light
+                                // chip — a top-to-bottom sheen from near-white
+                                // into warm grey, so the surface catches light
+                                // instead of reading as flat paint.
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Color(0xFFFDFCF9),
+                                    Color(0xFFDCD9D0),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                                // Lifted inside the track: soft shadow
+                                // beneath, bright hairline on the edge.
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(
+                                      isDark ? 0.30 : 0.16,
+                                    ),
+                                    blurRadius: 12,
+                                    spreadRadius: -2,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.6),
+                                  width: 0.8,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-    
-                const SizedBox(height: 24),
-    
-                // 🏙️ Project List
-                Expanded(
-                  child: projectsAsync.when(
-                    data: (projects) => ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(
-                        24,
-                        0,
-                        24,
-                        120,
-                      ), // Bottom padding for shell nav
-                      itemCount: filteredProjects.length,
-                      itemBuilder: (context, index) {
-                        final project = filteredProjects[index];
-                        final projectId = project['_id']?.toString() ?? '';
-                        final heroImages = project['heroImages'] as List?;
-                        // Web parity (projects/page.tsx): the card image is ONLY
-                        // heroImages[0], else the same stock fallback. The web list
-                        // does NOT fall back to the singular `heroImage`, which is
-                        // often a brand/palette graphic (why DING DONG showed the
-                        // green M4 render instead of a real photo).
-                        final rawHero =
-                            (heroImages != null && heroImages.isNotEmpty)
-                            ? heroImages[0].toString()
-                            : null;
-                        final imageUrl = (rawHero == null || rawHero.isEmpty)
-                            ? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'
-                            : apiClient.resolveUrl(rawHero);
-                        return GestureDetector(
-                          onTap: () {
-                            if (projectId.isEmpty) return;
-                            if (cpCatalogMode) {
-                              final map = project is Map<String, dynamic>
-                                  ? project as Map<String, dynamic>
-                                  : Map<String, dynamic>.from(project as Map);
-                              context.push('/cp/projects/$projectId', extra: map);
-                              return;
-                            }
-                            final authState = ref.read(authProvider);
-                            if (authState.status == AuthStatus.authenticated) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProjectDetailScreen(
-                                    projectId: projectId,
-                                    projectData: project,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => GuestProjectDetailScreen(
-                                    projectId: projectId,
-                                    projectData: project,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          child: isGridView
-                              ? _ProjectGridItem(
-                                  project: project,
-                                  imageUrl: imageUrl,
-                                )
-                              : _ProjectListRowItem(
-                                  project: project,
-                                  imageUrl: imageUrl,
-                                ),
-                        );
-                      },
-                    ),
-                    loading: () => Center(
-                      child: CircularProgressIndicator(color: M4Theme.premiumBlue),
-                    ),
-                    error: (e, s) {
-                      final isDark =
-                          Theme.of(context).brightness == Brightness.dark;
-                      final onSurface = isDark ? Colors.white : Color(0xFF163A2C);
-                      final msg = e.toString().toLowerCase();
-                      final isTimeout =
-                          msg.contains('timeout') || msg.contains('connection');
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(32),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                LucideIcons.wifiOff,
-                                size: 38,
-                                color: onSurface.withOpacity(0.3),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                isTimeout
-                                    ? 'TAKING LONGER THAN USUAL'
-                                    : "COULDN'T LOAD PROPERTIES",
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.ebGaramond(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: onSurface,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                isTimeout
-                                    ? 'The server may be waking up. Please try again.'
-                                    : 'Please check your connection and try again.',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.ebGaramond(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
-                                  color: onSurface.withOpacity(0.5),
-                                  height: 1.5,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              GestureDetector(
-                                onTap: () => ref.invalidate(projectsProvider),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 28,
-                                    vertical: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: onSurface,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    'RETRY',
-                                    style: GoogleFonts.gelasio(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
-                                      letterSpacing: 1.5,
+                          Row(
+                            children: filters.map((filter) {
+                              final isSelected = currentFilter == filter;
+                              return Expanded(
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () =>
+                                      ref
+                                              .read(
+                                                projectFilterProvider.notifier,
+                                              )
+                                              .state =
+                                          filter,
+                                  child: Center(
+                                    child: AnimatedDefaultTextStyle(
+                                      duration: duration,
+                                      curve: Curves.easeOutCubic,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 10,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w600
+                                            : FontWeight.bold,
+                                        color: isSelected
+                                            ? const Color(0xFF15271E)
+                                            : Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface
+                                                  .withOpacity(0.55),
+                                        letterSpacing: 1,
+                                      ),
+                                      child: Text(filter.toUpperCase()),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              );
+                            }).toList(),
                           ),
-                        ),
+                        ],
                       );
                     },
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // 🏙️ Project List
+                Expanded(
+                  child: Stack(
+                    children: [
+                      projectsAsync.when(
+                        data: (projects) => ListView.builder(
+                          padding: const EdgeInsets.fromLTRB(
+                            24,
+                            0,
+                            24,
+                            120,
+                          ), // Bottom padding for shell nav
+                          itemCount: filteredProjects.length,
+                          itemBuilder: (context, index) {
+                            final project = filteredProjects[index];
+                            final projectId = project['_id']?.toString() ?? '';
+                            // Thumbnail source, in order of preference. The
+                            // catalog populates `heroImage` (SINGULAR) on every
+                            // project and that is the image the web card shows;
+                            // `heroImages` (plural) is not a field the payload
+                            // has at all, so the old chain always skipped
+                            // straight to the galleries — and for a project
+                            // with no gallery (Skyline Heights, M4 Aura
+                            // Heights) all the way to one shared stock photo,
+                            // which is why those cards showed the same
+                            // building. `heroImage` is a plain string: either
+                            // an http URL or a base64 `data:` URI, both of
+                            // which _projListImage renders.
+                            String? plainOf(String key) {
+                              final v = project[key];
+                              if (v is String && v.trim().isNotEmpty) return v;
+                              return null;
+                            }
+
+                            String? firstOf(String key) {
+                              final v = project[key];
+                              if (v is List && v.isNotEmpty) {
+                                final f = v.first;
+                                final str = f is Map
+                                    ? (f['url'] ?? f['image'] ?? '').toString()
+                                    : f.toString();
+                                return str.isEmpty ? null : str;
+                              }
+                              return null;
+                            }
+
+                            final rawHero =
+                                plainOf('heroImage') ??
+                                firstOf('heroImages') ??
+                                firstOf('exteriorImages') ??
+                                firstOf('interiorImages') ??
+                                firstOf('media');
+                            final imageUrl =
+                                (rawHero == null || rawHero.isEmpty)
+                                ? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'
+                                : apiClient.resolveUrl(rawHero);
+                            return GestureDetector(
+                              onTap: () {
+                                if (projectId.isEmpty) return;
+                                if (cpCatalogMode) {
+                                  final map = project is Map<String, dynamic>
+                                      ? project as Map<String, dynamic>
+                                      : Map<String, dynamic>.from(
+                                          project as Map,
+                                        );
+                                  context.push(
+                                    '/cp/projects/$projectId',
+                                    extra: map,
+                                  );
+                                  return;
+                                }
+                                final authState = ref.read(authProvider);
+                                if (authState.status ==
+                                    AuthStatus.authenticated) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProjectDetailScreen(
+                                        projectId: projectId,
+                                        projectData: project,
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          GuestProjectDetailScreen(
+                                            projectId: projectId,
+                                            projectData: project,
+                                          ),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: isGridView
+                                  ? _ProjectGridItem(
+                                      project: project,
+                                      imageUrl: imageUrl,
+                                    )
+                                  : _ProjectListRowItem(
+                                      project: project,
+                                      imageUrl: imageUrl,
+                                    ),
+                            );
+                          },
+                        ),
+                        loading: () => const Center(
+                          child: CircularProgressIndicator(
+                            color: M4Theme.premiumBlue,
+                          ),
+                        ),
+                        error: (e, s) {
+                          final isDark =
+                              Theme.of(context).brightness == Brightness.dark;
+                          final onSurface = isDark
+                              ? Colors.white
+                              : const Color(0xFF0C312B);
+                          final msg = e.toString().toLowerCase();
+                          final isTimeout =
+                              msg.contains('timeout') ||
+                              msg.contains('connection');
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(32),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    LucideIcons.wifiOff,
+                                    size: 38,
+                                    color: onSurface.withOpacity(0.3),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    isTimeout
+                                        ? 'TAKING LONGER THAN USUAL'
+                                        : "COULDN'T LOAD PROPERTIES",
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: onSurface,
+                                      letterSpacing: 1,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    isTimeout
+                                        ? 'The server may be waking up. Please try again.'
+                                        : 'Please check your connection and try again.',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                      color: onSurface.withOpacity(0.5),
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  GestureDetector(
+                                    onTap: () =>
+                                        ref.invalidate(projectsProvider),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 28,
+                                        vertical: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: onSurface,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Text(
+                                        'RETRY',
+                                        style: GoogleFonts.gelasio(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w700,
+                                          color: isDark
+                                              ? const Color(0xFF0C312B)
+                                              : const Color(0xFFF4EFE3),
+                                          letterSpacing: 1.5,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -758,19 +960,27 @@ class _ProjectGridItem extends StatelessWidget {
         : (loc?.toString() ?? ''));
     final locationLabel = (locName.isEmpty ? 'N/A' : locName).split(',').first;
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
+      // Figma: cards stack close together and are softly rounded, not
+      // pill-round.
+      margin: const EdgeInsets.only(bottom: 12),
       height:
           200, // Enforce 16:9 aspect ratio parity with web (approx for mobile width)
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(40),
+        color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(24),
+        // Figma depth: the card sits ON the green, lifted by a soft shadow that
+        // falls straight down and stays tucked under the card. The negative
+        // spread is what keeps it from haloing past the corners.
+        // (The dark branch used to be Colors.transparent — i.e. no shadow at
+        // all — so cards read as flat cut-outs on the green.)
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.transparent : Color(0xFF163A2C)).withOpacity(
-              isDark ? 0.3 : 0.05,
-            ),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: isDark
+                ? Colors.black.withOpacity(0.34)
+                : const Color(0xFF163A2C).withOpacity(0.10),
+            blurRadius: 26,
+            spreadRadius: -6,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
@@ -779,8 +989,6 @@ class _ProjectGridItem extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           _projListImage(imageUrl),
-          // Figma parity: faint network mesh over the photo ("picture ke upar").
-          const MeshOverlay(opacity: 0.22),
           // Subtle Gradient Overlay for text readability on images
           Container(
             decoration: BoxDecoration(
@@ -808,16 +1016,18 @@ class _ProjectGridItem extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.4),
+                  // Figma: pale translucent glass over the photo, not a dark
+                  // chip — the label reads light against the image.
+                  color: Colors.white.withOpacity(0.18),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  border: Border.all(color: Colors.white.withOpacity(0.22)),
                 ),
                 child: Text(
                   'ARTISTIC IMPRESSION',
                   style: GoogleFonts.gelasio(
-                    fontSize: 7,
+                    fontSize: 8,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withOpacity(0.9),
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -833,47 +1043,38 @@ class _ProjectGridItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Web order: title ABOVE location.
+                // Figma order: a small tracked-out locality sits above the
+                // project name, and the name carries all the weight.
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        (project['title'] ?? 'M4 PROJECT')
-                            .toString()
-                            .toUpperCase(),
+                        locationLabel.toUpperCase(),
                         style: GoogleFonts.gelasio(
-                          fontSize: 20,
+                          fontSize: 9,
+                          color: Colors.white70,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          letterSpacing: -0.5,
+                          letterSpacing: 1.5,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          const Icon(
-                            LucideIcons.mapPin,
-                            size: 12,
-                            color: Colors.white70,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              locationLabel.toUpperCase(),
-                              style: GoogleFonts.gelasio(
-                                fontSize: 9,
-                                color: Colors.white70,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 1.5,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                      const SizedBox(height: 4),
+                      Text(
+                        (project['title'] ?? 'M4 Project')
+                            .toString()
+                            .toUpperCase(),
+                        style: GoogleFonts.gelasio(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          letterSpacing: -0.5,
+                          height: 1.05,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -881,18 +1082,20 @@ class _ProjectGridItem extends StatelessWidget {
 
                 const SizedBox(width: 16),
 
-                // Action Arrow Button (web parity: light glass-icon, dark arrow)
+                // Guest-portal parity: white glass circle with a green arrow.
                 Container(
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.white.withOpacity(0.4)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.4),
+                    ),
                   ),
                   child: const Icon(
                     LucideIcons.arrowUpRight,
-                    color: Colors.black,
+                    color: Color(0xFF0C312B),
                     size: 20,
                   ),
                 ),
@@ -920,19 +1123,20 @@ class _ProjectListRowItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+        color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.transparent : Color(0xFF163A2C)).withOpacity(
-              isDark ? 0.3 : 0.04,
-            ),
+            color: (isDark ? Colors.transparent : const Color(0xFF163A2C))
+                .withOpacity(isDark ? 0.3 : 0.04),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.05,
+          ),
         ),
       ),
       child: Row(
@@ -958,10 +1162,10 @@ class _ProjectListRowItem extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   (project['title'] ?? 'M4 PROJECT').toString().toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
                     letterSpacing: -0.5,
                   ),
                   maxLines: 1,
@@ -981,7 +1185,7 @@ class _ProjectListRowItem extends StatelessWidget {
                     Expanded(
                       child: Text(
                         project['location']?['name'] ?? 'N/A',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           color: Theme.of(
                             context,
@@ -1035,7 +1239,7 @@ class _Badge extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 8,
           fontWeight: FontWeight.w600,
           color: Theme.of(context).colorScheme.onSurface,
@@ -1115,11 +1319,11 @@ class _FilterSection extends StatelessWidget {
                 ),
                 child: Text(
                   opt.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 9,
                     fontWeight: FontWeight.w600,
                     color: isSelected
-                        ? (isDarkMode ? Colors.black : Colors.white)
+                        ? (isDarkMode ? const Color(0xFF0C312B) : Colors.white)
                         : onSurface.withOpacity(0.85),
                     letterSpacing: 1,
                   ),
@@ -1150,7 +1354,7 @@ class _ViewToggleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color fg = active
         ? (isDark ? Colors.black : Colors.white)
-        : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.4);
+        : (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(0.4);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -1159,7 +1363,7 @@ class _ViewToggleButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: active
-              ? (isDark ? Colors.white : Color(0xFF163A2C))
+              ? (isDark ? Colors.white : const Color(0xFF0C312B))
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),

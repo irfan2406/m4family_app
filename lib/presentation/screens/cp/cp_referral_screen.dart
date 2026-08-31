@@ -479,7 +479,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
               children: [
                 Text(
                   name.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: scheme.onSurface,
@@ -515,7 +515,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
             ),
             child: Text(
               status.toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 8,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1,
@@ -555,7 +555,9 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
               ),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                color: isDark
+                    ? const Color(0xFF141B3A)
+                    : const Color(0xFFF4EFE3),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(40),
                 ),
@@ -628,7 +630,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                                 value: selectedProjectId,
                                 hint: Text(
                                   'SELECT PROJECT',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
                                     color: scheme.onSurface.withValues(
@@ -655,7 +657,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                                           (p['title'] ?? 'Project')
                                               .toString()
                                               .toUpperCase(),
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.inter(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w500,
                                             color: scheme.onSurface,
@@ -690,7 +692,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   const SizedBox(height: 10),
                   _buildTextField(
                     phoneCtrl,
-                    '+91 XXXXX XXXXX',
+                    'Enter Mobile Number',
                     scheme,
                     isDark,
                     isPhone: true,
@@ -839,15 +841,15 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
         inputFormatters: isPhone
             ? Validators.phoneFormatters
             : Validators.nameFormatters,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w700,
           color: scheme.onSurface,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.ebGaramond(
-            fontSize: 11,
+          hintStyle: GoogleFonts.inter(
+            fontSize: 10,
             fontWeight: FontWeight.w500,
             color: scheme.onSurface.withValues(alpha: 0.62),
           ),

@@ -8,27 +8,58 @@ import 'package:flutter/material.dart';
 class M4Nav {
   M4Nav._();
 
-  /// Bar height, excluding the float margin.
-  static const double height = 62;
+  /// Bar height, excluding the float margin. Figma: 65.
+  static const double height = 65;
 
-  /// Fully rounded pill - both ends read as floating, never edge-attached.
-  static const double radius = 40;
+  /// Fully rounded pill — Figma radius 32.5, exactly half the height, so both
+  /// ends are true semicircles.
+  static const double radius = 32.5;
 
   /// Frosted-glass blur applied behind the bar.
   static const double blur = 30;
 
   /// Side inset from the screen edge, and the float gap above the bottom.
-  static const double sideInset = 16;
+  /// Figma: a 329-wide bar on a 390-wide frame — (390 - 329) / 2 = 30.5.
+  static const double sideInset = 30.5;
   static const double bottomInset = 14;
 
+  /// Figma bar width. The bar is centred and never exceeds this.
+  static const double width = 329;
+
+  /// Figma glass fill: #FFFFFF at 10%, over the blur. One flat tint for every
+  /// portal — no per-portal gradients, so all four bars read identically.
+  static const Color glass = Color(0x1AFFFFFF);
+
+  // The active-tab treatment follows the surface behind the bar.
+  //
+  // On the deep-green "showcase" screens the disc is a soft translucent white
+  // with a white glyph (the Figma glass look). On the cream info screens that
+  // would be white-on-cream — invisible — so there the disc is a SOLID brand
+  // green with a cream glyph, and inactive glyphs are muted green.
+  //
+  // Brand green for the filled disc on cream.
+  static const Color discGreen = Color(0xFF0C312B);
+
+  /// Glyph on the green showcase surfaces.
+  static const Color glyphOnGreen = Colors.white;
+
+  /// Glyph inside the solid green disc on cream.
+  static const Color glyphOnDisc = Color(0xFFF4EFE3);
+
+  /// Inactive glyph on cream (muted brand green).
+  static const Color glyphOnCream = Color(0xFF0C312B);
+
+  /// Translucent disc on the green surfaces.
+  static const Color activeDiscTint = Color(0x38FFFFFF); // white at 22%
+
   /// Inner horizontal padding between the pill edge and the first/last tab.
-  static const double innerPadding = 8;
+  static const double innerPadding = 16;
 
   /// Tab glyph size.
-  static const double iconSize = 22;
+  static const double iconSize = 24;
 
   /// Active-tab disc diameter.
-  static const double activeDisc = 40;
+  static const double activeDisc = 50;
 
   /// Inactive glyphs sit at this opacity of the active colour.
   static const double inactiveOpacity = 0.72;

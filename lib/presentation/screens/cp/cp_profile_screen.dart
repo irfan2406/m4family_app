@@ -49,10 +49,16 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
   }
 
   Map<String, dynamic> _effectiveUser() {
-    if (_me != null) return _me!;
-    final u = ref.read(authProvider).user;
-    if (u != null) return Map<String, dynamic>.from(u);
-    return {};
+    // `watch`, not `read`: saving a new name updates the session, and this
+    // header has to repaint for the change to show. It also merges instead of
+    // preferring `_me` outright - `_me` is a snapshot taken when the screen
+    // opened, so on its own it kept serving the pre-save name.
+    final auth = ref.watch(authProvider).user;
+    final base = _me == null
+        ? <String, dynamic>{}
+        : Map<String, dynamic>.from(_me!);
+    if (auth == null) return base;
+    return {...base, ...Map<String, dynamic>.from(auth)};
   }
 
   String _name(Map<String, dynamic> u) {
@@ -131,7 +137,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     center: const Alignment(-0.8, -1),
                     radius: 1.2,
                     colors: [
-                      const Color(0xFFC5A35B).withValues(alpha: 0.10),
+                      const Color(0xFF0C312B).withValues(alpha: 0.06),
                       Colors.transparent,
                     ],
                   ),
@@ -284,7 +290,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                           builder: (ctx) => AlertDialog(
                             title: Text(
                               'Log out',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -374,7 +380,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
         color: scheme.surfaceContainerHighest,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(
+            color: const Color(0xFF0C312B).withValues(
               alpha: scheme.brightness == Brightness.dark ? 0.35 : 0.08,
             ),
             blurRadius: 24,
@@ -449,7 +455,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         phone.toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: scheme.primary.withValues(alpha: 0.8),
@@ -461,7 +467,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         email.toLowerCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface.withValues(alpha: 0.6),
@@ -495,7 +501,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                             Expanded(
                               child: Text(
                                 'BORN: $born',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                   color: scheme.primary,
@@ -527,7 +533,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
       ),
       child: Text(
         text.toUpperCase(),
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 10,
           fontWeight: FontWeight.w600,
           color: scheme.primary,
@@ -586,7 +592,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9.5,
                       fontWeight: FontWeight.w600,
                       color: scheme.onSurface,
@@ -647,7 +653,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
               Expanded(
                 child: Text(
                   'EMPLOYEE MANAGEMENT',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: scheme.onSurface,

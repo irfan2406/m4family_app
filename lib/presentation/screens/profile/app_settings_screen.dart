@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
-import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
@@ -17,7 +16,6 @@ class AppSettingsScreen extends ConsumerStatefulWidget {
 class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
   bool _pushNotifications = true;
   bool _emailNotifications = false;
-  bool _darkMode = false;
   bool _biometricAccess = true;
   bool _autoRefresh = true;
 
@@ -33,14 +31,11 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     _emailNotifications = user?['emailNotifications'] ?? false;
     _biometricAccess = user?['biometricAccess'] ?? true;
     _autoRefresh = user?['autoRefresh'] ?? true;
-    // Dark mode is reflected from the active theme provider.
-    _darkMode = ref.read(themeProvider) == ThemeMode.dark;
   }
 
   Future<void> _persist() async {
     try {
       await ref.read(apiClientProvider).updatePreferences({
-        'darkMode': _darkMode,
         'pushNotifications': _pushNotifications,
         'emailNotifications': _emailNotifications,
         'biometricAccess': _biometricAccess,
@@ -71,20 +66,9 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     _persist();
   }
 
-  void _onDarkModeToggle(bool value) {
-    setState(() => _darkMode = value);
-    ref
-        .read(themeProvider.notifier)
-        .setTheme(value ? ThemeMode.dark : ThemeMode.light);
-    _persist();
-  }
-
   @override
   Widget build(BuildContext context) {
-    // Keep local dark-mode flag in sync with the active theme.
-    final themeMode = ref.watch(themeProvider);
-    _darkMode = themeMode == ThemeMode.dark;
-    final isDark = themeMode == ThemeMode.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final bg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
 
@@ -106,8 +90,6 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                   children: [
                     _buildCommunicationsCard(isDark),
                     const SizedBox(height: 16),
-                    _buildAppearanceCard(isDark),
-                    const SizedBox(height: 16),
                     _buildSecurityCard(isDark),
                     const SizedBox(height: 16),
                     _buildPreferencesCard(isDark),
@@ -128,7 +110,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+            color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
               alpha: 0.06,
             ),
           ),
@@ -156,7 +138,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                 style: GoogleFonts.gelasio(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   letterSpacing: 2,
                 ),
               ),
@@ -166,9 +148,8 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                    alpha: 0.5,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.5),
                   letterSpacing: 2,
                 ),
               ),
@@ -202,23 +183,6 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
           subtitle: 'DEEPER INSIGHTS',
           value: _emailNotifications,
           onChanged: (v) => _onToggle('email', v),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAppearanceCard(bool isDark) {
-    return _buildCard(
-      isDark,
-      label: 'VISUAL EXPERIENCE',
-      children: [
-        _buildToggleTile(
-          isDark,
-          icon: LucideIcons.moon,
-          title: 'FORCE DARK MODE',
-          subtitle: 'PREMIUM AESTHETIC',
-          value: _darkMode,
-          onChanged: _onDarkModeToggle,
         ),
       ],
     );
@@ -265,7 +229,9 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     required String label,
     required List<Widget> children,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -295,9 +261,8 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
             style: GoogleFonts.gelasio(
               fontSize: 8,
               fontWeight: FontWeight.w700,
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                alpha: 0.5,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withValues(alpha: 0.5),
               letterSpacing: 3.2,
             ),
           ),
@@ -316,16 +281,20 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    final tileBg = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final tileBg = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final tileBorder = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
     final iconBg = isDark
         ? M4Theme.premiumBlue.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.05);
-    final iconColor = isDark ? Colors.white : Color(0xFF163A2C);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final iconColor = isDark ? Colors.white : const Color(0xFF0C312B);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -353,7 +322,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                     color: textPrimary,
@@ -375,7 +344,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: isDark ? Colors.white : Color(0xFF163A2C),
+            activeColor: isDark ? Colors.white : const Color(0xFF0C312B),
             activeTrackColor: isDark ? Colors.white24 : Colors.black12,
           ),
         ],
@@ -404,7 +373,7 @@ class _IconButton extends StatelessWidget {
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+            color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
               alpha: 0.05,
             ),
           ),
@@ -420,7 +389,7 @@ class _IconButton extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white54 : Color(0xFF5E6B60),
+          color: isDark ? Colors.white54 : const Color(0xFF155A4F),
           size: 20,
         ),
       ),

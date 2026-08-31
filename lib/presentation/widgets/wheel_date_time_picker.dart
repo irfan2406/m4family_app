@@ -136,6 +136,13 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
   }
 
   void _emit(DateTime next) {
+    // Never hand back a moment before the minimum. The year/month/day wheels
+    // already exclude past dates, but the hour/minute/AM-PM wheels are
+    // unfiltered — so on the minimum day itself an earlier time is still
+    // reachable (e.g. a 30-minute-out video call slot at 10:00 when it is
+    // already 12:30). Clamp here so every caller is covered.
+    final min = widget.minDate;
+    if (min != null && next.isBefore(min)) next = min;
     setState(() => _value = next);
     widget.onChanged(_value);
   }
@@ -268,10 +275,10 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
           (i) => Center(
             child: Text(
               label(i),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : const Color(0xFF155A4F),
               ),
             ),
           ),
@@ -291,9 +298,13 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.08),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+            alpha: 0.08,
+          ),
         ),
-        color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.02),
+        color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+          alpha: 0.02,
+        ),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -304,9 +315,8 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
               decoration: BoxDecoration(
                 border: Border.symmetric(
                   horizontal: BorderSide(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                      alpha: 0.1,
-                    ),
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                        .withValues(alpha: 0.1),
                   ),
                 ),
               ),
@@ -347,12 +357,11 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
                 ),
                 Text(
                   ':',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                      alpha: 0.68,
-                    ),
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                        .withValues(alpha: 0.68),
                   ),
                 ),
                 _wheel(

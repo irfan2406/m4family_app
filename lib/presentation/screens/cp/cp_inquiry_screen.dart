@@ -148,20 +148,18 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                   height: 40,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                      alpha: 0.05,
-                    ),
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                        .withValues(alpha: 0.05),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                        alpha: 0.1,
-                      ),
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withValues(alpha: 0.1),
                     ),
                   ),
                   child: Icon(
                     LucideIcons.arrowLeft,
                     size: 18,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                   ),
                 ),
               ),
@@ -170,7 +168,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
               Text(
                 'REGISTER\nINTEREST',
                 style: GoogleFonts.gelasio(
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   fontSize: 34,
                   fontWeight: FontWeight.w400,
                   letterSpacing: -0.5,
@@ -185,7 +183,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _luxuryInput(
-                      'Full Name *',
+                      'Enter Full Name',
                       _name,
                       keyboardType: TextInputType.name,
                       inputFormatters: Validators.nameFormatters,
@@ -193,7 +191,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                     ),
                     const SizedBox(height: 16),
                     _luxuryInput(
-                      'Email *',
+                      'Enter Email Address',
                       _email,
                       keyboardType: TextInputType.emailAddress,
                       inputFormatters: Validators.emailFormatters,
@@ -201,14 +199,14 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                     ),
                     const SizedBox(height: 16),
                     _luxuryInput(
-                      '+91 98653 21250 *',
+                      'Enter Mobile Number',
                       _phone,
                       keyboardType: TextInputType.phone,
                       inputFormatters: Validators.phoneFormatters,
                       validator: _validatePhone,
                     ),
                     const SizedBox(height: 16),
-                    _luxuryInput('Message', _message, isLong: true),
+                    _luxuryInput('Enter Message', _message, isLong: true),
                   ],
                 ),
               ),
@@ -220,7 +218,9 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                     value: _agreedToTerms,
                     onChanged: (val) =>
                         setState(() => _agreedToTerms = val ?? false),
-                    activeColor: isDark ? Colors.white : Color(0xFF163A2C),
+                    activeColor: isDark
+                        ? Colors.white
+                        : const Color(0xFF0C312B),
                     checkColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     side: BorderSide(
                       color: isDark ? Colors.white24 : Colors.black26,
@@ -231,8 +231,10 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                       padding: const EdgeInsets.only(top: 12),
                       child: RichText(
                         text: TextSpan(
-                          style: GoogleFonts.ebGaramond(
-                            color: isDark ? Colors.white54 : Color(0xFF5E6B60),
+                          style: GoogleFonts.inter(
+                            color: isDark
+                                ? Colors.white54
+                                : const Color(0xFF155A4F),
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 0.8,
@@ -241,8 +243,10 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                             const TextSpan(text: "I'VE READ AND AGREE TO THE "),
                             TextSpan(
                               text: 'PRIVACY POLICY',
-                              style: GoogleFonts.ebGaramond(
-                                color: isDark ? Colors.white : Color(0xFF163A2C),
+                              style: GoogleFonts.inter(
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF155A4F),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.8,
@@ -264,8 +268,12 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                 child: ElevatedButton(
                   onPressed: _submitting ? null : _submit,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                    foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    backgroundColor: isDark
+                        ? Colors.white
+                        : const Color(0xFF0C312B),
+                    foregroundColor: isDark
+                        ? Colors.black
+                        : const Color(0xFFF4EFE3),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -277,7 +285,9 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                           height: 22,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            color: isDark
+                                ? Colors.black
+                                : const Color(0xFFF4EFE3),
                           ),
                         )
                       : Text(
@@ -312,7 +322,9 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
         color: isDark ? Colors.black : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.12),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+            alpha: 0.12,
+          ),
         ),
         boxShadow: isDark
             ? null
@@ -330,14 +342,16 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
         inputFormatters: inputFormatters,
         maxLines: isLong ? 5 : 1,
         validator: validator,
-        style: TextStyle(color: isDark ? Colors.white : Color(0xFF163A2C)),
+        style: TextStyle(
+          color: isDark ? Colors.white : const Color(0xFF0C312B),
+        ),
         decoration: InputDecoration(
           hintText: label,
-          hintStyle: GoogleFonts.ebGaramond(
-            color: isDark ? Colors.white54 : Colors.black45,
-            fontSize: 13,
+          hintStyle: GoogleFonts.inter(
+            color: isDark ? Colors.white54 : const Color(0x730C312B),
+            fontSize: 12,
           ),
-          errorStyle: GoogleFonts.ebGaramond(
+          errorStyle: GoogleFonts.inter(
             color: Colors.redAccent,
             fontSize: 11,
             fontWeight: FontWeight.w600,

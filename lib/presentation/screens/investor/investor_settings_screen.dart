@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
@@ -145,10 +144,11 @@ class _InvestorSettingsScreenState
           ok
               ? 'Preferences updated securely'
               : 'Could not save changes. Try again.',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: Colors.black,
+            // Green snackbar background -> white text (was invisible).
+            color: Colors.white,
           ),
         ),
       ),
@@ -161,7 +161,7 @@ class _InvestorSettingsScreenState
       builder: (ctx) => AlertDialog(
         title: Text(
           'Sign out everywhere',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w700),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w700),
         ),
         content: const Text(
           'Sign out of your investor account on all devices?',
@@ -173,7 +173,10 @@ class _InvestorSettingsScreenState
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Sign out', style: TextStyle(color: Color(0xFFC65B46))),
+            child: const Text(
+              'Sign out',
+              style: TextStyle(color: Color(0xFFC65B46)),
+            ),
           ),
         ],
       ),
@@ -193,14 +196,14 @@ class _InvestorSettingsScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
 
     if (_loading) {
       return Scaffold(
         backgroundColor: bg,
         body: const Center(
-          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+          child: CircularProgressIndicator(color: Color(0xFF0C312B)),
         ),
       );
     }
@@ -223,7 +226,7 @@ class _InvestorSettingsScreenState
                   Text(
                     _error!,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: muted,
@@ -237,7 +240,7 @@ class _InvestorSettingsScreenState
                       style: GoogleFonts.gelasio(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: M4Theme.premiumBlue,
+                        color: const Color(0xFF0C312B),
                         letterSpacing: 1.5,
                       ),
                     ),
@@ -348,7 +351,7 @@ class _InvestorSettingsScreenState
   }
 
   Widget _buildHeader(bool isDark, Color textPrimary, Color muted) {
-    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final border = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.06,
     );
     return Container(
@@ -415,7 +418,7 @@ class _InvestorSettingsScreenState
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: M4Theme.premiumBlue,
+                    color: Color(0xFF0C312B),
                   ),
                 )
               : Material(
@@ -434,7 +437,9 @@ class _InvestorSettingsScreenState
                         style: GoogleFonts.gelasio(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black,
+                          // On the green button, so white (it was the same
+                          // green as the button and read as an empty pill).
+                          color: Colors.white,
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -471,8 +476,10 @@ class _InvestorSettingsScreenState
     TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
-    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
+    final border = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: isDark ? 0.08 : 0.06,
     );
     final fieldColor = enabled ? textPrimary : muted;
@@ -508,7 +515,7 @@ class _InvestorSettingsScreenState
                         enabled: enabled,
                         keyboardType: keyboardType,
                         inputFormatters: inputFormatters,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: fieldColor,
@@ -528,7 +535,7 @@ class _InvestorSettingsScreenState
                           value ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: fieldColor,
@@ -549,7 +556,7 @@ class _InvestorSettingsScreenState
                   ),
                   child: Text(
                     'VERIFIED',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: _gold,
@@ -575,8 +582,10 @@ class _InvestorSettingsScreenState
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
-    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
+    final border = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: isDark ? 0.08 : 0.06,
     );
 
@@ -607,7 +616,7 @@ class _InvestorSettingsScreenState
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: textPrimary,
@@ -616,7 +625,7 @@ class _InvestorSettingsScreenState
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                     color: muted,
@@ -648,20 +657,26 @@ class _InvestorSettingsScreenState
           alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFC65B46).withValues(alpha: 0.2)),
+            border: Border.all(
+              color: const Color(0xFFC65B46).withValues(alpha: 0.2),
+            ),
             color: const Color(0xFFC65B46).withValues(alpha: 0.05),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(LucideIcons.logOut, size: 16, color: Color(0xFFC65B46)),
+              const Icon(
+                LucideIcons.logOut,
+                size: 16,
+                color: Color(0xFFC65B46),
+              ),
               const SizedBox(width: 8),
               Text(
                 'SIGN OUT ON ALL DEVICES',
                 style: GoogleFonts.gelasio(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFFC65B46),
+                  color: const Color(0xFFC65B46),
                   letterSpacing: 2,
                 ),
               ),

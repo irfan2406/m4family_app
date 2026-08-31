@@ -118,9 +118,7 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
           ? Center(
               child: Text(
                 _error!,
-                style: GoogleFonts.ebGaramond(
-                  color: scheme.onSurfaceVariant,
-                ),
+                style: GoogleFonts.inter(color: scheme.onSurfaceVariant),
               ),
             )
           : RefreshIndicator(
@@ -177,6 +175,7 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
                                   children: [
                                     if (thumb != null && thumb.isNotEmpty)
                                       CachedNetworkImage(
+                                        memCacheWidth: 1080,
                                         imageUrl: ref
                                             .read(apiClientProvider)
                                             .resolveUrl(thumb),
@@ -229,7 +228,7 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
                                       title.toUpperCase(),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.inter(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 1.2,

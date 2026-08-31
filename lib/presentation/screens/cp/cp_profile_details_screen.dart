@@ -24,7 +24,7 @@ class CpProfileDetailsScreen extends ConsumerStatefulWidget {
 
 class _CpProfileDetailsScreenState
     extends ConsumerState<CpProfileDetailsScreen> {
-  static const _purple = Color(0xFFC5A35B);
+  static const _purple = Color(0xFF0C312B);
 
   final _name = TextEditingController();
   final _email = TextEditingController();
@@ -272,9 +272,13 @@ class _CpProfileDetailsScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -420,7 +424,7 @@ class _CpProfileDetailsScreenState
               children: [
                 Text(
                   'MY PROFILE',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                     letterSpacing: -0.3,
@@ -625,7 +629,7 @@ class _CpProfileDetailsScreenState
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
           maxLines: maxLines,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 15,
             fontWeight: FontWeight.w600,
             color: enabled ? textPrimary : textPrimary.withValues(alpha: 0.8),

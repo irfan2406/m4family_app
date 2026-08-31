@@ -75,9 +75,13 @@ class _CpEliteInvestorConnectScreenState
     final scheme = Theme.of(context).colorScheme;
 
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = scheme.outlineVariant.withValues(alpha: 0.5);
 
     return Scaffold(
@@ -91,7 +95,7 @@ class _CpEliteInvestorConnectScreenState
           children: [
             Text(
               'Partner Terminal',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
               ),
@@ -183,7 +187,7 @@ class _CpEliteInvestorConnectScreenState
                       child: Center(
                         child: Text(
                           'No ventures available right now',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: muted,
                             fontWeight: FontWeight.w700,
                           ),
@@ -303,7 +307,7 @@ class _CpEliteInvestorConnectScreenState
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Text(
                             s.growth.toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.5,
@@ -361,6 +365,7 @@ class _CpEliteInvestorConnectScreenState
                   fit: StackFit.expand,
                   children: [
                     CachedNetworkImage(
+                      memCacheWidth: 1080,
                       imageUrl: o.image,
                       fit: BoxFit.cover,
                       placeholder: (_, __) =>
@@ -671,7 +676,9 @@ class _CommitButtonState extends State<_CommitButton> {
 
   @override
   Widget build(BuildContext context) {
-    final fg = widget.isDark ? Colors.white : Color(0xFF163A2C); // foreground
+    final fg = widget.isDark
+        ? Colors.white
+        : const Color(0xFF0C312B); // foreground
     final bg = widget.isDark ? Colors.black : Colors.white; // background
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),

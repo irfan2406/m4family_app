@@ -96,8 +96,10 @@ class _CommunityProjectsListScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     final apiClient = ref.watch(apiClientProvider);
 
     return Scaffold(
@@ -132,8 +134,11 @@ class _CommunityProjectsListScreenState
                         decoration: BoxDecoration(
                           border: Border(
                             left: BorderSide(
-                              color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                  .withValues(alpha: isDark ? 0.3 : 0.2),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withValues(alpha: isDark ? 0.3 : 0.2),
                               width: 4,
                             ),
                           ),
@@ -251,9 +256,8 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
             color: bg.withValues(alpha: 0.8),
             border: Border(
               bottom: BorderSide(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                  alpha: 0.08,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.08),
               ),
             ),
           ),
@@ -377,13 +381,17 @@ class _ProjectCard extends StatelessWidget {
           children: [
             // Hero image
             CachedNetworkImage(
+              memCacheWidth: 1080,
               imageUrl: imageUrl,
               fit: BoxFit.cover,
               fadeInDuration: const Duration(milliseconds: 400),
               placeholder: (context, url) => Container(color: Colors.black12),
               errorWidget: (context, url, error) => Container(
                 color: Colors.black26,
-                child: const Icon(LucideIcons.alertCircle, color: Colors.white38),
+                child: const Icon(
+                  LucideIcons.alertCircle,
+                  color: Colors.white38,
+                ),
               ),
             ),
 
@@ -510,7 +518,7 @@ class _ProjectCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       startingPrice!,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFFF4EFE3),
@@ -558,7 +566,7 @@ class _ProjectCard extends StatelessWidget {
                 ),
                 child: const Icon(
                   LucideIcons.arrowRight,
-                  color: Colors.black,
+                  color: const Color(0xFF0C312B),
                   size: 20,
                 ),
               ),
@@ -612,9 +620,8 @@ class _EmptyState extends StatelessWidget {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
               side: BorderSide(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                  alpha: 0.2,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.2),
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -625,7 +632,7 @@ class _EmptyState extends StatelessWidget {
               style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
                 letterSpacing: 2,
               ),
             ),
@@ -651,7 +658,9 @@ class _ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -670,7 +679,7 @@ class _ErrorState extends StatelessWidget {
               style: GoogleFonts.gelasio(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
                 letterSpacing: 2,
               ),
             ),
@@ -680,7 +689,7 @@ class _ErrorState extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 10,
                 color: muted,
                 fontWeight: FontWeight.w500,
@@ -695,9 +704,8 @@ class _ErrorState extends StatelessWidget {
                   vertical: 18,
                 ),
                 side: BorderSide(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                    alpha: 0.2,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.2),
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -708,7 +716,7 @@ class _ErrorState extends StatelessWidget {
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   letterSpacing: 2,
                 ),
               ),

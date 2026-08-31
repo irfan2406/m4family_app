@@ -172,30 +172,18 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           : null,
       appBar: AppBar(
         centerTitle: true,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'WHO WE ARE',
-              style: GoogleFonts.gelasio(
-                color: isDark ? Colors.white : Color(0xFF163A2C),
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-                letterSpacing: 2,
-              ),
-            ),
-            Text(
-              'M4 FAMILY COLLECTIVE',
-              style: GoogleFonts.ebGaramond(
-                color: isDark ? Colors.white : Color(0xFF163A2C),
-                fontWeight: FontWeight.w400,
-                fontSize: 8,
-                letterSpacing: 2,
-              ),
-            ),
-          ],
+        title: Text(
+          'WHO WE ARE',
+          style: GoogleFonts.gelasio(
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            letterSpacing: 2,
+          ),
         ),
-        backgroundColor: isDark ? const Color(0xFF0B1026) : Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: isDark
+            ? const Color(0xFF0B1026)
+            : Theme.of(context).scaffoldBackgroundColor,
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -221,19 +209,17 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                      0.08,
-                    ),
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                        .withOpacity(0.08),
                   ),
                 ),
                 child: Icon(
                   LucideIcons.arrowLeft,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   size: 16,
                 ),
               ),
@@ -242,10 +228,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         ),
         actions: [
           Builder(
-            builder: (context) => Center(
+            builder: (context) => const Center(
               child: Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: const SideMenuButton(),
+                padding: EdgeInsets.only(right: 12),
+                child: SideMenuButton(),
               ),
             ),
           ),
@@ -306,7 +292,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0B1026) : Theme.of(context).scaffoldBackgroundColor,
+        color: isDark
+            ? const Color(0xFF0B1026)
+            : Theme.of(context).scaffoldBackgroundColor,
         border: Border(
           bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
         ),
@@ -326,9 +314,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 right: stepWidth / 2,
                 child: Container(
                   height: 2,
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withOpacity(0.05),
                 ),
               ),
               // Animated Progress Line
@@ -362,66 +349,86 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         children: [
                           AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
-                            width: 40,
-                            height: 40,
+                            // Figma "Rectangle 12": the active step is a 39x39
+                            // rounded square (radius 8) filled #155A4F. Inactive
+                            // steps stay circles.
+                            width: 39,
+                            height: 39,
                             decoration: BoxDecoration(
                               color: isActive
-                                  ? colorScheme.primary
+                                  ? const Color(0xFF155A4F)
                                   : isCompleted
-                                  ? (isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3))
+                                  ? (isDark
+                                        ? const Color(0xFF141B3A)
+                                        : const Color(0xFFF4EFE3))
                                   : (isDark
                                         ? Colors.white.withOpacity(0.05)
                                         : Colors.black.withOpacity(0.04)),
-                              shape: BoxShape.circle,
+                              // Always a rectangle: the active step is a
+                              // rounded square (radius 8), inactive steps use a
+                              // full radius (39/2) so they read as circles.
+                              // Animating radius-to-radius avoids the shape
+                              // mismatch that threw a red error frame on switch.
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(
+                                isActive ? 8 : 19.5,
+                              ),
                               border: Border.all(
                                 color: isActive
-                                    ? colorScheme.primary
+                                    ? const Color(0xFF155A4F)
                                     : isCompleted
-                                    ? colorScheme.primary
+                                    ? colorScheme.primary.withOpacity(0.55)
                                     : (isDark
                                           ? Colors.white.withOpacity(0.1)
                                           : Colors.black.withOpacity(0.1)),
                                 width: 2,
                               ),
-                              boxShadow: isActive
-                                  ? [
-                                      BoxShadow(
-                                        color: colorScheme.primary.withOpacity(
-                                          0.3,
-                                        ),
-                                        blurRadius: 15,
-                                      ),
-                                    ]
-                                  : null,
                             ),
                             child: Icon(
                               step['icon'],
                               color: isActive
-                                  ? (isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3))
+                                  ? (isDark
+                                        ? const Color(0xFF141B3A)
+                                        : const Color(0xFFF4EFE3))
                                   : isCompleted
-                                  ? colorScheme.primary
-                                  : (isDark ? Colors.white60 : Color(0xFF5E6B60)),
+                                  ? colorScheme.primary.withOpacity(0.62)
+                                  : (isDark
+                                        ? Colors.white60
+                                        : const Color(0xFF155A4F)),
                               size: 16,
                             ),
                           ),
                           const SizedBox(height: 8),
                           // Web parity: single line — long labels auto-shrink
                           // to fit (e.g. "CUSTOM VIEWS") instead of wrapping.
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              step['label'].toString().toUpperCase(),
-                              maxLines: 1,
-                              softWrap: false,
-                              style: GoogleFonts.ebGaramond(
-                                color: isActive
-                                    ? (isDark ? Colors.white : Color(0xFF163A2C))
-                                    : (isDark
-                                          ? Colors.white60
-                                          : Color(0xFF5E6B60)),
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: -0.3,
+                          Padding(
+                            // Gutter between neighbouring labels: without it
+                            // PHILOSOPHY and CUSTOM VIEWS fill their cells edge
+                            // to edge and run into each other.
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                step['label'].toString().toUpperCase(),
+                                maxLines: 1,
+                                softWrap: false,
+                                // 9.5 so the longest name (CUSTOM VIEWS) fits
+                                // its cell unscaled: FittedBox only shrinks
+                                // what overflows, so a size the long labels
+                                // clear is what keeps all five equal.
+                                style: GoogleFonts.inter(
+                                  color: isActive
+                                      ? (isDark
+                                            ? Colors.white
+                                            : M4Theme.lightForeground)
+                                      : (isDark
+                                            ? Colors.white70
+                                            : M4Theme.lightForeground
+                                                  .withOpacity(0.72)),
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ),
                           ),
@@ -467,34 +474,42 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         const SizedBox(height: 24),
         _buildGlassCard(
           child: Column(
+            // Stretch, so each paragraph fills the card and its text can start
+            // at the left edge instead of being centred as a block.
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Figma: Inter 400, 12px, line-height 168%, #0C312B, and the
+              // copy starts at the left edge (not centred).
               Text(
                 '"M4 Family, with over a decade of excellence in Mumbai’s real estate landscape, has established itself as a trusted name in premium residential development."',
-                style: GoogleFonts.ebGaramond(
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
-                  fontSize: 13,
+                textAlign: TextAlign.start,
+                style: GoogleFonts.inter(
+                  color: isDark ? Colors.white : M4Theme.figmaHeading,
+                  fontSize: 12,
                   fontWeight: FontWeight.w400,
-                  height: 1.8,
+                  height: 1.68,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 6),
               Text(
                 'Renowned for delivering homes that blend contemporary design with enduring quality, we take pride in creating spaces that inspire modern living while retaining timeless value.',
-                style: GoogleFonts.ebGaramond(
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  height: 1.8,
+                textAlign: TextAlign.start,
+                style: GoogleFonts.inter(
+                  color: isDark ? Colors.white : M4Theme.figmaHeading,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  height: 1.68,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 6),
               Text(
                 'Every development we undertake reflects meticulous planning, uncompromising quality, and a commitment to delivering on promises. From Aura Heights to our latest offering Ocean View, we continue to redefine what it means to call a place home.',
-                style: GoogleFonts.ebGaramond(
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  height: 1.8,
+                textAlign: TextAlign.start,
+                style: GoogleFonts.inter(
+                  color: isDark ? Colors.white : M4Theme.figmaHeading,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  height: 1.68,
                 ),
               ),
             ],
@@ -588,8 +603,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           const SizedBox(height: 8),
                           Text(
                             item['title']!.toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
-                              color: isDark ? Colors.white : Color(0xFF163A2C),
+                            style: GoogleFonts.inter(
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF155A4F),
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.5,
@@ -598,8 +615,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           const SizedBox(height: 8),
                           Text(
                             (item['desc'] ?? item['content'] ?? '').toString(),
-                            style: GoogleFonts.ebGaramond(
-                              color: isDark ? Colors.white70 : Color(0xFF5E6B60),
+                            style: GoogleFonts.inter(
+                              color: isDark
+                                  ? Colors.white70
+                                  : const Color(0xFF155A4F),
                               fontSize: 12,
                               height: 1.6,
                               fontWeight: FontWeight.w500,
@@ -648,7 +667,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             return Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
+                color: isDark
+                    ? Colors.white.withOpacity(0.03)
+                    : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isDark
@@ -681,7 +702,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     pillar['title'].toString().toUpperCase(),
                     style: GoogleFonts.gelasio(
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 2,
@@ -691,10 +712,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     pillar['desc'],
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.ebGaramond(
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                        0.68,
-                      ),
+                    style: GoogleFonts.inter(
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.68),
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.5,
@@ -737,15 +757,18 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionHeader(LucideIcons.sparkles, 'INTERACTIVE LIVING'),
-        const SizedBox(height: 32),
+        // 24, matching the OUR STORY step's header-to-card gap.
+        const SizedBox(height: 24),
         _buildPhilosophyQuote(),
         const SizedBox(height: 32),
         Text(
           'EXPERIENCE THE FUTURE OF HOME PERSONALISATION. OUR PROPRIETARY CUSTOM VIEWS SUITE ALLOWS YOU TO VISUALISE AND CRAFT YOUR DREAM SPACE BEFORE IT\'S EVEN BUILT.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.ebGaramond(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
-            fontSize: 11,
+          // Was 11px at 60% — too faint to read on the cream page.
+          style: GoogleFonts.inter(
+            color: (isDark ? Colors.white : M4Theme.lightForeground)
+                .withOpacity(0.82),
+            fontSize: 13,
             fontWeight: FontWeight.w500,
             height: 1.8,
             letterSpacing: 0.5,
@@ -784,46 +807,40 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   Widget _buildPhilosophyQuote() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(40),
-        border: Border.all(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
-        ),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-      ),
+    // Card chrome comes from the same builder the OUR STORY card uses, so the
+    // surface, radius, padding, border and shadow can never drift apart.
+    return _buildGlassCard(
+      // Same treatment as the OUR STORY card: centred, EB Garamond at 15,
+      // full-strength foreground, upright rather than italic.
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        // Stretch, so the body copy fills the card and starts at its left
+        // edge; the label above keeps its own centred alignment.
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             'CUSTOMER VIEWS',
+            textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               color: colorScheme.primary,
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 2,
             ),
           ),
           const SizedBox(height: 16),
           Text(
-            '"AT M4 FAMILY, WE BELIEVE THAT LUXURY IS DEEPLY PERSONAL. OUR \'CUSTOMER VIEWS\' PHILOSOPHY ENSURES THAT EVERY RESIDENT\'S PERSPECTIVE IS VALUED, ALLOWING FOR A COLLABORATIVE APPROACH TO CREATING LIVING SPACES THAT REFLECT INDIVIDUAL LIFESTYLES AND ASPIRATIONS. WE INVITE YOU TO EXPLORE OUR BESPOKE PERSONALISATION OPTIONS, WHERE YOUR VISION MEETS OUR ARCHITECTURAL EXCELLENCE."',
-            style: GoogleFonts.ebGaramond(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.7),
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              height: 1.7,
-              fontStyle: FontStyle.italic,
-              letterSpacing: 0.2,
+            // Sentence case, like the OUR STORY copy: at the same 15pt, all
+            // caps render a size larger because every glyph sits at cap
+            // height, so the case is what made this card look bigger.
+            '"At M4 Family, we believe that luxury is deeply personal. Our \'Customer Views\' philosophy ensures that every resident\'s perspective is valued, allowing for a collaborative approach to creating living spaces that reflect individual lifestyles and aspirations. We invite you to explore our bespoke personalisation options, where your vision meets our architectural excellence."',
+            // Figma: Inter 400, 12px, line-height 168%, #0C312B, starting at
+            // the left edge — same body spec as the OUR STORY card.
+            textAlign: TextAlign.start,
+            style: GoogleFonts.inter(
+              color: isDark ? Colors.white : M4Theme.figmaHeading,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              height: 1.68,
             ),
           ),
         ],
@@ -841,6 +858,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         child: Stack(
           children: [
             CachedNetworkImage(
+              memCacheWidth: 1080,
               imageUrl: ref
                   .read(apiClientProvider)
                   .resolveUrl(
@@ -850,14 +868,16 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               width: double.infinity,
               height: double.infinity,
               placeholder: (context, url) => Container(color: Colors.black12),
+              errorWidget: (context, url, error) =>
+                  Container(color: Colors.black12),
             ),
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [Colors.transparent, Colors.black26, Colors.black87],
-                  stops: const [0.0, 0.5, 1.0],
+                  stops: [0.0, 0.5, 1.0],
                 ),
               ),
             ),
@@ -908,7 +928,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             color: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.05),
             ),
             boxShadow: [
               BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
@@ -919,7 +940,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Center(
-                child: Icon(icon, color: colorScheme.primary, size: 18),
+                // Softer green, matching the step marks above.
+                child: Icon(
+                  icon,
+                  color: colorScheme.primary.withOpacity(0.62),
+                  size: 18,
+                ),
               ),
             ),
           ),
@@ -928,7 +954,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         Text(
           title,
           style: GoogleFonts.gelasio(
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
             fontSize: 18,
             fontWeight: FontWeight.w700,
             letterSpacing: -1,
@@ -943,7 +969,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
+        color: isDark
+            ? Colors.white.withOpacity(0.04)
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: isDark
@@ -1000,7 +1028,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 height: 48,
                 decoration: BoxDecoration(
                   // Web: glass white tile, rounded-2xl, subtle border + shadow.
-                  color: isDark ? Colors.white.withOpacity(0.06) : const Color(0xFFF4EFE3),
+                  color: isDark
+                      ? Colors.white.withOpacity(0.06)
+                      : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: colorScheme.primary.withOpacity(0.1),
@@ -1030,8 +1060,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   children: [
                     Text(
                       section['title'].toString().toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                      style: GoogleFonts.inter(
+                        color: isDark ? Colors.white : const Color(0xFF155A4F),
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.5,
@@ -1055,8 +1085,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           Text(
             section['content'].toString().toUpperCase(),
             // Web parity: lighter, less heavy body copy inside the card.
-            style: GoogleFonts.ebGaramond(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.5),
+            style: GoogleFonts.inter(
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.5),
               fontSize: 11,
               fontWeight: FontWeight.w600,
               height: 1.6,
@@ -1084,9 +1115,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: CachedNetworkImage(
+            memCacheWidth: 1080,
             imageUrl: url,
             fit: BoxFit.cover,
             placeholder: (context, url) => Container(color: Colors.black12),
+            errorWidget: (context, url, error) =>
+                Container(color: Colors.black12),
           ),
         ),
       ),
@@ -1098,13 +1132,15 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.black,
+        // M4 deep green, not black - the card sits on the cream page.
+        color: const Color(0xFF0C312B),
         borderRadius: BorderRadius.circular(48),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
-            blurRadius: 40,
-            offset: const Offset(0, 20),
+            color: const Color(0xFF0C312B).withValues(alpha: 0.22),
+            blurRadius: 32,
+            spreadRadius: -8,
+            offset: const Offset(0, 14),
           ),
         ],
       ),
@@ -1170,7 +1206,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     'CHOOSE YOUR MATERIALS, EXPLORE CONFIGURATIONS, AND SEE YOUR VISION COME TO LIFE WITH M4 CUSTOM VIEWS.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: Colors.white.withOpacity(0.7),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -1200,7 +1236,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
+                        foregroundColor: const Color(0xFF0C312B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),
                         ),
@@ -1214,7 +1250,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                     AuthStatus.authenticated
                                 ? 'CUSTOM VIEWS'
                                 : 'ENQUIRE FOR CUSTOM VIEWS',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontWeight: FontWeight.w600,
                               fontSize: 11,
                               letterSpacing: 1,
@@ -1246,7 +1282,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           // Web parity: a centered floating card with margins on every edge,
           // rounded on all corners — not a full-width bottom sheet.
           return Dialog(
-            backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+            backgroundColor: isDark
+                ? const Color(0xFF141B3A)
+                : const Color(0xFFF4EFE3),
             insetPadding: const EdgeInsets.symmetric(
               horizontal: 20,
               vertical: 44,
@@ -1272,8 +1310,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           Expanded(
                             child: Text(
                               'CUSTOM PERSONALISATION',
-                              style: GoogleFonts.ebGaramond(
-                                color: isDark ? Colors.white : Color(0xFF163A2C),
+                              style: GoogleFonts.inter(
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF155A4F),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 17,
                                 letterSpacing: -0.3,
@@ -1283,7 +1323,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           IconButton(
                             icon: Icon(
                               LucideIcons.x,
-                              color: isDark ? Colors.white : Color(0xFF163A2C),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF0C312B),
                               size: 20,
                             ),
                             onPressed: () => Navigator.pop(context),
@@ -1293,11 +1335,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'Enter your details to receive our premium personalisation catalog and schedule a consultation.',
-                        style: GoogleFonts.ebGaramond(
-                          // Web parity: muted gray subtitle, not solid black.
+                        style: GoogleFonts.inter(
                           color: isDark
                               ? Colors.white54
-                              : const Color(0xFFC5A35B),
+                              : const Color(0xFF163A2C).withValues(alpha: 0.78),
                           fontSize: 12,
                           height: 1.5,
                           fontWeight: FontWeight.w500,
@@ -1308,7 +1349,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       _buildFieldLabel('FULL NAME'),
                       _buildTextField(
                         _nameController,
-                        'Your Name',
+                        'Enter Full Name',
                         LucideIcons.user,
                         keyboardType: TextInputType.name,
                         inputFormatters: Validators.nameFormatters,
@@ -1318,7 +1359,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       _buildFieldLabel('PHONE NUMBER'),
                       _buildTextField(
                         _phoneController,
-                        'Mobile Number',
+                        'Enter Mobile Number',
                         LucideIcons.phone,
                         keyboardType: TextInputType.phone,
                         inputFormatters: Validators.phoneFormatters,
@@ -1328,7 +1369,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       _buildFieldLabel('EMAIL ADDRESS (OPTIONAL)'),
                       _buildTextField(
                         _emailController,
-                        'Email Address',
+                        'Enter Email Address',
                         LucideIcons.mail,
                         keyboardType: TextInputType.emailAddress,
                         inputFormatters: Validators.emailFormatters,
@@ -1360,7 +1401,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               Expanded(
                                 child: Text(
                                   submitError!,
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     color: const Color(0xFFC65B46),
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
@@ -1459,7 +1500,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isDark
                                 ? Colors.white
-                                : Color(0xFF163A2C),
+                                : const Color(0xFF0C312B),
                             foregroundColor: isDark
                                 ? Colors.black
                                 : const Color(0xFFF4EFE3),
@@ -1473,12 +1514,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                   height: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    color: Theme.of(
+                                      context,
+                                    ).scaffoldBackgroundColor,
                                   ),
                                 )
                               : Text(
                                   'SEND REQUEST',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w400,
                                     fontSize: 12,
                                     letterSpacing: 2,
@@ -1503,9 +1546,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       padding: const EdgeInsets.only(left: 4, bottom: 10),
       child: Text(
         label,
-        style: GoogleFonts.ebGaramond(
-          // Web parity: muted slate-gray field labels.
-          color: isDark ? Colors.white54 : const Color(0xFFC5A35B),
+        style: GoogleFonts.inter(
+          color: isDark ? Colors.white54 : const Color(0xFF163A2C),
           fontSize: 10,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.2,
@@ -1524,27 +1566,31 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     // Web parity: plain light-filled input, no leading icon, and a gold
     // border only while focused (matches the reference popup).
+    // M4 palette: cream field on the cream sheet, hairline border, green ink -
+    // the gold fill made the inputs read as solid yellow blocks.
     final fill = isDark
         ? Colors.white.withOpacity(0.04)
-        : const Color(0xFFC5A35B);
+        : const Color(0xFFF4EFE3);
     final baseBorder = isDark
         ? Colors.white.withOpacity(0.06)
-        : Colors.transparent;
-    const gold = Color(0xFFC5A35B);
+        : const Color(0xFFD4CFBC);
+    const focus = Color(0xFF163A2C);
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
-      style: GoogleFonts.ebGaramond(
-        color: isDark ? Colors.white : Color(0xFF163A2C),
+      style: GoogleFonts.inter(
+        color: isDark ? Colors.white : const Color(0xFF163A2C),
         fontSize: 15,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.ebGaramond(
-          color: isDark ? Colors.white38 : const Color(0xFFC5A35B),
-          fontSize: 14,
+        hintStyle: GoogleFonts.inter(
+          color: isDark
+              ? Colors.white38
+              : const Color(0xFF163A2C).withValues(alpha: 0.5),
+          fontSize: 13,
           fontWeight: FontWeight.w500,
         ),
         filled: true,
@@ -1554,12 +1600,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           vertical: 18,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: baseBorder, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: gold, width: 1.8),
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: focus, width: 1),
         ),
       ),
     );
@@ -1597,7 +1643,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 child: Text(
                   'BACK',
                   style: GoogleFonts.gelasio(
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                     fontWeight: FontWeight.w700,
                     fontSize: 10,
                     letterSpacing: 2,
@@ -1621,8 +1667,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                backgroundColor: isDark
+                    ? Colors.white
+                    : const Color(0xFF0C312B),
+                foregroundColor: isDark
+                    ? Colors.black
+                    : const Color(0xFFF4EFE3),
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),

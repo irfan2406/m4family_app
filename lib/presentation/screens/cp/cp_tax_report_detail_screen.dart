@@ -84,7 +84,7 @@ class _CpTaxReportDetailScreenState
         backgroundColor: const Color(0xFFC65B46),
         content: Text(
           'Downloading $name...',
-          style: GoogleFonts.ebGaramond(fontSize: 12),
+          style: GoogleFonts.inter(fontSize: 12),
         ),
       ),
     );
@@ -106,8 +106,10 @@ class _CpTaxReportDetailScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
 
     return Scaffold(
       backgroundColor: bg,
@@ -151,7 +153,7 @@ class _CpTaxReportDetailScreenState
               children: [
                 Text(
                   'Tax Report',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                     color: textPrimary,
@@ -160,7 +162,7 @@ class _CpTaxReportDetailScreenState
                 const SizedBox(height: 2),
                 Text(
                   'FISCAL COMPLIANCE',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 9,
                     letterSpacing: 1.5,
                     fontWeight: FontWeight.w600,
@@ -176,14 +178,12 @@ class _CpTaxReportDetailScreenState
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                  alpha: 0.04,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                    alpha: 0.08,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.08),
                 ),
               ),
               child: Icon(LucideIcons.download, size: 18, color: muted),
@@ -205,7 +205,7 @@ class _CpTaxReportDetailScreenState
             const SizedBox(height: 16),
             Text(
               'Report not found',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 color: textPrimary,
@@ -215,7 +215,7 @@ class _CpTaxReportDetailScreenState
             Text(
               'This tax report could not be found or you do not have access.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(fontSize: 12, color: muted),
+              style: GoogleFonts.inter(fontSize: 12, color: muted),
             ),
           ],
         ),
@@ -291,7 +291,7 @@ class _CpTaxReportDetailScreenState
           const SizedBox(width: 6),
           Text(
             'VERIFIED DOCUMENT',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 9,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -304,13 +304,14 @@ class _CpTaxReportDetailScreenState
   }
 
   Widget _metaCard(bool isDark, Color textPrimary, Color muted) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final divider = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-      alpha: 0.06,
-    );
+    final divider = (isDark ? Colors.white : const Color(0xFF0C312B))
+        .withValues(alpha: 0.06);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -384,7 +385,7 @@ class _CpTaxReportDetailScreenState
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 10,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -406,7 +407,7 @@ class _CpTaxReportDetailScreenState
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: textPrimary,
@@ -421,7 +422,9 @@ class _CpTaxReportDetailScreenState
   }
 
   Widget _descriptionCard(bool isDark, Color textPrimary, Color muted) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -438,7 +441,7 @@ class _CpTaxReportDetailScreenState
         children: [
           Text(
             'DESCRIPTION',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -448,7 +451,7 @@ class _CpTaxReportDetailScreenState
           const SizedBox(height: 10),
           Text(
             _description,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 13,
               height: 1.55,
               fontWeight: FontWeight.w400,
@@ -461,7 +464,7 @@ class _CpTaxReportDetailScreenState
   }
 
   Widget _secureWarning(bool isDark, Color textPrimary, Color muted) {
-    const gold = Color(0xFFC5A35B);
+    const gold = Color(0xFF0C312B);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -480,7 +483,7 @@ class _CpTaxReportDetailScreenState
               children: [
                 Text(
                   'SECURE DOCUMENT',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.2,
@@ -491,7 +494,7 @@ class _CpTaxReportDetailScreenState
                 Text(
                   'This document contains confidential financial information. '
                   'Do not share it with unauthorised parties.',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     height: 1.5,
                     fontWeight: FontWeight.w400,
@@ -523,7 +526,7 @@ class _CpTaxReportDetailScreenState
         ),
         label: Text(
           'DOWNLOAD DOCUMENT',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,

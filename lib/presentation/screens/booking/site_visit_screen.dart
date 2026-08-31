@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,6 +24,12 @@ class SiteVisitScreen extends ConsumerStatefulWidget {
 class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  bool _prefilled = false;
+  // CP-only: the visit can be handed to one of the partner's employees. The
+  // list endpoint is CP-scoped, so it is only fetched for a CP account.
+  List<Map<String, dynamic>> _employees = [];
+  String? _employeeId;
+  bool _isCp = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
   DateTime? _selectedDate;
@@ -39,6 +46,36 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     // Fields intentionally left empty for manual entry to match web protocol
   }
 
+  /// Seeds the visitor fields from the signed-in account, so the form matches
+  /// the web layout without making a logged-in user retype what we already know.
+  void _prefillFromAccount() {
+    if (_prefilled) return;
+    final u = ref.read(authProvider).user;
+    if (u == null) return;
+    _prefilled = true;
+    _isCp = u['role']?.toString().toLowerCase() == 'cp';
+    if (_isCp) unawaited(_fetchEmployees());
+    _nameController.text = (u['fullName'] ?? u['username'] ?? '').toString();
+    _phoneController.text = (u['phone'] ?? '').toString();
+  }
+
+  Future<void> _fetchEmployees() async {
+    try {
+      final res = await ref.read(apiClientProvider).getCpEmployees();
+      final body = res.data;
+      if (body is Map && body['data'] is List && mounted) {
+        setState(() {
+          _employees = (body['data'] as List)
+              .whereType<Map>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList();
+        });
+      }
+    } catch (_) {
+      // Non-fatal: the field simply stays empty rather than blocking booking.
+    }
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -50,8 +87,13 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
 
   Future<void> _selectDateTime() async {
     final now = DateTime.now();
+    // No past slots. A site visit is never booked for today (the form itself
+    // promises a confirmation call within 2 hours), and `temp` already
+    // defaults to tomorrow — so floor the wheels at midnight tomorrow. This
+    // also drops the part-elapsed current month/day from the month/day lists.
+    final minSchedule = DateTime(now.year, now.month, now.day + 1);
     DateTime temp = _selectedDate ?? now.add(const Duration(days: 1));
-    if (temp.isBefore(now)) temp = now.add(const Duration(days: 1));
+    if (temp.isBefore(minSchedule)) temp = now.add(const Duration(days: 1));
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Web parity: absolute Day/Month/Year + time wheel picker (CANCEL/CONFIRM).
@@ -73,9 +115,8 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                    0.15,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withOpacity(0.15),
                   borderRadius: BorderRadius.circular(99),
                 ),
               ),
@@ -85,18 +126,18 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 'SELECT DATE & TIME',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF155A4F),
                 ),
               ),
             ),
             const SizedBox(height: 8),
             WheelDateTimePicker(
               initial: temp,
-              minDate: now,
+              minDate: minSchedule,
               isDark: isDark,
               onChanged: (dt) => temp = dt,
             ),
@@ -112,14 +153,16 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       side: BorderSide(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.2),
                       ),
-                      foregroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                      foregroundColor: isDark
+                          ? Colors.white
+                          : const Color(0xFF0C312B),
                     ),
                     child: Text(
                       'CANCEL',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -131,8 +174,12 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   child: FilledButton(
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                      foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      backgroundColor: isDark
+                          ? Colors.white
+                          : const Color(0xFF0C312B),
+                      foregroundColor: isDark
+                          ? Colors.black
+                          : const Color(0xFFF4EFE3),
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -140,7 +187,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                     ),
                     child: Text(
                       'CONFIRM',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -182,12 +229,16 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
         'date': DateFormat('yyyy-MM-dd').format(_selectedDate!),
         'time': _selectedTime!.format(context),
         // Web parity: user details come from the logged-in account.
-        'name':
-            authUser?['fullName']?.toString() ??
-            authUser?['username']?.toString() ??
-            'App User',
-        'phone': authUser?['phone']?.toString() ?? '',
+        'name': _nameController.text.trim().isNotEmpty
+            ? _nameController.text.trim()
+            : (authUser?['fullName']?.toString() ??
+                  authUser?['username']?.toString() ??
+                  'App User'),
+        'phone': _phoneController.text.trim().isNotEmpty
+            ? _phoneController.text.trim()
+            : (authUser?['phone']?.toString() ?? ''),
         'email': authUser?['email']?.toString() ?? '',
+        if (_employeeId != null) 'employeeId': _employeeId,
         'notes': _notesController.text.trim(),
         'visitType': _visitType,
       });
@@ -216,11 +267,14 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _prefillFromAccount();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_isSuccess) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
+        backgroundColor: isDark
+            ? const Color(0xFF141B3A)
+            : const Color(0xFFD4CFBC),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(40),
@@ -231,12 +285,14 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Icon(
                     LucideIcons.checkCircle2,
-                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    color: isDark
+                        ? const Color(0xFF0C312B)
+                        : const Color(0xFFF4EFE3),
                     size: 50,
                   ),
                 ),
@@ -255,7 +311,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                    color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     height: 1.8,
@@ -268,12 +324,13 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                     width: double.infinity,
                     height: 64,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: (isDark ? Colors.white : Color(0xFF163A2C))
-                              .withOpacity(0.1),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -283,7 +340,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                       child: Text(
                         'BACK TO PROJECT',
                         style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          color: isDark
+                              ? const Color(0xFF0C312B)
+                              : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w700,
                           fontSize: 10,
                           letterSpacing: 2,
@@ -300,7 +359,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
+      backgroundColor: isDark
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFD4CFBC),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -315,7 +376,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
         leading: IconButton(
           icon: Icon(
             LucideIcons.chevronLeft,
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -323,18 +384,19 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'SCHEDULE VISIT',
-              style: GoogleFonts.ebGaramond(
+              'SITE VISIT',
+              style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : const Color(0xFF155A4F),
               ),
             ),
             Text(
-              'PREMIUM PROTOCOL',
-              style: GoogleFonts.ebGaramond(
+              'PROTOCOL VERIFICATION',
+              style: GoogleFonts.inter(
                 fontSize: 8,
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.68),
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1,
               ),
@@ -352,12 +414,12 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
               decoration: BoxDecoration(
                 // Web parity: bg-primary/5 + border-primary/10 + shadow-sm —
                 // a light tinted card with a soft shadow (not a solid black box).
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.04),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.04),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                    0.08,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withOpacity(0.08),
                 ),
                 boxShadow: isDark
                     ? null
@@ -375,12 +437,14 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       LucideIcons.info,
-                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      color: isDark
+                          ? const Color(0xFF0C312B)
+                          : const Color(0xFFF4EFE3),
                       size: 20,
                     ),
                   ),
@@ -388,10 +452,10 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   Expanded(
                     child: Text(
                       'NOTE: OUR RELATIONSHIP MANAGER WILL CONTACT YOU WITHIN 2 HOURS TO CONFIRM YOUR SCHEDULE.',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 9,
                         fontWeight: FontWeight.w600,
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.7),
                         letterSpacing: 0.5,
                         height: 1.5,
@@ -402,9 +466,24 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
               ),
             ),
             const SizedBox(height: 40),
-            // Web parity: no Name/Phone/Email fields — details come from the
-            // logged-in user; the form starts at Select Property.
-            _buildFieldLabel('SELECT PROPERTY'),
+            // Web parity: the booking form asks for the visitor's name and
+            // number. Both are pre-filled from the signed-in account so a
+            // logged-in user does not retype them, and stay editable.
+            _buildFieldLabel('FULL NAME'),
+            _buildTextField(
+              _nameController,
+              LucideIcons.user,
+              'Enter Full Name',
+            ),
+            const SizedBox(height: 24),
+            _buildFieldLabel('PHONE NUMBER'),
+            _buildTextField(
+              _phoneController,
+              LucideIcons.phone,
+              'Enter Mobile Number',
+            ),
+            const SizedBox(height: 24),
+            _buildFieldLabel('SELECT PROJECT'),
             Consumer(
               builder: (context, ref, child) {
                 final projectsAsync = ref.watch(projectsProvider);
@@ -432,7 +511,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                           isExpanded: true,
                           icon: Icon(
                             LucideIcons.chevronDown,
-                            color: isDark ? Colors.white24 : Colors.black26,
+                            color: isDark
+                                ? Colors.white24
+                                : const Color(0x420C312B),
                             size: 18,
                           ),
                           dropdownColor: isDark
@@ -445,10 +526,12 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                                 (p['title'] ?? 'PROJECT')
                                     .toString()
                                     .toUpperCase(),
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                                  color: isDark
+                                      ? Colors.white
+                                      : const Color(0xFF155A4F),
                                 ),
                               ),
                             );
@@ -463,15 +546,17 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                       const Center(child: CupertinoActivityIndicator()),
                   error: (e, s) => Text(
                     'Error loading projects',
-                    style: GoogleFonts.ebGaramond(
-                      fontSize: 10,
-                      color: Colors.red,
-                    ),
+                    style: GoogleFonts.inter(fontSize: 10, color: Colors.red),
                   ),
                 );
               },
             ),
             const SizedBox(height: 40),
+            if (_isCp) ...[
+              _buildFieldLabel('HANDLED BY (EMPLOYEE)'),
+              _buildEmployeeField(),
+              const SizedBox(height: 24),
+            ],
             _buildFieldLabel('SCHEDULE'),
             GestureDetector(
               onTap: _selectDateTime,
@@ -495,7 +580,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   children: [
                     Icon(
                       LucideIcons.calendar,
-                      color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                      color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                       size: 18,
                     ),
                     const SizedBox(width: 16),
@@ -503,18 +588,20 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                       _selectedDate == null
                           ? 'SELECT DATE & TIME'
                           : '${DateFormat('dd MMM yyyy').format(_selectedDate!)} @ ${_selectedTime!.format(context)}',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: _selectedDate == null
-                            ? (isDark ? Colors.white24 : Colors.black26)
-                            : (isDark ? Colors.white : Color(0xFF163A2C)),
+                            ? (isDark
+                                  ? Colors.white24
+                                  : const Color(0x420C312B))
+                            : (isDark ? Colors.white : const Color(0xFF0C312B)),
                       ),
                     ),
                     const Spacer(),
                     Icon(
                       LucideIcons.chevronRight,
-                      color: isDark ? Colors.white24 : Colors.black26,
+                      color: isDark ? Colors.white24 : const Color(0x420C312B),
                       size: 16,
                     ),
                   ],
@@ -526,7 +613,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
             _buildTextField(
               _notesController,
               LucideIcons.messageSquare,
-              'SPECIFIC REQUIREMENTS...',
+              'Enter Specific Requirements',
               maxLines: 4,
             ),
             const SizedBox(height: 56),
@@ -536,13 +623,12 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                 width: double.infinity,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                        0.1,
-                      ),
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.1),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -554,7 +640,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
-                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            color: isDark
+                                ? Colors.black
+                                : const Color(0xFFF4EFE3),
                             strokeWidth: 2,
                           ),
                         )
@@ -564,7 +652,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                             Text(
                               'SECURE BOOKING',
                               style: GoogleFonts.gelasio(
-                                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                color: isDark
+                                    ? const Color(0xFF0C312B)
+                                    : const Color(0xFFF4EFE3),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 10,
                                 letterSpacing: 2,
@@ -573,7 +663,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                             const SizedBox(width: 12),
                             Icon(
                               LucideIcons.send,
-                              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                              color: isDark
+                                  ? const Color(0xFF0C312B)
+                                  : const Color(0xFFF4EFE3),
                               size: 16,
                             ),
                           ],
@@ -585,16 +677,78 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
             Center(
               child: Text(
                 '* PICK-UP AND DROP FACILITY INCLUDED FOR PREMIUM TIER MEMBERS.',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 8,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white24 : Colors.black26,
+                  color: isDark ? Colors.white24 : const Color(0x420C312B),
                   letterSpacing: 0.5,
                 ),
               ),
             ),
             const SizedBox(height: 48),
           ],
+        ),
+      ),
+    );
+  }
+
+  /// CP-only handler picker. Same cream field treatment as the other inputs.
+  Widget _buildEmployeeField() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final selected = _employees.firstWhere(
+      (e) => e["_id"]?.toString() == _employeeId,
+      orElse: () => <String, dynamic>{},
+    );
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withOpacity(0.03)
+            : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withOpacity(0.05)
+              : const Color(0xFFD4CFBC),
+        ),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _employeeId,
+          isExpanded: true,
+          dropdownColor: isDark
+              ? const Color(0xFF141B3A)
+              : const Color(0xFFF4EFE3),
+          borderRadius: BorderRadius.circular(8),
+          icon: Icon(
+            LucideIcons.chevronDown,
+            size: 18,
+            color: isDark ? Colors.white70 : const Color(0xFF0C312B),
+          ),
+          hint: Text(
+            "SELECT EMPLOYEE",
+            style: GoogleFonts.inter(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: isDark
+                  ? Colors.white70
+                  : const Color(0xFF0C312B).withValues(alpha: 0.6),
+            ),
+          ),
+          items: _employees.map((e) {
+            return DropdownMenuItem<String>(
+              value: e["_id"]?.toString(),
+              child: Text(
+                (e["name"] ?? "").toString().toUpperCase(),
+                style: GoogleFonts.inter(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: (v) => setState(() => _employeeId = v),
         ),
       ),
     );
@@ -609,7 +763,9 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
         style: GoogleFonts.gelasio(
           fontSize: 9,
           fontWeight: FontWeight.w700,
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.75),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.75,
+          ),
           letterSpacing: 1.5,
         ),
       ),
@@ -628,21 +784,21 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withOpacity(0.03)
-            : Colors.black.withOpacity(0.04),
-        borderRadius: BorderRadius.circular(16),
+            : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isDark
               ? Colors.white.withOpacity(0.05)
-              : Colors.black.withOpacity(0.05),
+              : const Color(0xFFD4CFBC),
         ),
       ),
       child: TextField(
         controller: controller,
         maxLines: maxLines,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w500,
-          color: isDark ? Colors.white : Color(0xFF163A2C),
+          color: isDark ? Colors.white : const Color(0xFF0C312B),
         ),
         decoration: InputDecoration(
           filled: false,
@@ -650,17 +806,17 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
           hintText: hint,
-          hintStyle: GoogleFonts.ebGaramond(
-            fontSize: 12,
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
+          hintStyle: GoogleFonts.inter(
+            fontSize: 11,
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.68),
             fontWeight: FontWeight.bold,
           ),
           icon: maxLines == 1
               ? Icon(
                   icon,
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                    0.4,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withOpacity(0.4),
                   size: 18,
                 )
               : null,

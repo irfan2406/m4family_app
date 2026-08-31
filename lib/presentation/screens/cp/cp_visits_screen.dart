@@ -351,7 +351,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             const SizedBox(width: 8),
             Text(
               'PERFORMANCE TRACKER',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
                 letterSpacing: 1.2,
@@ -412,7 +412,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             ),
             child: Text(
               label,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 9,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
@@ -470,7 +470,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'SYNCHRONIZING RECORDS...',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
@@ -525,13 +525,13 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             ),
             child: TextField(
               onChanged: (v) => setState(() => _searchQuery = v),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
               decoration: InputDecoration(
-                hintText: 'SEARCH CLIENT OR PROJECT...',
-                hintStyle: GoogleFonts.ebGaramond(
+                hintText: 'Search Visits',
+                hintStyle: GoogleFonts.inter(
                   fontSize: 9,
                   fontWeight: FontWeight.w500,
                   color: scheme.onSurface.withValues(alpha: 0.62),
@@ -577,7 +577,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 size: 16,
                 color: scheme.onSurfaceVariant,
               ),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 9,
                 fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
@@ -660,7 +660,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   children: [
                     Text(
                       dateStr,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
@@ -670,7 +670,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     const SizedBox(height: 2),
                     Text(
                       'VISIT ID: $shortId',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 8,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.8,
@@ -703,7 +703,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                               .toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
@@ -714,7 +714,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                           phone ?? email ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             color: scheme.onSurfaceVariant.withValues(
@@ -736,7 +736,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.right,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
@@ -768,7 +768,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                           _projectTitle(v).toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
@@ -787,7 +787,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   child: Text(
                     (v['configuration'] ?? 'N/A').toString().toUpperCase(),
                     textAlign: TextAlign.right,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: scheme.onSurface,
@@ -844,7 +844,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   ),
                   child: Text(
                     'VIEW BOOKING',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
@@ -873,7 +873,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 7,
             fontWeight: FontWeight.w600,
             letterSpacing: 1,
@@ -949,7 +949,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     if (status == 'INTERESTED') {
       return Text(
         'AWAITING ADMIN CLOSURE',
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 7,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.8,
@@ -966,7 +966,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           value: 'INTERESTED',
           child: Text(
             'Interested',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: Colors.amber.shade800,
@@ -977,7 +977,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           value: 'NOT_INTERESTED',
           child: Text(
             'Not Interested',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: Colors.red,
@@ -999,7 +999,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           children: [
             Text(
               'UPDATE STATUS',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 9,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1,
@@ -1038,7 +1038,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           Text(
             'NO RECORDS FOUND MATCHING YOUR SEARCH',
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: scheme.onSurfaceVariant.withValues(alpha: 0.68),
@@ -1069,7 +1069,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           const SizedBox(width: 12),
           Text(
             'PAGE $_page / $_totalPages',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
@@ -1099,11 +1099,11 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     String label;
     switch (status) {
       case 'NEW':
-        base = const Color(0xFFC5A35B); // blue
+        base = const Color(0xFF0C312B); // blue
         label = 'NEW VISIT';
         break;
       case 'INTERESTED':
-        base = const Color(0xFFC5A35B); // amber
+        base = const Color(0xFF0C312B); // amber
         label = 'INTERESTED';
         break;
       case 'NOT_INTERESTED':
@@ -1128,7 +1128,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       ),
       child: Text(
         label,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 7,
           fontWeight: FontWeight.w600,
           color: fg,
@@ -1166,7 +1166,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 children: [
                   Text(
                     'PAYMENT TRACKER',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
@@ -1175,7 +1175,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   ),
                   Text(
                     'SETTLEMENT & COMMISSION STATUS',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 7,
                       fontWeight: FontWeight.w500,
                       color: scheme.onSurfaceVariant.withValues(alpha: 0.6),
@@ -1200,7 +1200,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 ),
                 child: Text(
                   '${_bookings.length} TOTAL',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 8,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.8,
@@ -1224,7 +1224,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'LOADING FINANCIAL LOGS...',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
@@ -1267,7 +1267,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'ZERO FINANCIAL LOGS DETECTED',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 9,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.2,
@@ -1348,7 +1348,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     Center(
                       child: Text(
                         '$progress%',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           fontStyle: FontStyle.italic,
@@ -1371,7 +1371,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                             projectTitle.toUpperCase(),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: scheme.onSurface,
@@ -1389,7 +1389,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     const SizedBox(height: 2),
                     Text(
                       'Client: ${clientName.toString().toUpperCase()}',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 9,
                         fontWeight: FontWeight.w700,
                         color: scheme.onSurfaceVariant,
@@ -1413,7 +1413,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                       ),
                       child: Text(
                         sanctioned ? 'SANCTIONED' : 'PENDING SANCTION',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 7,
                           fontWeight: FontWeight.w600,
                           color: sanctioned
@@ -1489,7 +1489,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     child: Text(
                       '100% Payment achieved. Notify admin for commission settlement.'
                           .toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 7,
                         fontWeight: FontWeight.w600,
                         color: Colors.amber.shade800,

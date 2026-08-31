@@ -20,6 +20,9 @@ class M4Theme {
   static const Color goldDeep = Color(0xFFA8863F);
 
   /// Warm cream used for text / surfaces on the green theme.
+  /// "Living the" in the wordmark — sampled from the web (#65AEA0).
+  static const Color taglineAccent = Color(0xFF65AEA0);
+
   static const Color cream = Color(0xFFF4EFE3);
   static const Color creamMuted = Color(0xFFFBF7EF);
 
@@ -34,14 +37,25 @@ class M4Theme {
   // ===================================================================
   // LIGHT (:root) — CREAM
   // ===================================================================
-  static const Color lightBackground = Color(0xFFF3EDE0); // Figma cream page
-  static const Color lightForeground = Color(0xFF15271E); // dark green-black
-  static const Color lightCard = Color(0xFFF4EFE3); // warm cream card (never white)
+  static const Color lightBackground = Color(
+    0xFFD4CFBC,
+  ); // Figma cream page #D4CFBC
+  static const Color lightForeground = Color(0xFF0C312B); // Figma green ink
+
+  /// Figma typography colours (M4 Web reference). Headings sit at [figmaHeading]
+  /// and body copy at [figmaBody] on the light / cream surfaces. Dark and green
+  /// "showcase" surfaces keep their own cream / white text — those are correct
+  /// by design and #155A4F would be unreadable on them.
+  static const Color figmaHeading = Color(0xFF0C312B);
+  static const Color figmaBody = Color(0xFF155A4F);
+  static const Color lightCard = Color(
+    0xFFF4EFE3,
+  ); // warm cream card (never white)
   static const Color lightPrimary = Color(0xFF15271E); // dark green fill
   static const Color lightPrimaryFg = Color(0xFFF6F1E7); // cream on dark fill
   static const Color lightSecondary = Color(0xFFEAE1D0); // cream secondary
   static const Color lightMuted = Color(0xFFEAE1D0);
-  static const Color lightMutedFg = Color(0xFF5E6B60); // muted green-gray
+  static const Color lightMutedFg = Color(0xFF155A4F); // muted green-gray
   static const Color lightAccent = Color(0xFFEDE5D6);
   static const Color lightDestructive = coral;
   static const Color lightBorder = Color(0xFFD4CFBC); // Figma: 1px input border
@@ -98,7 +112,7 @@ class M4Theme {
     Color? color,
     double? letterSpacing,
     double? height,
-  }) => GoogleFonts.ebGaramond(
+  }) => GoogleFonts.inter(
     fontSize: fontSize,
     fontWeight: fontWeight,
     color: color,
@@ -110,10 +124,26 @@ class M4Theme {
   /// any exported transparency-checker / noise baked into it) saturates to a
   /// clean, uniform black, and the wordmark becomes pure white.
   static const ColorFilter _taglineCrush = ColorFilter.matrix(<double>[
-    -6, 0, 0, 0, 255,
-    0, -6, 0, 0, 255,
-    0, 0, -6, 0, 255,
-    0, 0, 0, 1, 0,
+    -6,
+    0,
+    0,
+    0,
+    255,
+    0,
+    -6,
+    0,
+    0,
+    255,
+    0,
+    0,
+    -6,
+    0,
+    255,
+    0,
+    0,
+    0,
+    1,
+    0,
   ]);
 
   /// The "Living the M4 Life" wordmark, recoloured to blend with the CURRENT
@@ -150,7 +180,9 @@ class M4Theme {
                     fontSize: 26,
                     height: 1.15,
                     fontWeight: FontWeight.w400,
-                    color: fg.withValues(alpha: 0.78),
+                    // Web colour, not a tint of the foreground — every portal
+                    // renders this on the green showcase surface.
+                    color: taglineAccent,
                   ),
                 ),
                 TextSpan(
@@ -196,7 +228,8 @@ class M4Theme {
     ),
     checkboxTheme: CheckboxThemeData(
       fillColor: WidgetStateProperty.resolveWith(
-        (s) => s.contains(WidgetState.selected) ? forestGreen : Colors.transparent,
+        (s) =>
+            s.contains(WidgetState.selected) ? forestGreen : Colors.transparent,
       ),
       checkColor: const WidgetStatePropertyAll(cream),
       side: const BorderSide(color: forestGreen, width: 1.5),
@@ -211,7 +244,9 @@ class M4Theme {
       thumbColor: forestGreen,
       inactiveTrackColor: Color(0x33163A2C),
     ),
-    progressIndicatorTheme: const ProgressIndicatorThemeData(color: forestGreen),
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: forestGreen,
+    ),
     colorScheme:
         const ColorScheme.light(
           primary: lightPrimary,
@@ -235,31 +270,39 @@ class M4Theme {
           surfaceContainerHighest: lightMuted,
           onSurfaceVariant: lightMutedFg,
         ),
-    textTheme: GoogleFonts.ebGaramondTextTheme().copyWith(
+    textTheme: GoogleFonts.interTextTheme().copyWith(
       displayLarge: GoogleFonts.gelasio(
         fontSize: 32,
         fontWeight: FontWeight.bold,
-        color: lightForeground,
+        color: figmaHeading,
         letterSpacing: -0.5,
       ),
       displayMedium: GoogleFonts.gelasio(
         fontSize: 28,
         fontWeight: FontWeight.bold,
-        color: lightForeground,
+        color: figmaHeading,
         letterSpacing: -0.5,
       ),
       headlineMedium: GoogleFonts.gelasio(
         fontSize: 24,
         fontWeight: FontWeight.w600,
-        color: lightForeground,
+        color: figmaHeading,
       ),
       titleLarge: GoogleFonts.gelasio(
         fontSize: 20,
         fontWeight: FontWeight.w600,
-        color: lightForeground,
+        color: figmaHeading,
       ),
-      bodyLarge: GoogleFonts.ebGaramond(fontSize: 17, color: lightForeground),
-      bodyMedium: GoogleFonts.ebGaramond(fontSize: 15, color: lightMutedFg),
+      bodyLarge: GoogleFonts.inter(
+        fontSize: 17,
+        color: figmaBody,
+        height: 1.42,
+      ),
+      bodyMedium: GoogleFonts.inter(
+        fontSize: 15,
+        color: figmaBody,
+        height: 1.42,
+      ),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -333,10 +376,7 @@ class M4Theme {
         fontWeight: FontWeight.w700,
         color: lightForeground,
       ),
-      contentTextStyle: GoogleFonts.ebGaramond(
-        fontSize: 15,
-        color: lightMutedFg,
-      ),
+      contentTextStyle: GoogleFonts.inter(fontSize: 15, color: lightMutedFg),
     ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: lightCard,
@@ -347,10 +387,7 @@ class M4Theme {
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: lightForeground,
-      contentTextStyle: GoogleFonts.ebGaramond(
-        color: lightPrimaryFg,
-        fontSize: 14,
-      ),
+      contentTextStyle: GoogleFonts.inter(color: lightPrimaryFg, fontSize: 14),
       actionTextColor: goldSoft,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -367,7 +404,7 @@ class M4Theme {
         borderRadius: BorderRadius.circular(16),
         side: const BorderSide(color: lightBorder),
       ),
-      textStyle: GoogleFonts.ebGaramond(
+      textStyle: GoogleFonts.inter(
         fontSize: 14,
         fontWeight: FontWeight.w500,
         color: lightForeground,
@@ -403,18 +440,18 @@ class M4Theme {
         color: lightForeground,
         borderRadius: BorderRadius.circular(8),
       ),
-      textStyle: GoogleFonts.ebGaramond(color: lightPrimaryFg, fontSize: 12),
+      textStyle: GoogleFonts.inter(color: lightPrimaryFg, fontSize: 12),
     ),
     tabBarTheme: TabBarThemeData(
       labelColor: lightForeground,
       unselectedLabelColor: lightMutedFg,
       indicatorColor: gold,
       dividerColor: Colors.transparent,
-      labelStyle: GoogleFonts.ebGaramond(
+      labelStyle: GoogleFonts.inter(
         fontWeight: FontWeight.w800,
         letterSpacing: 0.5,
       ),
-      unselectedLabelStyle: GoogleFonts.ebGaramond(
+      unselectedLabelStyle: GoogleFonts.inter(
         fontWeight: FontWeight.w600,
         letterSpacing: 0.5,
       ),
@@ -436,9 +473,8 @@ class M4Theme {
         (s) => s.contains(WidgetState.selected) ? cream : Colors.white54,
       ),
       trackColor: WidgetStateProperty.resolveWith(
-        (s) => s.contains(WidgetState.selected)
-            ? gold
-            : const Color(0x33FFFFFF),
+        (s) =>
+            s.contains(WidgetState.selected) ? gold : const Color(0x33FFFFFF),
       ),
     ),
     checkboxTheme: CheckboxThemeData(
@@ -482,33 +518,32 @@ class M4Theme {
           surfaceContainerHighest: darkMuted,
           onSurfaceVariant: darkMutedFg,
         ),
-    textTheme: GoogleFonts.ebGaramondTextTheme(ThemeData.dark().textTheme)
-        .copyWith(
-          displayLarge: GoogleFonts.gelasio(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: darkForeground,
-            letterSpacing: -0.5,
-          ),
-          displayMedium: GoogleFonts.gelasio(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: darkForeground,
-            letterSpacing: -0.5,
-          ),
-          headlineMedium: GoogleFonts.gelasio(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            color: darkForeground,
-          ),
-          titleLarge: GoogleFonts.gelasio(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: darkForeground,
-          ),
-          bodyLarge: GoogleFonts.ebGaramond(fontSize: 17, color: darkForeground),
-          bodyMedium: GoogleFonts.ebGaramond(fontSize: 15, color: darkMutedFg),
-        ),
+    textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).copyWith(
+      displayLarge: GoogleFonts.gelasio(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: darkForeground,
+        letterSpacing: -0.5,
+      ),
+      displayMedium: GoogleFonts.gelasio(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        color: darkForeground,
+        letterSpacing: -0.5,
+      ),
+      headlineMedium: GoogleFonts.gelasio(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: darkForeground,
+      ),
+      titleLarge: GoogleFonts.gelasio(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: darkForeground,
+      ),
+      bodyLarge: GoogleFonts.inter(fontSize: 17, color: darkForeground),
+      bodyMedium: GoogleFonts.inter(fontSize: 15, color: darkMutedFg),
+    ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -581,10 +616,7 @@ class M4Theme {
         fontWeight: FontWeight.w700,
         color: darkForeground,
       ),
-      contentTextStyle: GoogleFonts.ebGaramond(
-        fontSize: 15,
-        color: darkMutedFg,
-      ),
+      contentTextStyle: GoogleFonts.inter(fontSize: 15, color: darkMutedFg),
     ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: darkCard,
@@ -595,10 +627,7 @@ class M4Theme {
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: darkCard,
-      contentTextStyle: GoogleFonts.ebGaramond(
-        color: darkForeground,
-        fontSize: 14,
-      ),
+      contentTextStyle: GoogleFonts.inter(color: darkForeground, fontSize: 14),
       actionTextColor: gold,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -606,87 +635,10 @@ class M4Theme {
     dividerTheme: const DividerThemeData(color: darkBorder, thickness: 1),
   );
 
-  // ===================================================================
-  // DARK MODE — NAVY (screenshot parity)
-  // ===================================================================
-  /// The app's DARK theme is a deep navy blue (matches the reference
-  /// screenshot). LIGHT mode is unaffected: the guest "showcase" screens
-  /// (Home/Properties/Drawer) keep using the green `darkTheme` in LIGHT mode,
-  /// while the app's actual dark mode uses THIS navy theme for every section.
-  static const Color navyBackground = Color(0xFF0B1026); // deep navy
-  static const Color navyCard = Color(0xFF141B3A); // lifted navy surface
-  static const Color navyMuted = Color(0xFF1C2547);
-  static const Color navyBorder = Color(0xFF2C3866);
-
-  static final ThemeData darkThemeNavy = darkTheme.copyWith(
-    scaffoldBackgroundColor: navyBackground,
-    canvasColor: navyBackground,
-    colorScheme: darkTheme.colorScheme.copyWith(
-      surface: navyCard,
-      // ignore: deprecated_member_use
-      background: navyBackground,
-      outline: navyBorder,
-      outlineVariant: navyBorder,
-      surfaceContainerHighest: navyMuted,
-    ),
-    cardTheme: darkTheme.cardTheme.copyWith(
-      color: navyCard,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-        side: const BorderSide(color: navyBorder),
-      ),
-    ),
-    inputDecorationTheme: darkTheme.inputDecorationTheme.copyWith(
-      fillColor: navyCard,
-    ),
-    dialogTheme: darkTheme.dialogTheme.copyWith(backgroundColor: navyCard),
-    bottomSheetTheme: darkTheme.bottomSheetTheme.copyWith(
-      backgroundColor: navyCard,
-    ),
-    dividerTheme: const DividerThemeData(color: navyBorder, thickness: 1),
-    // Navy overlays so popup menus, dropdowns, menus and tabs match the dark
-    // navy surfaces (mirrors the light theme's centralised overlay styling).
-    popupMenuTheme: PopupMenuThemeData(
-      color: navyCard,
-      surfaceTintColor: Colors.transparent,
-      elevation: 8,
-      shadowColor: Colors.black.withOpacity(0.5),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: navyBorder),
-      ),
-      textStyle: GoogleFonts.ebGaramond(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: cream,
-      ),
-    ),
-    menuTheme: MenuThemeData(
-      style: MenuStyle(
-        backgroundColor: const WidgetStatePropertyAll(navyCard),
-        surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
-        elevation: const WidgetStatePropertyAll(8),
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: navyBorder),
-          ),
-        ),
-      ),
-    ),
-    dropdownMenuTheme: DropdownMenuThemeData(
-      menuStyle: MenuStyle(
-        backgroundColor: const WidgetStatePropertyAll(navyCard),
-        surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: navyBorder),
-          ),
-        ),
-      ),
-    ),
-  );
+  /// Kept as a palette colour only: the navigation pill uses it for the active
+  /// glyph on the green showcase surfaces. The navy DARK theme it belonged to
+  /// was removed when dark mode was dropped — the app is light-only.
+  static const Color navyBackground = Color(0xFF0B1026);
 }
 
 // Glassmorphism helper

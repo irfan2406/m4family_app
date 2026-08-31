@@ -79,7 +79,9 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C);
+    final textPrimary = isDark
+        ? const Color(0xFFF4EFE3)
+        : const Color(0xFF0C312B);
     final muted = textPrimary.withValues(alpha: 0.5);
 
     if (_loading) {
@@ -298,9 +300,8 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     final card = isDark
         ? const Color(0xFFF4EFE3).withValues(alpha: 0.03)
         : const Color(0xFFEDE5D6);
-    final border = (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
-      alpha: isDark ? 0.08 : 0.06,
-    );
+    final border = (isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0C312B))
+        .withValues(alpha: isDark ? 0.08 : 0.06);
     // Web parity: initials on a lime accent square (no photo/gold border).
     final initials = _initials(name);
     final Widget avatarChild = Center(
@@ -309,7 +310,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
         style: GoogleFonts.gelasio(
           fontSize: 28,
           fontWeight: FontWeight.w700,
-          color: Colors.black,
+          color: const Color(0xFF0C312B),
         ),
       ),
     );
@@ -340,7 +341,9 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
-                    color: const Color(0xFFF4EFE3),  // lighter cream tile on the deeper cream card
+                    color: const Color(
+                      0xFFF4EFE3,
+                    ), // lighter cream tile on the deeper cream card
                   ),
                   child: hasPhoto
                       ? CachedNetworkImage(
@@ -360,7 +363,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                         name.toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                           color: textPrimary,
@@ -372,7 +375,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                         email,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           color: muted,
@@ -381,7 +384,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                       const SizedBox(height: 4),
                       Text(
                         phone,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: textPrimary,
@@ -408,7 +411,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                                 address.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
                                   color: bg,
@@ -427,7 +430,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                             const SizedBox(width: 6),
                             Text(
                               'BORN: $born',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
                                 color: textPrimary.withValues(alpha: 0.7),
@@ -499,9 +502,8 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    final border = (isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C)).withValues(
-      alpha: isDark ? 0.08 : 0.06,
-    );
+    final border = (isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0C312B))
+        .withValues(alpha: isDark ? 0.08 : 0.06);
     return Material(
       color: textPrimary.withValues(alpha: 0.03),
       borderRadius: BorderRadius.circular(24),
@@ -537,7 +539,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                       title.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         color: textPrimary,
@@ -546,7 +548,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                     const SizedBox(height: 2),
                     Text(
                       subtitle.toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
                         color: muted,
@@ -574,7 +576,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
             builder: (ctx) => AlertDialog(
               title: Text(
                 'Log out',
-                style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w700),
+                style: GoogleFonts.inter(fontWeight: FontWeight.w700),
               ),
               content: const Text('Sign out of your investor account?'),
               actions: [

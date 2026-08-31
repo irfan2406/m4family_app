@@ -92,7 +92,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
   @override
   Widget build(BuildContext context) {
     final currentStep = ref.watch(customViewsStepProvider);
-    final isSubmitted = false;
+    const isSubmitted = false;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -176,7 +176,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                 child: Column(
                   children: [
                     // Banner Section (always visible, exactly as Web CP)
-                    Container(
+                    SizedBox(
                       height: 200,
                       width: double.infinity,
                       child: Stack(
@@ -233,7 +233,9 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                               Theme.of(context).brightness ==
                                                   Brightness.light
                                               ? Colors.white.withOpacity(0.5)
-                                              : Colors.black.withOpacity(0.5),
+                                              : const Color(
+                                                  0xFF0C312B,
+                                                ).withOpacity(0.5),
                                           offset: const Offset(0, 1),
                                           blurRadius: 4,
                                         ),
@@ -254,7 +256,9 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                               Theme.of(context).brightness ==
                                                   Brightness.light
                                               ? Colors.white.withOpacity(0.5)
-                                              : Colors.black.withOpacity(0.5),
+                                              : const Color(
+                                                  0xFF0C312B,
+                                                ).withOpacity(0.5),
                                           offset: const Offset(0, 1),
                                           blurRadius: 4,
                                         ),
@@ -295,7 +299,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                           const SizedBox(height: 16),
                           Text(
                             'Your home is a reflection of your soul. Experience total creative freedom in our Personalisation Suite. From master suites to bespoke kitchens, curate every detail of your future residence with real-time visualisation and elite material selections.',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 14,
                               height: 1.7,
                               fontWeight: FontWeight.w500,
@@ -311,8 +315,8 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                     const SizedBox(height: 24),
 
                     // Journey Steps Track (4 steps with icons, exactly as Web CP)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -646,7 +650,7 @@ class _StepIconIndicator extends ConsumerWidget {
             Text(
               isAllotted ? 'ALLOTTED' : title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 9,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.8,
@@ -686,7 +690,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
         const SizedBox(height: 12),
         Text(
           'Select your project and unit\nconfiguration',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 12,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
             height: 1.5,
@@ -704,7 +708,11 @@ class _ProjectSelectionStep extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                Icon(LucideIcons.checkCircle2, color: Colors.green, size: 20),
+                const Icon(
+                  LucideIcons.checkCircle2,
+                  color: Colors.green,
+                  size: 20,
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -712,7 +720,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
                     children: [
                       Text(
                         'UNIT ALLOTTED',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           color: Colors.green,
@@ -722,7 +730,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
                       const SizedBox(height: 4),
                       Text(
                         'Your project and unit configuration are locked for this booking.',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           color: scheme.onSurface.withOpacity(0.68),
                         ),
@@ -798,7 +806,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
                         children: [
                           Text(
                             p['title']?.toUpperCase() ?? 'PROJECT',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: isSelected
@@ -877,21 +885,19 @@ class _ProjectSelectionStep extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? Theme.of(context).colorScheme.onBackground
-                      : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                          0.04,
-                        ),
+                      : (isDark ? Colors.white : const Color(0xFF0C312B))
+                            .withOpacity(0.04),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
                         ? Theme.of(context).colorScheme.onBackground
-                        : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                            0.1,
-                          ),
+                        : (isDark ? Colors.white : const Color(0xFF0C312B))
+                              .withOpacity(0.1),
                   ),
                 ),
                 child: Text(
                   unit,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1,
@@ -915,13 +921,13 @@ class _ProjectSelectionStep extends ConsumerWidget {
               top: BorderSide(color: scheme.onSurface.withValues(alpha: 0.08)),
             ),
           ),
-          child: Row(
+          child: const Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Expanded(
                 child: _UnitDetailField(
                   label: 'UNIT NUMBER',
-                  hint: 'e.g. 101',
+                  hint: 'Enter Unit Number',
                   field: _UnitField.number,
                 ),
               ),
@@ -929,7 +935,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
               Expanded(
                 child: _UnitDetailField(
                   label: 'BLOCK / TOWER',
-                  hint: 'e.g. A',
+                  hint: 'Enter Block or Tower',
                   field: _UnitField.block,
                 ),
               ),
@@ -937,7 +943,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
               Expanded(
                 child: _UnitDetailField(
                   label: 'WING',
-                  hint: 'e.g. B',
+                  hint: 'Enter Wing',
                   field: _UnitField.wing,
                 ),
               ),
@@ -1010,7 +1016,7 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
               child: Text(
                 widget.label,
                 maxLines: 1,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 9,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.2,
@@ -1024,7 +1030,7 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
         Container(
           height: 44,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+            color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
               alpha: 0.03,
             ),
             borderRadius: BorderRadius.circular(12),
@@ -1034,7 +1040,7 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
           child: TextField(
             controller: _controller,
             onChanged: (v) => ref.read(_provider.notifier).state = v,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 15,
               fontWeight: FontWeight.w600,
               color: scheme.onSurface,
@@ -1047,8 +1053,8 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
               hintText: widget.hint,
-              hintStyle: GoogleFonts.ebGaramond(
-                fontSize: 12,
+              hintStyle: GoogleFonts.inter(
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
                 color: scheme.onSurface.withValues(alpha: 0.68),
               ),
@@ -1115,7 +1121,7 @@ class _SpaceSelectionStep extends ConsumerWidget {
         const SizedBox(height: 12),
         Text(
           'Choose the area you want to personalise',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 12,
             color: scheme.onSurface.withOpacity(0.54),
           ),
@@ -1165,9 +1171,8 @@ class _SpaceSelectionStep extends ConsumerWidget {
                     border: Border.all(
                       color: isSelected
                           ? scheme.onSurface
-                          : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                              0.1,
-                            ),
+                          : (isDark ? Colors.white : const Color(0xFF0C312B))
+                                .withOpacity(0.1),
                     ),
                     boxShadow: isSelected
                         ? [
@@ -1186,7 +1191,7 @@ class _SpaceSelectionStep extends ConsumerWidget {
                         child: Text(
                           space.toUpperCase(),
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
@@ -1332,7 +1337,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
         const SizedBox(height: 12),
         Text(
           'Select from our curated collection',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 12,
             color: scheme.onSurface.withOpacity(0.54),
           ),
@@ -1401,7 +1406,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                 children: [
                                   Text(
                                     room.toUpperCase(),
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.inter(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w500,
                                       letterSpacing: 1.2,
@@ -1424,7 +1429,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                     ),
                                     child: Text(
                                       '$selected/$total',
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.inter(
                                         fontSize: 9,
                                         fontWeight: FontWeight.w600,
                                         color: isActive
@@ -1450,7 +1455,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                   child: Center(
                     child: Text(
                       'No materials available for this space.',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 12,
                         color: scheme.onSurface.withOpacity(0.68),
                       ),
@@ -1503,7 +1508,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                 const SizedBox(height: 3),
                                 Text(
                                   'SELECT MATERIALS FOR ${activeSpace.toUpperCase()}',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     fontSize: 8,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 1.2,
@@ -1643,7 +1648,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                     opt['name']?.toUpperCase() ?? '',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.inter(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w500,
                                       letterSpacing: 0.3,
@@ -1669,7 +1674,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                       children: [
                                         Text(
                                           opt['materialCode'] ?? 'M4-STD',
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.inter(
                                             fontSize: 8,
                                             fontWeight: FontWeight.w700,
                                             letterSpacing: 1,
@@ -1680,7 +1685,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                         ),
                                         Text(
                                           opt['materialType'] ?? 'MATTE',
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.inter(
                                             fontSize: 8,
                                             fontWeight: FontWeight.w700,
                                             letterSpacing: 1,
@@ -1720,7 +1725,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                     const SizedBox(height: 8),
                     Text(
                       'Review your choices in the final step',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 11,
                         fontStyle: FontStyle.italic,
                         color: scheme.onSurface.withOpacity(0.68),
@@ -1799,7 +1804,7 @@ class _FinaliseStep extends ConsumerWidget {
         const SizedBox(height: 12),
         Text(
           'Confirm your selections',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 12,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
           ),
@@ -1948,7 +1953,8 @@ class _SummaryRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.09),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.09),
           ),
         ),
       ),
@@ -1958,7 +1964,7 @@ class _SummaryRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.9),
@@ -1970,7 +1976,7 @@ class _SummaryRow extends StatelessWidget {
             children: [
               Text(
                 value.toUpperCase(),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.onSurface,
@@ -1980,7 +1986,7 @@ class _SummaryRow extends StatelessWidget {
               if (subValue != null)
                 Text(
                   subValue!,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 9,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.tertiary,
@@ -2054,7 +2060,7 @@ class _PremiumMaterialsSection extends StatelessWidget {
             separatorBuilder: (context, index) => const SizedBox(width: 16),
             itemBuilder: (context, index) {
               final mat = materials[index];
-              return Container(
+              return SizedBox(
                 width: 120, // Arch shape mimicking web
                 child: Stack(
                   fit: StackFit.expand,
@@ -2072,7 +2078,7 @@ class _PremiumMaterialsSection extends StatelessWidget {
                           child: const Center(
                             child: Icon(
                               LucideIcons.image,
-                              color: Colors.black12,
+                              color: Color(0x1F0C312B),
                             ),
                           ),
                         ),
@@ -2102,7 +2108,7 @@ class _PremiumMaterialsSection extends StatelessWidget {
                           Text(
                             mat['title']!,
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).colorScheme.background,
@@ -2189,7 +2195,7 @@ class _ConsultationSection extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Text(
                   'Leave your details with us and our elite interior design team will be in touch shortly.',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     color: Theme.of(
                       context,
@@ -2200,7 +2206,7 @@ class _ConsultationSection extends ConsumerWidget {
                 const SizedBox(height: 32),
                 _buildField(
                   context,
-                  'FULL NAME',
+                  'Enter Full Name',
                   LucideIcons.user,
                   nameController,
                   keyboardType: TextInputType.name,
@@ -2208,7 +2214,7 @@ class _ConsultationSection extends ConsumerWidget {
                 ),
                 _buildField(
                   context,
-                  'PHONE NUMBER',
+                  'Enter Mobile Number',
                   LucideIcons.phone,
                   phoneController,
                   keyboardType: TextInputType.phone,
@@ -2216,7 +2222,7 @@ class _ConsultationSection extends ConsumerWidget {
                 ),
                 _buildField(
                   context,
-                  'EMAIL (OPTIONAL)',
+                  'Enter Email Address (Optional)',
                   LucideIcons.mail,
                   emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -2266,7 +2272,7 @@ class _ConsultationSection extends ConsumerWidget {
                                 SnackBar(
                                   content: Text(
                                     'Consultation request sent successfully!',
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.inter(
                                       color: Theme.of(
                                         context,
                                       ).colorScheme.background,
@@ -2284,7 +2290,7 @@ class _ConsultationSection extends ConsumerWidget {
                                 SnackBar(
                                   content: Text(
                                     'Failed to submit request. Please try again.',
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.inter(
                                       color: Theme.of(
                                         context,
                                       ).colorScheme.onError,
@@ -2358,13 +2364,13 @@ class _ConsultationSection extends ConsumerWidget {
         controller: controller,
         keyboardType: keyboardType,
         inputFormatters: inputFormatters,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           color: Theme.of(context).colorScheme.onSurface,
           fontSize: 15,
         ),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: GoogleFonts.ebGaramond(
+          labelStyle: GoogleFonts.inter(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
             fontSize: 11,
           ),
@@ -2421,7 +2427,7 @@ class _ConsultationSection extends ConsumerWidget {
           Text(
             'Schedule a private session with our interior consultants at our Experience Centre in South Mumbai.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.54),
               height: 1.5,
@@ -2449,7 +2455,7 @@ class _ConsultationSection extends ConsumerWidget {
                   const SizedBox(width: 8),
                   Text(
                     'BOOK A CONSULTATION',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.surface,

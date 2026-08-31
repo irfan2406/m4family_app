@@ -92,9 +92,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         final user = response.data['data'] ?? response.data;
         state = state.copyWith(status: AuthStatus.authenticated, user: user);
         // Cache the profile so a later network blip cannot cost the session.
-        unawaited(
-          _storage.write(key: 'cached_user', value: jsonEncode(user)),
-        );
+        unawaited(_storage.write(key: 'cached_user', value: jsonEncode(user)));
       }
     } on DioException catch (e) {
       // A 401 means the token really is dead - stay unauthenticated so the

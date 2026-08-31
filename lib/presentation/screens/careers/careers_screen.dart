@@ -91,30 +91,18 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         centerTitle: true,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'CAREERS',
-              style: GoogleFonts.ebGaramond(
-                color: isDark ? Colors.white : Color(0xFF163A2C),
-                fontWeight: FontWeight.w600,
-                fontSize: 17,
-                letterSpacing: 1.5,
-              ),
-            ),
-            Text(
-              'JOIN OUR ARCHITECTURAL LEGACY',
-              style: GoogleFonts.ebGaramond(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
-                fontWeight: FontWeight.w400,
-                fontSize: 8,
-                letterSpacing: 2,
-              ),
-            ),
-          ],
+        title: Text(
+          'CAREERS',
+          style: GoogleFonts.inter(
+            color: isDark ? Colors.white : const Color(0xFF155A4F),
+            fontWeight: FontWeight.w600,
+            fontSize: 17,
+            letterSpacing: 1.5,
+          ),
         ),
-        backgroundColor: isDark ? const Color(0xFF0B1026) : Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: isDark
+            ? const Color(0xFF0B1026)
+            : Theme.of(context).scaffoldBackgroundColor,
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -142,19 +130,17 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                      0.08,
-                    ),
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                        .withOpacity(0.08),
                   ),
                 ),
                 child: Icon(
                   LucideIcons.arrowLeft,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   size: 16,
                 ),
               ),
@@ -163,10 +149,10 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         ),
         actions: [
           Builder(
-            builder: (context) => Center(
+            builder: (context) => const Center(
               child: Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: const SideMenuButton(),
+                padding: EdgeInsets.only(right: 12),
+                child: SideMenuButton(),
               ),
             ),
           ),
@@ -256,7 +242,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         Text(
           displayTitle,
           style: GoogleFonts.gelasio(
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
             fontSize: 34,
             fontWeight: FontWeight.w400,
             letterSpacing: -0.5,
@@ -267,7 +253,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         Text(
           subheading,
           style: GoogleFonts.gelasio(
-            color: isDark ? Colors.white : const Color(0xFF163A2C),
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
             fontSize: 24,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.5,
@@ -277,8 +263,9 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         const SizedBox(height: 10),
         Text(
           displayContent,
-          style: GoogleFonts.ebGaramond(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
+          style: GoogleFonts.inter(
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.6),
             fontSize: 16,
             fontWeight: FontWeight.w400,
             height: 1.6,
@@ -305,22 +292,23 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               decoration: BoxDecoration(
                 color: isActive
-                    ? (isDark ? Colors.white : Color(0xFF163A2C))
+                    ? (isDark ? Colors.white : const Color(0xFF0C312B))
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isActive
                       ? Colors.transparent
-                      : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.1),
+                      : (isDark ? Colors.white : const Color(0xFF0C312B))
+                            .withOpacity(0.1),
                 ),
               ),
               alignment: Alignment.center,
               child: Text(
                 cat,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   color: isActive
-                      ? (isDark ? Colors.black : Colors.white)
-                      : (isDark ? Colors.white60 : Color(0xFF5E6B60)),
+                      ? (isDark ? const Color(0xFF0C312B) : Colors.white)
+                      : (isDark ? Colors.white60 : const Color(0xFF155A4F)),
                   fontSize: 9,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.5,
@@ -353,10 +341,13 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         decoration: BoxDecoration(
           // Lighter, whiter "shadow box": soft white card with a faint border
           // and a subtle drop shadow (matches the reference empty state).
-          color: isDark ? Colors.white.withOpacity(0.03) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withOpacity(0.03)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(48),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.05),
           ),
           boxShadow: isDark
               ? null
@@ -375,14 +366,14 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 // Lighter grey logo disc.
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                  0.035,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.035),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 LucideIcons.briefcase,
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.12),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.12),
                 size: 40,
               ),
             ),
@@ -390,8 +381,9 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             Text(
               'NO ACTIVE VACANCIES CURRENTLY AVAILABLE',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
+              style: GoogleFonts.inter(
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.72),
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 2,
@@ -421,10 +413,13 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
           padding: const EdgeInsets.all(30),
           decoration: BoxDecoration(
             // Web parity: bigger white card (p-8, rounded-[2.5rem]) + shadow.
-            color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
+            color: isDark
+                ? Colors.white.withOpacity(0.04)
+                : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.05),
             ),
             boxShadow: isDark
                 ? null
@@ -445,7 +440,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                     Text(
                       (job['title'] ?? '').toString().toUpperCase(),
                       style: GoogleFonts.gelasio(
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.5,
@@ -461,8 +456,10 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                       children: [
                         Text(
                           (job['department'] ?? '').toString().toUpperCase(),
-                          style: GoogleFonts.ebGaramond(
-                            color: isDark ? Colors.white70 : Color(0xFF163A2C),
+                          style: GoogleFonts.inter(
+                            color: isDark
+                                ? Colors.white70
+                                : const Color(0xFF0C312B),
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 1.5,
@@ -472,8 +469,11 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                           width: 4,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                .withOpacity(0.2),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.2),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -483,12 +483,18 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                .withOpacity(0.03),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.03),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                  .withOpacity(0.1),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withOpacity(0.1),
                             ),
                           ),
                           child: Row(
@@ -496,8 +502,11 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                             children: [
                               Icon(
                                 LucideIcons.mapPin,
-                                color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                    .withOpacity(0.4),
+                                color:
+                                    (isDark
+                                            ? Colors.white
+                                            : const Color(0xFF0C312B))
+                                        .withOpacity(0.4),
                                 size: 12,
                               ),
                               const SizedBox(width: 6),
@@ -505,9 +514,12 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                                 (job['location'] ?? 'MUMBAI')
                                     .toString()
                                     .toUpperCase(),
-                                style: GoogleFonts.ebGaramond(
-                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                      .withOpacity(0.68),
+                                style: GoogleFonts.inter(
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : const Color(0xFF0C312B))
+                                          .withOpacity(0.68),
                                   fontSize: 10,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 1,
@@ -528,16 +540,14 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   // Web parity: light circle (w-12) with a dark chevron (w-6).
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withOpacity(0.05),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   LucideIcons.chevronRight,
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                    0.7,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withOpacity(0.7),
                   size: 24,
                 ),
               ),
@@ -564,10 +574,13 @@ class _HeaderCircleAction extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.1) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withOpacity(0.1)
+              : const Color(0xFFF4EFE3),
           shape: BoxShape.circle,
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.05),
           ),
           boxShadow: [
             BoxShadow(
@@ -579,7 +592,7 @@ class _HeaderCircleAction extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white : Color(0xFF163A2C),
+          color: isDark ? Colors.white : const Color(0xFF0C312B),
           size: 18,
         ),
       ),

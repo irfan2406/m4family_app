@@ -234,7 +234,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             Text(
               'SECURE MULTI-FACTOR AUTHENTICATION',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: Colors.white70,
@@ -247,7 +247,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         _LuxuryInputField(
           controller: _phoneController,
           label: 'WHATSAPP NUMBER (WITH COUNTRY CODE)',
-          hint: '+91 XXXXX XXXXX',
+          hint: 'Enter Mobile Number',
           icon: LucideIcons.phone,
           keyboardType: TextInputType.phone,
           inputFormatters: Validators.phoneFormatters,
@@ -255,7 +255,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         const SizedBox(height: 16),
         Text(
           'A secure one-time access token will be dispatched via WhatsApp for identity validation.',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 10,
             color: Colors.white70,
             height: 1.5,
@@ -285,7 +285,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              foregroundColor: const Color(0xFF0C312B),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -296,7 +296,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
-                      color: Colors.black,
+                      color: Color(0xFF0C312B),
                       strokeWidth: 2,
                     ),
                   )
@@ -305,7 +305,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       Text(
                         'REQUEST TOKEN',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
                           letterSpacing: 1,
@@ -346,7 +346,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(width: 8),
                   Text(
                     'BACK',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: Colors.white70,
                       fontWeight: FontWeight.w700,
                       fontSize: 9,
@@ -374,7 +374,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             Text(
               'WHATSAPP CODE SENT TO ${authState.identifier}',
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: Colors.white70,
@@ -456,9 +456,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 controller: _otpControllers[index],
                 focusNode: _focusNodes[index],
                 textAlign: TextAlign.center,
+                textAlignVertical: TextAlignVertical.center,
                 keyboardType: TextInputType.number,
                 maxLength: 1,
                 cursorColor: Colors.white,
+                cursorWidth: 2,
+                cursorHeight: 28,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -466,6 +469,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 decoration: InputDecoration(
                   counterText: "",
+                  // The global input theme pads every field by 20 horizontally.
+                  // In a 45-wide OTP box that leaves ~5px for the glyph, so the
+                  // digit and caret were squeezed out of sight. These boxes
+                  // centre their own single character instead.
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
@@ -499,7 +508,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              foregroundColor: const Color(0xFF0C312B),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -551,7 +560,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           const SizedBox(height: 4),
           Text(
             'V2.4.0 • ENCRYPTED',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 8,
               color: Colors.white,
               letterSpacing: 1.5,
@@ -594,7 +603,9 @@ class _PremiumButton extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isPrimary ? Colors.black : (iconColor ?? Colors.white54),
+              color: isPrimary
+                  ? const Color(0xFF0C312B)
+                  : (iconColor ?? Colors.white54),
               size: 20,
             ),
             const SizedBox(width: 16),
@@ -603,7 +614,7 @@ class _PremiumButton extends StatelessWidget {
               style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: isPrimary ? Colors.black : Colors.white,
+                color: isPrimary ? const Color(0xFF0C312B) : Colors.white,
                 letterSpacing: 2,
               ),
             ),

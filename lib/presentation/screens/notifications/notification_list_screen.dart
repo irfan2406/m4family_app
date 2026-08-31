@@ -115,7 +115,7 @@ class NotificationListScreen extends ConsumerWidget {
                             Flexible(
                               child: Text(
                                 'NOTIFICATIONS',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w500,
                                   color: scheme.onSurface,
@@ -173,7 +173,7 @@ class NotificationListScreen extends ConsumerWidget {
                             const SizedBox(width: 6),
                             Text(
                               'MARK ALL',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w500,
                                 color: isCp ? purple : scheme.onSurface,
@@ -257,7 +257,7 @@ class NotificationListScreen extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             'We\'ll notify you when something important happens.',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 10,
               color: scheme.onSurface.withValues(alpha: 0.68),
             ),
@@ -342,7 +342,7 @@ class _NotificationItem extends StatelessWidget {
                           Expanded(
                             child: Text(
                               notification.title.toString().toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: isRead
@@ -359,7 +359,7 @@ class _NotificationItem extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 2),
                             child: Text(
                               timeStr,
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 8,
                                 color: scheme.onSurfaceVariant.withValues(
                                   alpha: 0.7,
@@ -388,7 +388,7 @@ class _NotificationItem extends StatelessWidget {
                         notification.message.toString(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           color: scheme.onSurfaceVariant,
                           height: 1.5,
@@ -486,7 +486,7 @@ class _NotificationItem extends StatelessWidget {
                         (notification.type ?? 'UPDATE')
                             .toString()
                             .toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 8,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1,
@@ -498,7 +498,7 @@ class _NotificationItem extends StatelessWidget {
                     Flexible(
                       child: Text(
                         '• $timeStr',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 8,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1,
@@ -533,7 +533,7 @@ class _NotificationItem extends StatelessWidget {
                   child: Text(
                     notification.message.toString(),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: scheme.onSurface.withValues(alpha: 0.8),

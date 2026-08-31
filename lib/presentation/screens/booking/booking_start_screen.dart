@@ -47,7 +47,9 @@ class BookingStartScreen extends ConsumerWidget {
     ];
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
+      backgroundColor: isDark
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFD4CFBC),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -109,7 +111,7 @@ class BookingStartScreen extends ConsumerWidget {
                       ),
                       child: Icon(
                         LucideIcons.arrowLeft,
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         size: 24,
                       ),
                     ),
@@ -123,7 +125,7 @@ class BookingStartScreen extends ConsumerWidget {
                     style: GoogleFonts.gelasio(
                       fontSize: 36,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       height: 0.9,
                       letterSpacing: -2,
                     ),
@@ -135,9 +137,8 @@ class BookingStartScreen extends ConsumerWidget {
                     'INTERESTED IN ${projectTitle.toUpperCase()}?\nCHOOSE HOW YOU\'D LIKE TO PROCEED.',
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                        0.6,
-                      ),
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.6),
                       fontWeight: FontWeight.w700,
                       letterSpacing: 2.5,
                       height: 1.8,
@@ -201,12 +202,16 @@ class BookingStartScreen extends ConsumerWidget {
                   Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: (isDark ? Colors.white : Color(0xFF163A2C))
-                              .withOpacity(0.04),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.04),
                           borderRadius: BorderRadius.circular(24),
                           border: Border.all(
-                            color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                .withOpacity(0.08),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.08),
                           ),
                         ),
                         child: Row(
@@ -216,7 +221,9 @@ class BookingStartScreen extends ConsumerWidget {
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                color: isDark ? Colors.white : Color(0xFF163A2C),
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF0C312B),
                                 borderRadius: BorderRadius.circular(12),
                                 boxShadow: [
                                   BoxShadow(
@@ -228,7 +235,9 @@ class BookingStartScreen extends ConsumerWidget {
                               ),
                               child: Icon(
                                 LucideIcons.info,
-                                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                                color: isDark
+                                    ? const Color(0xFF0C312B)
+                                    : const Color(0xFFF4EFE3),
                                 size: 20,
                               ),
                             ),
@@ -239,11 +248,13 @@ class BookingStartScreen extends ConsumerWidget {
                                 children: [
                                   Text(
                                     'M4 FAMILY MEMBERS GET PRIORITY SITE VISITS AND EXCLUSIVE UNIT SELECTION WINDOWS.',
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.inter(
                                       fontSize: 9,
                                       fontWeight: FontWeight.w600,
                                       color:
-                                          (isDark ? Colors.white : Color(0xFF163A2C))
+                                          (isDark
+                                                  ? Colors.white
+                                                  : const Color(0xFF0C312B))
                                               .withOpacity(0.7),
                                       letterSpacing: 0.5,
                                       height: 1.6,
@@ -260,12 +271,12 @@ class BookingStartScreen extends ConsumerWidget {
                                     ),
                                     child: Text(
                                       'LEARN MORE',
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.inter(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w600,
                                         color: isDark
                                             ? Colors.white
-                                            : Color(0xFF163A2C),
+                                            : const Color(0xFF0C312B),
                                         letterSpacing: 1,
                                         decoration: TextDecoration.underline,
                                       ),
@@ -313,7 +324,9 @@ class _BookingOptionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withOpacity(0.02)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark
@@ -352,21 +365,20 @@ class _BookingOptionCard extends StatelessWidget {
                 children: [
                   Text(
                     opt['title'],
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
                       letterSpacing: 0.5,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     opt['desc'],
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9,
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                        0.68,
-                      ),
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.68),
                       fontWeight: FontWeight.bold,
                       height: 1.4,
                     ),
@@ -386,7 +398,7 @@ class _BookingOptionCard extends StatelessWidget {
               ),
               child: Icon(
                 LucideIcons.chevronRight,
-                color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                 size: 16,
               ),
             ),

@@ -165,6 +165,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                 fit: StackFit.expand,
                 children: [
                   CachedNetworkImage(
+                    memCacheWidth: 1080,
                     imageUrl:
                         'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80',
                     fit: BoxFit.cover,
@@ -315,7 +316,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                       children: [
                         Text(
                           title.toUpperCase(),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -325,7 +326,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                         const SizedBox(height: 12),
                         Text(
                           address,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.68),
@@ -521,7 +522,7 @@ class _ContactRowItem extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

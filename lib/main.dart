@@ -86,6 +86,7 @@ import 'package:m4_mobile/presentation/screens/cp/cp_booking_start_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_payment_plan_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_booking_confirmation_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_token_payment_screen.dart';
+import 'package:m4_mobile/presentation/screens/profile/referral_redeem_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_referral_redeem_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_payment_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_elite_screen.dart';
@@ -123,7 +124,6 @@ import 'package:m4_mobile/presentation/screens/custom_views/my_custom_views_scre
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/rendering.dart';
 
@@ -157,13 +157,8 @@ void main() async {
   // a small bundled asset (~ms), so it is not what delayed the splash.
   await dotenv.load(fileName: ".env");
 
-  // The saved theme is NO LONGER read here. FlutterSecureStorage.read() spins
-  // up the Android Keystore/EncryptedSharedPreferences on first use (100ms+,
-  // much worse on a cold start), and awaiting it before runApp() held back the
-  // first frame — that was the black screen before the animated splash.
-  // ThemeNotifier now restores the preference asynchronously instead; it starts
-  // on ThemeMode.dark, which already matches the black splash, so there is no
-  // flash while it resolves.
+  // No theme preference to read: the app is light-only, so nothing has to be
+  // restored from storage before the first frame.
   runApp(const ProviderScope(child: M4FamilyApp()));
 }
 
@@ -172,20 +167,16 @@ class M4FamilyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Single theme source for the WHOLE app (screens, drawers, popups): the
-    // stored light/dark preference. This keeps everything consistent — the
-    // drawer follows the same setting as every screen — and the toggle works.
-    final themeMode = ref.watch(themeProvider);
-
+    // Light only. No darkTheme and no themeMode state: the app never follows
+    // the device appearance, so a phone set to dark still gets M4 light.
+    // (The deep-green showcase surfaces are NOT dark mode — screens opt into
+    // M4Theme.darkTheme locally; see the shells.)
     return MaterialApp.router(
       title: 'M4 Family',
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: rootScaffoldMessengerKey,
       theme: M4Theme.lightTheme,
-      darkTheme: M4Theme.darkThemeNavy, // dark mode = deep navy (#0B1026)
-      themeMode: themeMode,
-      // Instant theme switch — disable MaterialApp's ~200ms cross-fade so the
-      // WHOLE app (screens + menu) flips light/dark together, with zero delay.
+      themeMode: ThemeMode.light,
       themeAnimationDuration: Duration.zero,
       routerConfig: _router,
     );
@@ -346,7 +337,7 @@ final GoRouter _router = GoRouter(
     // --- CP breadth (reuse existing screens + new CP profile/security screens) ---
     GoRoute(
       path: '/cp/notifications',
-      builder: (context, state) => NotificationListScreen(),
+      builder: (context, state) => const NotificationListScreen(),
     ),
     GoRoute(
       path: '/cp/communities',
@@ -430,11 +421,11 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/cp/customization',
-      builder: (context, state) => MyCustomViewsScreen(),
+      builder: (context, state) => const MyCustomViewsScreen(),
     ),
     GoRoute(
       path: '/cp/customization/detail',
-      builder: (context, state) => MyCustomViewsScreen(),
+      builder: (context, state) => const MyCustomViewsScreen(),
     ),
     GoRoute(
       // Web parity: CP custom-views renders the "Interactive Living /
@@ -659,6 +650,15 @@ final GoRouter _router = GoRouter(
       path: '/investor/referral/closed',
       builder: (context, state) => const InvestorReferralClosedScreen(),
     ),
+    GoRoute(
+      // The investor rewards screen pushed this before the route existed, which
+      // threw "no routes for location". It reuses the shared redeem screen; the
+      // caller passes the point balance as `extra`.
+      path: '/investor/referral/redeem',
+      builder: (context, state) => ReferralRedeemScreen(
+        walletBalance: state.extra is num ? (state.extra as num).toDouble() : 0,
+      ),
+    ),
     // Investor settings / security / profile subroutes
     GoRoute(
       path: '/investor/cp',
@@ -726,7 +726,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/investor/notifications',
-      builder: (context, state) => NotificationListScreen(),
+      builder: (context, state) => const NotificationListScreen(),
     ),
     GoRoute(
       path: '/investor/search',
@@ -740,7 +740,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/investor/my-custom-views',
-      builder: (context, state) => MyCustomViewsScreen(),
+      builder: (context, state) => const MyCustomViewsScreen(),
     ),
     GoRoute(
       path: '/investor/about',
@@ -953,11 +953,11 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/my-custom-views',
-      builder: (context, state) => MyCustomViewsScreen(),
+      builder: (context, state) => const MyCustomViewsScreen(),
     ),
     GoRoute(
       path: '/profile/custom-requests',
-      builder: (context, state) => SelectionLogsScreen(),
+      builder: (context, state) => const SelectionLogsScreen(),
     ),
     GoRoute(
       path: '/support/schedule-visit',
@@ -977,24 +977,27 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/profile/legal-vault',
-      builder: (context, state) => LegalVaultScreen(),
+      builder: (context, state) => const LegalVaultScreen(),
     ),
     GoRoute(
       path: '/profile/deactivate',
-      builder: (context, state) => DeactivateAccountScreen(),
+      builder: (context, state) => const DeactivateAccountScreen(),
     ),
-    GoRoute(path: '/support', builder: (context, state) => SupportScreen()),
+    GoRoute(
+      path: '/support',
+      builder: (context, state) => const SupportScreen(),
+    ),
     GoRoute(
       path: '/support/contact',
       builder: (context, state) => const ContactScreen(),
     ),
     GoRoute(
       path: '/notifications',
-      builder: (context, state) => NotificationListScreen(),
+      builder: (context, state) => const NotificationListScreen(),
     ),
     GoRoute(
       path: '/media',
-      builder: (context, state) => GuestContentHubScreen(
+      builder: (context, state) => const GuestContentHubScreen(
         title: 'MEDIA\nGALLERY',
         subtitle: 'Stay updated with our latest multimedia releases.',
         typeIcon: LucideIcons.play,
@@ -1039,7 +1042,11 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/projects',
-      builder: (context, state) => const ProjectListScreen(),
+      builder: (context, state) => Theme(
+        // Green showcase, same as the Properties tab in every shell.
+        data: M4Theme.darkTheme,
+        child: const ProjectListScreen(),
+      ),
     ),
     GoRoute(
       path: '/careers',

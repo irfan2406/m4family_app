@@ -94,10 +94,7 @@ class _InvestorDocumentDetailScreenState
         SnackBar(
           content: Text(
             'Secure link not available for this document',
-            style: GoogleFonts.ebGaramond(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
+            style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 12),
           ),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
@@ -193,8 +190,10 @@ class _InvestorDocumentDetailScreenState
     required String subtitle,
     bool showRetry = false,
   }) {
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
       child: Column(
@@ -204,9 +203,8 @@ class _InvestorDocumentDetailScreenState
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                alpha: 0.05,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(24),
             ),
             child: Icon(icon, size: 36, color: muted),
@@ -226,7 +224,7 @@ class _InvestorDocumentDetailScreenState
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: muted,
@@ -255,9 +253,13 @@ class _InvestorDocumentDetailScreenState
 
   Widget _buildDocumentDetail(bool isDark) {
     final doc = _doc!;
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -288,9 +290,8 @@ class _InvestorDocumentDetailScreenState
                     end: Alignment.bottomRight,
                     colors: [
                       _gold.withValues(alpha: 0.18),
-                      (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                        alpha: 0.03,
-                      ),
+                      (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withValues(alpha: 0.03),
                     ],
                   ),
                   border: Border(bottom: BorderSide(color: border)),
@@ -307,9 +308,8 @@ class _InvestorDocumentDetailScreenState
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.black : const Color(0xFFF4EFE3)).withValues(
-                        alpha: 0.4,
-                      ),
+                      color: (isDark ? Colors.black : const Color(0xFFF4EFE3))
+                          .withValues(alpha: 0.4),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(LucideIcons.x, size: 18, color: textPrimary),
@@ -421,7 +421,7 @@ class _InvestorDocumentDetailScreenState
                       const SizedBox(width: 8),
                       Text(
                         'ENCRYPTED & VERIFIED',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: _green,
@@ -446,7 +446,7 @@ class _InvestorDocumentDetailScreenState
                 const SizedBox(height: 8),
                 Text(
                   '"$description"',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     fontStyle: FontStyle.italic,
@@ -511,7 +511,7 @@ class _MetaCell extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 label,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 9,
                   fontWeight: FontWeight.w500,
                   color: muted,
@@ -523,7 +523,7 @@ class _MetaCell extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             value,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w500,
               color: textPrimary,
@@ -565,7 +565,7 @@ class _PrimaryButton extends StatelessWidget {
           ),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+          backgroundColor: isDark ? Colors.white : const Color(0xFF0C312B),
           foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
           elevation: 0,
           shape: RoundedRectangleBorder(

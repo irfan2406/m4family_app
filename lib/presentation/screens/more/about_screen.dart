@@ -36,7 +36,7 @@ class _AboutScreenState extends State<AboutScreen> {
         leading: IconButton(
           icon: Icon(
             LucideIcons.chevronLeft,
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -44,10 +44,10 @@ class _AboutScreenState extends State<AboutScreen> {
           children: [
             Text(
               'WHO WE ARE',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : const Color(0xFF155A4F),
                 letterSpacing: 1,
               ),
             ),
@@ -112,7 +112,9 @@ class _AboutScreenState extends State<AboutScreen> {
                                     ? Colors.black
                                     : (isDark
                                           ? Colors.white10
-                                          : Color(0xFF163A2C).withOpacity(0.05)),
+                                          : const Color(
+                                              0xFF163A2C,
+                                            ).withOpacity(0.05)),
                               ),
                               boxShadow: isActive
                                   ? [
@@ -128,19 +130,25 @@ class _AboutScreenState extends State<AboutScreen> {
                               _tabs[index]['icon'],
                               color: isActive
                                   ? Colors.white
-                                  : (isDark ? Colors.white38 : Color(0xFF5E6B60)),
+                                  : (isDark
+                                        ? Colors.white38
+                                        : const Color(0xFF155A4F)),
                               size: 20,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             _tabs[index]['name'],
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 7,
                               fontWeight: FontWeight.w600,
                               color: isActive
-                                  ? (isDark ? Colors.white : Color(0xFF163A2C))
-                                  : (isDark ? Colors.white24 : Colors.black26),
+                                  ? (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                  : (isDark
+                                        ? Colors.white24
+                                        : const Color(0x420C312B)),
                               letterSpacing: 1,
                             ),
                           ),
@@ -236,7 +244,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       border: Border.all(
                         color: isDark
                             ? Colors.white10
-                            : Color(0xFF163A2C).withOpacity(0.05),
+                            : const Color(0xFF163A2C).withOpacity(0.05),
                       ),
                     ),
                     child: const Icon(LucideIcons.briefcase, size: 20),
@@ -244,10 +252,10 @@ class _AboutScreenState extends State<AboutScreen> {
                   const SizedBox(width: 20),
                   Text(
                     'OUR STORY',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
                       letterSpacing: -0.5,
                     ),
                   ),
@@ -262,21 +270,25 @@ class _AboutScreenState extends State<AboutScreen> {
               child: Container(
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withOpacity(0.02) : const Color(0xFFF4EFE3),
+                  color: isDark
+                      ? Colors.white.withOpacity(0.02)
+                      : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(40),
                   border: Border.all(
                     color: isDark
                         ? Colors.white10
-                        : Color(0xFF163A2C).withOpacity(0.05),
+                        : const Color(0xFF163A2C).withOpacity(0.05),
                   ),
                 ),
                 child: Column(
                   children: [
                     Text(
                       '"M4 Family, with over a decade of excellence in Mumbai\'s real estate landscape, has established itself as a trusted name in premium residential development."',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 14,
-                        color: isDark ? Colors.white70 : Color(0xFF163A2C),
+                        color: isDark
+                            ? Colors.white70
+                            : const Color(0xFF0C312B),
                         height: 1.8,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.w500,
@@ -285,9 +297,11 @@ class _AboutScreenState extends State<AboutScreen> {
                     const SizedBox(height: 24),
                     Text(
                       'Renowned for delivering homes that blend contemporary design with timeless aesthetics, every development we undertake is a testament to our commitment to quality and institutional standards.',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 13,
-                        color: isDark ? Colors.white38 : Colors.black45,
+                        color: isDark
+                            ? Colors.white38
+                            : const Color(0x730C312B),
                         height: 1.8,
                         fontWeight: FontWeight.w600,
                       ),

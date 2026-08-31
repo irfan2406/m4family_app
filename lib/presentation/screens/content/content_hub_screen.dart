@@ -256,7 +256,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                     const SizedBox(height: 15),
                     Text(
                       _getSubtitle(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 14,
                         color: scheme.onSurface.withOpacity(0.68),
                         fontWeight: FontWeight.w500,
@@ -338,7 +338,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
           const SizedBox(height: 25),
           Text(
             'NO ${widget.type.toUpperCase()} POSTS FOUND',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: scheme.onSurface,
@@ -350,7 +350,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
             child: Text(
               "We're working on something amazing. Check back soon for fresh updates from our content hub.",
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 13,
                 color: scheme.onSurface.withOpacity(0.68),
                 height: 1.5,
@@ -441,7 +441,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                           ),
                           child: Text(
                             item['type'].toString().toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 7,
                               fontWeight: FontWeight.w600,
                               color: scheme.onSurface.withOpacity(0.6),
@@ -451,7 +451,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                         ),
                         Text(
                           formattedDate,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
                             color: scheme.onSurface.withOpacity(0.62),
@@ -464,7 +464,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                       item['title'].toString().toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
@@ -476,7 +476,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                       item['description'] ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 10,
                         color: scheme.onSurface.withOpacity(0.68),
                         fontWeight: FontWeight.w500,
@@ -488,7 +488,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                       children: [
                         Text(
                           'READ ARTICLE',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                             color: scheme.onSurface,

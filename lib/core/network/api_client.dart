@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
@@ -44,17 +45,22 @@ class ApiClient {
     // base64 image data) flooded logcat with tens of thousands of lines per
     // screen and janked the UI thread (frozen screen on restart). Keep just the
     // request line + errors.
-    dio.interceptors.add(
-      PrettyDioLogger(
-        request: true,
-        requestHeader: false,
-        requestBody: false,
-        responseHeader: false,
-        responseBody: false,
-        error: true,
-        compact: true,
-      ),
-    );
+    // Release builds carry no logger at all: the interceptor still walked
+    // every request/response (multi-MB catalog payloads included) to decide
+    // what to print.
+    if (kDebugMode) {
+      dio.interceptors.add(
+        PrettyDioLogger(
+          request: true,
+          requestHeader: false,
+          requestBody: false,
+          responseHeader: false,
+          responseBody: false,
+          error: true,
+          compact: true,
+        ),
+      );
+    }
   }
 
   Future<Response> get(
@@ -536,12 +542,28 @@ class ApiClient {
     return dio.get('/api/user/referrals/dashboard');
   }
 
+  /// Create a customer referral. `/api/referral` did not exist (the server
+  /// answered "Cannot POST /api/referral"), so every submission failed. The
+  /// user referral router is `/api/user/referrals`, matching its /dashboard
+  /// and /redeem siblings and the CP/investor create endpoints.
   Future<Response> submitReferral(Map<String, dynamic> data) async {
-    return dio.post('/api/referral', data: data);
+    return dio.post('/api/user/referrals', data: data);
   }
 
   Future<Response> redeemPoints(Map<String, dynamic> data) async {
     return dio.post('/api/user/referrals/redeem', data: data);
+  }
+
+  /// Operational / audit logs behind the web's "Full Audit History" page.
+  /// Scoped server-side by the caller's token, so each portal gets its own
+  /// records rather than one shared set.
+  Future<Response> getOperationalLogs() async {
+    return dio.get('/api/logs');
+  }
+
+  /// Redemption catalog shown on the web's "REDEEM REWARDS" page.
+  Future<Response> getRewardsCatalog() async {
+    return dio.get('/api/rewards/catalog');
   }
 
   // Site Visits & Bookings

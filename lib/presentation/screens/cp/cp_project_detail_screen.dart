@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -19,7 +20,6 @@ import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 /// CP portal project details — visual parity with web `/cp/projects/[id]`.
 ///
@@ -174,7 +174,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         _progress = [
           {
             'phaseName': 'Foundation',
-            'status': done ? 'Completed' : (started ? 'In Progress' : 'Upcoming'),
+            'status': done
+                ? 'Completed'
+                : (started ? 'In Progress' : 'Upcoming'),
             'progressPercent': pct,
             'phaseOrder': 1,
             'images': imgs,
@@ -272,6 +274,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ? s
         : ref.read(apiClientProvider).resolveUrl(s);
     return CachedNetworkImage(
+      memCacheWidth: 1080,
       imageUrl: url,
       fit: fit,
       errorWidget: (_, __, ___) => fallback,
@@ -315,9 +318,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           backgroundColor: const Color(0xFF163A2C),
           duration: const Duration(milliseconds: 1100),
           behavior: SnackBarBehavior.fixed,
-          content: Text(
-            next ? 'Saved to favorites' : 'Removed from favorites',
-          ),
+          content: Text(next ? 'Saved to favorites' : 'Removed from favorites'),
         ),
       );
     // 3) Persist in the background (UI + toast already reflect the change).
@@ -582,9 +583,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                    alpha: 0.15,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(99),
                 ),
               ),
@@ -594,11 +594,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 'SELECT DATE & TIME',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF155A4F),
                 ),
               ),
             ),
@@ -625,14 +625,16 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       side: BorderSide(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withValues(alpha: 0.2),
                       ),
-                      foregroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                      foregroundColor: isDark
+                          ? Colors.white
+                          : const Color(0xFF0C312B),
                     ),
                     child: Text(
                       'CANCEL',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -644,8 +646,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   child: FilledButton(
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                      foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      backgroundColor: isDark
+                          ? Colors.white
+                          : const Color(0xFF0C312B),
+                      foregroundColor: isDark
+                          ? Colors.black
+                          : const Color(0xFFF4EFE3),
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -653,7 +659,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     ),
                     child: Text(
                       'CONFIRM',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -778,11 +784,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    // M4 deep green, not black, on the light surfaces.
     final accent = scheme.brightness == Brightness.light
-        ? Colors.black
+        ? const Color(0xFF0C312B)
         : scheme.primary;
     final accentFg = scheme.brightness == Brightness.light
-        ? Colors.white
+        ? const Color(0xFFF4EFE3)
         : scheme.onPrimary;
     final p = _project ?? widget.projectData;
 
@@ -1038,7 +1045,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                 const SizedBox(width: 6),
                                 Text(
                                   _locationLine(),
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
                                     color: scheme.onSurface.withValues(
@@ -1091,7 +1098,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         const SizedBox(height: 12),
                         Text(
                           'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                             letterSpacing: -0.2,
@@ -1217,7 +1224,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     Color? activeColor,
   }) {
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     return Material(
       color: Colors.black.withValues(alpha: 0.25),
       borderRadius: BorderRadius.circular(14),
@@ -1258,10 +1266,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           height: 66,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.7),
-              width: 2,
-            ),
+            // No border: a 2px ring insets the child, leaving a white strip
+            // down all four sides of the photo. Dropping it lets the image
+            // fill the full 66x66 tile edge to edge. The 360 tile keeps its
+            // outline — it is cream-on-cream and would vanish without one.
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.35),
@@ -1281,14 +1289,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 child: Text(
                   label,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                     shadows: const [
                       Shadow(
                         blurRadius: 6,
-                        color: Colors.black,
+                        color: const Color(0xFF0C312B),
                         offset: Offset(0, 2),
                       ),
                     ],
@@ -1312,18 +1320,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           width: 66,
           height: 66,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: const Color(0xFFEDE5D6),
             borderRadius: BorderRadius.circular(18),
             // Outline-bordered card — same footprint + frame as the Exterior /
             // Interior thumbnails (matched on request). A visible hairline outline
             // (white-on-white would be invisible) plus a soft shadow.
             border: Border.all(
-              color: Colors.black.withValues(alpha: 0.12),
+              color: const Color(0xFF0C312B).withValues(alpha: 0.18),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.10),
+                color: const Color(0xFF0C312B).withValues(alpha: 0.10),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -1342,9 +1350,15 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 child: ClipRect(
                   child: Transform.scale(
                     scale: 1.5,
-                    child: Image.asset(
-                      'assets/360-vr.png',
-                      fit: BoxFit.contain,
+                    child: ColorFiltered(
+                      colorFilter: const ColorFilter.mode(
+                        Color(0xFFEDE5D6),
+                        BlendMode.multiply,
+                      ),
+                      child: Image.asset(
+                        'assets/360-vr.png',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
@@ -1352,7 +1366,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               const SizedBox(height: 3),
               Text(
                 '360° VIEW',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 8,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1404,7 +1418,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 13,
               fontWeight: FontWeight.w500,
               color: scheme.onSurface,
@@ -1453,7 +1467,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     bool watchOnly = false,
   }) {
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     final titleColor = scheme.onSurface.withValues(alpha: isLight ? 0.92 : 1);
     final subColor = scheme.onSurface.withValues(alpha: isLight ? 0.68 : 0.6);
     return Container(
@@ -1485,7 +1500,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               children: [
                 Text(
                   title.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.2,
@@ -1495,7 +1510,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 const SizedBox(height: 3),
                 Text(
                   subtitle.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 9,
                     fontWeight: FontWeight.w600,
                     color: subColor,
@@ -1523,7 +1538,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               ),
               child: Text(
                 'WATCH',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.4,
@@ -1554,7 +1569,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   ),
                   child: Text(
                     'VIEW',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.2,
@@ -1603,10 +1618,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     if (list.isEmpty) {
       return Text(
         'No amenities listed',
-        style: GoogleFonts.ebGaramond(
-          color: scheme.onSurfaceVariant,
-          fontSize: 11,
-        ),
+        style: GoogleFonts.inter(color: scheme.onSurfaceVariant, fontSize: 11),
       );
     }
     // A Wrap sizes each item to its OWN content height (icon + label) and flows
@@ -1640,7 +1652,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9.5,
                       fontWeight: FontWeight.w600,
                       height: 1.2,
@@ -1660,7 +1672,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final estRaw = (p['estimatedCompletionDate'] ?? '').toString().trim();
     final est = estRaw.isEmpty ? 'Q1 2028' : estRaw;
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     // Web parity: the box + shadow now live on the SINGLE outer construction
     // container in build() (which also wraps the year rail, phase cards and
     // phase tracking), so this returns content only.
@@ -1678,7 +1691,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 children: [
                   Text(
                     'ESTIMATED\nCOMPLETION\nDATE',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.2,
@@ -1690,12 +1703,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   const SizedBox(height: 8),
                   Text(
                     est.replaceAll(' ', '\n'),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 46,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -1.5,
                       height: 1.02,
-                      color: isLight ? Colors.black : scheme.onSurface,
+                      color: isLight
+                          ? const Color(0xFF0C312B)
+                          : scheme.onSurface,
                     ),
                   ),
                 ],
@@ -1728,16 +1743,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     children: [
                       Text(
                         '$pct%',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 22,
                           fontWeight: FontWeight.w600,
                           // Was inheriting the theme's navy — force dark.
-                          color: isLight ? Colors.black : scheme.onSurface,
+                          color: isLight
+                              ? const Color(0xFF0C312B)
+                              : scheme.onSurface,
                         ),
                       ),
                       Text(
                         'OVERALL',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 8,
                           fontWeight: FontWeight.w500,
                           color: scheme.onSurface.withValues(alpha: 0.7),
@@ -1758,7 +1775,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           overflow: _showFullProgressDesc
               ? TextOverflow.visible
               : TextOverflow.ellipsis,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             // Was 12.5 / 0.55 — small and faint. Bigger + darker for
             // readability.
             fontSize: 13.5,
@@ -1773,10 +1790,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               setState(() => _showFullProgressDesc = !_showFullProgressDesc),
           child: Text(
             _showFullProgressDesc ? 'Show less' : 'Read more',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12.5,
               fontWeight: FontWeight.w700,
-              color: isLight ? Colors.black : scheme.onSurface,
+              color: isLight ? const Color(0xFF0C312B) : scheme.onSurface,
             ),
           ),
         ),
@@ -1786,7 +1803,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Widget _progressTimeline(ColorScheme scheme) {
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     final phases =
         _progress
             .whereType<Map>()
@@ -1918,7 +1936,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     ),
                     child: Text(
                       status.toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 8,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1,
@@ -1958,7 +1976,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   (_project?['title'] ?? '').toString().toUpperCase(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.2,
@@ -1986,7 +2004,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             child: Center(
                               child: Text(
                                 '$pct%',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
                                   color: scheme.onSurfaceVariant,
@@ -2003,7 +2021,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         name.toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                           color: scheme.onSurfaceVariant,
@@ -2026,12 +2044,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   // mirrors that rather than deriving it from data.
   Widget _progressYearHeader(ColorScheme scheme) {
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     return Row(
       children: [
         Text(
           '2026',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             color: accent,
@@ -2066,7 +2085,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   // of phase cards (index, name, status dot, percentage, progress bar).
   Widget _phaseTrackingSection(ColorScheme scheme) {
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     final phases =
         _progress
             .whereType<Map>()
@@ -2090,7 +2110,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               children: [
                 Text(
                   'PHASE TRACKING',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 2,
@@ -2100,7 +2120,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 const SizedBox(height: 4),
                 Text(
                   'REAL-TIME DEVELOPMENT STATUS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 8,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 1,
@@ -2118,7 +2138,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               ),
               child: Text(
                 '${phases.length} MILESTONES',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 8,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1,
@@ -2189,7 +2209,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           ),
                           child: Text(
                             (i + 1).toString().padLeft(2, '0'),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: scheme.onSurfaceVariant,
@@ -2205,7 +2225,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                 name.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.6,
@@ -2226,7 +2246,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                   const SizedBox(width: 6),
                                   Text(
                                     status.toUpperCase(),
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.inter(
                                       fontSize: 8,
                                       fontWeight: FontWeight.w500,
                                       letterSpacing: 0.6,
@@ -2240,7 +2260,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         ),
                         Text(
                           '$pct%',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
@@ -2272,9 +2292,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Widget _registrationCard(ColorScheme scheme) {
     final isLight = scheme.brightness == Brightness.light;
-    final btnBg = isLight ? Colors.black : Colors.white;
+    final btnBg = isLight ? const Color(0xFF0C312B) : Colors.white;
     final btnFg = isLight ? Colors.white : Colors.black;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -2301,11 +2322,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           DropdownButtonFormField<String>(
             initialValue: _regEmployeeId,
             isExpanded: true,
-            dropdownColor: isLight ? Colors.white : const Color(0xFF141B3A),
+            dropdownColor: isLight
+                ? const Color(0xFFF4EFE3)
+                : const Color(0xFF141B3A),
             borderRadius: BorderRadius.circular(16),
             elevation: 4,
             iconEnabledColor: scheme.onSurface.withValues(alpha: 0.55),
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 13,
               fontWeight: FontWeight.w700,
               color: scheme.onSurface,
@@ -2315,7 +2338,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 value: null,
                 child: Text(
                   '— Select —',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: scheme.onSurface.withValues(alpha: 0.55),
@@ -2327,7 +2350,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   value: e['_id']?.toString(),
                   child: Text(
                     (e['name'] ?? '').toString().toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurface,
@@ -2339,10 +2362,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 value: 'other',
                 child: Text(
                   '+ OTHER (TYPE NAME)',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFFC65B46),
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF0C312B),
                   ),
                 ),
               ),
@@ -2355,7 +2378,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             const SizedBox(height: 8),
             _cpField(
               controller: _regEmployeeEntered,
-              hint: 'TYPE EMPLOYEE NAME HERE',
+              hint: 'Enter Employee Name',
               scheme: scheme,
             ),
           ],
@@ -2364,7 +2387,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           const SizedBox(height: 6),
           _cpField(
             controller: _regClientName,
-            hint: 'CLIENT NAME',
+            hint: 'Enter Client Name',
             scheme: scheme,
             errorText: _regNameError,
             // Clear the red state as soon as they start typing.
@@ -2377,7 +2400,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           const SizedBox(height: 6),
           _cpField(
             controller: _regClientPhone,
-            hint: '+91 98653 21250',
+            hint: 'Enter Mobile Number',
             scheme: scheme,
             keyboardType: TextInputType.phone,
             errorText: _regPhoneError,
@@ -2390,7 +2413,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           const SizedBox(height: 6),
           _cpField(
             controller: _regClientEmail,
-            hint: 'EMAIL ADDRESS',
+            hint: 'Enter Email Address',
             scheme: scheme,
             keyboardType: TextInputType.emailAddress,
             errorText: _regEmailError,
@@ -2403,7 +2426,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           const SizedBox(height: 6),
           _cpField(
             controller: _regLocation,
-            hint: 'CITY, COUNTRY',
+            hint: 'Enter City and Country',
             scheme: scheme,
           ),
           const SizedBox(height: 14),
@@ -2438,7 +2461,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Widget _buildBookingCtaBar(ColorScheme scheme) {
     final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     final accentFg = isLight ? Colors.white : scheme.onPrimary;
 
     return Container(
@@ -2555,86 +2579,26 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ? raw
         : (raw is Map ? (raw['name'] ?? '').toString() : '');
     final effective = invalid(loc) ? defaultLoc : loc;
-    final isLight = scheme.brightness == Brightness.light;
-    final btnBg = isLight ? Colors.black : scheme.primary;
-    final btnFg = isLight ? Colors.white : scheme.onPrimary;
-    final embed =
-        'https://www.google.com/maps?q=${Uri.encodeComponent(effective)}&output=embed';
-
-    // Google's embed URL only renders inside an <iframe>; loading it directly
-    // shows "must be used in an iframe". Wrap it in a minimal HTML page (this is
-    // what the web does with its <iframe>).
-    final mapHtml =
-        '<!DOCTYPE html><html><head>'
-        '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
-        '<style>html,body{margin:0;padding:0;height:100%;overflow:hidden;background:transparent;}'
-        'iframe{border:0;width:100%;height:100%;}</style></head>'
-        '<body><iframe src="$embed" allowfullscreen loading="lazy" '
-        'referrerpolicy="no-referrer-when-downgrade"></iframe></body></html>';
-    final controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..loadHtmlString(mapHtml);
-
-    return Container(
-      height: 280,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: scheme.outlineVariant.withValues(alpha: 0.35),
-          width: 4,
-        ),
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.18),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          Positioned.fill(child: WebViewWidget(controller: controller)),
-          Positioned(
-            top: 14,
-            right: 14,
-            child: FilledButton.icon(
-              onPressed: () => _openUrl(
-                'https://www.google.com/maps?q=${Uri.encodeComponent(effective)}',
-              ),
-              icon: const Icon(LucideIcons.mapPin, size: 16),
-              label: Text(
-                'VIEW ON MAPS',
-                style: GoogleFonts.gelasio(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2,
-                ),
-              ),
-              style: FilledButton.styleFrom(
-                backgroundColor: btnBg,
-                foregroundColor: btnFg,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 10,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(999),
-                ),
-              ),
-            ),
-          ),
-        ],
+    return M4MapView(
+      query: effective,
+      onOpen: () => _openUrl(
+        'https://www.google.com/maps?q=${Uri.encodeComponent(effective)}',
       ),
     );
   }
 
   Widget _videoCallSheet(ColorScheme scheme) {
     final isLight = scheme.brightness == Brightness.light;
-    final btnBg = isLight ? Colors.black : Colors.white;
+    final btnBg = isLight ? const Color(0xFF0C312B) : Colors.white;
     final btnFg = isLight ? Colors.white : Colors.black;
-    final accent = isLight ? Colors.black : scheme.primary;
+    // M4 deep green, not black, on the light surfaces.
+    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
     final media = MediaQuery.of(context);
-    // Clear the floating bottom nav (the sheet used to butt straight into it),
-    // and ride up with the keyboard when a field is focused.
-    final bottomGap = media.viewInsets.bottom > 0
-        ? media.viewInsets.bottom + 12
-        : 96.0;
+    // The Scaffold already lifts the body above the keyboard
+    // (resizeToAvoidBottomInset defaults to true), so adding viewInsets here
+    // raised the sheet by a second keyboard-height — it floated near the top
+    // and the 70% height cap clipped the form mid-way. Just a gutter now.
+    final bottomGap = media.viewInsets.bottom > 0 ? 12.0 : 96.0;
     return Positioned.fill(
       child: Material(
         color: Colors.black.withValues(alpha: 0.45),
@@ -2684,7 +2648,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           children: [
                             Text(
                               'VIDEO CALL',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: -0.2,
@@ -2695,7 +2659,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                               (_project?['title'] ?? '')
                                   .toString()
                                   .toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1.4,
@@ -2717,14 +2681,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       initialValue: _selectedProjectId,
                       isExpanded: true,
                       dropdownColor: scheme.brightness == Brightness.light
-                          ? Colors.white
+                          ? const Color(0xFFF4EFE3)
                           : const Color(0xFF141B3A),
                       borderRadius: BorderRadius.circular(16),
                       elevation: 4,
                       iconEnabledColor: scheme.onSurface.withValues(
                         alpha: 0.55,
                       ),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: scheme.onSurface,
@@ -2734,7 +2698,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           value: null,
                           child: Text(
                             '— Select Project —',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: scheme.onSurface.withValues(alpha: 0.55),
@@ -2746,7 +2710,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             value: (proj['_id'] ?? proj['id'])?.toString(),
                             child: Text(
                               (proj['title'] ?? '').toString().toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                                 color: scheme.onSurface,
@@ -2768,14 +2732,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       initialValue: _employeeId,
                       isExpanded: true,
                       dropdownColor: scheme.brightness == Brightness.light
-                          ? Colors.white
+                          ? const Color(0xFFF4EFE3)
                           : const Color(0xFF141B3A),
                       borderRadius: BorderRadius.circular(16),
                       elevation: 4,
                       iconEnabledColor: scheme.onSurface.withValues(
                         alpha: 0.55,
                       ),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: scheme.onSurface,
@@ -2785,7 +2749,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           value: null,
                           child: Text(
                             '— Select —',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: scheme.onSurface.withValues(alpha: 0.55),
@@ -2797,7 +2761,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             value: e['_id']?.toString(),
                             child: Text(
                               (e['name'] ?? '').toString().toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                                 color: scheme.onSurface,
@@ -2809,7 +2773,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           value: 'other',
                           child: Text(
                             '+ OTHER (TYPE NAME)',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFFC65B46),
@@ -2824,7 +2788,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       const SizedBox(height: 8),
                       _cpField(
                         controller: _employeeEntered,
-                        hint: 'TYPE EMPLOYEE NAME HERE',
+                        hint: 'Enter Employee Name',
                         scheme: scheme,
                       ),
                     ],
@@ -2833,7 +2797,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     const SizedBox(height: 6),
                     _cpField(
                       controller: _clientName,
-                      hint: 'CLIENT NAME',
+                      hint: 'Enter Client Name',
                       scheme: scheme,
                     ),
                     const SizedBox(height: 12),
@@ -2841,7 +2805,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     const SizedBox(height: 6),
                     _cpField(
                       controller: _clientPhone,
-                      hint: 'PHONE NUMBER',
+                      hint: 'Enter Mobile Number',
                       scheme: scheme,
                       keyboardType: TextInputType.phone,
                     ),
@@ -2850,7 +2814,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     const SizedBox(height: 6),
                     _cpField(
                       controller: _clientEmail,
-                      hint: 'EMAIL ADDRESS',
+                      hint: 'Enter Email Address',
                       scheme: scheme,
                       keyboardType: TextInputType.emailAddress,
                     ),
@@ -2946,12 +2910,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ),
         child: Text(
           label.toUpperCase(),
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w600,
             letterSpacing: 1,
             color: selected
-                ? (isLight ? Colors.white : Colors.black)
+                ? (isLight ? Colors.white : const Color(0xFF0C312B))
                 : scheme.onSurface,
           ),
         ),
@@ -2963,7 +2927,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     // Web labels are uppercase (text-[10.5px] font-black uppercase).
     return Text(
       text.toUpperCase(),
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.inter(
         fontSize: 10.5,
         fontWeight: FontWeight.w600,
         color: scheme.onSurface,
@@ -2981,7 +2945,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         SnackBar(
           content: Text(
             message,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
               color: Colors.white,
@@ -3013,7 +2977,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       keyboardType: keyboardType,
       onChanged: onChanged,
       decoration: _cpInputDec(scheme, hint: hint, errorText: errorText),
-      style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w700),
+      style: GoogleFonts.inter(fontWeight: FontWeight.w700),
     );
   }
 
@@ -3027,7 +2991,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     return InputDecoration(
       hintText: hint,
       errorText: errorText,
-      errorStyle: GoogleFonts.ebGaramond(
+      errorStyle: GoogleFonts.inter(
         fontSize: 11,
         fontWeight: FontWeight.w600,
         color: errorColor,
@@ -3171,7 +3135,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 right: 16,
                 child: Text(
                   '${_galleryIndex + 1} / ${_gallery.length}',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
                   ),
@@ -3242,11 +3206,11 @@ class _DashedCirclePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.butt;
 
-    final dashAngle = (2 * 3.14159) / dashCount;
+    const dashAngle = (2 * 3.14159) / dashCount;
 
     for (int i = 0; i < dashCount; i++) {
       final startAngle = i * dashAngle;
-      final sweepAngle = dashAngle * (1 - gap);
+      const sweepAngle = dashAngle * (1 - gap);
 
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),

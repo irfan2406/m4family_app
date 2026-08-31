@@ -110,8 +110,8 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                 ),
               ],
             ),
-            actions: [
-              const Padding(
+            actions: const [
+              Padding(
                 padding: EdgeInsets.only(right: 20),
                 child: SideMenuButton(),
               ),
@@ -141,7 +141,9 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                         child: Icon(
                           LucideIcons.fileText,
                           size: 20,
-                          color: isLight ? Colors.black : scheme.primary,
+                          color: isLight
+                              ? const Color(0xFF0C312B)
+                              : scheme.primary,
                         ),
                       ),
                       const SizedBox(width: 14),
@@ -151,7 +153,9 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 3,
-                          color: isLight ? Colors.black : scheme.primary,
+                          color: isLight
+                              ? const Color(0xFF0C312B)
+                              : scheme.primary,
                         ),
                       ),
                     ],
@@ -164,13 +168,13 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                       fontWeight: FontWeight.w700,
                       letterSpacing: -1,
                       height: 1.0,
-                      color: isLight ? Colors.black : Colors.white,
+                      color: isLight ? const Color(0xFF0C312B) : Colors.white,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Stay updated with our latest insights and news.',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: scheme.onSurface.withOpacity(isLight ? 0.8 : 0.6),
@@ -203,13 +207,13 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                     style: GoogleFonts.gelasio(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: isLight ? Colors.black : Colors.white,
+                      color: isLight ? const Color(0xFF0C312B) : Colors.white,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     "Check back soon for fresh updates.",
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: scheme.onSurface.withOpacity(isLight ? 0.7 : 0.68),
                       fontWeight: FontWeight.w600,
                     ),
@@ -288,6 +292,7 @@ class _BlogCard extends ConsumerWidget {
                     width: 92,
                     height: 92,
                     child: CachedNetworkImage(
+                      memCacheWidth: 1080,
                       imageUrl: imageUrl,
                       fit: BoxFit.cover,
                       placeholder: (_, __) =>
@@ -322,7 +327,7 @@ class _BlogCard extends ConsumerWidget {
                             ),
                             child: Text(
                               (item['type'] ?? 'BLOG').toString().toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 8,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1.2,
@@ -333,7 +338,7 @@ class _BlogCard extends ConsumerWidget {
                           const Spacer(),
                           Text(
                             shortDate,
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
                               color: scheme.onSurface.withOpacity(0.72),
@@ -346,12 +351,14 @@ class _BlogCard extends ConsumerWidget {
                         (item['title'] ?? '').toString().toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           height: 1.15,
                           letterSpacing: -0.3,
-                          color: isLight ? Colors.black : Colors.white,
+                          color: isLight
+                              ? const Color(0xFF0C312B)
+                              : Colors.white,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -359,18 +366,22 @@ class _BlogCard extends ConsumerWidget {
                         children: [
                           Text(
                             'READ ARTICLE',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 9,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1,
-                              color: isLight ? Colors.black : scheme.primary,
+                              color: isLight
+                                  ? const Color(0xFF0C312B)
+                                  : scheme.primary,
                             ),
                           ),
                           const Spacer(),
                           Icon(
                             LucideIcons.arrowRight,
                             size: 14,
-                            color: isLight ? Colors.black : scheme.primary,
+                            color: isLight
+                                ? const Color(0xFF0C312B)
+                                : scheme.primary,
                           ),
                         ],
                       ),

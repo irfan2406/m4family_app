@@ -189,8 +189,10 @@ class _InvestorInstallmentsScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -227,7 +229,7 @@ class _InvestorInstallmentsScreenState
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withValues(alpha: 0.04),
                         shape: BoxShape.circle,
                         border: Border.all(color: border),
@@ -363,7 +365,9 @@ class _InvestorInstallmentsScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.02),
+        color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+          alpha: 0.02,
+        ),
         border: Border(bottom: BorderSide(color: border)),
       ),
       child: Row(
@@ -412,7 +416,7 @@ class _InvestorInstallmentsScreenState
         const SizedBox(height: 6),
         Text(
           value,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 15,
             fontWeight: FontWeight.w600,
             color: color,
@@ -446,9 +450,8 @@ class _InvestorInstallmentsScreenState
               decoration: BoxDecoration(
                 color: active
                     ? activeColor.withValues(alpha: 0.1)
-                    : (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                        alpha: 0.03,
-                      ),
+                    : (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withValues(alpha: 0.03),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: active ? activeColor.withValues(alpha: 0.3) : border,
@@ -456,7 +459,7 @@ class _InvestorInstallmentsScreenState
               ),
               child: Text(
                 (f == 'All' ? 'All' : _statusLabel(f)).toUpperCase(),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 1,
@@ -479,7 +482,9 @@ class _InvestorInstallmentsScreenState
     required Color muted,
   }) {
     final color = _statusColor(item.status);
-    final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final cardBg = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -521,7 +526,7 @@ class _InvestorInstallmentsScreenState
                   item.milestoneName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: textPrimary,
@@ -532,7 +537,7 @@ class _InvestorInstallmentsScreenState
                   item.projectTitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: muted,
@@ -549,7 +554,7 @@ class _InvestorInstallmentsScreenState
                     const SizedBox(width: 4),
                     Text(
                       item.dueDate,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: muted,
@@ -567,7 +572,7 @@ class _InvestorInstallmentsScreenState
             children: [
               Text(
                 _formatAmount(item.amount),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: textPrimary,
@@ -583,7 +588,7 @@ class _InvestorInstallmentsScreenState
                 ),
                 child: Text(
                   _statusLabel(item.status).toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.8,
@@ -626,7 +631,7 @@ class _InvestorInstallmentsScreenState
             Text(
               'Your payment schedule will appear here once an investment is confirmed.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 height: 1.5,
@@ -667,7 +672,7 @@ class _InvestorInstallmentsScreenState
             Text(
               'Please check your connection and try again.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: muted,

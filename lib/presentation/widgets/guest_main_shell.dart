@@ -1,16 +1,14 @@
+import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'package:m4_mobile/presentation/widgets/nav_swipe.dart';
 import 'package:m4_mobile/presentation/widgets/nav_style.dart';
-import 'dart:ui';
+import 'package:m4_mobile/presentation/widgets/m4_bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/screens/home/guest_dashboard_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
 import 'package:m4_mobile/presentation/screens/careers/careers_screen.dart';
-import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
-import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
-import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,33 +26,32 @@ class GuestMainShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(guestNavigationProvider);
     final isDrawerOpen = ref.watch(drawerOpenProvider);
+    // The keyboard covers the floating nav pill, so while it is up the pill is
+    // hidden and the space it reserves is given back to the content.
+    final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
-    final bool appIsDark = Theme.of(context).brightness == Brightness.dark;
-
-    // LIGHT mode: Home (0) & Properties (1) are the deep-green "showcase"
-    // screens (white typography); the info tabs stay cream with green
-    // typography. DARK mode: everything inherits the navy theme.
-    Widget showcase(Widget child) => appIsDark
-        ? child
-        : Theme(data: M4Theme.darkTheme, child: child);
+    // Home (0) & Properties (1) are the deep-green "showcase" screens (white
+    // typography); the info tabs stay cream with green typography.
+    Widget showcase(Widget child) =>
+        Theme(data: M4Theme.darkTheme, child: child);
 
     final List<Widget> screens = [
       showcase(const GuestDashboardScreen()), // 0: Home     — green
-      showcase(const ProjectListScreen()), // 1: Projects — green
+      showcase(const ProjectListScreen(guestMode: true)), // 1: Projects — green
       const AboutScreen(), // 2: About    — cream
       const CareersScreen(), // 3: Careers  — cream
-      const ContactScreen(), // 4: Contact  — cream
+      const ContactScreen(embedded: true), // 4: Contact  — cream
     ];
 
     // Nav pill follows the active tab's surface: green on the showcase tabs,
     // cream on the info tabs, navy in dark mode.
-    final ThemeData navTheme = appIsDark
-        ? M4Theme.darkThemeNavy
-        : (currentIndex <= 1 ? M4Theme.darkTheme : M4Theme.lightTheme);
+    final ThemeData navTheme = currentIndex <= 1
+        ? M4Theme.darkTheme
+        : M4Theme.lightTheme;
 
     return Scaffold(
       backgroundColor: navTheme.scaffoldBackgroundColor,
-      drawer: const ConditionalDrawer(),
+      drawer: const GuestSidebarMenu(),
       onDrawerChanged: (isOpen) =>
           ref.read(drawerOpenProvider.notifier).state = isOpen,
       body: Stack(
@@ -62,10 +59,16 @@ class GuestMainShell extends ConsumerWidget {
           // The pill floats above the content, so tell the screens how much
           // room it takes: their scroll views add this as bottom inset and the
           // last card can scroll clear of the nav instead of hiding under it.
+          //
+          // With the keyboard up the pill is hidden, so the reserve is dropped
+          // — otherwise a focused text field sits ~92px above the keyboard with
+          // dead space under it.
           MediaQuery(
             data: MediaQuery.of(context).copyWith(
               padding: MediaQuery.of(context).padding.copyWith(
-                bottom: MediaQuery.of(context).padding.bottom + _navFootprint,
+                bottom: keyboardOpen
+                    ? MediaQuery.of(context).padding.bottom
+                    : MediaQuery.of(context).padding.bottom + _navFootprint,
               ),
             ),
             child: NavSwipe(
@@ -76,12 +79,16 @@ class GuestMainShell extends ConsumerWidget {
               child: IndexedStack(index: currentIndex, children: screens),
             ),
           ),
-          if (!isDrawerOpen)
+          if (!isDrawerOpen && !keyboardOpen)
             Align(
               alignment: Alignment.bottomCenter,
+              // Under the active tab's surface theme, so the bar knows whether
+              // it sits on a green showcase screen (translucent white disc) or
+              // a cream info screen (solid green disc).
               child: Theme(
                 data: navTheme,
-                child: _GuestNavigationPill(
+                child: M4BottomNav(
+                  icons: _guestIcons,
                   currentIndex: currentIndex,
                   onTap: (index) =>
                       ref.read(guestNavigationProvider.notifier).state = index,
@@ -94,196 +101,15 @@ class GuestMainShell extends ConsumerWidget {
   }
 }
 
-// Guest pill runs one size up from the shared M4Nav metrics so it matches the
-// web reference. Kept local to this shell: M4Nav still drives the customer, CP
-// and investor bars unchanged.
-const double _guestNavHeight = 74;
-const double _guestNavDisc = 50;
-const double _guestNavIcon = 24;
-const double _guestNavInnerPadding = 10;
+// Guest tab glyphs, in tab order. The bar itself is M4BottomNav — the one
+// component every portal renders.
+const List<IconData> _guestIcons = <IconData>[
+  LucideIcons.home,
+  LucideIcons.building2,
+  LucideIcons.info,
+  LucideIcons.briefcase,
+  LucideIcons.headphones,
+];
 
-/// Height the floating pill occupies: 74px bar + 14px bottom margin.
-const double _navFootprint = 92;
-
-class _GuestNavigationPill extends StatelessWidget {
-  final int currentIndex;
-  final Function(int) onTap;
-
-  const _GuestNavigationPill({required this.currentIndex, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    // Frosted-glass pill: the surface follows the screen behind it (deep-green
-    // on the showcase tabs, cream on the info tabs, navy in dark), with a
-    // hairline border and a soft shadow — no heavy dark halo.
-    return Container(
-      margin: const EdgeInsets.only(bottom: M4Nav.bottomInset),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(M4Nav.radius),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(M4Nav.radius),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: M4Nav.blur, sigmaY: M4Nav.blur),
-          child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: _guestNavInnerPadding, vertical: (_guestNavHeight - _guestNavDisc) / 2),
-      decoration: BoxDecoration(
-        // Frosted glass: a translucent tint over the 30px blur, with a top-down
-        // reflection so the bar reads as glass rather than a flat panel.
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: isDark
-              ? [
-                  Colors.white.withValues(alpha: 0.05),
-                  Colors.white.withValues(alpha: 0.01),
-                ]
-              : [
-                  Colors.white.withValues(alpha: 0.72),
-                  Colors.white.withValues(alpha: 0.38),
-                ],
-        ),
-        borderRadius: BorderRadius.circular(M4Nav.radius),
-        border: Border.all(
-          color: (isDark ? M4Theme.cream : Colors.white)
-              .withValues(alpha: isDark ? 0.16 : 0.65),
-          width: 1.2,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _NavIcon(
-            icon: LucideIcons.home,
-            isActive: currentIndex == 0,
-            onTap: () => onTap(0),
-          ),
-          const SizedBox(width: 12),
-          _NavIcon(
-            icon: LucideIcons.building2,
-            isActive: currentIndex == 1,
-            onTap: () => onTap(1),
-          ),
-          const SizedBox(width: 12),
-          _NavIcon(
-            icon: LucideIcons.info,
-            isActive: currentIndex == 2,
-            onTap: () => onTap(2),
-          ),
-          const SizedBox(width: 12),
-          _NavIcon(
-            icon: LucideIcons.briefcase,
-            isActive: currentIndex == 3,
-            onTap: () => onTap(3),
-          ),
-          const SizedBox(width: 12),
-          _NavIcon(
-            icon: LucideIcons.headphones,
-            isActive: currentIndex == 4,
-            onTap: () => onTap(4),
-          ),
-        ],
-      ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NavIcon extends StatelessWidget {
-  final IconData icon;
-  final bool isActive;
-  final VoidCallback onTap;
-
-  const _NavIcon({
-    required this.icon,
-    required this.isActive,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return _ScaleButton(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: M4Nav.animation,
-        curve: M4Nav.curve,
-        width: _guestNavDisc,
-        height: _guestNavDisc,
-        decoration: BoxDecoration(
-          color: isActive
-              ? (isDark ? Colors.white : Color(0xFF163A2C))
-              : Colors.transparent,
-          shape: BoxShape.circle,
-          boxShadow: isActive
-              ? [
-                  BoxShadow(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                      0.1,
-                    ),
-                    blurRadius: 10,
-                  ),
-                ]
-              : [],
-        ),
-        child: Center(
-          child: Icon(
-            icon,
-            color: isActive
-                ? (isDark ? Colors.black : Colors.white)
-                : (isDark ? Colors.white70 : Color(0xFF5E6B60)),
-            size: _guestNavIcon,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ScaleButton extends StatefulWidget {
-  final Widget child;
-  final VoidCallback onTap;
-  const _ScaleButton({required this.child, required this.onTap});
-
-  @override
-  State<_ScaleButton> createState() => _ScaleButtonState();
-}
-
-class _ScaleButtonState extends State<_ScaleButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scale;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 100),
-    );
-    _scale = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => _controller.forward(),
-      onTapUp: (_) => _controller.reverse(),
-      onTapCancel: () => _controller.reverse(),
-      onTap: widget.onTap,
-      child: ScaleTransition(scale: _scale, child: widget.child),
-    );
-  }
-}
+/// Height the floating pill occupies: the bar plus its bottom float margin.
+const double _navFootprint = M4Nav.height + M4Nav.bottomInset + 4;

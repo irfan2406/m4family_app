@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,7 +12,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 import 'package:m4_mobile/presentation/screens/support/raise_ticket_screen.dart';
 import 'dart:ui';
@@ -76,9 +77,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           backgroundColor: const Color(0xFF163A2C),
           duration: const Duration(milliseconds: 1100),
           behavior: SnackBarBehavior.fixed,
-          content: Text(
-            next ? 'Saved to favorites' : 'Removed from favorites',
-          ),
+          content: Text(next ? 'Saved to favorites' : 'Removed from favorites'),
         ),
       );
   }
@@ -137,7 +136,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           SnackBar(
             content: Text(
               message,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
@@ -211,7 +210,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   Expanded(
                     child: Text(
                       message,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
@@ -387,7 +386,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               style: GoogleFonts.gelasio(
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
                 height: 0.9,
                 letterSpacing: -1.5,
               ),
@@ -397,7 +396,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               'INTERESTED IN ${project?['title']?.toString().toUpperCase() ?? 'PROJECT'}?\nCHOOSE HOW YOU\'D LIKE TO PROCEED.',
               style: GoogleFonts.gelasio(
                 fontSize: 9,
-                color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                 fontWeight: FontWeight.w700,
                 letterSpacing: 2,
               ),
@@ -407,7 +406,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               icon: LucideIcons.messageSquare,
               title: 'SEND INQUIRY',
               desc: 'Get detailed brochure and pricing via email/WhatsApp.',
-              color: const Color(0xFFC5A35B),
+              color: const Color(0xFF163A2C),
               onTap: () {
                 Navigator.pop(context);
                 _showRequestDetailsDialog(project, null, 'General');
@@ -429,7 +428,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               icon: LucideIcons.creditCard,
               title: 'TOKEN BOOKING',
               desc: 'Lock your preferred unit with a refundable token amount.',
-              color: const Color(0xFFC5A35B),
+              color: const Color(0xFF163A2C),
               onTap: () {
                 Navigator.pop(context);
                 _showRequestDetailsDialog(project, 'TOKEN BOOKING', 'General');
@@ -461,11 +460,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   Expanded(
                     child: Text(
                       'M4 FAMILY MEMBERS GET PRIORITY SITE VISITS AND EXCLUSIVE UNIT SELECTION WINDOWS.',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 8,
                         color: isDark
                             ? Colors.white70
-                            : Color(0xFF163A2C).withOpacity(0.8),
+                            : const Color(0xFF0C312B).withOpacity(0.8),
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
                         height: 1.4,
@@ -530,19 +529,19 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
                       letterSpacing: 0.5,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     desc,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9,
-                      color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                      color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -551,7 +550,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             ),
             Icon(
               LucideIcons.chevronRight,
-              color: isDark ? Colors.white12 : Colors.black12,
+              color: isDark ? Colors.white12 : const Color(0x1F0C312B),
               size: 18,
             ),
           ],
@@ -595,7 +594,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       barrierColor: Colors.black.withOpacity(0.55),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => Dialog(
-          backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          backgroundColor: isDark
+              ? const Color(0xFF141B3A)
+              : const Color(0xFFF4EFE3),
           insetPadding: const EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 40,
@@ -618,7 +619,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       onPressed: () => Navigator.pop(context),
                       icon: Icon(
                         LucideIcons.x,
-                        color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                        color: isDark
+                            ? Colors.white38
+                            : const Color(0xFF155A4F),
                         size: 20,
                       ),
                       padding: EdgeInsets.zero,
@@ -634,7 +637,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     style: GoogleFonts.gelasio(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       letterSpacing: -0.5,
                     ),
                   ),
@@ -642,80 +645,97 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   Text(
                     planName != null
                         ? 'INQUIRY FOR "$planName" PAYMENT PLAN'
+                        // Web parity wording on the REQUEST DETAILS sheet.
+                        : type == 'General'
+                        ? 'A BESPOKE SHOWCASE OF LUXURY AT ${projectTitle.toUpperCase()}.'
                         : 'INQUIRY FOR ${projectTitle.toUpperCase()}',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                        0.6,
-                      ),
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.6),
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                     ),
                   ),
                   const SizedBox(height: 28),
 
-                  Text(
-                    'PREFERRED CONFIGURATION *',
-                    style: GoogleFonts.ebGaramond(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                        0.72,
+                  // Web parity: the REQUEST DETAILS sheet collects only name,
+                  // email, phone and notes — no configuration chips. The video
+                  // call / site visit variants keep theirs.
+                  if (type != 'General') ...[
+                    Text(
+                      'PREFERRED CONFIGURATION *',
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                            .withOpacity(0.72),
+                        letterSpacing: 1,
                       ),
-                      letterSpacing: 1,
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  // Web parity: 3-column grid (grid-cols-3), wider chips.
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.zero,
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                    childAspectRatio: 2.8,
-                    children: ["1 BHK", "2 BHK", "3 BHK", "4 BHK", "PENTHOUSE"]
-                        .map((config) {
-                          final isActive = _selectedConfig == config;
-                          return GestureDetector(
-                            onTap: () =>
-                                setModalState(() => _selectedConfig = config),
-                            child: Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: isActive
-                                    ? (isDark ? Colors.white : Color(0xFF163A2C))
-                                    : (isDark
-                                          ? Colors.white.withOpacity(0.03)
-                                          : Colors.black.withOpacity(0.04)),
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
+                    const SizedBox(height: 12),
+                    // Web parity: 3-column grid (grid-cols-3), wider chips.
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.zero,
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      childAspectRatio: 2.8,
+                      children:
+                          [
+                            "1 BHK",
+                            "2 BHK",
+                            "3 BHK",
+                            "4 BHK",
+                            "PENTHOUSE",
+                          ].map((config) {
+                            final isActive = _selectedConfig == config;
+                            return GestureDetector(
+                              onTap: () =>
+                                  setModalState(() => _selectedConfig = config),
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
                                   color: isActive
-                                      ? (isDark ? Colors.white : Color(0xFF163A2C))
+                                      ? (isDark
+                                            ? Colors.white
+                                            : const Color(0xFF0C312B))
                                       : (isDark
-                                            ? Colors.white.withOpacity(0.1)
-                                            : Colors.black.withOpacity(0.08)),
+                                            ? Colors.white.withOpacity(0.03)
+                                            : Colors.black.withOpacity(0.04)),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: isActive
+                                        ? (isDark
+                                              ? Colors.white
+                                              : const Color(0xFF0C312B))
+                                        : (isDark
+                                              ? Colors.white.withOpacity(0.1)
+                                              : Colors.black.withOpacity(0.08)),
+                                  ),
+                                ),
+                                child: Text(
+                                  config,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.5,
+                                    color: isActive
+                                        ? (isDark
+                                              ? const Color(0xFF0C312B)
+                                              : Colors.white)
+                                        : (isDark
+                                              ? Colors.white54
+                                              : const Color(0xFF155A4F)),
+                                  ),
                                 ),
                               ),
-                              child: Text(
-                                config,
-                                style: GoogleFonts.ebGaramond(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.5,
-                                  color: isActive
-                                      ? (isDark ? Colors.black : Colors.white)
-                                      : (isDark
-                                            ? Colors.white54
-                                            : Color(0xFF5E6B60)),
-                                ),
-                              ),
-                            ),
-                          );
-                        })
-                        .toList(),
-                  ),
+                            );
+                          }).toList(),
+                    ),
+                  ],
 
                   if (type == 'VC' || type == 'Site Visit') ...[
                     // VISIT TYPE toggle (web parity)
@@ -725,12 +745,13 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.04),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: (isDark ? Colors.white : Color(0xFF163A2C))
-                              .withOpacity(0.08),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.08),
                         ),
                       ),
                       child: Row(
@@ -746,7 +767,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                 ),
                                 decoration: BoxDecoration(
                                   color: active
-                                      ? (isDark ? Colors.white : Color(0xFF163A2C))
+                                      ? (isDark
+                                            ? Colors.white
+                                            : const Color(0xFF0C312B))
                                       : Colors.transparent,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -758,10 +781,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                     fontWeight: FontWeight.w700,
                                     letterSpacing: 1.5,
                                     color: active
-                                        ? (isDark ? Colors.black : Colors.white)
+                                        ? (isDark
+                                              ? const Color(0xFF0C312B)
+                                              : Colors.white)
                                         : (isDark
                                               ? Colors.white54
-                                              : Colors.black45),
+                                              : const Color(0x730C312B)),
                                   ),
                                 ),
                               ),
@@ -787,12 +812,16 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                           vertical: 18,
                         ),
                         decoration: BoxDecoration(
-                          color: (isDark ? Colors.white : Color(0xFF163A2C))
-                              .withOpacity(0.03),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.03),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                .withOpacity(0.08),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.08),
                           ),
                         ),
                         child: Row(
@@ -800,7 +829,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                             Icon(
                               LucideIcons.calendar,
                               size: 16,
-                              color: isDark ? Colors.white : Color(0xFF163A2C),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF0C312B),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -808,10 +839,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                 _inquiryDateTime == null
                                     ? 'SELECT DATE & TIME'
                                     : _formatInquiryDateTime(_inquiryDateTime!),
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                                  color: isDark
+                                      ? Colors.white
+                                      : const Color(0xFF155A4F),
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -819,8 +852,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                             Icon(
                               LucideIcons.chevronRight,
                               size: 16,
-                              color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                  .withOpacity(0.4),
+                              color:
+                                  (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0C312B))
+                                      .withOpacity(0.4),
                             ),
                           ],
                         ),
@@ -850,41 +886,50 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       controller: _notesController,
                       maxLines: 4,
                       textCapitalization: TextCapitalization.characters,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        color: isDark ? Colors.white : const Color(0xFF155A4F),
                       ),
                       decoration: InputDecoration(
                         hintText:
                             'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
-                        hintStyle: GoogleFonts.ebGaramond(
-                          fontSize: 11,
+                        hintStyle: GoogleFonts.inter(
+                          fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          color: (isDark ? Colors.white : Color(0xFF163A2C))
-                              .withOpacity(0.72),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.72),
                         ),
                         filled: true,
-                        fillColor: (isDark ? Colors.white : Color(0xFF163A2C))
-                            .withOpacity(0.03),
+                        fillColor:
+                            (isDark ? Colors.white : const Color(0xFF0C312B))
+                                .withOpacity(0.03),
                         contentPadding: const EdgeInsets.all(16),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(
-                            color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                .withOpacity(0.08),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.08),
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(
-                            color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                .withOpacity(0.08),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.08),
                           ),
                         ),
                       ),
                     ),
                   ] else ...[
+                    // Web parity order: name, then email, then phone.
                     const SizedBox(height: 24),
                     _buildInquiryField(
                       'FULL NAME *',
@@ -895,19 +940,19 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     ),
                     const SizedBox(height: 16),
                     _buildInquiryField(
+                      'EMAIL ADDRESS (OPTIONAL)',
+                      _emailController,
+                      LucideIcons.mail,
+                      keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildInquiryField(
                       'PHONE NUMBER *',
                       _phoneController,
                       LucideIcons.phone,
                       keyboardType: TextInputType.phone,
                       inputFormatters: Validators.phoneFormatters,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildInquiryField(
-                      'EMAIL (OPTIONAL)',
-                      _emailController,
-                      LucideIcons.mail,
-                      keyboardType: TextInputType.emailAddress,
-                      inputFormatters: Validators.emailFormatters,
                     ),
                   ],
 
@@ -918,12 +963,15 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                .withOpacity(0.1),
+                            color:
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
+                                    .withOpacity(0.1),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           ),
@@ -933,18 +981,26 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'SUBMIT INQUIRY',
-                            style: GoogleFonts.ebGaramond(
+                            // Web parity: the REQUEST DETAILS sheet confirms a
+                            // booking; the other variants stay an inquiry.
+                            type == 'General'
+                                ? 'CONFIRM BOOKING'
+                                : 'SUBMIT INQUIRY',
+                            style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
-                              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                              color: isDark
+                                  ? const Color(0xFF0C312B)
+                                  : const Color(0xFFF4EFE3),
                               letterSpacing: 1,
                             ),
                           ),
                           const SizedBox(width: 8),
                           Icon(
                             LucideIcons.arrowUpRight,
-                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            color: isDark
+                                ? const Color(0xFF0C312B)
+                                : const Color(0xFFF4EFE3),
                             size: 14,
                           ),
                         ],
@@ -955,9 +1011,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   Center(
                     child: Text(
                       'OUR ADVISOR WILL CONTACT YOU WITHIN 24 HOURS',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 7,
-                        color: isDark ? Colors.white24 : Colors.black26,
+                        color: isDark
+                            ? Colors.white24
+                            : const Color(0x420C312B),
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1,
                       ),
@@ -979,7 +1037,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       style: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.w700,
-        color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
+        color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+          0.72,
+        ),
         letterSpacing: 1.5,
       ),
     );
@@ -996,7 +1056,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       context: context,
       barrierColor: Colors.black.withOpacity(0.55),
       builder: (dCtx) => Dialog(
-        backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+        backgroundColor: isDark
+            ? const Color(0xFF141B3A)
+            : const Color(0xFFF4EFE3),
         insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         child: Padding(
@@ -1008,11 +1070,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'SELECT DATE & TIME',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
                   ),
                 ),
               ),
@@ -1035,14 +1097,17 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                           borderRadius: BorderRadius.circular(16),
                         ),
                         side: BorderSide(
-                          color: (isDark ? Colors.white : Color(0xFF163A2C))
-                              .withOpacity(0.2),
+                          color:
+                              (isDark ? Colors.white : const Color(0xFF0C312B))
+                                  .withOpacity(0.2),
                         ),
-                        foregroundColor: isDark ? Colors.white : Color(0xFF163A2C),
+                        foregroundColor: isDark
+                            ? Colors.white
+                            : const Color(0xFF0C312B),
                       ),
                       child: Text(
                         'CANCEL',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                           fontSize: 12,
@@ -1056,15 +1121,19 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       onPressed: () => Navigator.pop(dCtx, temp),
                       style: FilledButton.styleFrom(
                         minimumSize: const Size.fromHeight(52),
-                        backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-                        foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        backgroundColor: isDark
+                            ? Colors.white
+                            : const Color(0xFF0C312B),
+                        foregroundColor: isDark
+                            ? Colors.black
+                            : const Color(0xFFF4EFE3),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
                       child: Text(
                         'CONFIRM',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                           fontSize: 12,
@@ -1101,10 +1170,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             fontSize: 10,
             fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white54 : Color(0xFF5E6B60),
+            color: isDark ? Colors.white54 : const Color(0xFF155A4F),
             letterSpacing: 1,
           ),
         ),
@@ -1126,10 +1195,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             controller: controller,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 15,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Color(0xFF163A2C),
+              color: isDark ? Colors.white : const Color(0xFF155A4F),
             ),
             decoration: InputDecoration(
               filled: false,
@@ -1138,7 +1207,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               focusedBorder: InputBorder.none,
               icon: Icon(
                 icon,
-                color: isDark ? Colors.white24 : Colors.black26,
+                color: isDark ? Colors.white24 : const Color(0x420C312B),
                 size: 16,
               ),
               contentPadding: const EdgeInsets.symmetric(vertical: 16),
@@ -1232,7 +1301,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   child: IconButton(
                     icon: Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.black26,
                         shape: BoxShape.circle,
                       ),
@@ -1257,7 +1326,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   child: IconButton(
                     icon: Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.black26,
                         shape: BoxShape.circle,
                       ),
@@ -1307,7 +1376,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                               1;
                           return Text(
                             '$current / ${urls.length}',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               color: Colors.white,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -1339,8 +1408,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_isLoading && project == null) {
-      return Scaffold(
-        backgroundColor: Colors.black,
+      return const Scaffold(
+        backgroundColor: Color(0xFF0C312B),
         body: Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
@@ -1348,7 +1417,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+      backgroundColor: isDark
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFF4EFE3),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -1362,47 +1433,47 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 const SizedBox(height: 24),
                 _buildTitleSection(project, isDark),
                 const SizedBox(height: 24),
-                GridView.count(
+                // Web parity: one row of three — VIDEO CALL · COMPLETION ·
+                // SITE VISIT. The web page carries no CONFIG tile here; the
+                // configuration is listed in the Overview below.
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  // Taller cards (was 2.5) so the larger label/value text fits
-                  // without the "BOTTOM OVERFLOWED" warning.
-                  childAspectRatio: 2.1,
-                  children: [
-                    _OverviewActionCard(
-                      label: 'COMPLETION',
-                      value: '${project?['completion'] ?? 0}%',
-                      icon: LucideIcons.checkCircle2,
-                    ),
-                    _OverviewActionCard(
-                      label: 'CONFIG',
-                      value: project?['config'] ?? '3 & 4 BHK',
-                      icon: LucideIcons.building2,
-                    ),
-                    _OverviewActionCard(
-                      label: 'VIDEO CALL',
-                      value: 'CONNECT NOW',
-                      icon: LucideIcons.video,
-                      isAction: true,
-                      onTap: () =>
-                          _showRequestDetailsDialog(project, null, 'VC'),
-                    ),
-                    _OverviewActionCard(
-                      label: 'SITE VISIT',
-                      value: 'BOOK TOUR',
-                      icon: LucideIcons.eye,
-                      isAction: true,
-                      onTap: () => _showRequestDetailsDialog(
-                        project,
-                        null,
-                        'Site Visit',
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _OverviewActionCard(
+                          label: 'VIDEO CALL',
+                          value: 'Connect Now',
+                          icon: LucideIcons.video,
+                          isAction: true,
+                          onTap: () =>
+                              _showRequestDetailsDialog(project, null, 'VC'),
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _OverviewActionCard(
+                          label: 'COMPLETION',
+                          value: '${project?['completion'] ?? 0}%',
+                          icon: LucideIcons.calendar,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _OverviewActionCard(
+                          label: 'SITE VISIT',
+                          value: 'Book Tour',
+                          icon: LucideIcons.eye,
+                          isAction: true,
+                          onTap: () => _showRequestDetailsDialog(
+                            project,
+                            null,
+                            'Site Visit',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 24),
                 Padding(
@@ -1416,10 +1487,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       _buildAmenitiesSection(project),
                       const SizedBox(height: 40),
                       _buildConstructionSection(project),
-                      const SizedBox(height: 40),
-                      // Web parity: Gallery follows Construction (web has no
-                      // standalone Plans section — plans live in the Overview).
-                      _buildMediaGallerySection(project),
                       const SizedBox(height: 40),
                       // Web parity: no standalone Documents section here.
                       _buildContactSection(project),
@@ -1440,7 +1507,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
   // Web parity: the project title + location pill sit BELOW the hero, in large
   // dark serif on the page background (not overlaid on the image).
   Widget _buildTitleSection(dynamic project, bool isDark) {
-    final onSurface = isDark ? Colors.white : Color(0xFF163A2C);
+    final onSurface = isDark ? Colors.white : const Color(0xFF0C312B);
     final locName =
         ((project?['location'] is Map
                 ? project?['location']?['name']
@@ -1479,7 +1546,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 const SizedBox(width: 6),
                 Text(
                   locName,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: onSurface.withOpacity(0.9),
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -1512,19 +1579,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             borderRadius: const BorderRadius.vertical(
               bottom: Radius.circular(40),
             ),
-            child: CachedNetworkImage(
-              imageUrl: heroUrl,
-              fit: BoxFit.cover,
-              // Decode at roughly display size and skip the default 500ms
-              // fade — full-res decodes are what make the hero appear late.
+            child: _ProjectImage(
+              url: heroUrl,
+              isDark: isDark,
+              // Decode at roughly display size — full-res decodes are what
+              // make the hero appear late.
               memCacheWidth: 1080,
-              fadeInDuration: Duration.zero,
-              placeholder: (context, url) => Container(
-                color: isDark ? Colors.white10 : Color(0xFF163A2C).withOpacity(0.1),
-              ),
-              errorWidget: (context, url, error) => Container(
-                color: isDark ? Colors.white10 : Color(0xFF163A2C).withOpacity(0.1),
-              ),
             ),
           ),
           Container(
@@ -1612,39 +1672,39 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   Widget _buildMediaQuickActions(dynamic project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
-    final heroImages = project?['heroImages'] as List?;
-    final firstHero = (heroImages != null && heroImages.isNotEmpty)
-        ? heroImages[0]
-        : '';
-    final heroUrl = apiClient.resolveUrl(
-      project?['heroImage'] ?? project?['coverImage'] ?? firstHero,
-    );
-    // Web parity: distinct exterior/interior thumbnails, not the same hero twice.
+    // A photo tile is rendered only when the catalog actually holds images
+    // for it. Skyline Heights ships `exteriorImages: []` and
+    // `interiorImages: []`, so both tiles fell back to the hero — the same
+    // picture shown twice, labelled EXTERIOR and INTERIOR, opening an empty
+    // gallery on tap. Projects that do have galleries (Cledor, Clédor, Ocean
+    // View) are untouched, and the tiles come back on their own once images
+    // are uploaded. The 360 tile is an icon rather than a photo, so it always
+    // stays.
     final exteriorImages = project?['exteriorImages'] as List?;
     final interiorImages = project?['interiorImages'] as List?;
-    final extUrl = (exteriorImages != null && exteriorImages.isNotEmpty)
-        ? apiClient.resolveUrl(exteriorImages[0])
-        : heroUrl;
-    final intUrl = (interiorImages != null && interiorImages.isNotEmpty)
-        ? apiClient.resolveUrl(interiorImages[0])
-        : heroUrl;
+    final hasExterior = exteriorImages != null && exteriorImages.isNotEmpty;
+    final hasInterior = interiorImages != null && interiorImages.isNotEmpty;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         children: [
-          _HeroMediaThumb(
-            label: 'EXTERIOR',
-            imageUrl: extUrl,
-            onTap: () => _openHeroGallery(project, 'EXTERIOR'),
-          ),
-          const SizedBox(width: 12),
-          _HeroMediaThumb(
-            label: 'INTERIOR',
-            imageUrl: intUrl,
-            onTap: () => _openHeroGallery(project, 'INTERIOR'),
-          ),
-          const SizedBox(width: 12),
+          if (hasExterior) ...[
+            _HeroMediaThumb(
+              label: 'EXTERIOR',
+              imageUrl: apiClient.resolveUrl(exteriorImages[0]),
+              onTap: () => _openHeroGallery(project, 'EXTERIOR'),
+            ),
+            const SizedBox(width: 12),
+          ],
+          if (hasInterior) ...[
+            _HeroMediaThumb(
+              label: 'INTERIOR',
+              imageUrl: apiClient.resolveUrl(interiorImages[0]),
+              onTap: () => _openHeroGallery(project, 'INTERIOR'),
+            ),
+            const SizedBox(width: 12),
+          ],
           _HeroMediaThumb(
             label: '360° VIEW',
             isVR: true,
@@ -1665,7 +1725,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         Container(
           width: 24,
           height: 1,
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.55),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.55,
+          ),
         ),
         const SizedBox(width: 12),
         Text(
@@ -1673,7 +1735,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           style: GoogleFonts.gelasio(
             fontSize: 11,
             fontWeight: FontWeight.w700,
-            color: isDark ? Colors.white : Color(0xFF163A2C),
+            color: isDark ? Colors.white : const Color(0xFF0C312B),
             letterSpacing: 3,
           ),
         ),
@@ -1696,10 +1758,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           // Web parity: overview copy capped at 3 lines.
           maxLines: 3,
           overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             // Was 11 / 60% — small & faint. Bigger + darker.
             fontSize: 12.5,
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.78),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.78),
             height: 1.7,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.2,
@@ -1794,17 +1857,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     );
   }
 
-  Widget _buildMediaGallerySection(dynamic project) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader('Gallery'),
-        const SizedBox(height: 24),
-        _buildMedia(project),
-      ],
-    );
-  }
-
   Widget _buildLocationSection(dynamic project) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1826,16 +1878,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       children: [
         _buildSectionHeader('Plans'),
         const SizedBox(height: 24),
-        ...plans
-            .map(
-              (plan) => _FloorPlanItem(
-                plan: plan,
-                imageUrl: apiClient.resolveUrl(plan['image']?.toString()),
-                onLaunch: _launchAction,
-                onView: _showMediaLightbox,
-              ),
-            )
-            .toList(),
+        ...plans.map(
+          (plan) => _FloorPlanItem(
+            plan: plan,
+            imageUrl: apiClient.resolveUrl(plan['image']?.toString()),
+            onLaunch: _launchAction,
+            onView: _showMediaLightbox,
+          ),
+        ),
       ],
     );
   }
@@ -1872,9 +1922,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     'Experience luxurious living redefined with M4 Family. Our projects blend architectural excellence with modern comforts to create homes that inspire.')
                 .toString()
                 .toUpperCase(),
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12,
-              color: isDark ? Colors.white.withOpacity(0.9) : Colors.black,
+              color: isDark
+                  ? Colors.white.withOpacity(0.9)
+                  : const Color(0xFF0C312B),
               height: 1.8,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.2,
@@ -1890,10 +1942,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 setState(() => _showFullOverviewDesc = !_showFullOverviewDesc),
             child: Text(
               _showFullOverviewDesc ? 'Read less' : 'Read more',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : const Color(0xFF155A4F),
                 decoration: TextDecoration.underline,
               ),
             ),
@@ -1913,7 +1965,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 ),
                 child: Text(
                   'RESOURCES',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     textStyle: const TextStyle(inherit: true),
                     fontSize: 8,
                     fontWeight: FontWeight.w600,
@@ -2003,7 +2055,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF5E6B60),
+              color: const Color(0xFF155A4F),
               letterSpacing: 2,
             ),
           ),
@@ -2089,7 +2141,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               name,
               textAlign: TextAlign.center,
               // Was 8px — too small. Bigger + a touch darker.
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 9.5,
                 fontWeight: FontWeight.w700,
                 color: isDark
@@ -2141,11 +2193,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _SectionHeader(title: 'CONSTRUCTION PROGRESS'),
-              const _Badge(text: 'LIVE TRACKING', isOutline: true),
+              _Badge(text: 'LIVE TRACKING', isOutline: true),
             ],
           ),
           const SizedBox(height: 24),
@@ -2163,7 +2215,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           ),
 
           const SizedBox(height: 32),
-          _SectionHeader(title: 'RECENT LOGS'),
+          const _SectionHeader(title: 'RECENT LOGS'),
           const SizedBox(height: 20),
           if (_updates.isEmpty)
             const _EmptyTabContent(
@@ -2171,16 +2223,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   'Site logs will appear once construction reaches next milestone',
             )
           else
-            ..._updates
-                .map(
-                  (update) => _ConstructionUpdateCard(
-                    update: update,
-                    imageUrl: ref
-                        .read(apiClientProvider)
-                        .resolveUrl(update['image']?.toString()),
-                  ),
-                )
-                .toList(),
+            ..._updates.map(
+              (update) => _ConstructionUpdateCard(
+                update: update,
+                imageUrl: ref
+                    .read(apiClientProvider)
+                    .resolveUrl(update['image']?.toString()),
+              ),
+            ),
         ],
       ),
     );
@@ -2201,7 +2251,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 0),
-          _LocationMap(
+          M4MapView(
             query: locName,
             onOpen: () => _launchAction(
               'Opening Maps...',
@@ -2219,7 +2269,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionHeader(title: 'ARCHITECTURAL PLANNING'),
+          const _SectionHeader(title: 'ARCHITECTURAL PLANNING'),
           const SizedBox(height: 24),
           if (project?['plans'] != null &&
               (project['plans'] as List).isNotEmpty)
@@ -2242,96 +2292,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     );
   }
 
-  Widget _buildMedia(dynamic project) {
-    final allMedia = project?['media'] as List? ?? [];
-    final List<dynamic> filteredMedia = allMedia;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final apiClient = ref.read(apiClientProvider);
-
-    if (filteredMedia.isEmpty)
-      return const _EmptyTabContent(message: 'Coming soon');
-
-    return Column(
-      children: [
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.zero,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1.3,
-          ),
-          itemCount: filteredMedia.length,
-          itemBuilder: (context, index) {
-            final item = filteredMedia[index];
-            final type = (item['type'] ?? 'Image').toString().toUpperCase();
-            final isVideo = type == 'VIDEO' || type == 'VIDEO_THUMBNAIL';
-            final url = apiClient.resolveUrl(item['url']?.toString());
-
-            final allUrls = filteredMedia
-                .map((m) => m['url']?.toString() ?? '')
-                .where((u) => u.isNotEmpty)
-                .toList();
-
-            return _ScaleButton(
-              onTap: () => _showMediaLightbox(
-                allUrls,
-                isVideo ? 'VIDEO' : 'IMAGE',
-                index,
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: isDark
-                        ? Colors.white.withOpacity(0.05)
-                        : Colors.black.withOpacity(0.05),
-                  ),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl: url,
-                        fit: BoxFit.cover,
-                        // Thumbnails render ~90dp wide — decoding the full-res
-                        // source here was the main cost on this row.
-                        memCacheWidth: 300,
-                        fadeInDuration: Duration.zero,
-                        placeholder: (context, url) => Container(
-                          color: isDark
-                              ? Colors.white10
-                              : Color(0xFF163A2C).withOpacity(0.05),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: isDark
-                              ? Colors.white10
-                              : Color(0xFF163A2C).withOpacity(0.05),
-                        ),
-                      ),
-                      if (isVideo)
-                        const Center(
-                          child: Icon(
-                            LucideIcons.playCircle,
-                            color: Colors.white,
-                            size: 40,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
   Widget _buildDocuments(dynamic project) {
     final docs = project?['documents'] as List? ?? [];
     return _buildTabContent(
@@ -2346,16 +2306,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               onLaunch: _launchAction,
             )
           else
-            ...docs
-                .map(
-                  (doc) => _DocumentItem(
-                    title: doc['name'] ?? 'Document',
-                    size: doc['size'] ?? 'N/A',
-                    type: doc['type'] ?? 'GENERAL',
-                    onLaunch: _launchAction,
-                  ),
-                )
-                .toList(),
+            ...docs.map(
+              (doc) => _DocumentItem(
+                title: doc['name'] ?? 'Document',
+                size: doc['size'] ?? 'N/A',
+                type: doc['type'] ?? 'GENERAL',
+                onLaunch: _launchAction,
+              ),
+            ),
         ],
       ),
     );
@@ -2407,7 +2365,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       children: [
                         Text(
                           'INTERESTED IN THIS PROJECT?',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                             color: colorScheme.onSurface,
@@ -2417,7 +2375,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                         const SizedBox(height: 4),
                         Text(
                           'CONNECT WITH OUR TEAM TODAY',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 7,
                             fontWeight: FontWeight.w500,
                             color: colorScheme.onSurfaceVariant,
@@ -2456,27 +2414,25 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               ),
               const SizedBox(height: 24),
               _ScaleButton(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BookingStartScreen(
-                      projectId: widget.projectId,
-                      project: project,
-                    ),
-                  ),
-                ),
+                // Web parity: BOOK YOUR UNIT NOW opens the REQUEST DETAILS
+                // sheet straight away — the web has no intermediate
+                // "how can we help?" chooser.
+                onTap: () =>
+                    _showRequestDetailsDialog(project, null, 'General'),
                 child: Container(
                   width: double.infinity,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                     borderRadius: BorderRadius.circular(24),
                   ),
                   child: Center(
                     child: Text(
                       'BOOK YOUR UNIT NOW',
                       style: GoogleFonts.gelasio(
-                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        color: isDark
+                            ? const Color(0xFF0C312B)
+                            : const Color(0xFFF4EFE3),
                         fontWeight: FontWeight.w700,
                         fontSize: 10,
                         letterSpacing: 2,
@@ -2669,7 +2625,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     }
     return Icon(
       _getAmenityIcon(name),
-      color: const Color(0xFFC5A35B),
+      color: const Color(0xFF155A4F),
       size: size,
     );
   }
@@ -2693,6 +2649,59 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 }
 
 // Helper Widgets
+/// Project imagery arrives either as a URL or as an inline `data:image;base64`
+/// payload (the CMS stores some heroes that way — Skyline Heights is one).
+/// CachedNetworkImage is an HTTP loader and renders a data URI as a blank box,
+/// so those are decoded to bytes instead.
+class _ProjectImage extends StatelessWidget {
+  final String url;
+  final bool isDark;
+  final int? memCacheWidth;
+
+  const _ProjectImage({
+    required this.url,
+    required this.isDark,
+    this.memCacheWidth,
+  });
+
+  Widget _fallback() => Container(
+    color: isDark ? Colors.white10 : const Color(0xFF163A2C).withOpacity(0.1),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    if (url.isEmpty) return _fallback();
+
+    if (url.startsWith('data:')) {
+      final comma = url.indexOf(',');
+      if (comma == -1) return _fallback();
+      try {
+        final bytes = base64Decode(url.substring(comma + 1));
+        return Image.memory(
+          bytes,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          cacheWidth: memCacheWidth,
+          gaplessPlayback: true,
+          errorBuilder: (_, _, _) => _fallback(),
+        );
+      } catch (_) {
+        return _fallback();
+      }
+    }
+
+    return CachedNetworkImage(
+      imageUrl: url,
+      fit: BoxFit.cover,
+      memCacheWidth: memCacheWidth,
+      fadeInDuration: Duration.zero,
+      placeholder: (context, url) => _fallback(),
+      errorWidget: (context, url, error) => _fallback(),
+    );
+  }
+}
+
 class _OverviewActionCard extends StatelessWidget {
   final String label;
   final String value;
@@ -2715,49 +2724,68 @@ class _OverviewActionCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
+      // Web parity: icon stacked above the label and value, centred, so three
+      // cards sit side by side. The old icon-beside-label row could not fit at
+      // a third of the width.
       child: Container(
-        padding: const EdgeInsets.all(16),
+        height: 140,
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isDark
-                ? Colors.white.withOpacity(0.05)
-                : Colors.black.withOpacity(0.03),
+                ? Colors.white.withOpacity(0.08)
+                : Colors.black.withOpacity(0.05),
           ),
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
+            Icon(
+              icon,
+              size: 24,
+              color: isDark ? Colors.white60 : const Color(0xFF155A4F),
+            ),
+            Column(
               children: [
-                Icon(
-                  icon,
-                  size: 16,
-                  color: isDark ? Colors.white60 : Color(0xFF5E6B60),
-                ),
-                const SizedBox(width: 8),
                 Text(
                   label.toUpperCase(),
-                  // Was 8px / 38% — too small & faint. Bigger + darker.
-                  style: GoogleFonts.ebGaramond(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white70 : Color(0xFF5E6B60),
-                    letterSpacing: 0.5,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? Colors.white70 : const Color(0xFF155A4F),
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    value,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
+                      letterSpacing: -0.2,
+                    ),
                   ),
                 ),
               ],
-            ),
-            Text(
-              value.toUpperCase(),
-              style: GoogleFonts.ebGaramond(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : Color(0xFF163A2C),
-                letterSpacing: -0.2,
-              ),
             ),
           ],
         ),
@@ -2785,10 +2813,12 @@ class _Badge extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 8,
           fontWeight: FontWeight.w600,
-          color: color != null ? Colors.white : Colors.black.withOpacity(0.7),
+          color: color != null
+              ? Colors.white
+              : const Color(0xFF0C312B).withOpacity(0.7),
           letterSpacing: 1.0,
         ),
       ),
@@ -2834,20 +2864,20 @@ class _OverviewPremiumCard extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             title,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: const Color(0xFF0C312B),
               letterSpacing: 1,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 8,
               fontWeight: FontWeight.bold,
-              color: Colors.black.withOpacity(0.72),
+              color: const Color(0xFF0C312B).withOpacity(0.72),
             ),
           ),
         ],
@@ -2873,7 +2903,9 @@ class _BottomIconAction extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.black.withOpacity(0.05)),
         ),
-        child: Center(child: Icon(icon, color: Colors.black, size: 20)),
+        child: Center(
+          child: Icon(icon, color: const Color(0xFF0C312B), size: 20),
+        ),
       ),
     );
   }
@@ -2922,7 +2954,7 @@ class _LocationLandmark extends StatelessWidget {
             ),
             child: Icon(
               icon,
-              color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+              color: isDark ? Colors.white38 : const Color(0xFF155A4F),
               size: 20,
             ),
           ),
@@ -2933,18 +2965,18 @@ class _LocationLandmark extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
                   ),
                 ),
                 Text(
                   distance.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white24 : Colors.black26,
+                    color: isDark ? Colors.white24 : const Color(0x420C312B),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -2978,7 +3010,7 @@ class _FloorPlanItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark
             ? const Color(0xFF141B3A)
-            : Color(0xFF163A2C).withOpacity(0.04),
+            : const Color(0xFF163A2C).withOpacity(0.04),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -3012,7 +3044,7 @@ class _FloorPlanItem extends StatelessWidget {
                       LucideIcons.image,
                       color: isDark
                           ? Colors.white.withOpacity(0.1)
-                          : Colors.black.withOpacity(0.1),
+                          : const Color(0xFF0C312B).withOpacity(0.1),
                     ),
                   ),
                 ),
@@ -3029,10 +3061,10 @@ class _FloorPlanItem extends StatelessWidget {
                   children: [
                     Text(
                       (plan['title'] ?? 'Floor Plan').toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        color: isDark ? Colors.white : const Color(0xFF155A4F),
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -3040,10 +3072,12 @@ class _FloorPlanItem extends StatelessWidget {
                         plan['area'].toString().isNotEmpty)
                       Text(
                         plan['area'].toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white24 : Colors.black26,
+                          color: isDark
+                              ? Colors.white24
+                              : const Color(0x420C312B),
                           letterSpacing: 1,
                         ),
                       ),
@@ -3054,7 +3088,7 @@ class _FloorPlanItem extends StatelessWidget {
                 onTap: () => onLaunch('Downloading Floor Plan...', imageUrl),
                 child: Icon(
                   LucideIcons.download,
-                  color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                  color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                   size: 18,
                 ),
               ),
@@ -3076,9 +3110,9 @@ class _EmptyTabContent extends StatelessWidget {
       child: Text(
         message,
         textAlign: TextAlign.center,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 12,
-          color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+          color: isDark ? Colors.white38 : const Color(0xFF155A4F),
         ),
       ),
     );
@@ -3125,7 +3159,7 @@ class _InventoryItem extends StatelessWidget {
                   ),
                   child: Icon(
                     LucideIcons.home,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                     size: 20,
                   ),
                 ),
@@ -3136,17 +3170,17 @@ class _InventoryItem extends StatelessWidget {
                     children: [
                       Text(
                         'UNIT ${unit['unitNumber']}',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                          color: const Color(0xFF0C312B),
                         ),
                       ),
                       Text(
                         '${unit['type']} • ${unit['area']} SQFT',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
-                          color: Colors.black.withOpacity(0.72),
+                          color: const Color(0xFF0C312B).withOpacity(0.72),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -3158,7 +3192,7 @@ class _InventoryItem extends StatelessWidget {
                   children: [
                     Text(
                       '$currency ${unit['price']}',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: M4Theme.premiumBlue,
@@ -3166,9 +3200,9 @@ class _InventoryItem extends StatelessWidget {
                     ),
                     Text(
                       'EXCL. TAXES',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 8,
-                        color: Colors.black.withOpacity(0.72),
+                        color: const Color(0xFF0C312B).withOpacity(0.72),
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
                       ),
@@ -3192,7 +3226,7 @@ class _InventoryItem extends StatelessWidget {
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 2,
-                    color: Colors.black,
+                    color: const Color(0xFF0C312B),
                   ),
                 ),
               ),
@@ -3242,7 +3276,7 @@ class _ConstructionUpdateCard extends StatelessWidget {
                     child: Center(
                       child: Icon(
                         LucideIcons.image,
-                        color: Colors.black.withOpacity(0.1),
+                        color: const Color(0xFF0C312B).withOpacity(0.1),
                       ),
                     ),
                   ),
@@ -3266,10 +3300,10 @@ class _ConstructionUpdateCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         update['title']?.toString().toUpperCase() ?? 'UPDATE',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                          color: const Color(0xFF0C312B),
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -3277,9 +3311,9 @@ class _ConstructionUpdateCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       update['date']?.toString() ?? '',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 10,
-                        color: Colors.black.withOpacity(0.72),
+                        color: const Color(0xFF0C312B).withOpacity(0.72),
                       ),
                     ),
                   ],
@@ -3287,9 +3321,9 @@ class _ConstructionUpdateCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   update['description'] ?? '',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 11,
-                    color: Colors.black.withOpacity(0.6),
+                    color: const Color(0xFF0C312B).withOpacity(0.6),
                     height: 1.5,
                   ),
                 ),
@@ -3371,17 +3405,17 @@ class _DocumentItem extends StatelessWidget {
                 children: [
                   Text(
                     title.toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                      color: const Color(0xFF0C312B),
                     ),
                   ),
                   Text(
                     '$type • $size',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 9,
-                      color: Colors.black.withOpacity(0.72),
+                      color: const Color(0xFF0C312B).withOpacity(0.72),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -3390,7 +3424,7 @@ class _DocumentItem extends StatelessWidget {
             ),
             Icon(
               LucideIcons.download,
-              color: Colors.black.withOpacity(0.24),
+              color: const Color(0xFF0C312B).withOpacity(0.24),
               size: 18,
             ),
           ],
@@ -3454,12 +3488,12 @@ class _FilterChip extends StatelessWidget {
                 ),
                 child: Text(
                   label,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 9,
                     fontWeight: FontWeight.w600,
                     color: isActive
                         ? Colors.white
-                        : Colors.black.withOpacity(0.72),
+                        : const Color(0xFF0C312B).withOpacity(0.72),
                     letterSpacing: 1.0,
                   ),
                 ),
@@ -3557,7 +3591,7 @@ class _SocialIconButton extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white : Color(0xFF163A2C),
+          color: isDark ? Colors.white : const Color(0xFF0C312B),
           size: 20,
         ),
       ),
@@ -3567,143 +3601,6 @@ class _SocialIconButton extends StatelessWidget {
 
 /// Web parity: an embedded Google Map (matching the web iframe) with
 /// "Open in Maps" and "VIEW ON MAPS" overlays, via webview_flutter.
-class _LocationMap extends StatefulWidget {
-  final String query;
-  final VoidCallback onOpen;
-  const _LocationMap({required this.query, required this.onOpen});
-
-  @override
-  State<_LocationMap> createState() => _LocationMapState();
-}
-
-class _LocationMapState extends State<_LocationMap> {
-  late final WebViewController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    // Google's ?output=embed page refuses to render as a TOP-LEVEL document
-    // ("must be used in an iframe"). Wrapping it in an actual <iframe> inside a
-    // local HTML page makes the embed work.
-    final src =
-        'https://maps.google.com/maps?q=${Uri.encodeComponent(widget.query)}'
-        '&t=&z=13&ie=UTF8&iwloc=&output=embed';
-    final html =
-        '<!DOCTYPE html><html><head>'
-        '<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">'
-        '<style>html,body{margin:0;padding:0;height:100%;background:#e5e3df;overflow:hidden}'
-        'iframe{border:0;width:100%;height:100%;display:block}</style></head>'
-        '<body><iframe src="$src" allowfullscreen loading="lazy" '
-        'referrerpolicy="no-referrer-when-downgrade"></iframe></body></html>';
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0xFFF4EFE3))
-      ..loadHtmlString(html);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: SizedBox(
-        height: 220,
-        width: double.infinity,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            WebViewWidget(controller: _controller),
-            // Open in Maps (top-left)
-            Positioned(
-              top: 12,
-              left: 12,
-              child: GestureDetector(
-                onTap: widget.onOpen,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: (isDark ? Colors.black : Colors.white).withOpacity(
-                      0.85,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Open in Maps',
-                        style: GoogleFonts.ebGaramond(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFFC5A35B),
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      const Icon(
-                        LucideIcons.externalLink,
-                        size: 12,
-                        color: Color(0xFFC5A35B),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            // VIEW ON MAPS (top-right)
-            Positioned(
-              top: 12,
-              right: 12,
-              child: GestureDetector(
-                onTap: widget.onOpen,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 9,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.15),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        LucideIcons.mapPin,
-                        size: 13,
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'VIEW ON MAPS',
-                        style: GoogleFonts.ebGaramond(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Color(0xFF163A2C),
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 /// Web parity: the construction progress ring is a DOTTED circle
 /// (SVG strokeDasharray="1.5 1.5") — the filled portion in the accent color,
 /// the remainder in a faded track. Rendered here with a dashed-arc painter.
@@ -3807,7 +3704,7 @@ class _HeroMediaThumb extends StatelessWidget {
         width: 68,
         height: 68,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFEDE5D6),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: isDark
@@ -3829,41 +3726,30 @@ class _HeroMediaThumb extends StatelessWidget {
           children: [
             if (isVR)
               Container(
-                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                color: isDark
+                    ? const Color(0xFF141B3A)
+                    : const Color(0xFFF4EFE3),
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Web parity: the same /360-vr.png icon (dark:invert in
-                      // dark mode via an inversion color matrix).
-                      isDark
-                          ? ColorFiltered(
-                              colorFilter: const ColorFilter.matrix(<double>[
-                                -1, 0, 0, 0, 255, //
-                                0, -1, 0, 0, 255, //
-                                0, 0, -1, 0, 255, //
-                                0, 0, 0, 1, 0, //
-                              ]),
-                              child: Image.asset(
-                                'assets/360-vr.png',
-                                width: 30,
-                                height: 30,
-                                fit: BoxFit.contain,
-                              ),
-                            )
-                          : Image.asset(
-                              'assets/360-vr.png',
-                              width: 30,
-                              height: 30,
-                              fit: BoxFit.contain,
-                            ),
+                      // A vector icon rather than the 360-vr.png bitmap: it
+                      // tints with the theme and needs no multiply blend to
+                      // hide the PNG's white plate.
+                      Icon(
+                        LucideIcons.rotate3d,
+                        size: 26,
+                        color: isDark ? Colors.white : const Color(0xFF155A4F),
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         '360° VIEW',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 7,
                           fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Color(0xFF163A2C),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF155A4F),
                         ),
                       ),
                     ],
@@ -3871,22 +3757,7 @@ class _HeroMediaThumb extends StatelessWidget {
                 ),
               )
             else if (imageUrl != null)
-              CachedNetworkImage(
-                imageUrl: imageUrl!,
-                fit: BoxFit.cover,
-                memCacheWidth: 900,
-                fadeInDuration: Duration.zero,
-                placeholder: (context, url) => Container(
-                  color: isDark
-                      ? Colors.white10
-                      : Color(0xFF163A2C).withOpacity(0.1),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  color: isDark
-                      ? Colors.white10
-                      : Color(0xFF163A2C).withOpacity(0.1),
-                ),
-              ),
+              _ProjectImage(url: imageUrl!, isDark: isDark, memCacheWidth: 900),
 
             if (!isVR) ...[
               // Gradient Overlay for text readability
@@ -3912,7 +3783,7 @@ class _HeroMediaThumb extends StatelessWidget {
                 child: Text(
                   label,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 7,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
@@ -3975,7 +3846,7 @@ class _MultimediaAssetCard extends StatelessWidget {
             ),
             child: Icon(
               icon,
-              color: isDark ? Colors.white : Color(0xFF163A2C),
+              color: isDark ? Colors.white : const Color(0xFF0C312B),
               size: 18,
             ),
           ),
@@ -3986,10 +3857,10 @@ class _MultimediaAssetCard extends StatelessWidget {
               children: [
                 Text(
                   title.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -3997,10 +3868,10 @@ class _MultimediaAssetCard extends StatelessWidget {
                 Text(
                   subtitle.toUpperCase(),
                   // Was 7px / 38% — too small & faint. Bigger + darker.
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white60 : Color(0xFF5E6B60),
+                    color: isDark ? Colors.white60 : const Color(0xFF155A4F),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -4026,10 +3897,10 @@ class _MultimediaAssetCard extends StatelessWidget {
                   ),
                   child: Text(
                     'VIEW',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 8,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
                     ),
                   ),
                 ),
@@ -4044,15 +3915,17 @@ class _MultimediaAssetCard extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       'DOWNLOAD',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 8,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        color: isDark
+                            ? const Color(0xFF0C312B)
+                            : const Color(0xFFF4EFE3),
                       ),
                     ),
                   ),
@@ -4068,15 +3941,17 @@ class _MultimediaAssetCard extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       'WATCH STORY',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 8,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        color: isDark
+                            ? const Color(0xFF0C312B)
+                            : const Color(0xFFF4EFE3),
                       ),
                     ),
                   ),
@@ -4141,10 +4016,10 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   children: [
                     Text(
                       'ESTIMATED COMPLETION',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        color: isDark ? Colors.white : const Color(0xFF155A4F),
                         letterSpacing: 1,
                       ),
                     ),
@@ -4153,16 +4028,16 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       estimatedCompletion.toUpperCase(),
                       style: GoogleFonts.gelasio(
                         fontSize: 40,
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         height: 1,
                       ),
                     ),
                     const SizedBox(height: 16),
                     Text(
                       'As the project progresses, significant milestones are reached, showcasing our team\'s dedication and expertise. We are steadily moving closer to our completion goal, ensuring quality and safety at every step. Each phase is handled with precision to meet our luxury standards and timeline.',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 11,
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.6),
                         height: 1.6,
                         fontWeight: FontWeight.w500,
@@ -4177,10 +4052,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       onTap: onToggle,
                       child: Text(
                         showFullDesc ? 'Show less' : 'Read more',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Color(0xFF163A2C),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF155A4F),
                         ),
                       ),
                     ),
@@ -4201,8 +4078,10 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     size: 100,
                     strokeWidth: 6,
                     dashCount: 56,
-                    activeColor: isDark ? Colors.white : Color(0xFF163A2C),
-                    trackColor: isDark ? Colors.white : Color(0xFF163A2C),
+                    activeColor: isDark
+                        ? Colors.white
+                        : const Color(0xFF0C312B),
+                    trackColor: isDark ? Colors.white : const Color(0xFF0C312B),
                   ),
                   Column(
                     mainAxisSize: MainAxisSize.min,
@@ -4212,16 +4091,20 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         style: GoogleFonts.gelasio(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
-                          color: isDark ? Colors.white : Color(0xFF163A2C),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF0C312B),
                         ),
                       ),
                       Text(
                         'OVERALL',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 8,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
-                          color: isDark ? Colors.white38 : Colors.black45,
+                          color: isDark
+                              ? Colors.white38
+                              : const Color(0x730C312B),
                         ),
                       ),
                     ],
@@ -4243,7 +4126,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     style: GoogleFonts.gelasio(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -4252,9 +4135,11 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     height: 12,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+                      color: isDark
+                          ? const Color(0xFF141B3A)
+                          : const Color(0xFFF4EFE3),
                       border: Border.all(
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         width: 2,
                       ),
                     ),
@@ -4262,9 +4147,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   Expanded(
                     child: Container(
                       height: 1,
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                        0.2,
-                      ),
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.2),
                     ),
                   ),
                 ],
@@ -4360,17 +4244,21 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                   final bg = s == 'completed'
                                       ? const Color(0xFF163A2C)
                                       : s == 'in progress'
-                                      ? (isDark ? Colors.white : Color(0xFF163A2C))
+                                      ? (isDark
+                                            ? Colors.white
+                                            : const Color(0xFF0C312B))
                                       : (isDark
                                             ? Colors.white24
-                                            : Color(0xFF163A2C).withOpacity(0.12));
+                                            : const Color(
+                                                0xFF163A2C,
+                                              ).withOpacity(0.12));
                                   final fg = s == 'completed'
                                       ? Colors.white
                                       : s == 'in progress'
                                       ? (isDark ? Colors.black : Colors.white)
                                       : (isDark
                                             ? Colors.white70
-                                            : Color(0xFF163A2C));
+                                            : const Color(0xFF0C312B));
                                   return Container(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 10,
@@ -4382,7 +4270,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                     ),
                                     child: Text(
                                       status.toUpperCase(),
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.inter(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w600,
                                         color: fg,
@@ -4404,7 +4292,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                             // Web parity: project title first (e.g. CLÉDOR).
                             Text(
                               projectTitle.toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 color: isDark
@@ -4435,24 +4323,24 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                         backgroundColor:
                                             (isDark
                                                     ? Colors.white
-                                                    : Color(0xFF163A2C))
+                                                    : const Color(0xFF0C312B))
                                                 .withOpacity(0.12),
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
                                               isDark
                                                   ? Colors.white
-                                                  : Color(0xFF163A2C),
+                                                  : const Color(0xFF0C312B),
                                             ),
                                       ),
                                     ),
                                     Text(
                                       '${phase['progressPercent'] ?? phase['progress'] ?? 0}%',
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.inter(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w600,
                                         color: isDark
                                             ? Colors.white
-                                            : Color(0xFF163A2C),
+                                            : const Color(0xFF0C312B),
                                       ),
                                     ),
                                   ],
@@ -4470,7 +4358,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                       fontSize: 10,
                                       fontWeight: FontWeight.w700,
                                       color:
-                                          (isDark ? Colors.white : Color(0xFF163A2C))
+                                          (isDark
+                                                  ? Colors.white
+                                                  : const Color(0xFF0C312B))
                                               .withOpacity(0.8),
                                       letterSpacing: 2,
                                     ),
@@ -4503,7 +4393,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     style: GoogleFonts.gelasio(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF0C312B),
                       letterSpacing: 4,
                     ),
                   ),
@@ -4513,9 +4403,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w700,
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                        0.5,
-                      ),
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.5),
                       letterSpacing: 1.5,
                     ),
                   ),
@@ -4527,14 +4416,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   vertical: 7,
                 ),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withOpacity(0.05),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                      0.15,
-                    ),
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                        .withOpacity(0.15),
                   ),
                 ),
                 child: Text(
@@ -4542,7 +4429,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -4557,9 +4444,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                    0.12,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withOpacity(0.12),
                 ),
               ),
               child: Center(
@@ -4568,9 +4454,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   style: GoogleFonts.gelasio(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                      0.35,
-                    ),
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                        .withOpacity(0.35),
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -4592,7 +4477,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   final dotColor = s == 'completed'
                       ? const Color(0xFF163A2C)
                       : s == 'in progress'
-                      ? (isDark ? Colors.white : Color(0xFF163A2C))
+                      ? (isDark ? Colors.white : const Color(0xFF0C312B))
                       : (isDark ? Colors.white38 : Colors.black26);
                   return Container(
                     width: 240,
@@ -4604,7 +4489,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           : Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.08),
                       ),
                     ),
@@ -4628,19 +4513,19 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                         color:
                                             (isDark
                                                     ? Colors.white
-                                                    : Color(0xFF163A2C))
+                                                    : const Color(0xFF0C312B))
                                                 .withOpacity(0.15),
                                       ),
                                     ),
                                     child: Text(
                                       (index + 1).toString().padLeft(2, '0'),
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.inter(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w600,
                                         color:
                                             (isDark
                                                     ? Colors.white
-                                                    : Color(0xFF163A2C))
+                                                    : const Color(0xFF0C312B))
                                                 .withOpacity(0.72),
                                       ),
                                     ),
@@ -4660,12 +4545,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                               .toUpperCase(),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.inter(
                                             fontSize: 11,
                                             fontWeight: FontWeight.w600,
                                             color: isDark
                                                 ? Colors.white
-                                                : Color(0xFF163A2C),
+                                                : const Color(0xFF0C312B),
                                             letterSpacing: 1,
                                           ),
                                         ),
@@ -4689,7 +4574,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                                 color:
                                                     (isDark
                                                             ? Colors.white
-                                                            : Color(0xFF163A2C))
+                                                            : const Color(
+                                                                0xFF0C312B,
+                                                              ))
                                                         .withOpacity(0.5),
                                                 letterSpacing: 1.5,
                                               ),
@@ -4708,7 +4595,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                               style: GoogleFonts.gelasio(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
-                                color: isDark ? Colors.white : Color(0xFF163A2C),
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF0C312B),
                                 letterSpacing: -0.5,
                               ),
                             ),
@@ -4721,10 +4610,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                             value: (pct / 100).clamp(0.0, 1.0),
                             minHeight: 6,
                             backgroundColor:
-                                (isDark ? Colors.white : Color(0xFF163A2C))
+                                (isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B))
                                     .withOpacity(0.08),
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              isDark ? Colors.white : Color(0xFF163A2C),
+                              isDark ? Colors.white : const Color(0xFF0C312B),
                             ),
                           ),
                         ),
@@ -4831,7 +4722,7 @@ class _MediaFloatThumbnail extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             color: Colors.white,
             fontSize: 6,
             fontWeight: FontWeight.w600,
@@ -4855,7 +4746,7 @@ class _PlanRow extends StatelessWidget {
       children: [
         Text(
           label.toUpperCase(),
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             color: Colors.white70,
             fontSize: 8,
             fontWeight: FontWeight.w600,
@@ -4864,7 +4755,7 @@ class _PlanRow extends StatelessWidget {
         ),
         Text(
           value,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             color: Colors.white,
             fontSize: 10,
             fontWeight: FontWeight.bold,
@@ -4890,7 +4781,9 @@ class _CircleAction extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.1) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withOpacity(0.1)
+              : const Color(0xFFF4EFE3),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
@@ -4908,7 +4801,7 @@ class _CircleAction extends StatelessWidget {
         child: Icon(
           icon,
           size: 20,
-          color: color ?? (isDark ? Colors.white : Color(0xFF163A2C)),
+          color: color ?? (isDark ? Colors.white : const Color(0xFF0C312B)),
         ),
       ),
     );

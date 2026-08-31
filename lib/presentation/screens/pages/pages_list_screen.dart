@@ -81,7 +81,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                       const SizedBox(width: 8),
                       Text(
                         'Back to Home',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
@@ -139,7 +139,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                     ? Center(
                         child: Text(
                           'No published pages available.',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.72),
@@ -187,14 +187,12 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                    0.04,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withOpacity(0.04),
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                      0.05,
-                    ),
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                        .withOpacity(0.05),
                   ),
                 ),
                 child: Row(
@@ -203,13 +201,13 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.06),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Icon(
                         LucideIcons.fileText,
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
                             .withOpacity(0.7),
                         size: 20,
                       ),
@@ -226,7 +224,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                                   (page['title'] ?? 'Untitled')
                                       .toString()
                                       .toUpperCase(),
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     color: Theme.of(
                                       context,
                                     ).colorScheme.onSurface,
@@ -243,20 +241,27 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                      .withOpacity(0.05),
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : const Color(0xFF0C312B))
+                                          .withOpacity(0.05),
                                   borderRadius: BorderRadius.circular(6),
                                   border: Border.all(
                                     color:
-                                        (isDark ? Colors.white : Color(0xFF163A2C))
+                                        (isDark
+                                                ? Colors.white
+                                                : const Color(0xFF0C312B))
                                             .withOpacity(0.1),
                                   ),
                                 ),
                                 child: Text(
                                   portal,
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     color:
-                                        (isDark ? Colors.white : Color(0xFF163A2C))
+                                        (isDark
+                                                ? Colors.white
+                                                : const Color(0xFF0C312B))
                                             .withOpacity(0.72),
                                     fontSize: 8,
                                     fontWeight: FontWeight.w600,
@@ -271,9 +276,12 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                             children: [
                               Text(
                                 'DYNAMIC CONTENT',
-                                style: GoogleFonts.ebGaramond(
-                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                      .withOpacity(0.72),
+                                style: GoogleFonts.inter(
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : const Color(0xFF0C312B))
+                                          .withOpacity(0.72),
                                   fontSize: 9,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 1,

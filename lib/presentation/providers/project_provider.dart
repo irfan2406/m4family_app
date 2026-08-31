@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show compute;
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -16,7 +17,9 @@ Future<List<dynamic>?> _loadCachedProjects() async {
   try {
     final f = _homeCacheFile;
     if (!await f.exists()) return null;
-    final map = jsonDecode(await f.readAsString());
+    // Multi-MB payload: decode on a background isolate so the first
+    // frames are not blocked by parsing base64-laden JSON.
+    final map = await compute(jsonDecode, await f.readAsString());
     final list = map is Map ? map['projects'] : null;
     return (list is List && list.isNotEmpty) ? list : null;
   } catch (_) {
@@ -38,12 +41,12 @@ Future<void> _saveCachedProjects(List<dynamic> projects) async {
     final f = _homeCacheFile;
     Map<String, dynamic> map = {};
     if (await f.exists()) {
-      final decoded = jsonDecode(await f.readAsString());
+      final decoded = await compute(jsonDecode, await f.readAsString());
       if (decoded is Map) map = Map<String, dynamic>.from(decoded);
     }
     // Merge — the guest home owns the communities/media slices of this file.
     map['projects'] = projects;
-    await f.writeAsString(jsonEncode(map));
+    await f.writeAsString(await compute(jsonEncode, map));
   } catch (_) {
     // Best-effort cache; never surface to the UI.
   }
@@ -284,14 +287,18 @@ final filteredProjectsProvider = Provider<List<dynamic>>((ref) {
             matchesArea;
       }).toList();
 
-      // Web parity: render in creation order (oldest → newest). The web list
-      // shows CLÉDOR → CLEDOR ELITE → DING DONG; the raw API order the app got
-      // was newest-first. Sort by createdAt (fallback Mongo _id, which encodes
-      // creation time) ascending to match the web's serial order.
+      // Web parity: newest first. The catalog already returns createdAt
+      // DESCENDING (Skyline Heights → Cledor → skai → Clédor → Ocean View →
+      // M4 Aura Heights) and the web CP list renders exactly that order, so a
+      // newly added project lands at the top. This used to sort ASCENDING to
+      // match an older web build; the live web now shows the reverse, which
+      // is why the app listed CLÉDOR first where the web starts at SKYLINE
+      // HEIGHTS. Sort explicitly rather than trusting arrival order, keyed on
+      // createdAt (falling back to the Mongo _id, which encodes create time).
       filtered.sort((a, b) {
         final ka = (a['createdAt'] ?? a['_id'] ?? '').toString();
         final kb = (b['createdAt'] ?? b['_id'] ?? '').toString();
-        return ka.compareTo(kb);
+        return kb.compareTo(ka);
       });
       return filtered;
     },

@@ -49,28 +49,36 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
     final firstName = parts.isNotEmpty ? parts.first : '';
     final lastName = parts.length > 1 ? parts.sublist(1).join(' ') : '';
 
-    if (fn.isEmpty ||
-        _companyName.text.trim().isEmpty ||
-        _email.text.trim().isEmpty ||
-        _phone.text.trim().isEmpty ||
-        _reraNumber.text.trim().isEmpty ||
-        _reraId.text.trim().isEmpty ||
-        _cpId.text.trim().isEmpty ||
-        _password.text.isEmpty ||
-        _confirmPassword.text.isEmpty) {
+    // Only two fields are mandatory: full name and phone. Everything else may
+    // be left blank. Password is the one exception the app cannot relax — the
+    // API rejects any body without one ("Phone and password are required"),
+    // and a CP with no password could never sign in afterwards.
+    if (fn.isEmpty || _phone.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Color(0xFFC65B46),
-          content: Text('Please fill in all required fields'),
+          content: Text('Please enter your full name and phone number'),
         ),
       );
       return;
     }
-    // Format checks (was empty-only): valid name / email / phone.
+    if (_password.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Color(0xFFC65B46),
+          content: Text('Please set a password so you can sign in later'),
+        ),
+      );
+      return;
+    }
+    // Format checks cover the required fields, plus e-mail only when one was
+    // actually typed — an untouched optional field must not raise an error.
     final formatErr =
         Validators.nameError(fn, field: 'full name') ??
-        Validators.emailError(_email.text) ??
-        Validators.phoneError(_phone.text);
+        Validators.phoneError(_phone.text) ??
+        (_email.text.trim().isEmpty
+            ? null
+            : Validators.emailError(_email.text));
     if (formatErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -80,7 +88,9 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       );
       return;
     }
-    if (_password.text != _confirmPassword.text) {
+    // Confirm-password is optional too; only enforce a match when it is filled.
+    if (_confirmPassword.text.isNotEmpty &&
+        _password.text != _confirmPassword.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Color(0xFFC65B46),
@@ -93,18 +103,29 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
     setState(() => _submitting = true);
     try {
       final api = ref.read(apiClientProvider);
-      final res = await api.register({
+      // Only full name + phone are user-required now, so every other value
+      // may be blank. An empty optional field is omitted from the body
+      // entirely rather than posted as "" — the server should not have to
+      // store or format-check blank strings.
+      final body = <String, dynamic>{
         'phone': _phone.text.trim(),
-        'email': _email.text.trim(),
         'password': _password.text,
         'role': 'CP',
         'firstName': firstName,
-        'lastName': lastName,
-        'companyName': _companyName.text.trim(),
-        'reraNumber': _reraNumber.text.trim(),
-        'reraId': _reraId.text.trim(),
-        'cpId': _cpId.text.trim(),
-      });
+      };
+      void putIfFilled(String key, String value) {
+        final v = value.trim();
+        if (v.isNotEmpty) body[key] = v;
+      }
+
+      putIfFilled('lastName', lastName);
+      putIfFilled('email', _email.text);
+      putIfFilled('companyName', _companyName.text);
+      putIfFilled('reraNumber', _reraNumber.text);
+      putIfFilled('reraId', _reraId.text);
+      putIfFilled('cpId', _cpId.text);
+
+      final res = await api.register(body);
       if (!mounted) return;
       if (res.statusCode == 201 && res.data['status'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -266,21 +287,21 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     icon: LucideIcons.user,
                     keyboard: TextInputType.name,
                     inputFormatters: Validators.nameFormatters,
-                    hint: 'John Doe',
+                    hint: 'Enter Full Name',
                   ),
                   _CpField(
-                    label: 'COMPANY NAME *',
+                    label: 'COMPANY NAME',
                     controller: _companyName,
                     icon: LucideIcons.building2,
-                    hint: 'ABC Realty Pvt Ltd',
+                    hint: 'Enter Company Name',
                   ),
                   _CpField(
-                    label: 'EMAIL *',
+                    label: 'EMAIL',
                     controller: _email,
                     icon: LucideIcons.mail,
                     keyboard: TextInputType.emailAddress,
                     inputFormatters: Validators.emailFormatters,
-                    hint: 'john@example.com',
+                    hint: 'Enter Email Address',
                   ),
                   _CpField(
                     label: 'PHONE *',
@@ -288,43 +309,43 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     icon: LucideIcons.phone,
                     keyboard: TextInputType.phone,
                     inputFormatters: Validators.phoneFormatters,
-                    hint: '+91 XXXXX XXXXX',
+                    hint: 'Enter Mobile Number',
                   ),
                   const SizedBox(height: 24),
                   _section('RERA CREDENTIALS'),
                   _CpField(
-                    label: 'RERA NUMBER *',
+                    label: 'RERA NUMBER',
                     controller: _reraNumber,
                     icon: LucideIcons.fileText,
-                    hint: '1234567',
+                    hint: 'Enter RERA Number',
                   ),
                   _CpField(
-                    label: 'RERA ID *',
+                    label: 'RERA ID',
                     controller: _reraId,
                     icon: LucideIcons.fileText,
-                    hint: 'RERA-123-456',
+                    hint: 'Enter RERA ID',
                   ),
                   const SizedBox(height: 24),
                   _section('ACCOUNT SETUP'),
                   _CpField(
-                    label: 'CHANNEL PARTNER ID *',
+                    label: 'CHANNEL PARTNER ID',
                     controller: _cpId,
                     icon: LucideIcons.sparkles,
-                    hint: 'CP-XXXXX',
+                    hint: 'Enter Channel Partner ID',
                   ),
                   _CpField(
-                    label: 'PASSWORD *',
+                    label: 'PASSWORD',
                     controller: _password,
                     icon: LucideIcons.lock,
                     obscure: true,
-                    hint: '••••••••',
+                    hint: 'Enter Password',
                   ),
                   _CpField(
-                    label: 'CONFIRM PASSWORD *',
+                    label: 'CONFIRM PASSWORD',
                     controller: _confirmPassword,
                     icon: LucideIcons.lock,
                     obscure: true,
-                    hint: '••••••••',
+                    hint: 'Confirm Password',
                   ),
                   const SizedBox(height: 48),
                   SizedBox(

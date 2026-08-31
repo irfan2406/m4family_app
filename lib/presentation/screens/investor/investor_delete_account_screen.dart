@@ -86,7 +86,7 @@ class _InvestorDeleteAccountScreenState
       SnackBar(
         content: Text(
           msg,
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
         ),
         backgroundColor: error ? _dangerDeep : Colors.green,
       ),
@@ -107,7 +107,7 @@ class _InvestorDeleteAccountScreenState
           ),
           title: Text(
             'FINAL CONFIRMATION',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
@@ -117,12 +117,11 @@ class _InvestorDeleteAccountScreenState
           content: Text(
             'This permanently purges your investor account and your entire '
             'digital legacy within M4. This action cannot be undone.',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                alpha: 0.7,
-              ),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withValues(alpha: 0.7),
             ),
           ),
           actions: [
@@ -130,12 +129,11 @@ class _InvestorDeleteAccountScreenState
               onPressed: () => Navigator.pop(ctx, false),
               child: Text(
                 'CANCEL',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                    alpha: 0.6,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -149,7 +147,7 @@ class _InvestorDeleteAccountScreenState
               ),
               child: Text(
                 'EXECUTE PURGE',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1,
@@ -216,9 +214,13 @@ class _InvestorDeleteAccountScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -368,7 +370,7 @@ class _InvestorDeleteAccountScreenState
             'Final action. All institutional ties, documents, and historical '
             'data will be permanently purged. This cannot be reversed and you '
             'will be signed out of every device.',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 12,
               height: 1.55,
               fontWeight: FontWeight.w600,
@@ -432,7 +434,7 @@ class _InvestorDeleteAccountScreenState
                       children: [
                         Text(
                           _purgeScope[i]['title'] as String,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: textPrimary,
@@ -441,7 +443,7 @@ class _InvestorDeleteAccountScreenState
                         const SizedBox(height: 3),
                         Text(
                           _purgeScope[i]['subtitle'] as String,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                             height: 1.3,
@@ -512,9 +514,9 @@ class _InvestorDeleteAccountScreenState
               color: textPrimary,
             ),
             decoration: InputDecoration(
-              hintText: _confirmWord,
+              hintText: 'Enter $_confirmWord to Confirm',
               hintStyle: GoogleFonts.gelasio(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 3,
                 color: muted.withValues(alpha: 0.72),
@@ -573,15 +575,15 @@ class _InvestorDeleteAccountScreenState
             controller: _passCtrl,
             obscureText: _obscurePass,
             onChanged: (_) => setState(() {}),
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: textPrimary,
             ),
             decoration: InputDecoration(
-              hintText: '••••••••',
-              hintStyle: GoogleFonts.ebGaramond(
-                fontSize: 14,
+              hintText: 'Enter Password',
+              hintStyle: GoogleFonts.inter(
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: muted.withValues(alpha: 0.72),
               ),
@@ -648,7 +650,7 @@ class _InvestorDeleteAccountScreenState
               child: Text(
                 'I acknowledge that this protocol will erase my entire digital '
                 'legacy within M4. Final & irreversible.',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 11,
                   height: 1.5,
                   fontWeight: FontWeight.w600,

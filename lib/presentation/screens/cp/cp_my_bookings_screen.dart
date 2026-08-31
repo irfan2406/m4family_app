@@ -169,7 +169,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
       );
     }
     if (s.contains('pending')) {
-      const fg = Color(0xFFC5A35B);
+      const fg = Color(0xFF0C312B);
       return (
         bg: fg.withValues(alpha: 0.10),
         border: fg.withValues(alpha: 0.20),
@@ -188,7 +188,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     required bool isDark,
     EdgeInsets padding = const EdgeInsets.all(22),
   }) {
-    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final border = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.08,
     );
     return ClipRRect(
@@ -226,7 +226,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     required bool isDark,
     Color? iconColor,
   }) {
-    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final border = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.08,
     );
     return InkWell(
@@ -320,7 +320,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                       projectName.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.2,
@@ -341,7 +341,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                             location,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
                               letterSpacing: 1.2,
@@ -363,7 +363,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                           projectType.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 1.2,
@@ -461,9 +461,8 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               color: onSurf.withValues(alpha: isDark ? 0.06 : 0.035),
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                  alpha: 0.06,
-                ),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.06),
               ),
             ),
             child: Column(
@@ -496,7 +495,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     const SizedBox(width: 10),
                     Text(
                       '$paymentProgress%',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         fontStyle: FontStyle.italic,
@@ -515,9 +514,8 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     // guarantees the full-width track renders when the fill is 0.
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                        alpha: isDark ? 0.28 : 0.18,
-                      ),
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withValues(alpha: isDark ? 0.28 : 0.18),
                     ),
                     child: TweenAnimationBuilder<double>(
                       tween: Tween(begin: 0, end: paymentProgress / 100.0),
@@ -594,9 +592,8 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     color: onSurf.withValues(alpha: 0.03),
                     borderRadius: BorderRadius.circular(999),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-                        alpha: 0.06,
-                      ),
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withValues(alpha: 0.06),
                     ),
                   ),
                   child: Text(
@@ -645,7 +642,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       textAlign: rightAlign ? TextAlign.right : TextAlign.left,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.inter(
         fontSize: 13,
         fontWeight: FontWeight.w600,
         fontStyle: italic ? FontStyle.italic : FontStyle.normal,
@@ -700,7 +697,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
   // Web parity: a real-time search field + project filter dropdown, sitting
   // as a second row under the header.
   Widget _buildSearchAndFilter(ColorScheme scheme, bool isDark) {
-    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final border = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.08,
     );
     final fill = scheme.surface.withValues(alpha: isDark ? 0.06 : 0.5);
@@ -721,14 +718,14 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
             child: TextField(
               controller: _searchController,
               onChanged: (v) => setState(() => _searchQuery = v),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 1,
               ),
               decoration: InputDecoration(
-                hintText: 'SEARCH CLIENT, ID...',
-                hintStyle: GoogleFonts.ebGaramond(
+                hintText: 'Search Bookings',
+                hintStyle: GoogleFonts.inter(
                   fontSize: 9,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 1,
@@ -781,7 +778,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                 size: 16,
                 color: scheme.onSurfaceVariant,
               ),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 9,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.8,
@@ -847,8 +844,11 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                 color: scheme.surface,
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                      .withValues(alpha: 0.10),
+                                  color:
+                                      (isDark
+                                              ? Colors.white
+                                              : const Color(0xFF0C312B))
+                                          .withValues(alpha: 0.10),
                                 ),
                               ),
                               child: Icon(
@@ -864,7 +864,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                               children: [
                                 Text(
                                   'CLIENT BOOKINGS',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: -0.2,

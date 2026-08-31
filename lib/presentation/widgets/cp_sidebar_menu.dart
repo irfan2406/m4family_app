@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:m4_mobile/presentation/widgets/drawer_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,7 +7,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
-import 'package:m4_mobile/core/providers/theme_provider.dart';
 
 class CpSidebarMenu extends ConsumerStatefulWidget {
   const CpSidebarMenu({super.key});
@@ -31,7 +30,11 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
 
   // Confirm before logging out — a Yes/No popup so a stray tap can't log out.
   Future<void> _confirmLogout() async {
-    final isDark = ref.read(themeProvider) == ThemeMode.dark;
+    // Dark mode is gone, so this is always false. It is NOT read from the
+    // ambient brightness: the drawer can be opened from a green "showcase"
+    // screen, whose theme reports Brightness.dark, and that would flip the
+    // menu to tones it never used in light mode.
+    const bool isDark = false;
     final confirmed = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -71,16 +74,18 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Are you sure you want to logout?',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 13,
-                  color: isDark ? Colors.white60 : const Color(0xFF163A2C).withValues(alpha: 0.78),
+                  color: isDark
+                      ? Colors.white60
+                      : const Color(0xFF0C312B).withValues(alpha: 0.78),
                 ),
               ),
               const SizedBox(height: 22),
@@ -105,7 +110,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         ),
                         child: Text(
                           'NO',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
@@ -128,7 +133,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         ),
                         child: Text(
                           'YES',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
@@ -157,150 +162,34 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
   @override
   Widget build(BuildContext context) {
     final idx = ref.watch(cpNavigationIndexProvider);
-    final themeMode = ref.watch(themeProvider);
-    final isDark = themeMode == ThemeMode.dark;
 
     return Drawer(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: M4Drawer.panelWidth(context),
       backgroundColor: Colors.transparent,
       elevation: 0,
-      child: Stack(
-        children: [
-          ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-              child: Container(
-                color: isDark ? Colors.black.withOpacity(0.6) : const Color(0xFF0C312B).withValues(alpha: 0.72),
-              ),
-            ),
-          ),
-          SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
-                  child: Row(
-                    children: [
-                      Text(
-                        'PARTNER MENU',
-                        style: GoogleFonts.gelasio(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 2,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Main Menu
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: [
-                      // Web parity (CPSidebar.tsx menuItems order): Dashboard,
-                      // Profile, Notifications, Properties, Custom Views,
-                      // Content Hub, Communities, Bookings, Support Hub.
-                      _SidebarItem(
-                        icon: LucideIcons.home,
-                        label: 'Dashboard',
-                        isActive: idx == 0,
-                        onTap: () => _setTab(0),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.users,
-                        label: 'Profile',
-                        isActive: idx == 4,
-                        onTap: () => _setTab(4),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.bell,
-                        label: 'Notifications',
-                        isActive: false,
-                        onTap: () => _go('/notifications'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.layoutGrid,
-                        label: 'Properties',
-                        isActive: idx == 2,
-                        onTap: () => _setTab(2),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.sparkles,
-                        label: 'Custom Views',
-                        isActive: false,
-                        onTap: () => _go('/cp/custom-views'),
-                      ),
-
-                      Theme(
-                        data: Theme.of(
-                          context,
-                        ).copyWith(dividerColor: Colors.transparent),
-                        child: ExpansionTile(
-                          iconColor: const Color(0xFFF4EFE3),
-                          collapsedIconColor: const Color(0xFFF4EFE3),
-                          onExpansionChanged: (_) {},
-                          tilePadding: EdgeInsets.zero,
-                          title: _SidebarItem(
-                            icon: LucideIcons.sparkles,
-                            label: 'Content Hub',
-                            isActive: false,
-                          ),
-                          // Web parity: sub-items navigate to their own routes
-                          // (/cp/media, /cp/highlights, /cp/events, /cp/blog) —
-                          // there is no Content Hub tab in the CP shell, so the
-                          // old setTab(9) crashed (index out of range).
-                          children: [
-                            _SubItem(
-                              label: 'Media',
-                              onTap: () => _go('/cp/media'),
-                            ),
-                            _SubItem(
-                              label: 'Highlights',
-                              onTap: () => _go('/cp/highlights'),
-                            ),
-                            _SubItem(
-                              label: 'Events',
-                              onTap: () => _go('/cp/events'),
-                            ),
-                            _SubItem(
-                              label: 'Blog',
-                              onTap: () => _go('/cp/blog'),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      _SidebarItem(
-                        icon: LucideIcons.building2,
-                        label: 'Communities',
-                        isActive: false,
-                        onTap: () => _go('/communities'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.calendar,
-                        label: 'Bookings',
-                        isActive: false,
-                        onTap: () => _go('/cp/booking/my-bookings'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.headphones,
-                        label: 'Support Hub',
-                        isActive: idx == 3,
-                        onTap: () => _setTab(3),
-                      ),
-
-                      const SizedBox(height: 24),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 8,
-                        ),
-                        child: Text(
-                          'QUICK ACTIONS',
+      child: DecoratedBox(
+        // Large soft ambient lift and an almost-invisible cream hairline —
+        // the luxury floating-card effect, no hard shadow or harsh outline.
+        decoration: BoxDecoration(
+          boxShadow: M4Drawer.shadow,
+          border: Border(right: BorderSide(color: M4Drawer.border)),
+        ),
+        child: Stack(
+          children: [
+            // Figma glass panel: deep-green base, cream bloom through
+            // the middle, blue bloom low down, #0B0000 10% veil, blur 40.
+            const DrawerGlass(),
+            SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
+                    child: Row(
+                      children: [
+                        Text(
+                          'PARTNER MENU',
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
@@ -308,130 +197,200 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                             color: Colors.white,
                           ),
                         ),
-                      ),
-
-                      _SidebarItem(
-                        icon: LucideIcons.mail,
-                        label: 'Enquiry',
-                        isActive: false,
-                        // Opens the "Register Interest" form (same fields and
-                        // design as the web home #interest-form section).
-                        onTap: () => _go('/cp/booking/inquiry'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.phone,
-                        label: 'Call',
-                        isActive: false,
-                        onTap: () {
-                          _close();
-                          SupportHandlers.launchCall();
-                        },
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.messageSquare,
-                        label: 'Whatsapp',
-                        isActive: false,
-                        onTap: () {
-                          _close();
-                          SupportHandlers.launchWhatsApp();
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
-                // Theme Mode Toggle
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'THEME MODE',
-                        style: GoogleFonts.gelasio(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 2,
-                          color: Colors.white,
+                  // Main Menu
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        // Web parity (CPSidebar.tsx menuItems order): Dashboard,
+                        // Profile, Notifications, Properties, Custom Views,
+                        // Content Hub, Communities, Bookings, Support Hub.
+                        _SidebarItem(
+                          icon: LucideIcons.home,
+                          label: 'Dashboard',
+                          isActive: idx == 0,
+                          onTap: () => _setTab(0),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          ref
-                              .read(themeProvider.notifier)
-                              .setTheme(
-                                isDark ? ThemeMode.light : ThemeMode.dark,
-                              );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
-                                .withOpacity(0.08),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
-                                  .withOpacity(0.1),
+                        _SidebarItem(
+                          icon: LucideIcons.users,
+                          label: 'Profile',
+                          isActive: idx == 4,
+                          onTap: () => _setTab(4),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.bell,
+                          label: 'Notifications',
+                          isActive: false,
+                          onTap: () => _go('/notifications'),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.layoutGrid,
+                          label: 'Properties',
+                          isActive: idx == 2,
+                          onTap: () => _setTab(2),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.sparkles,
+                          label: 'Custom Views',
+                          isActive: false,
+                          onTap: () => _go('/cp/custom-views'),
+                        ),
+
+                        Theme(
+                          data: Theme.of(
+                            context,
+                          ).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            iconColor: const Color(0xFFF4EFE3),
+                            collapsedIconColor: const Color(0xFFF4EFE3),
+                            onExpansionChanged: (_) {},
+                            tilePadding: EdgeInsets.zero,
+                            title: const _SidebarItem(
+                              icon: LucideIcons.sparkles,
+                              label: 'Content Hub',
+                              isActive: false,
+                            ),
+                            // Web parity: sub-items navigate to their own routes
+                            // (/cp/media, /cp/highlights, /cp/events, /cp/blog) —
+                            // there is no Content Hub tab in the CP shell, so the
+                            // old setTab(9) crashed (index out of range).
+                            children: [
+                              _SubItem(
+                                label: 'Media',
+                                onTap: () => _go('/cp/media'),
+                              ),
+                              _SubItem(
+                                label: 'Highlights',
+                                onTap: () => _go('/cp/highlights'),
+                              ),
+                              _SubItem(
+                                label: 'Events',
+                                onTap: () => _go('/cp/events'),
+                              ),
+                              _SubItem(
+                                label: 'Blog',
+                                onTap: () => _go('/cp/blog'),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        _SidebarItem(
+                          icon: LucideIcons.building2,
+                          label: 'Communities',
+                          isActive: false,
+                          onTap: () => _go('/communities'),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.calendar,
+                          label: 'Bookings',
+                          isActive: false,
+                          onTap: () => _go('/cp/booking/my-bookings'),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.headphones,
+                          label: 'Support Hub',
+                          isActive: idx == 3,
+                          onTap: () => _setTab(3),
+                        ),
+
+                        const SizedBox(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 8,
+                          ),
+                          child: Text(
+                            'QUICK ACTIONS',
+                            style: GoogleFonts.gelasio(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 2,
+                              color: Colors.white,
                             ),
                           ),
-                          // Web parity: light mode → Sparkles, dark → Moon
-                          // (resolvedTheme === "dark" ? Moon : Sparkles).
-                          child: Icon(
-                            isDark ? LucideIcons.moon : LucideIcons.sun,
-                            color: isDark ? Colors.white : const Color(0xFFF4EFE3),
-                            size: 18,
+                        ),
+
+                        _SidebarItem(
+                          icon: LucideIcons.mail,
+                          label: 'Enquiry',
+                          isActive: false,
+                          // Opens the "Register Interest" form (same fields and
+                          // design as the web home #interest-form section).
+                          onTap: () => _go('/cp/booking/inquiry'),
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.phone,
+                          label: 'Call',
+                          isActive: false,
+                          onTap: () {
+                            _close();
+                            SupportHandlers.launchCall();
+                          },
+                        ),
+                        _SidebarItem(
+                          icon: LucideIcons.messageSquare,
+                          label: 'Whatsapp',
+                          isActive: false,
+                          onTap: () {
+                            _close();
+                            SupportHandlers.launchWhatsApp();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Logout
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: GestureDetector(
+                      onTap: _confirmLogout,
+                      child: Container(
+                        height: 56,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          // Same treatment as the guest drawer's exit button:
+                          // a coral tint with a coral hairline, not a solid
+                          // cream pill.
+                          color: const Color(0xFFC65B46).withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: const Color(0xFFC65B46).withOpacity(0.1),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Logout
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: GestureDetector(
-                    onTap: _confirmLogout,
-                    child: Container(
-                      height: 56,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        // Web parity: bg-red-50 (light) / red-900/10 (dark).
-                        color: isDark
-                            ? const Color(0xFFC65B46).withOpacity(0.1)
-                            : const Color(0xFFF4EFE3),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            LucideIcons.logOut,
-                            size: 18,
-                            color: const Color(0xFFC65B46),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            'LOGOUT',
-                            style: GoogleFonts.gelasio(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 1.5,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              LucideIcons.logOut,
+                              size: 18,
                               color: const Color(0xFFC65B46),
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 10),
+                            Text(
+                              'LOGOUT',
+                              style: GoogleFonts.gelasio(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.5,
+                                color: const Color(0xFFC65B46),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -450,58 +409,10 @@ class _SidebarItem extends StatelessWidget {
     this.onTap,
   });
 
+  // Rendering is M4DrawerTile — the one row every portal uses.
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    const purple = const Color(0xFFF4EFE3); // purple-600
-    // Web parity: active → purple icon tile; inactive → slate tile + slate-400
-    // icon.
-    final iconBg = isActive
-        ? (isDark
-              ? purple.withOpacity(0.25)
-              : Colors.white.withValues(alpha: 0.14)) // purple-100
-        : (isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : Colors.white.withValues(alpha: 0.10)); // slate-800 / slate-50
-    final iconColor = isActive ? purple : const Color(0xFFF4EFE3).withValues(alpha: 0.75); // slate-400
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Padding(
-        // Web parity: px-6 py-3.5 (24px horizontal via the ListView pad + 8;
-        // 14px vertical rhythm).
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: iconBg,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(child: Icon(icon, size: 16, color: iconColor)),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                label,
-                style: GoogleFonts.ebGaramond(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: -0.2,
-                  color: isActive
-                      ? purple
-                      : (isDark ? Colors.white70 : const Color(0xFFF4EFE3)),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      M4DrawerTile(icon: icon, label: label, isActive: isActive, onTap: onTap);
 }
 
 class _SubItem extends StatelessWidget {
@@ -524,19 +435,20 @@ class _SubItem extends StatelessWidget {
               width: 28,
               height: 28,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.05),
+                color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
+                    .withOpacity(0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
+              child: const Icon(
                 LucideIcons.logIn,
                 size: 14,
-                color: isDark ? Colors.white70 : Color(0xFF5E6B60),
+                color: Colors.white,
               ),
             ),
             const SizedBox(width: 12),
             Text(
               label,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: isDark ? Colors.white : const Color(0xFFF4EFE3),

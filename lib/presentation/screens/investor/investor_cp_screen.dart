@@ -71,9 +71,13 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -94,7 +98,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
           children: [
             Text(
               'Partner Dashboard',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: textPrimary,
@@ -257,15 +261,15 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
       ),
       child: TextField(
         controller: _search,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w700,
           color: textPrimary,
         ),
         decoration: InputDecoration(
-          hintText: 'Search registered leads…',
-          hintStyle: GoogleFonts.ebGaramond(
-            fontSize: 13,
+          hintText: 'Search Leads',
+          hintStyle: GoogleFonts.inter(
+            fontSize: 12,
             fontWeight: FontWeight.w600,
             color: muted,
           ),
@@ -430,7 +434,7 @@ class _LeadCard extends StatelessWidget {
                       lead.name.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
                         color: textPrimary,
@@ -464,7 +468,7 @@ class _LeadCard extends StatelessWidget {
                 ),
                 child: Text(
                   lead.status.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 1,
@@ -598,7 +602,7 @@ class _RegisterCard extends StatelessWidget {
             Text(
               'Register a high-priority lead against your channel partner ID and '
               'track it through visit, booking and payout.',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 height: 1.6,
@@ -677,8 +681,10 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
     final card = isDark
         ? Colors.white.withValues(alpha: 0.05)
         : Colors.black.withValues(alpha: 0.03);
@@ -763,7 +769,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                       ? const Color(0xFF141B3A)
                       : const Color(0xFFF4EFE3),
                   icon: Icon(LucideIcons.chevronDown, size: 18, color: muted),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: textPrimary,
@@ -780,7 +786,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
             const SizedBox(height: 8),
             _field(
               _name,
-              'Enter client name',
+              'Enter Client Name',
               textPrimary,
               muted,
               card,
@@ -791,7 +797,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
             const SizedBox(height: 8),
             _field(
               _mobile,
-              'Enter client mobile',
+              'Enter Client Mobile Number',
               textPrimary,
               muted,
               card,
@@ -857,15 +863,15 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
       child: TextField(
         controller: c,
         keyboardType: keyboard,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w700,
           color: textPrimary,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.ebGaramond(
-            fontSize: 13,
+          hintStyle: GoogleFonts.inter(
+            fontSize: 12,
             fontWeight: FontWeight.w600,
             color: muted,
           ),

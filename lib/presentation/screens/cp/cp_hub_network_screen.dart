@@ -65,7 +65,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    const purple = Color(0xFFC5A35B);
+    const purple = Color(0xFF0C312B);
 
     const events = [
       {
@@ -94,7 +94,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
         ),
         title: Text(
           'Network',
-          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w500),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w500),
         ),
       ),
       body: _loading
@@ -123,7 +123,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           icon: LucideIcons.wallet,
                           label: 'COMMISSION',
                           value: 'AED ${_formatNumber(_balance())}',
-                          accent: const Color(0xFFC5A35B),
+                          accent: const Color(0xFF0C312B),
                         ),
                       ),
                     ],
@@ -142,7 +142,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           const SizedBox(width: 8),
                           Text(
                             'Upcoming Events',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.2,
@@ -193,7 +193,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                               Expanded(
                                 child: Text(
                                   e['title']!.toString(),
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -211,7 +211,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                 ),
                                 child: Text(
                                   (e['type'] ?? '').toString().toUpperCase(),
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.inter(
                                     fontSize: 8,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 1.2,
@@ -224,7 +224,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           const SizedBox(height: 6),
                           Text(
                             '${e['date']} • ${e['location']}',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               color: scheme.onSurface.withValues(alpha: 0.68),
@@ -274,7 +274,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           const SizedBox(width: 8),
                           Text(
                             'Member Spotlight',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.2,
@@ -300,9 +300,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                   if (members.isEmpty)
                     Text(
                       'No referrals in your network yet',
-                      style: GoogleFonts.ebGaramond(
-                        color: scheme.onSurfaceVariant,
-                      ),
+                      style: GoogleFonts.inter(color: scheme.onSurfaceVariant),
                     )
                   else
                     GridView.builder(
@@ -354,7 +352,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                   shape: BoxShape.circle,
                                   gradient: LinearGradient(
                                     colors: [
-                                      Color(0xFFC5A35B),
+                                      Color(0xFF0C312B),
                                       Color(0xFF141B3A),
                                     ],
                                   ),
@@ -362,7 +360,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                 child: Center(
                                   child: Text(
                                     initial,
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.inter(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -374,7 +372,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                 name.isEmpty ? 'Partner' : name,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -384,7 +382,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                 industry.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 8,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 1.2,
@@ -414,7 +412,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                             children: [
                               Text(
                                 'Private Forum',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -422,7 +420,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                               const SizedBox(height: 4),
                               Text(
                                 'Discuss trends with verified Partners',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.inter(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                   color: scheme.onSurface.withValues(
@@ -490,7 +488,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
           const SizedBox(height: 4),
           Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 8,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.2,

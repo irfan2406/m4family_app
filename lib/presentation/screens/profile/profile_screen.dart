@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:intl/intl.dart';
-import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:go_router/go_router.dart';
@@ -21,8 +20,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final user = authState.user;
-    final themeMode = ref.watch(themeProvider);
-    final isDark = themeMode == ThemeMode.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (user == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -92,7 +90,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             style: GoogleFonts.gelasio(
               fontSize: 22,
               fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : Color(0xFF163A2C),
+              color: isDark ? Colors.white : const Color(0xFF0C312B),
               letterSpacing: -0.5,
             ),
           ),
@@ -151,7 +149,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white10
-                        : Color(0xFF163A2C).withOpacity(0.05),
+                        : const Color(0xFF163A2C).withOpacity(0.05),
                     borderRadius: BorderRadius.circular(24),
                     image: avatarUrl != null
                         ? DecorationImage(
@@ -165,7 +163,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: avatarUrl == null
                       ? Icon(
                           LucideIcons.user,
-                          color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                          color: isDark
+                              ? Colors.white38
+                              : const Color(0xFF155A4F),
                           size: 32,
                         )
                       : null,
@@ -180,25 +180,31 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         style: GoogleFonts.gelasio(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
-                          color: isDark ? Colors.white : Color(0xFF163A2C),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF0C312B),
                           letterSpacing: -0.5,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         email,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white38 : Colors.black45,
+                          color: isDark
+                              ? Colors.white38
+                              : const Color(0x730C312B),
                         ),
                       ),
                       Text(
                         phone,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white38 : Colors.black45,
+                          color: isDark
+                              ? Colors.white38
+                              : const Color(0x730C312B),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -220,7 +226,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             Icon(
                               LucideIcons.mapPin,
                               size: 12,
-                              color: isDark ? Colors.white54 : Color(0xFF5E6B60),
+                              color: isDark
+                                  ? Colors.white54
+                                  : const Color(0xFF155A4F),
                             ),
                             const SizedBox(width: 6),
                             ConstrainedBox(
@@ -229,12 +237,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 address.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.ebGaramond(
-                                  fontSize: 9,
+                                style: GoogleFonts.inter(
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w500,
                                   color: isDark
                                       ? Colors.white70
-                                      : Color(0xFF163A2C),
+                                      : const Color(0xFF0C312B),
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -249,15 +257,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           Icon(
                             LucideIcons.calendar,
                             size: 12,
-                            color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                            color: isDark
+                                ? Colors.white38
+                                : const Color(0xFF155A4F),
                           ),
                           const SizedBox(width: 6),
                           Text(
                             'BORN: ${born.toUpperCase()}',
-                            style: GoogleFonts.ebGaramond(
-                              fontSize: 9,
+                            style: GoogleFonts.inter(
+                              fontSize: 10,
                               fontWeight: FontWeight.w700,
-                              color: isDark ? Colors.white38 : Colors.black45,
+                              color: isDark
+                                  ? Colors.white38
+                                  : const Color(0x730C312B),
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -289,7 +301,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   style: GoogleFonts.gelasio(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -298,7 +310,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   style: GoogleFonts.gelasio(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : Color(0xFF163A2C),
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
                   ),
                 ),
               ],
@@ -355,7 +367,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildLogoutButton(BuildContext context, WidgetRef ref) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 64,
       child: OutlinedButton(
@@ -379,7 +391,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             const SizedBox(width: 12),
             Text(
               'LOG OUT',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: Colors.redAccent,
@@ -418,7 +430,7 @@ class _SectionTitle extends StatelessWidget {
           fontWeight: FontWeight.w700,
           color: isDark
               ? Colors.white.withOpacity(0.72)
-              : Colors.black.withOpacity(0.72),
+              : const Color(0xFF0C312B).withOpacity(0.72),
           letterSpacing: 2,
         ),
       ),
@@ -472,7 +484,7 @@ class _SupportTile extends StatelessWidget {
               child: Icon(
                 icon,
                 size: 20,
-                color: isDark ? Colors.white38 : Colors.black45,
+                color: isDark ? Colors.white38 : const Color(0x730C312B),
               ),
             ),
             const SizedBox(width: 16),
@@ -482,19 +494,19 @@ class _SupportTile extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.ebGaramond(
-                      fontSize: 8,
+                    style: GoogleFonts.inter(
+                      fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white24 : Colors.black45,
+                      color: isDark ? Colors.white70 : const Color(0x8A0C312B),
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -504,7 +516,7 @@ class _SupportTile extends StatelessWidget {
             Icon(
               LucideIcons.chevronRight,
               size: 16,
-              color: isDark ? Colors.white24 : Colors.black26,
+              color: isDark ? Colors.white70 : const Color(0x8A0C312B),
             ),
             const SizedBox(width: 8),
           ],
@@ -532,7 +544,9 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.05) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withOpacity(0.05)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark
@@ -551,7 +565,7 @@ class _IconButton extends StatelessWidget {
         child: Icon(
           icon,
           size: 20,
-          color: isDark ? Colors.white : Color(0xFF163A2C),
+          color: isDark ? Colors.white : const Color(0xFF0C312B),
         ),
       ),
     );

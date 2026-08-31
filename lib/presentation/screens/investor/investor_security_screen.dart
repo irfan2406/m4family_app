@@ -118,7 +118,7 @@ class _InvestorSecurityScreenState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: const Color(0xFFC65B46),
-        content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12)),
+        content: Text(msg, style: GoogleFonts.inter(fontSize: 12)),
       ),
     );
   }
@@ -137,9 +137,13 @@ class _InvestorSecurityScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
+      alpha: 0.5,
+    );
+    final card = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -172,7 +176,7 @@ class _InvestorSecurityScreenState
                 const SizedBox(width: 8),
                 Text(
                   'Security & Privacy',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontWeight: FontWeight.w500,
                     fontSize: 16,
                     color: textPrimary,
@@ -184,7 +188,7 @@ class _InvestorSecurityScreenState
               padding: const EdgeInsets.only(left: 14, top: 1),
               child: Text(
                 'ACCOUNT PROTECTION',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 11,
                   letterSpacing: 1.5,
                   fontWeight: FontWeight.w600,
@@ -304,7 +308,9 @@ class _InvestorSecurityScreenState
                     child: Icon(
                       LucideIcons.check,
                       size: 12,
-                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      color: isDark
+                          ? const Color(0xFF0C312B)
+                          : const Color(0xFFF4EFE3),
                     ),
                   ),
                 ),
@@ -326,7 +332,7 @@ class _InvestorSecurityScreenState
             child: Text(
               'Your account is secured with military-grade encryption and 2FA.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 height: 1.4,
@@ -391,7 +397,7 @@ class _InvestorSecurityScreenState
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: textPrimary,
@@ -400,7 +406,7 @@ class _InvestorSecurityScreenState
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: muted,
@@ -521,7 +527,7 @@ class _InvestorSecurityScreenState
               children: [
                 Text(
                   login['device'] ?? '',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: textPrimary,
@@ -531,7 +537,7 @@ class _InvestorSecurityScreenState
                   const SizedBox(height: 2),
                   Text(
                     meta,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: muted,
@@ -553,7 +559,7 @@ class _InvestorSecurityScreenState
             ),
             child: Text(
               status.toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1,
@@ -583,7 +589,7 @@ class _InvestorSecurityScreenState
           const SizedBox(height: 12),
           Text(
             title,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 13,
               fontWeight: FontWeight.w700,
               color: textPrimary,
@@ -593,7 +599,7 @@ class _InvestorSecurityScreenState
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: muted,

@@ -93,7 +93,7 @@ class _CpEliteCpConnectScreenState
           children: [
             Text(
               'Partners Portal',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: scheme.onSurface,
@@ -258,7 +258,7 @@ class _CpEliteCpConnectScreenState
       ),
       child: TextField(
         controller: _search,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w500,
           letterSpacing: 0.5,
@@ -266,8 +266,8 @@ class _CpEliteCpConnectScreenState
         ),
         textCapitalization: TextCapitalization.characters,
         decoration: InputDecoration(
-          hintText: 'SCAN VERIFIED INSTITUTIONAL PARTNERS…',
-          hintStyle: GoogleFonts.ebGaramond(
+          hintText: 'Search Partners',
+          hintStyle: GoogleFonts.inter(
             fontSize: 10,
             fontWeight: FontWeight.w500,
             letterSpacing: 0.5,
@@ -522,7 +522,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                         p.name.toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: scheme.onSurface,
@@ -534,7 +534,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                         '${p.expert} • ${p.region}'.toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           color: muted,
@@ -554,7 +554,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                         const SizedBox(width: 3),
                         Text(
                           p.rating,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: scheme.primary,
@@ -565,7 +565,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                     const SizedBox(height: 2),
                     Text(
                       '${p.activeProjects} OPS',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 9,
                         fontWeight: FontWeight.w700,
                         color: scheme.onSurface.withValues(alpha: 0.68),
@@ -733,7 +733,7 @@ class _AcceleratorCard extends StatelessWidget {
                   Text(
                     'Maximize institutional yield with 1.5x commission vectors on all '
                     'Prestige-tier residential clusters in core markets.',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       height: 1.6,

@@ -367,7 +367,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           label,
           textAlign: TextAlign.center,
           // Was 8px / 60% — far too small and faint to read. Bigger + darker.
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             color: foreground.withOpacity(0.85),
             fontSize: 10.5,
             fontWeight: FontWeight.w600,
@@ -833,7 +833,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Text(
                     'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner.',
                     textAlign: TextAlign.justify,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: Theme.of(
                         context,
                       ).colorScheme.onSurface.withOpacity(0.6),
@@ -980,7 +980,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           'FEATURED PROPERTY',
                                           // Was 9px — too small to read.
                                           style: GoogleFonts.gelasio(
-                                            color: const Color(0xFFC5A35B),
+                                            color: const Color(0xFFF4EFE3),
                                             fontSize: 11,
                                             fontWeight: FontWeight.w700,
                                             letterSpacing: 2,
@@ -1003,7 +1003,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           overflow: TextOverflow.ellipsis,
                                           // Was 10px / 80% — faint on the photo.
                                           // Bigger, bolder, near-solid white.
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.inter(
                                             color: Colors.white.withOpacity(
                                               0.95,
                                             ),
@@ -1149,7 +1149,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               color:
                                   Theme.of(context).brightness ==
                                       Brightness.dark
-                                  ? Colors.black
+                                  ? const Color(0xFF0C312B)
                                   : Colors.white,
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
@@ -1208,70 +1208,76 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   const SizedBox(height: 28),
                   Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
+                      // Investor parity: a 3% translucent lift over the page
+                      // rather than a solid surface panel, so the card reads as
+                      // the same colour in both portals.
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.03),
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.1),
+                        ).colorScheme.onSurface.withOpacity(0.08),
                       ),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24),
                       child: Column(
                         children: <Widget>[
-                          IntrinsicHeight(
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: _EngageCell(
-                                    icon: LucideIcons.building2,
-                                    title: 'EXPLORE PROJECTS',
-                                    desc: 'Browse our portfolio of properties',
-                                    onTap: () =>
-                                        ref
-                                                .read(
-                                                  navigationProvider.notifier,
-                                                )
-                                                .state =
-                                            1,
-                                  ),
+                          // No IntrinsicHeight: it measures wrapping Text as a
+                          // single line, then forces that height on the row —
+                          // the 2-line title + 3-line desc of REGISTER INTEREST
+                          // overflowed by 20px. A plain Row sizes to the tallest
+                          // cell correctly. Cells have no background or divider,
+                          // so equal heights are not needed visually.
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Expanded(
+                                child: _EngageCell(
+                                  icon: LucideIcons.building2,
+                                  title: 'EXPLORE PROJECTS',
+                                  desc: 'Browse our portfolio of properties',
+                                  onTap: () =>
+                                      ref
+                                              .read(navigationProvider.notifier)
+                                              .state =
+                                          1,
                                 ),
-                                Expanded(
-                                  child: _EngageCell(
-                                    icon: LucideIcons.layoutGrid,
-                                    title: 'BOOK A VIEWING',
-                                    desc:
-                                        'Schedule a visit to our show apartment',
-                                    onTap: _scrollToInquiry,
-                                  ),
+                              ),
+                              Expanded(
+                                child: _EngageCell(
+                                  icon: LucideIcons.layoutGrid,
+                                  title: 'BOOK A VIEWING',
+                                  desc:
+                                      'Schedule a visit to our show apartment',
+                                  onTap: _scrollToInquiry,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          IntrinsicHeight(
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: _EngageCell(
-                                    icon: LucideIcons.image,
-                                    title: 'MEDIA GALLERY',
-                                    desc:
-                                        'Watch films and view property renders',
-                                    onTap: () => context.push('/media'),
-                                  ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Expanded(
+                                child: _EngageCell(
+                                  icon: LucideIcons.image,
+                                  title: 'MEDIA GALLERY',
+                                  desc: 'Watch films and view property renders',
+                                  onTap: () => context.push('/media'),
                                 ),
-                                Expanded(
-                                  child: _EngageCell(
-                                    icon: LucideIcons.user,
-                                    title: 'REGISTER INTEREST',
-                                    desc:
-                                        'Register your interest in our properties',
-                                    onTap: _scrollToInquiry,
-                                  ),
+                              ),
+                              Expanded(
+                                child: _EngageCell(
+                                  icon: LucideIcons.user,
+                                  title: 'REGISTER INTEREST',
+                                  desc:
+                                      'Register your interest in our properties',
+                                  onTap: _scrollToInquiry,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -1329,7 +1335,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                   const SizedBox(height: 48),
                   _PremiumInputField(
-                    label: 'Full Name *',
+                    label: 'Enter Full Name',
                     controller: _nameController,
                     errorText: _nameError,
                     keyboardType: TextInputType.name,
@@ -1340,7 +1346,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     },
                   ),
                   _PremiumInputField(
-                    label: 'Email Address *',
+                    label: 'Enter Email Address',
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     inputFormatters: Validators.emailFormatters,
@@ -1352,7 +1358,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     },
                   ),
                   _PremiumInputField(
-                    label: 'Phone Number *',
+                    label: 'Enter Mobile Number',
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
                     inputFormatters: Validators.phoneFormatters,
@@ -1364,7 +1370,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     },
                   ),
                   _PremiumInputField(
-                    label: 'Message',
+                    label: 'Enter Message',
                     controller: _messageController,
                     maxLines: 3,
                   ),
@@ -1407,7 +1413,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
           ),
 
-          SliverToBoxAdapter(child: SizedBox(height: 96)),
+          const SliverToBoxAdapter(child: SizedBox(height: 96)),
         ],
       ),
     );
@@ -1429,21 +1435,22 @@ class _CategoryChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
         decoration: BoxDecoration(
           color: isActive
-              ? (isDark ? Colors.white : Color(0xFF163A2C))
+              ? (isDark ? Colors.white : const Color(0xFF0C312B))
               : (isDark
                     ? Colors.white.withOpacity(0.05)
                     : Colors.black.withOpacity(0.05)),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.1),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.1),
           ),
         ),
         child: Text(
           label,
           style: GoogleFonts.gelasio(
             color: isActive
-                ? (isDark ? Colors.black : Colors.white)
-                : (isDark ? Colors.white38 : Color(0xFF5E6B60)),
+                ? (isDark ? const Color(0xFF0C312B) : Colors.white)
+                : (isDark ? Colors.white38 : const Color(0xFF155A4F)),
             fontSize: 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 2,
@@ -1536,7 +1543,7 @@ class _ProjectCard extends StatelessWidget {
                           ),
                           child: Text(
                             status.toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               color: Colors.white,
                               fontSize: 8,
                               fontWeight: FontWeight.w500,
@@ -1559,7 +1566,7 @@ class _ProjectCard extends StatelessWidget {
                         ),
                         child: Text(
                           'ARTISTIC IMPRESSION',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Colors.white,
                             fontSize: 6.5,
                             fontWeight: FontWeight.w600,
@@ -1602,7 +1609,7 @@ class _ProjectCard extends StatelessWidget {
                           location.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: scheme.onSurface.withOpacity(0.55),
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
@@ -1625,7 +1632,7 @@ class _ProjectCard extends StatelessWidget {
                       children: [
                         Text(
                           'READ MORE',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: scheme.surface,
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -1677,14 +1684,12 @@ class _QuickAction extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                    0.05,
-                  ),
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withOpacity(0.05),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                      0.08,
-                    ),
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                        .withOpacity(0.08),
                   ),
                 ),
                 child: Icon(
@@ -1698,7 +1703,7 @@ class _QuickAction extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.inter(
               fontSize: 8,
               fontWeight: FontWeight.w700,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
@@ -1734,13 +1739,15 @@ class _EngageCell extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Icon in a bordered circle (web: w-10 h-10 rounded-full border)
+            // Icon in a bordered circle (web: w-10 h-10 rounded-full border).
+            // Fill/border alphas match the investor connect grid.
             Container(
               width: 44,
               height: 44,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: scheme.onSurface.withOpacity(0.12)),
+                color: scheme.onSurface.withOpacity(0.05),
+                border: Border.all(color: scheme.onSurface.withOpacity(0.1)),
               ),
               child: Icon(icon, color: scheme.onSurface, size: 20),
             ),
@@ -1748,7 +1755,7 @@ class _EngageCell extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
@@ -1760,12 +1767,13 @@ class _EngageCell extends StatelessWidget {
             Text(
               desc,
               textAlign: TextAlign.center,
-              // Was 10.5px / 65% (then 12 / 82%) — still read as faint grey.
-              // Now near-solid foreground at a proper body size.
-              style: GoogleFonts.ebGaramond(
+              // Muted to 50%, matching the investor connect grid exactly.
+              // (Previously 95% — a deliberate earlier bump that made this
+              // portal's copy read far heavier than the other portals'.)
+              style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: scheme.onSurface.withOpacity(0.95),
+                color: scheme.onSurface.withOpacity(0.5),
                 height: 1.4,
               ),
             ),
@@ -1822,9 +1830,8 @@ class _QuickFilterSheet extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                      0.1,
-                    ),
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                        .withOpacity(0.1),
                   ),
                   child: Icon(
                     LucideIcons.x,
@@ -1836,14 +1843,14 @@ class _QuickFilterSheet extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 35),
-          _FilterSection(
+          const _FilterSection(
             title: 'LOCATION',
-            options: const ['SOUTH MUMBAI', 'WORLI', 'BANDRA', 'JUHU', 'POWAI'],
+            options: ['SOUTH MUMBAI', 'WORLI', 'BANDRA', 'JUHU', 'POWAI'],
           ),
           const SizedBox(height: 30),
-          _FilterSection(
+          const _FilterSection(
             title: 'PROPERTY TYPE',
-            options: const ['RESIDENTIAL', 'COMMERCIAL'],
+            options: ['RESIDENTIAL', 'COMMERCIAL'],
           ),
           const SizedBox(height: 50),
           GestureDetector(
@@ -1852,14 +1859,16 @@ class _QuickFilterSheet extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 20),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Center(
                 child: Text(
                   'SHOW RESULTS',
                   style: GoogleFonts.gelasio(
-                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    color: isDark
+                        ? const Color(0xFF0C312B)
+                        : const Color(0xFFF4EFE3),
                     fontWeight: FontWeight.w700,
                     fontSize: 12,
                     letterSpacing: 1.5,
@@ -1907,19 +1916,17 @@ class _FilterSection extends StatelessWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                      0.05,
-                    ),
+                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                        .withOpacity(0.05),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                        0.05,
-                      ),
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.05),
                     ),
                   ),
                   child: Text(
                     opt,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
@@ -1943,7 +1950,7 @@ class _SliderNavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
+    final foreground = isDark ? Colors.white : const Color(0xFF0C312B);
 
     return GestureDetector(
       onTap: onTap,
@@ -2007,14 +2014,15 @@ class _PremiumInputField extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   // Web parity: white field with a soft shadow.
-                  color: isDark ? Colors.white.withOpacity(0.04) : const Color(0xFFF4EFE3),
+                  color: isDark
+                      ? Colors.white.withOpacity(0.04)
+                      : const Color(0xFFF4EFE3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: hasError
                         ? _errorColor
-                        : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
-                            0.08,
-                          ),
+                        : (isDark ? Colors.white : const Color(0xFF0C312B))
+                              .withOpacity(0.08),
                     width: hasError ? 1.5 : 1,
                   ),
                   boxShadow: isDark
@@ -2034,7 +2042,7 @@ class _PremiumInputField extends StatelessWidget {
                   onChanged: onChanged,
                   inputFormatters: inputFormatters,
                   cursorColor: Theme.of(context).colorScheme.onSurface,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 15.5,
                     fontWeight: FontWeight.w700,
@@ -2045,13 +2053,13 @@ class _PremiumInputField extends StatelessWidget {
                     isCollapsed: true,
                     hintText: label,
                     // Was 14px / 68% — the placeholder read as washed out.
-                    hintStyle: GoogleFonts.ebGaramond(
+                    hintStyle: GoogleFonts.inter(
                       color: hasError
                           ? _errorColor.withOpacity(0.85)
                           : Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.82),
-                      fontSize: 14.5,
+                      fontSize: 13.5,
                       fontWeight: FontWeight.w600,
                     ),
                     filled: false,
@@ -2068,7 +2076,7 @@ class _PremiumInputField extends StatelessWidget {
               padding: const EdgeInsets.only(left: 10, top: 6),
               child: Text(
                 errorText!,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   color: _errorColor,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -2106,17 +2114,21 @@ class _PremiumDropdownField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.03),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.05),
               ),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButtonFormField<String>(
                 value: value,
-                dropdownColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-                style: GoogleFonts.ebGaramond(
+                dropdownColor: isDark
+                    ? const Color(0xFF141B3A)
+                    : const Color(0xFFF4EFE3),
+                style: GoogleFonts.inter(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 13,
                 ),
@@ -2129,7 +2141,7 @@ class _PremiumDropdownField extends StatelessWidget {
                 ),
                 decoration: InputDecoration(
                   labelText: label,
-                  labelStyle: GoogleFonts.ebGaramond(
+                  labelStyle: GoogleFonts.inter(
                     color: Theme.of(
                       context,
                     ).colorScheme.onSurface.withOpacity(0.68),
@@ -2175,10 +2187,12 @@ class _PremiumFormField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.03),
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withOpacity(0.05),
               ),
             ),
             child: Row(
@@ -2186,7 +2200,7 @@ class _PremiumFormField extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     color: Theme.of(
                       context,
                     ).colorScheme.onSurface.withOpacity(0.68),
@@ -2235,17 +2249,19 @@ class _GlassSearchField extends StatelessWidget {
               const SizedBox(width: 15),
               Expanded(
                 child: TextField(
-                  cursorColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                  cursorColor: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Theme.of(context).colorScheme.onSurface,
                   onChanged: onChanged,
-                  style: GoogleFonts.ebGaramond(
-                    color: Colors.black,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF0C312B),
                     fontSize: 15,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Search residences...',
-                    hintStyle: GoogleFonts.ebGaramond(
-                      color: Colors.black45,
-                      fontSize: 13,
+                    hintText: 'Search Residences',
+                    hintStyle: GoogleFonts.inter(
+                      color: const Color(0x730C312B),
+                      fontSize: 12,
                     ),
                     filled: false,
                     border: InputBorder.none,
@@ -2288,7 +2304,7 @@ class _GlassIconButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: Colors.white.withOpacity(0.4)),
             ),
-            child: Icon(icon, color: Colors.black, size: 20),
+            child: Icon(icon, color: const Color(0xFF0C312B), size: 20),
           ),
         ),
       ),
@@ -2321,7 +2337,7 @@ class _WebTab extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.inter(
             color: isActive ? onSurface : onSurface.withOpacity(0.55),
             fontSize: 12,
             fontWeight: FontWeight.w600,
@@ -2359,10 +2375,13 @@ class _UpdateCard extends StatelessWidget {
         width: 280,
         margin: const EdgeInsets.only(left: 20, right: 10),
         decoration: BoxDecoration(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.04),
+          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+            0.04,
+          ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+            color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                .withOpacity(0.05),
           ),
         ),
         padding: const EdgeInsets.all(16),
@@ -2372,6 +2391,7 @@ class _UpdateCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(25),
               child: CachedNetworkImage(
+                memCacheWidth: 1080,
                 imageUrl: imageUrl,
                 height: 120,
                 width: double.infinity,
@@ -2398,7 +2418,7 @@ class _UpdateCard extends StatelessWidget {
                   ),
                   child: Text(
                     type,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 7,
                       fontWeight: FontWeight.w600,
                       color: Theme.of(
@@ -2409,7 +2429,7 @@ class _UpdateCard extends StatelessWidget {
                 ),
                 Text(
                   date,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 8,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(
@@ -2422,7 +2442,7 @@ class _UpdateCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               title,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onSurface,
@@ -2434,7 +2454,7 @@ class _UpdateCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               snippet,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 9,
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                 height: 1.4,
@@ -2626,7 +2646,7 @@ class _CommunityCard extends StatelessWidget {
                     const SizedBox(height: 10),
                     Text(
                       description,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         color: Colors.white.withOpacity(0.7),
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
@@ -2642,7 +2662,7 @@ class _CommunityCard extends StatelessWidget {
                       children: [
                         Text(
                           'EXPLORE COMMUNITY',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w400,
@@ -2665,7 +2685,7 @@ class _CommunityCard extends StatelessWidget {
                           ),
                           child: const Icon(
                             LucideIcons.arrowRight,
-                            color: Colors.black,
+                            color: const Color(0xFF0C312B),
                             size: 18,
                           ),
                         ),

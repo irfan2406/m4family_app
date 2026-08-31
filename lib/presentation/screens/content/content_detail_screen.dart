@@ -121,7 +121,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   const SizedBox(height: 10),
                   Text(
                     'Video format not supported or unreachable',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       color: Colors.white.withOpacity(0.6),
                       fontSize: 12,
                     ),
@@ -346,7 +346,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             const SizedBox(width: 15),
                             Text(
                               formattedDate,
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.inter(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: scheme.onSurface.withOpacity(0.68),
@@ -373,7 +373,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         Text(
                           widget.content['description'] ??
                               'No description provided.',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.inter(
                             fontSize: 15,
                             color: scheme.onSurface.withOpacity(0.6),
                             height: 1.8,
@@ -388,7 +388,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           const SizedBox(height: 20),
                           HtmlWidget(
                             widget.content['content'],
-                            textStyle: GoogleFonts.ebGaramond(
+                            textStyle: GoogleFonts.inter(
                               fontSize: 15,
                               color: scheme.onSurface.withOpacity(0.6),
                               height: 1.8,
@@ -620,7 +620,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         color = const Color(0xFFC5A35B);
         break;
       case 'ENDED':
-        color = isDark ? Colors.white38 : Color(0xFF5E6B60);
+        color = isDark ? Colors.white38 : const Color(0xFF155A4F);
         break;
       case 'CANCELLED':
         color = const Color(0xFFC65B46);
@@ -657,7 +657,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -705,17 +707,17 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                  color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                   letterSpacing: 1.5,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 value,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF155A4F),
                   letterSpacing: -0.2,
                 ),
               ),
@@ -789,24 +791,24 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white38 : Color(0xFF5E6B60),
+                      color: isDark ? Colors.white38 : const Color(0xFF155A4F),
                       letterSpacing: 1.5,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     location,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Color(0xFF163A2C),
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
                       letterSpacing: -0.2,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'VIEW ON MAPS ↗',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 8,
                       fontWeight: FontWeight.w600,
                       color: M4Theme.premiumBlue,
@@ -846,10 +848,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               const SizedBox(width: 10),
               Text(
                 '$count ATTENDING',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF155A4F),
                   letterSpacing: 1,
                 ),
               ),
@@ -877,7 +879,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   child: Center(
                     child: Text(
                       initial,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.inter(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: M4Theme.premiumBlue,
@@ -1084,13 +1086,13 @@ class _M4VideoControlsState extends State<_M4VideoControls> {
               width: 22,
               child: icon == null
                   ? null
-                  : Icon(icon, size: 18, color: Colors.black87),
+                  : Icon(icon, size: 18, color: const Color(0xDD0C312B)),
             ),
             const SizedBox(width: 10),
             Text(
               label,
-              style: GoogleFonts.ebGaramond(
-                color: Colors.black87,
+              style: GoogleFonts.inter(
+                color: const Color(0xDD0C312B),
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -1180,7 +1182,7 @@ class _M4VideoControlsState extends State<_M4VideoControls> {
                           const SizedBox(width: 10),
                           Text(
                             '${_fmt(value.position)} / ${_fmt(value.duration)}',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.inter(
                               color: Colors.white,
                               fontSize: 11,
                               fontWeight: FontWeight.w700,

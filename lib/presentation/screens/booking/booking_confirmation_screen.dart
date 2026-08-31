@@ -137,14 +137,16 @@ class _BookingConfirmationScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.68,
     );
 
     if (_loading) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
+        backgroundColor: isDark
+            ? const Color(0xFF141B3A)
+            : const Color(0xFFD4CFBC),
         body: const Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
@@ -152,7 +154,9 @@ class _BookingConfirmationScreenState
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFD4CFBC),
+      backgroundColor: isDark
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFD4CFBC),
       body: Stack(
         children: [
           // Decorative background circles
@@ -368,7 +372,7 @@ class _BookingConfirmationScreenState
                       width: double.infinity,
                       height: 64,
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Color(0xFF163A2C),
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
@@ -376,14 +380,18 @@ class _BookingConfirmationScreenState
                         children: [
                           Icon(
                             LucideIcons.home,
-                            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            color: isDark
+                                ? const Color(0xFF0C312B)
+                                : const Color(0xFFF4EFE3),
                             size: 18,
                           ),
                           const SizedBox(width: 14),
                           Text(
                             'BACK TO DASHBOARD',
                             style: GoogleFonts.gelasio(
-                              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                              color: isDark
+                                  ? const Color(0xFF0C312B)
+                                  : const Color(0xFFF4EFE3),
                               fontWeight: FontWeight.w700,
                               fontSize: 12,
                               letterSpacing: 2,
@@ -435,7 +443,9 @@ class _BookingConfirmationScreenState
       width: double.infinity,
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.02) : const Color(0xFFF4EFE3),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.02)
+            : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: isDark
@@ -473,7 +483,7 @@ class _BookingConfirmationScreenState
                 const SizedBox(height: 6),
                 Text(
                   '#${(_receiptId.isNotEmpty ? _receiptId : _fallbackReceipt).toUpperCase()}',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: textPrimary,
@@ -492,7 +502,7 @@ class _BookingConfirmationScreenState
             muted: muted,
             child: Text(
               _projectTitle.toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
@@ -513,7 +523,7 @@ class _BookingConfirmationScreenState
                   muted: muted,
                   child: Text(
                     '₹$_amount',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.inter(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: M4Theme.premiumBlue,
@@ -560,7 +570,7 @@ class _BookingConfirmationScreenState
                             style: GoogleFonts.gelasio(
                               fontSize: 8,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFF163A2C),
+                              color: const Color(0xFF0C312B),
                               letterSpacing: 2,
                             ),
                           ),
@@ -630,7 +640,9 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         height: 56,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.03)
+              : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark
@@ -659,7 +671,7 @@ class _ActionButton extends StatelessWidget {
                 style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
                   letterSpacing: 1.5,
                 ),
               ),
