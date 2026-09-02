@@ -1047,107 +1047,17 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   Future<DateTime?> _pickInquiryDateTime() async {
     final now = DateTime.now();
-    DateTime temp = _inquiryDateTime ?? now.add(const Duration(minutes: 30));
-    if (temp.isBefore(now)) temp = now.add(const Duration(minutes: 30));
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    // Web parity: an absolute Day/Month/Year + time wheel picker, shown
-    // centered on screen (not the Material calendar dialog).
-    return showDialog<DateTime>(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.55),
-      builder: (dCtx) => Dialog(
-        backgroundColor: isDark
-            ? const Color(0xFF141B3A)
-            : const Color(0xFFF4EFE3),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'SELECT DATE & TIME',
-                  style: GoogleFonts.inter(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                    color: isDark ? Colors.white : const Color(0xFF155A4F),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              WheelDateTimePicker(
-                initial: temp,
-                minDate: now,
-                isDark: isDark,
-                onChanged: (dt) => temp = dt,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(dCtx),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(52),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        side: BorderSide(
-                          color:
-                              (isDark ? Colors.white : const Color(0xFF0C312B))
-                                  .withOpacity(0.2),
-                        ),
-                        foregroundColor: isDark
-                            ? Colors.white
-                            : const Color(0xFF0C312B),
-                      ),
-                      child: Text(
-                        'CANCEL',
-                        style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: () => Navigator.pop(dCtx, temp),
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size.fromHeight(52),
-                        backgroundColor: isDark
-                            ? Colors.white
-                            : const Color(0xFF0C312B),
-                        foregroundColor: isDark
-                            ? Colors.black
-                            : const Color(0xFFF4EFE3),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: Text(
-                        'CONFIRM',
-                        style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    // The one M4 chooser, same bottom sheet as every other date field in the
+    // app. This screen used to open its own centred dialog — same wheels, but
+    // a card in the middle of the screen instead of the sheet.
+    //
+    // Tomorrow onwards, matching the other booking sheets: flooring at `now`
+    // kept today selectable and the unfiltered hour wheel then displayed
+    // slots that had already passed.
+    final minSchedule = DateTime(now.year, now.month, now.day + 1);
+    var temp = _inquiryDateTime ?? now.add(const Duration(days: 1));
+    if (temp.isBefore(minSchedule)) temp = now.add(const Duration(days: 1));
+    return showM4DateTimeSheet(context, initial: temp, minDate: minSchedule);
   }
 
   String _formatInquiryDateTime(DateTime dt) {

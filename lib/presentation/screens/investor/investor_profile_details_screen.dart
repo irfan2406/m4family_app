@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/presentation/widgets/wheel_date_picker.dart';
+import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 
 /// Investor profile details — parity with web `app/investor/profile/details/page.tsx`.
 /// Edit mode for name, email, phone, address, bio + avatar upload (camera button).
@@ -749,7 +749,14 @@ class _InvestorProfileDetailsScreenState
     } catch (_) {
       initial = DateTime(2000);
     }
-    final picked = await showWheelDatePicker(context, initial: initial);
+    // The one M4 chooser, same as every booking sheet: starts on today and
+    // runs forward.
+    final now = DateTime.now();
+    final picked = await showM4DateTimeSheet(
+      context,
+      initial: initial,
+      minDate: DateTime(now.year, now.month, now.day),
+    );
     if (picked != null) {
       setState(() => _dob = DateFormat('yyyy-MM-dd').format(picked));
     }

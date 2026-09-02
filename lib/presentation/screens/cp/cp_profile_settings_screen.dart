@@ -352,7 +352,7 @@ class _CpProfileSettingsScreenState
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'SELECT DATE',
+                'SELECT DATE & TIME',
                 style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -364,8 +364,11 @@ class _CpProfileSettingsScreenState
             const SizedBox(height: 8),
             WheelDateTimePicker(
               initial: temp,
+              // Starts on today and runs forward, matching the booking
+              // pickers. Midnight rather than `now` so selecting today itself
+              // isn't pushed to the current time by the floor.
+              minDate: DateTime(now.year, now.month, now.day),
               isDark: isDark,
-              showTime: false,
               onChanged: (dt) => temp = dt,
             ),
             const SizedBox(height: 16),

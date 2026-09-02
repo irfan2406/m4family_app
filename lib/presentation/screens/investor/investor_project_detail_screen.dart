@@ -17,6 +17,7 @@ import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
+import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 
 /// Decoded base64 image bytes, keyed by the raw `data:` URI, so a large hero
 /// image (the backend stores heroes as multi-MB base64) is decoded once instead
@@ -579,30 +580,32 @@ class _InvestorProjectDetailScreenState
                           GestureDetector(
                             onTap: () async {
                               final now = DateTime.now();
-                              final date = await showDatePicker(
-                                context: sheetContext,
-                                initialDate: scheduledAt ?? now,
-                                firstDate: now,
-                                lastDate: now.add(const Duration(days: 180)),
+                              // The M4 wheel chooser, same as every other
+                              // scheduling field in the app. This screen was
+                              // the last one popping Flutter's stock Material
+                              // calendar dialog and clock dial, which look
+                              // nothing like the rest of the app — and whose
+                              // clock had no floor, so an already-past slot on
+                              // today (09:00 at 13:00) was bookable. The
+                              // wheels carry both bounds, so the 180-day
+                              // window this screen has always had is kept.
+                              // Tomorrow onwards, like every other booking
+                              // sheet; the 180-day window is unchanged.
+                              final minSchedule = DateTime(
+                                now.year,
+                                now.month,
+                                now.day + 1,
                               );
-                              if (date == null) return;
-                              if (!sheetContext.mounted) return;
-                              final time = await showTimePicker(
-                                context: sheetContext,
-                                initialTime: TimeOfDay.fromDateTime(
-                                  scheduledAt ?? now,
-                                ),
+                              final picked = await showM4DateTimeSheet(
+                                sheetContext,
+                                initial:
+                                    scheduledAt ??
+                                    now.add(const Duration(days: 1)),
+                                minDate: minSchedule,
+                                maxDate: now.add(const Duration(days: 180)),
                               );
-                              if (time == null) return;
-                              setModalState(() {
-                                scheduledAt = DateTime(
-                                  date.year,
-                                  date.month,
-                                  date.day,
-                                  time.hour,
-                                  time.minute,
-                                );
-                              });
+                              if (picked == null) return;
+                              setModalState(() => scheduledAt = picked);
                             },
                             child: Container(
                               width: double.infinity,

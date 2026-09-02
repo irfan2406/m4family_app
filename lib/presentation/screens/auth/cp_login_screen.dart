@@ -149,11 +149,11 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 48),
-                  // Sign in with the mobile number rather than the CP ID.
-                  // /api/auth/login takes a single `identifier`, which the
-                  // backend resolves against phone / email / id alike (the
-                  // investor screen documents the same contract), so only the
-                  // field changes — the request shape is untouched.
+                  // Mobile number only. /api/auth/login takes a single
+                  // `identifier`, so the phone goes out in that field; the
+                  // formatter keeps letters, '@' and '.' out of the box and
+                  // the guard below refuses anything that isn't a real number,
+                  // so a CP ID or an email can never be submitted here.
                   _Field(
                     label: 'MOBILE NUMBER',
                     controller: _phoneController,
@@ -245,6 +245,23 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                           content: Text(
                                             'Please enter both mobile number and password',
                                           ),
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    // Number sign-in only: a value that isn't
+                                    // a valid mobile number never reaches the
+                                    // API — the partner is told why instead.
+                                    final phoneErr = Validators.phoneError(id);
+                                    if (phoneErr != null) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          backgroundColor: const Color(
+                                            0xFFC65B46,
+                                          ),
+                                          content: Text(phoneErr),
                                         ),
                                       );
                                       return;

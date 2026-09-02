@@ -11,10 +11,12 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
@@ -29,316 +31,6 @@ final Map<String, Uint8List> _detailB64Cache = {};
 /// Web parity: the booking dialog's accent (subtitle, section labels, schedule
 /// row, field placeholders) is a premium slate-blue, not gray.
 const Color _kBookingBlue = Color(0xFF141B3A);
-
-/// Web parity: bespoke date+time wheel picker — separate Day | Month | Year |
-/// Hour | Minute | AM/PM columns under a "SELECT DATE & TIME" header. Returns
-/// the composed [DateTime] via Navigator.pop, or null on dismiss.
-class _DateTimeWheelSheet extends StatefulWidget {
-  final DateTime initial;
-  final bool isDark;
-  const _DateTimeWheelSheet({required this.initial, required this.isDark});
-
-  @override
-  State<_DateTimeWheelSheet> createState() => _DateTimeWheelSheetState();
-}
-
-class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
-  static const _months = [
-    'JAN',
-    'FEB',
-    'MAR',
-    'APR',
-    'MAY',
-    'JUN',
-    'JUL',
-    'AUG',
-    'SEP',
-    'OCT',
-    'NOV',
-    'DEC',
-  ];
-
-  late int _baseYear; // first selectable year
-  static const _yearSpan = 4; // current year .. +3
-
-  late int _year; // absolute year
-  late int _month; // 1..12
-  late int _day; // 1..daysInMonth
-  late int _hour12; // 1..12
-  late int _minute; // 0..59
-  late int _ampm; // 0 = AM, 1 = PM
-
-  late FixedExtentScrollController _dayCtl,
-      _monthCtl,
-      _yearCtl,
-      _hourCtl,
-      _minCtl,
-      _ampmCtl;
-
-  @override
-  void initState() {
-    super.initState();
-    final d = widget.initial;
-    _baseYear = DateTime.now().year;
-    _year = d.year.clamp(_baseYear, _baseYear + _yearSpan - 1);
-    _month = d.month;
-    _day = d.day;
-    _ampm = d.hour >= 12 ? 1 : 0;
-    _hour12 = d.hour % 12 == 0 ? 12 : d.hour % 12;
-    _minute = d.minute;
-
-    _dayCtl = FixedExtentScrollController(initialItem: _day - 1);
-    _monthCtl = FixedExtentScrollController(initialItem: _month - 1);
-    _yearCtl = FixedExtentScrollController(initialItem: _year - _baseYear);
-    _hourCtl = FixedExtentScrollController(initialItem: _hour12 - 1);
-    _minCtl = FixedExtentScrollController(initialItem: _minute);
-    _ampmCtl = FixedExtentScrollController(initialItem: _ampm);
-  }
-
-  @override
-  void dispose() {
-    _dayCtl.dispose();
-    _monthCtl.dispose();
-    _yearCtl.dispose();
-    _hourCtl.dispose();
-    _minCtl.dispose();
-    _ampmCtl.dispose();
-    super.dispose();
-  }
-
-  int get _daysInMonth => DateTime(_year, _month + 1, 0).day;
-
-  // After a month/year change the current day may no longer exist (e.g. 31 →
-  // Feb). Clamp it and snap the day wheel back into range.
-  void _clampDay() {
-    final max = _daysInMonth;
-    if (_day > max) {
-      _day = max;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_dayCtl.hasClients) {
-          _dayCtl.jumpToItem(_day - 1);
-        }
-      });
-    }
-  }
-
-  DateTime _compose() {
-    int h24 = _hour12 % 12; // 12 → 0
-    if (_ampm == 1) h24 += 12; // PM
-    final day = _day > _daysInMonth ? _daysInMonth : _day;
-    return DateTime(_year, _month, day, h24, _minute);
-  }
-
-  Widget _wheel({
-    required FixedExtentScrollController controller,
-    required int count,
-    required String Function(int) label,
-    required ValueChanged<int> onChanged,
-    int flex = 2,
-  }) {
-    final txt = widget.isDark ? Colors.white : const Color(0xFF0C312B);
-    return Expanded(
-      flex: flex,
-      child: CupertinoPicker(
-        scrollController: controller,
-        selectionOverlay: const SizedBox.shrink(),
-        itemExtent: 40,
-        magnification: 1.05,
-        useMagnifier: true,
-        squeeze: 1.05,
-        onSelectedItemChanged: onChanged,
-        children: List.generate(
-          count,
-          (i) => Center(
-            child: Text(
-              label(i),
-              style: GoogleFonts.inter(
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                color: txt,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = widget.isDark;
-    final bg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
-    final txt = isDark ? Colors.white : const Color(0xFF0C312B);
-    // Defensive clamp so the day wheel never renders fewer rows than _day.
-    if (_day > _daysInMonth) _day = _daysInMonth;
-
-    return Container(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 12),
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: isDark ? Colors.white24 : Colors.black12,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'SELECT DATE & TIME',
-                  style: GoogleFonts.gelasio(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: txt,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () => Navigator.pop(context, _compose()),
-                  child: Text(
-                    'DONE',
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : _kBookingBlue,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 216,
-            child: Stack(
-              children: [
-                // Center selection highlight (rounded row like the web).
-                Center(
-                  child: Container(
-                    height: 40,
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                          .withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: [
-                      // Day — row count follows the selected month/year; the
-                      // persistent controller is snapped back in _clampDay.
-                      _wheel(
-                        controller: _dayCtl,
-                        count: _daysInMonth,
-                        label: (i) => (i + 1).toString(),
-                        onChanged: (i) => _day = i + 1,
-                        flex: 2,
-                      ),
-                      _wheel(
-                        controller: _monthCtl,
-                        count: 12,
-                        label: (i) => _months[i],
-                        onChanged: (i) => setState(() {
-                          _month = i + 1;
-                          _clampDay();
-                        }),
-                        flex: 2,
-                      ),
-                      _wheel(
-                        controller: _yearCtl,
-                        count: _yearSpan,
-                        label: (i) => (_baseYear + i).toString(),
-                        onChanged: (i) => setState(() {
-                          _year = _baseYear + i;
-                          _clampDay();
-                        }),
-                        flex: 3,
-                      ),
-                      const SizedBox(width: 8),
-                      _wheel(
-                        controller: _hourCtl,
-                        count: 12,
-                        label: (i) => (i + 1).toString().padLeft(2, '0'),
-                        onChanged: (i) => _hour12 = i + 1,
-                        flex: 2,
-                      ),
-                      Text(
-                        ':',
-                        style: GoogleFonts.gelasio(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: txt,
-                        ),
-                      ),
-                      _wheel(
-                        controller: _minCtl,
-                        count: 60,
-                        label: (i) => i.toString().padLeft(2, '0'),
-                        onChanged: (i) => _minute = i,
-                        flex: 2,
-                      ),
-                      _wheel(
-                        controller: _ampmCtl,
-                        count: 2,
-                        label: (i) => i == 0 ? 'AM' : 'PM',
-                        onChanged: (i) => _ampm = i,
-                        flex: 2,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
-            child: GestureDetector(
-              onTap: () => Navigator.pop(context, _compose()),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.white : const Color(0xFF0C312B),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: Text(
-                    'CONFIRM',
-                    style: GoogleFonts.gelasio(
-                      color: isDark
-                          ? const Color(0xFF0C312B)
-                          : const Color(0xFFF4EFE3),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class GuestProjectDetailScreen extends ConsumerStatefulWidget {
   final dynamic projectData;
@@ -578,19 +270,22 @@ class _GuestProjectDetailScreenState
     );
   }
 
-  // Web parity: bespoke wheel picker with separate Day | Month | Year | Hour |
-  // Minute | AM/PM columns under a "SELECT DATE & TIME" title (matches the
-  // web IOSDateTimePicker), instead of Flutter's combined-date Cupertino sheet.
+  // The one M4 chooser — the same sheet every other date field in the app
+  // opens. This screen used to build its own: same Day | Month | Year | Hour |
+  // Minute | AM/PM columns, but a DONE link instead of CANCEL / CONFIRM and no
+  // bordered box around the wheels.
   Future<DateTime?> _pickIosDateTime(DateTime initial) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final now = DateTime.now();
-    if (initial.isBefore(now)) initial = now.add(const Duration(minutes: 30));
-    return showModalBottomSheet<DateTime>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (sheetCtx) =>
-          _DateTimeWheelSheet(initial: initial, isDark: isDark),
+    // Tomorrow onwards, like every other booking sheet. Midnight today left
+    // the hour wheel showing hours that have already gone by.
+    final minSchedule = DateTime(now.year, now.month, now.day + 1);
+    if (initial.isBefore(minSchedule)) {
+      initial = now.add(const Duration(days: 1));
+    }
+    return showM4DateTimeSheet(
+      context,
+      initial: initial,
+      minDate: minSchedule,
     );
   }
 
@@ -1781,7 +1476,13 @@ class _GuestProjectDetailScreenState
           ),
           // Scrollable Header Actions (Match Web Absolute Logic)
           Positioned(
-            top: MediaQuery.of(context).padding.top + 6,
+            // Sit closer to the top. On a punch-hole screen the safe-area
+            // inset (54dp on the test device) runs well below the status-bar
+            // text (~24dp), so parking 6dp under the whole inset left an
+            // obvious empty band above the row. Take some of that slack back,
+            // with a 26dp floor so the buttons still clear the clock on a
+            // device whose inset is only the status bar.
+            top: math.max(MediaQuery.of(context).padding.top - 12, 26.0),
             left: 16,
             right: 16,
             child: Row(

@@ -173,6 +173,28 @@ class M4FamilyApp extends ConsumerWidget {
       themeMode: ThemeMode.light,
       themeAnimationDuration: Duration.zero,
       routerConfig: _router,
+      // Draw text at the size the screens were designed for, whatever the
+      // phone's own font-size setting says.
+      //
+      // Every layout here is built from fixed-width rows, chips and cards
+      // measured at a 1.0 text scale. On a handset whose system font is
+      // turned up — Realme UI's Font Size slider, Samsung's Display size,
+      // Android's Settings > Display > Font size — the same strings render
+      // wider and taller and push straight past those bounds: 'N MILESTONES'
+      // out of its chip, a support card's title onto a second line, the AM/PM
+      // column out of the date wheel. In a debug build that shows as the
+      // yellow-and-black overflow stripes reported from a Realme GT 60;
+      // in release the text is silently clipped instead. Reproduced here at
+      // 1.5x and gone at 1.0x.
+      //
+      // Clamping in one place covers every screen, including any added later.
+      builder: (context, child) {
+        final media = MediaQuery.of(context);
+        return MediaQuery(
+          data: media.copyWith(textScaler: TextScaler.noScaling),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

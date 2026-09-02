@@ -2,6 +2,136 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// The one M4 date/time chooser: a bottom sheet with a drag handle, a
+/// left-aligned title, [WheelDateTimePicker] and CANCEL / CONFIRM — the exact
+/// sheet every booking flow shows. Returns the chosen moment, or null when
+/// cancelled.
+///
+/// Every date field in the app routes through this, so a Date of Birth sheet
+/// and a site-visit sheet are the same control.
+Future<DateTime?> showM4DateTimeSheet(
+  BuildContext context, {
+  required DateTime initial,
+  DateTime? minDate,
+  DateTime? maxDate,
+  bool showTime = true,
+  String title = 'SELECT DATE & TIME',
+}) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  // CONFIRM hands back [temp], which only moves when a wheel is scrolled — so
+  // an out-of-range [initial] would otherwise be returned unchanged.
+  var temp = initial;
+  if (minDate != null && temp.isBefore(minDate)) temp = minDate;
+  if (maxDate != null && temp.isAfter(maxDate)) temp = maxDate;
+  return showModalBottomSheet<DateTime>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    builder: (sheetCtx) => Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                    .withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(99),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              title,
+              style: GoogleFonts.inter(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+                color: isDark ? Colors.white : const Color(0xFF155A4F),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          WheelDateTimePicker(
+            initial: temp,
+            minDate: minDate,
+            maxDate: maxDate,
+            isDark: isDark,
+            showTime: showTime,
+            onChanged: (dt) => temp = dt,
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => Navigator.pop(sheetCtx),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(52),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    side: BorderSide(
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withValues(alpha: 0.2),
+                    ),
+                    foregroundColor: isDark
+                        ? Colors.white
+                        : const Color(0xFF0C312B),
+                  ),
+                  child: Text(
+                    'CANCEL',
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton(
+                  onPressed: () => Navigator.pop(sheetCtx, temp),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(52),
+                    backgroundColor: isDark
+                        ? Colors.white
+                        : const Color(0xFF0C312B),
+                    foregroundColor: isDark
+                        ? Colors.black
+                        : const Color(0xFFF4EFE3),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: Text(
+                    'CONFIRM',
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 /// Custom absolute Day/Month/Year (+ optional Hour/Min/AM-PM) wheel picker
 /// matching web's `IOSDateTimePicker` — Cupertino's own `dateAndTime` mode
 /// always shows relative labels ("Today", weekday names) with no way to
@@ -24,6 +154,12 @@ import 'package:google_fonts/google_fonts.dart';
 class WheelDateTimePicker extends StatefulWidget {
   final DateTime initial;
   final DateTime? minDate;
+
+  /// Mirror of [minDate] for fields that cannot run into the future — a Date
+  /// of Birth. Caps the year list at its year and, on that year, the month and
+  /// day wheels at its month and day. Null (every scheduling picker) leaves
+  /// the upper end unbounded, exactly as before.
+  final DateTime? maxDate;
   final bool isDark;
   final bool showTime;
   final ValueChanged<DateTime> onChanged;
@@ -32,6 +168,7 @@ class WheelDateTimePicker extends StatefulWidget {
     super.key,
     required this.initial,
     this.minDate,
+    this.maxDate,
     required this.isDark,
     this.showTime = true,
     required this.onChanged,
@@ -68,37 +205,59 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
 
   int _daysInMonth(int year, int month) => DateTime(year, month + 1, 0).day;
 
-  // 0-indexed month values available for the currently selected year. With a
-  // minDate, the min year excludes months before minDate.month (web
-  // `availableMonths`); with no minDate, every month is always available.
-  List<int> _availableMonthIdx() {
+  // 0-indexed month values available for [year]. With a minDate, its own year
+  // excludes months before minDate.month (web `availableMonths`); with a
+  // maxDate, its own year excludes months after maxDate.month. With neither,
+  // every month is available. Takes the year as an argument because the
+  // year/month handlers need the list for the year being moved TO, before
+  // _value has been updated.
+  List<int> _monthIdxFor(int year) {
     final min = widget.minDate;
-    if (min != null && _value.year == min.year) {
-      return List.generate(12 - min.month + 1, (i) => min.month - 1 + i);
-    }
-    return List.generate(12, (i) => i);
+    final max = widget.maxDate;
+    final first = (min != null && year == min.year) ? min.month : 1;
+    final last = (max != null && year == max.year) ? max.month : 12;
+    final count = last - first + 1;
+    return List.generate(count < 1 ? 1 : count, (i) => first - 1 + i);
   }
 
-  // Day-of-month values available for the current year+month. With a
-  // minDate, the min year+month excludes days before minDate.day (web
-  // `availableDays`); with no minDate, every day in the month is available.
-  List<int> _availableDays() {
-    final total = _daysInMonth(_value.year, _value.month);
+  // Day-of-month values available for [year]/[month], bounded the same way
+  // (web `availableDays`) and never past the real length of the month.
+  List<int> _daysFor(int year, int month) {
+    final total = _daysInMonth(year, month);
     final min = widget.minDate;
-    if (min != null && _value.year == min.year && _value.month == min.month) {
-      final count = total - min.day + 1;
-      return List.generate(count < 1 ? 1 : count, (i) => min.day + i);
+    final max = widget.maxDate;
+    final first = (min != null && year == min.year && month == min.month)
+        ? min.day
+        : 1;
+    var last = total;
+    if (max != null &&
+        year == max.year &&
+        month == max.month &&
+        max.day < last) {
+      last = max.day;
     }
-    return List.generate(total, (i) => i + 1);
+    final count = last - first + 1;
+    return List.generate(count < 1 ? 1 : count, (i) => first + i);
   }
+
+  List<int> _availableMonthIdx() => _monthIdxFor(_value.year);
+
+  List<int> _availableDays() => _daysFor(_value.year, _value.month);
 
   @override
   void initState() {
     super.initState();
     _value = widget.initial;
     final min = widget.minDate;
+    final max = widget.maxDate;
+    if (min != null && _value.isBefore(min)) _value = min;
+    if (max != null && _value.isAfter(max)) _value = max;
     _years = min != null
         ? List.generate(11, (i) => min.year + i)
+        : max != null
+        // Bounded above (a birthdate): end the list at the maximum's year
+        // rather than running ten years past today.
+        ? List.generate(101, (i) => (max.year - 100) + i)
         : List.generate(111, (i) => (DateTime.now().year - 100) + i);
 
     final months = _availableMonthIdx();
@@ -143,6 +302,10 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
     // already 12:30). Clamp here so every caller is covered.
     final min = widget.minDate;
     if (min != null && next.isBefore(min)) next = min;
+    // The same in the other direction, for a bounded-above field: the day
+    // wheels stop at the maximum but the time wheels do not.
+    final max = widget.maxDate;
+    if (max != null && next.isAfter(max)) next = max;
     setState(() => _value = next);
     widget.onChanged(_value);
   }
@@ -163,7 +326,6 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
   }
 
   void _onYear(int idx) {
-    final min = widget.minDate;
     final year = _years[idx];
     var next = DateTime(
       year,
@@ -172,29 +334,16 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
       _value.hour,
       _value.minute,
     );
-    final months = (min != null && year == min.year)
-        ? List.generate(12 - min.month + 1, (i) => min.month - 1 + i)
-        : List.generate(12, (i) => i);
+    final months = _monthIdxFor(year);
     if (!months.contains(next.month - 1)) {
       next = DateTime(year, months.first + 1, 1, next.hour, next.minute);
     }
-    final maxDay = _daysInMonth(next.year, next.month);
-    final dayFloor =
-        (min != null && next.year == min.year && next.month == min.month)
-        ? min.day
-        : 1;
-    if (next.day > maxDay) {
-      next = DateTime(next.year, next.month, maxDay, next.hour, next.minute);
-    }
-    if (next.day < dayFloor) {
-      next = DateTime(next.year, next.month, dayFloor, next.hour, next.minute);
-    }
+    next = _clampDayInto(next);
     _emit(next);
     _resyncMonthAndDay();
   }
 
   void _onMonth(int idx) {
-    final min = widget.minDate;
     final months = _availableMonthIdx();
     final month = months[idx] + 1;
     var next = DateTime(
@@ -204,19 +353,28 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
       _value.hour,
       _value.minute,
     );
-    final maxDay = _daysInMonth(next.year, next.month);
-    final dayFloor =
-        (min != null && next.year == min.year && next.month == min.month)
-        ? min.day
-        : 1;
-    if (next.day > maxDay) {
-      next = DateTime(next.year, next.month, maxDay, next.hour, next.minute);
-    }
-    if (next.day < dayFloor) {
-      next = DateTime(next.year, next.month, dayFloor, next.hour, next.minute);
-    }
+    next = _clampDayInto(next);
     _emit(next);
     _resyncMonthAndDay();
+  }
+
+  // Pull [next]'s day inside the range its (possibly just changed) year and
+  // month allow — the shared tail of _onYear and _onMonth.
+  DateTime _clampDayInto(DateTime next) {
+    final days = _daysFor(next.year, next.month);
+    if (next.day > days.last) {
+      return DateTime(next.year, next.month, days.last, next.hour, next.minute);
+    }
+    if (next.day < days.first) {
+      return DateTime(
+        next.year,
+        next.month,
+        days.first,
+        next.hour,
+        next.minute,
+      );
+    }
+    return next;
   }
 
   void _onDay(int idx) {

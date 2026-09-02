@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
@@ -12,6 +11,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
   const ProfileSettingsScreen({super.key});
@@ -117,98 +117,25 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
 
   Future<void> _selectDate() async {
     if (!_isEditing) return;
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    DateTime tempDate = _selectedDob ?? DateTime(2000);
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return Container(
-          height: 350,
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-            border: Border.all(
-              color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                  .withOpacity(0.05),
-            ),
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(25, 20, 25, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "SELECT BIRTHDAY",
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withOpacity(0.05)
-                              : Colors.black.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          "DONE",
-                          style: GoogleFonts.inter(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFFC5A35B),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(thickness: 0.5),
-              Expanded(
-                child: CupertinoTheme(
-                  data: CupertinoThemeData(
-                    brightness: isDark ? Brightness.dark : Brightness.light,
-                    textTheme: CupertinoTextThemeData(
-                      dateTimePickerTextStyle: GoogleFonts.gelasio(
-                        color: isDark ? Colors.white : const Color(0xFF0C312B),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.date,
-                    initialDateTime: tempDate,
-                    maximumDate: DateTime.now(),
-                    onDateTimeChanged: (DateTime picked) {
-                      setState(() {
-                        _selectedDob = picked;
-                        _dobController.text = DateFormat(
-                          'dd MMM yyyy',
-                        ).format(picked).toUpperCase();
-                      });
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+    // The M4 wheel chooser every other portal's Date of Birth already uses.
+    // This screen had its own CupertinoDatePicker sheet — a different wheel,
+    // a "SELECT BIRTHDAY" header and a gold DONE that committed on scroll
+    // instead of CANCEL / CONFIRM.
+    // The one M4 chooser, same as every booking sheet: starts on today and
+    // runs forward.
+    final now = DateTime.now();
+    final picked = await showM4DateTimeSheet(
+      context,
+      initial: _selectedDob ?? DateTime(2000),
+      minDate: DateTime(now.year, now.month, now.day),
     );
+    if (picked == null || !mounted) return;
+    setState(() {
+      _selectedDob = picked;
+      _dobController.text = DateFormat(
+        'dd MMM yyyy',
+      ).format(picked).toUpperCase();
+    });
   }
 
   Future<void> _handleSave() async {

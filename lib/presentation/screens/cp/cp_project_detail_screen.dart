@@ -562,8 +562,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   // iOS-style wheel date+time picker (matches the web IOSDateTimePicker).
   Future<void> _pickVideoDt() async {
     final now = DateTime.now();
-    DateTime temp = _videoCallDt ?? now.add(const Duration(minutes: 30));
-    if (temp.isBefore(now)) temp = now.add(const Duration(minutes: 30));
+    // Tomorrow onwards, like every other booking sheet in the app. Flooring
+    // at `now` left today selectable, and the hour/minute wheels are not
+    // filtered — so an already-past slot on today was still on screen.
+    final minSchedule = DateTime(now.year, now.month, now.day + 1);
+    DateTime temp = _videoCallDt ?? now.add(const Duration(days: 1));
+    if (temp.isBefore(minSchedule)) {
+      temp = now.add(const Duration(days: 1));
+    }
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final result = await showModalBottomSheet<DateTime>(
       context: context,
@@ -609,7 +615,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             // labels with no way to disable them, so this is a custom picker.
             WheelDateTimePicker(
               initial: temp,
-              minDate: now,
+              minDate: minSchedule,
               isDark: isDark,
               onChanged: (dt) => temp = dt,
             ),
