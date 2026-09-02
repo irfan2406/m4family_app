@@ -1130,9 +1130,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.inter(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
                               letterSpacing: 1.2,
                             ),
                           ),
@@ -1893,47 +1893,58 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              mainAxisSpacing: 1,
-              crossAxisSpacing: 1,
-              childAspectRatio: 0.95,
-              children: [
-                _buildConnectItem(
-                  LucideIcons.building2,
-                  'EXPLORE PROJECTS',
-                  'Browse our portfolio of properties',
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Theme(
-                        data: M4Theme.darkTheme,
-                        child: const ProjectListScreen(guestMode: true),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // A cell has to hold the 48px icon, a two-line title and a
+                // two-line description: about 178px once the 20px padding on
+                // each side is counted. Below that the ratio would make it
+                // shorter than its own content.
+                final cellWidth = (constraints.maxWidth - 1) / 2;
+                final designHeight = cellWidth / 0.95;
+                final cellHeight = designHeight < 178 ? 178.0 : designHeight;
+                return GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 1,
+                  crossAxisSpacing: 1,
+                  childAspectRatio: cellWidth / cellHeight,
+                  children: [
+                    _buildConnectItem(
+                      LucideIcons.building2,
+                      'EXPLORE PROJECTS',
+                      'Browse our portfolio of properties',
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Theme(
+                            data: M4Theme.darkTheme,
+                            child: const ProjectListScreen(guestMode: true),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                _buildConnectItem(
-                  LucideIcons.calendarDays,
-                  'BOOK A VIEWING',
-                  'Schedule a visit to our show apartment',
-                  _scrollToInterestForm,
-                ),
-                _buildConnectItem(
-                  LucideIcons.image,
-                  'MEDIA GALLERY',
-                  'Watch films and view property renders',
-                  () => context.push('/media'),
-                ),
-                _buildConnectItem(
-                  LucideIcons.user,
-                  'REGISTER INTEREST',
-                  'Register your interest in our properties',
-                  _scrollToInterestForm,
-                ),
-              ],
+                    _buildConnectItem(
+                      LucideIcons.calendarDays,
+                      'BOOK A VIEWING',
+                      'Schedule a visit to our show apartment',
+                      _scrollToInterestForm,
+                    ),
+                    _buildConnectItem(
+                      LucideIcons.image,
+                      'MEDIA GALLERY',
+                      'Watch films and view property renders',
+                      () => context.push('/media'),
+                    ),
+                    _buildConnectItem(
+                      LucideIcons.user,
+                      'REGISTER INTEREST',
+                      'Register your interest in our properties',
+                      _scrollToInterestForm,
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -1973,10 +1984,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 size: 20,
               ),
             ),
+            // Every cell in the grid gets the same height, so the text has to
+            // give way on a narrow screen rather than run past the bottom.
             const SizedBox(height: 16),
             Text(
               title,
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.inter(
                 color: isDark ? Colors.white : const Color(0xFF155A4F),
                 fontWeight: FontWeight.w600,
@@ -1985,15 +2000,18 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               ),
             ),
             const SizedBox(height: 6),
-            Text(
-              desc,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                    .withOpacity(0.68),
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                height: 1.4,
+            Flexible(
+              child: Text(
+                desc,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.inter(
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withOpacity(0.68),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  height: 1.4,
+                ),
               ),
             ),
           ],
