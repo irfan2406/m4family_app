@@ -62,304 +62,326 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
 
     final currentRouteName = ModalRoute.of(context)?.settings.name;
 
-    return Drawer(
-      width: M4Drawer.panelWidth(context),
-      backgroundColor: Colors.transparent,
-      child: DecoratedBox(
-        // Large soft ambient lift and an almost-invisible cream hairline —
-        // the luxury floating-card effect, no hard shadow or harsh outline.
-        decoration: BoxDecoration(
-          boxShadow: M4Drawer.shadow,
-          border: Border(right: BorderSide(color: M4Drawer.border)),
-        ),
-        child: Stack(
-          children: [
-            // Figma glass panel: deep-green base, cream bloom through
-            // the middle, blue bloom low down, #0B0000 10% veil, blur 40.
-            const DrawerGlass(),
+    // A drawer opened from one of the shell TAB screens inherits their
+    // MediaQuery, and the shell inflates padding.bottom by the floating nav
+    // pill's footprint so those screens can reserve room for it. The drawer
+    // then loses that much height: opened from Home it filled the screen with
+    // EXIT APP at the bottom, but opened from Who We Are / Careers / Contact
+    // the list was cut short and EXIT APP floated up, leaving a gap. Only
+    // padding is inflated (viewPadding still carries the real system
+    // inset), so restore it and every entry point renders identically.
+    final mq = MediaQuery.of(context);
+    return MediaQuery(
+      data: mq.copyWith(
+        padding: mq.padding.copyWith(bottom: mq.viewPadding.bottom),
+      ),
+      child: Drawer(
+        width: M4Drawer.panelWidth(context),
+        backgroundColor: Colors.transparent,
+        child: DecoratedBox(
+          // Large soft ambient lift and an almost-invisible cream hairline —
+          // the luxury floating-card effect, no hard shadow or harsh outline.
+          decoration: BoxDecoration(
+            boxShadow: M4Drawer.shadow,
+            border: Border(right: BorderSide(color: M4Drawer.border)),
+          ),
+          child: Stack(
+            children: [
+              // Figma glass panel: deep-green base, cream bloom through
+              // the middle, blue bloom low down, #0B0000 10% veil, blur 40.
+              const DrawerGlass(),
 
-            SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32, 48, 32, 32),
-                    child: Row(
-                      children: [
-                        Text(
-                          isInvestor ? 'INVESTOR MENU' : 'MENU',
-                          style: GoogleFonts.gelasio(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Navigation Items
-                  Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      children: [
-                        _SidebarItem(
-                          icon: LucideIcons.home,
-                          label: 'Home',
-                          isActive:
-                              currentIndex == 0 && currentRouteName == null,
-                          activeColor: accentColor,
-                          onTap: () => navigateTo(0),
-                        ),
-                        _SidebarItem(
-                          icon: LucideIcons.building2,
-                          label: 'Communities', // 👈 Web plural
-                          isActive: currentIndex == 4,
-                          activeColor: accentColor,
-                          onTap: () => navigateTo(4),
-                        ),
-                        _SidebarItem(
-                          icon: LucideIcons.layoutGrid,
-                          label: 'Properties',
-                          isActive: currentIndex == 1,
-                          activeColor: accentColor,
-                          onTap: () => navigateTo(1),
-                        ),
-
-                        // 🏗️ Content Hub Dropdown
-                        _SidebarDropdown(
-                          icon: LucideIcons.bell,
-                          label: 'Content Hub',
-                          isOpen: _isContentOpen,
-                          onToggle: () =>
-                              setState(() => _isContentOpen = !_isContentOpen),
-                          subItems: [
-                            _SidebarSubItem(
-                              label: 'Media',
-                              icon: LucideIcons.playCircle,
-                              onTap: () {
-                                ref
-                                        .read(contentHubTypeProvider.notifier)
-                                        .state =
-                                    'media';
-                                navigateTo(9);
-                              },
-                            ),
-                            _SidebarSubItem(
-                              label: 'Highlights',
-                              icon: LucideIcons.zap,
-                              onTap: () {
-                                ref
-                                        .read(contentHubTypeProvider.notifier)
-                                        .state =
-                                    'highlight';
-                                navigateTo(9);
-                              },
-                            ),
-                            _SidebarSubItem(
-                              label: 'Events',
-                              icon: LucideIcons.calendar,
-                              onTap: () {
-                                ref
-                                        .read(contentHubTypeProvider.notifier)
-                                        .state =
-                                    'event';
-                                navigateTo(9);
-                              },
-                            ),
-                            _SidebarSubItem(
-                              label: 'Blog',
-                              icon: LucideIcons.fileText,
-                              onTap: () {
-                                ref
-                                        .read(contentHubTypeProvider.notifier)
-                                        .state =
-                                    'blog';
-                                navigateTo(9);
-                              },
-                            ),
-                          ],
-                        ),
-
-                        // 🎨 Custom Views Dropdown
-                        _SidebarDropdown(
-                          icon: LucideIcons.sparkles,
-                          label: 'Custom Views',
-                          isOpen: _isCustomViewsOpen,
-                          onToggle: () => setState(
-                            () => _isCustomViewsOpen = !_isCustomViewsOpen,
-                          ),
-                          subItems: [
-                            _SidebarSubItem(
-                              label: 'My Custom Views',
-                              icon: LucideIcons.logIn,
-                              onTap: () => navigateTo(7),
-                            ),
-                            _SidebarSubItem(
-                              label: 'Custom Views',
-                              icon: LucideIcons.logIn,
-                              onTap: () => navigateTo(6),
-                            ),
-                          ],
-                        ),
-
-                        _SidebarItem(
-                          icon: LucideIcons.bell,
-                          label: 'Notifications',
-                          isActive: currentIndex == 5,
-                          activeColor: accentColor,
-                          onTap: () => navigateTo(5),
-                        ),
-
-                        _SidebarItem(
-                          icon: LucideIcons.info,
-                          label: 'Who we are',
-                          isActive: currentRouteName == 'about',
-                          onTap: () {
-                            Navigator.pop(context);
-                            if (currentRouteName == 'about') return;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                settings: const RouteSettings(name: 'about'),
-                                builder: (context) => const AboutScreen(),
-                              ),
-                            );
-                          },
-                        ),
-
-                        _SidebarItem(
-                          icon: LucideIcons.headphones,
-                          label: 'Contact Us',
-                          isActive: currentRouteName == 'contact',
-                          onTap: () {
-                            Navigator.pop(context);
-                            if (currentRouteName == 'contact') return;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                settings: const RouteSettings(name: 'contact'),
-                                builder: (context) => const ContactScreen(),
-                              ),
-                            );
-                          },
-                        ),
-
-                        _SidebarItem(
-                          icon: LucideIcons.briefcase,
-                          label: 'Careers',
-                          isActive: currentRouteName == 'careers',
-                          onTap: () {
-                            Navigator.pop(context);
-                            if (currentRouteName == 'careers') return;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                settings: const RouteSettings(name: 'careers'),
-                                builder: (context) => const CareersScreen(),
-                              ),
-                            );
-                          },
-                        ),
-
-                        const SizedBox(height: 32),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 8,
-                          ),
-                          child: Text(
-                            'QUICK ACTIONS',
+              SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(32, 48, 32, 32),
+                      child: Row(
+                        children: [
+                          Text(
+                            isInvestor ? 'INVESTOR MENU' : 'MENU',
                             style: GoogleFonts.gelasio(
-                              // The drawer is always the dark green panel, so the
-                              // section label is cream like MENU above it —
-                              // onSurface resolved dark here and sank into the
-                              // background.
-                              color: const Color(0xFFF4EFE3),
+                              color: Colors.white,
                               fontSize: 12,
-                              fontWeight: FontWeight.w700, // 👈 Match web bold
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 4,
                             ),
                           ),
-                        ),
-                        _SidebarItem(
-                          icon: LucideIcons.mail,
-                          label: 'Enquiry',
-                          onTap: () {
-                            ref.read(navigationProvider.notifier).state = 0;
-                            ref
-                                .read(inquiryScrollTriggerProvider.notifier)
-                                .state++;
-                            Navigator.pop(context);
-                          },
-                        ),
-                        const _SidebarItem(
-                          icon: LucideIcons.phone,
-                          label: 'Call',
-                          onTap: SupportHandlers.launchCall,
-                        ),
-                        const _SidebarItem(
-                          icon: LucideIcons.messageSquare,
-                          label: 'Whatsapp',
-                          onTap: SupportHandlers.launchWhatsApp,
-                        ),
-                        _SidebarItem(
-                          icon: LucideIcons.info,
-                          label: 'About',
-                          onTap: () {
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AboutScreen(),
-                              ),
-                            );
-                          },
-                        ),
-
-                        const SizedBox(height: 120),
-                      ],
-                    ),
-                  ),
-
-                  // Footer — divider line ABOVE the THEME MODE row + LOG OUT
-                  // (matches web: line separates QUICK ACTIONS from the footer).
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(
-                          color: Colors.white.withOpacity(isDark ? 0.05 : 0.2),
-                        ),
+                        ],
                       ),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Bottom Actions (LOG OUT)
-                        Container(
-                          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                (isDark ? Colors.black : Colors.white)
-                                    .withOpacity(0.2),
-                              ],
+
+                    // Navigation Items
+                    Expanded(
+                      child: ListView(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        children: [
+                          _SidebarItem(
+                            icon: LucideIcons.home,
+                            label: 'Home',
+                            isActive:
+                                currentIndex == 0 && currentRouteName == null,
+                            activeColor: accentColor,
+                            onTap: () => navigateTo(0),
+                          ),
+                          _SidebarItem(
+                            icon: LucideIcons.building2,
+                            label: 'Communities', // 👈 Web plural
+                            isActive: currentIndex == 4,
+                            activeColor: accentColor,
+                            onTap: () => navigateTo(4),
+                          ),
+                          _SidebarItem(
+                            icon: LucideIcons.layoutGrid,
+                            label: 'Properties',
+                            isActive: currentIndex == 1,
+                            activeColor: accentColor,
+                            onTap: () => navigateTo(1),
+                          ),
+
+                          // 🏗️ Content Hub Dropdown
+                          _SidebarDropdown(
+                            icon: LucideIcons.bell,
+                            label: 'Content Hub',
+                            isOpen: _isContentOpen,
+                            onToggle: () => setState(
+                              () => _isContentOpen = !_isContentOpen,
+                            ),
+                            subItems: [
+                              _SidebarSubItem(
+                                label: 'Media',
+                                icon: LucideIcons.playCircle,
+                                onTap: () {
+                                  ref
+                                          .read(contentHubTypeProvider.notifier)
+                                          .state =
+                                      'media';
+                                  navigateTo(9);
+                                },
+                              ),
+                              _SidebarSubItem(
+                                label: 'Highlights',
+                                icon: LucideIcons.zap,
+                                onTap: () {
+                                  ref
+                                          .read(contentHubTypeProvider.notifier)
+                                          .state =
+                                      'highlight';
+                                  navigateTo(9);
+                                },
+                              ),
+                              _SidebarSubItem(
+                                label: 'Events',
+                                icon: LucideIcons.calendar,
+                                onTap: () {
+                                  ref
+                                          .read(contentHubTypeProvider.notifier)
+                                          .state =
+                                      'event';
+                                  navigateTo(9);
+                                },
+                              ),
+                              _SidebarSubItem(
+                                label: 'Blog',
+                                icon: LucideIcons.fileText,
+                                onTap: () {
+                                  ref
+                                          .read(contentHubTypeProvider.notifier)
+                                          .state =
+                                      'blog';
+                                  navigateTo(9);
+                                },
+                              ),
+                            ],
+                          ),
+
+                          // 🎨 Custom Views Dropdown
+                          _SidebarDropdown(
+                            icon: LucideIcons.sparkles,
+                            label: 'Custom Views',
+                            isOpen: _isCustomViewsOpen,
+                            onToggle: () => setState(
+                              () => _isCustomViewsOpen = !_isCustomViewsOpen,
+                            ),
+                            subItems: [
+                              _SidebarSubItem(
+                                label: 'My Custom Views',
+                                icon: LucideIcons.logIn,
+                                onTap: () => navigateTo(7),
+                              ),
+                              _SidebarSubItem(
+                                label: 'Custom Views',
+                                icon: LucideIcons.logIn,
+                                onTap: () => navigateTo(6),
+                              ),
+                            ],
+                          ),
+
+                          _SidebarItem(
+                            icon: LucideIcons.bell,
+                            label: 'Notifications',
+                            isActive: currentIndex == 5,
+                            activeColor: accentColor,
+                            onTap: () => navigateTo(5),
+                          ),
+
+                          _SidebarItem(
+                            icon: LucideIcons.info,
+                            label: 'Who we are',
+                            isActive: currentRouteName == 'about',
+                            onTap: () {
+                              Navigator.pop(context);
+                              if (currentRouteName == 'about') return;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  settings: const RouteSettings(name: 'about'),
+                                  builder: (context) => const AboutScreen(),
+                                ),
+                              );
+                            },
+                          ),
+
+                          _SidebarItem(
+                            icon: LucideIcons.headphones,
+                            label: 'Contact Us',
+                            isActive: currentRouteName == 'contact',
+                            onTap: () {
+                              Navigator.pop(context);
+                              if (currentRouteName == 'contact') return;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  settings: const RouteSettings(
+                                    name: 'contact',
+                                  ),
+                                  builder: (context) => const ContactScreen(),
+                                ),
+                              );
+                            },
+                          ),
+
+                          _SidebarItem(
+                            icon: LucideIcons.briefcase,
+                            label: 'Careers',
+                            isActive: currentRouteName == 'careers',
+                            onTap: () {
+                              Navigator.pop(context);
+                              if (currentRouteName == 'careers') return;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  settings: const RouteSettings(
+                                    name: 'careers',
+                                  ),
+                                  builder: (context) => const CareersScreen(),
+                                ),
+                              );
+                            },
+                          ),
+
+                          const SizedBox(height: 32),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 8,
+                            ),
+                            child: Text(
+                              'QUICK ACTIONS',
+                              style: GoogleFonts.gelasio(
+                                // The drawer is always the dark green panel, so the
+                                // section label is cream like MENU above it —
+                                // onSurface resolved dark here and sank into the
+                                // background.
+                                color: const Color(0xFFF4EFE3),
+                                fontSize: 12,
+                                fontWeight:
+                                    FontWeight.w700, // 👈 Match web bold
+                                letterSpacing: 4,
+                              ),
                             ),
                           ),
-                          child: _SidebarExitButton(),
-                        ),
-                      ],
+                          _SidebarItem(
+                            icon: LucideIcons.mail,
+                            label: 'Enquiry',
+                            onTap: () {
+                              ref.read(navigationProvider.notifier).state = 0;
+                              ref
+                                  .read(inquiryScrollTriggerProvider.notifier)
+                                  .state++;
+                              Navigator.pop(context);
+                            },
+                          ),
+                          const _SidebarItem(
+                            icon: LucideIcons.phone,
+                            label: 'Call',
+                            onTap: SupportHandlers.launchCall,
+                          ),
+                          const _SidebarItem(
+                            icon: LucideIcons.messageSquare,
+                            label: 'Whatsapp',
+                            onTap: SupportHandlers.launchWhatsApp,
+                          ),
+                          _SidebarItem(
+                            icon: LucideIcons.info,
+                            label: 'About',
+                            onTap: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const AboutScreen(),
+                                ),
+                              );
+                            },
+                          ),
+
+                          const SizedBox(height: 120),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+
+                    // Footer — divider line ABOVE the THEME MODE row + LOG OUT
+                    // (matches web: line separates QUICK ACTIONS from the footer).
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: Colors.white.withOpacity(
+                              isDark ? 0.05 : 0.2,
+                            ),
+                          ),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Bottom Actions (LOG OUT)
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  (isDark ? Colors.black : Colors.white)
+                                      .withOpacity(0.2),
+                                ],
+                              ),
+                            ),
+                            child: _SidebarExitButton(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

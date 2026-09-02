@@ -2660,15 +2660,23 @@ class _CommunityCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'EXPLORE COMMUNITY',
-                          style: GoogleFonts.inter(
+                        // The label takes the room left over and the
+                        // arrow keeps its circle; without a flex the pair was
+                        // wider than the card on a 361dp screen.
+                        Expanded(
+                          child: Text(
+                            'EXPLORE COMMUNITY',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w400,
-                            letterSpacing: 1.2,
+                              letterSpacing: 1.2,
+                            ),
                           ),
                         ),
+                        const SizedBox(width: 8),
                         Container(
                           width: 44,
                           height: 44,

@@ -282,11 +282,7 @@ class _GuestProjectDetailScreenState
     if (initial.isBefore(minSchedule)) {
       initial = now.add(const Duration(days: 1));
     }
-    return showM4DateTimeSheet(
-      context,
-      initial: initial,
-      minDate: minSchedule,
-    );
+    return showM4DateTimeSheet(context, initial: initial, minDate: minSchedule);
   }
 
   @override
@@ -1568,13 +1564,23 @@ class _GuestProjectDetailScreenState
           color: isDark ? Colors.white : const Color(0xFF0C312B),
         ),
         const SizedBox(width: 16),
-        Text(
-          title.toUpperCase(),
-          style: GoogleFonts.gelasio(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: isDark ? Colors.white : const Color(0xFF0C312B),
-            letterSpacing: 4,
+        // The longest headings (CONSTRUCTION PROGRESS at letterSpacing 4)
+        // are a couple of points wider than a 361dp screen allows. Shrink
+        // to fit rather than run off the edge; at the width they were drawn
+        // for they are already inside the line and nothing is scaled.
+        Flexible(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              title.toUpperCase(),
+              style: GoogleFonts.gelasio(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
+                letterSpacing: 4,
+              ),
+            ),
           ),
         ),
       ],
@@ -1703,21 +1709,26 @@ class _GuestProjectDetailScreenState
                   : null,
             ),
             const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Text(
-                name,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.inter(
-                  fontSize: 8.5,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.8)
-                      : const Color(0xFF0C312B).withValues(alpha: 0.8),
-                  letterSpacing: 0.5,
-                  height: 1.2,
+            // The grid cell height follows its width, so on a narrower screen
+            // the icon plus two lines of label outgrew it. Flexible lets the
+            // label give way instead of running past the bottom.
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(
+                  name,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 8.5,
+                    fontWeight: FontWeight.w600,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.8)
+                        : const Color(0xFF0C312B).withValues(alpha: 0.8),
+                    letterSpacing: 0.5,
+                    height: 1.2,
+                  ),
                 ),
               ),
             ),
@@ -3073,31 +3084,38 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Web parity: slate-navy heading + muted slate subtitle.
-                    Text(
-                      'PHASE TRACKING',
-                      style: GoogleFonts.gelasio(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 2,
-                        color: isDark ? Colors.white : const Color(0xFF0C312B),
+                // The title column takes the room it needs and the badge keeps the
+                // rest; without a flex here a longer title (or a phone with the
+                // system font turned up) pushed the badge off the right edge.
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Web parity: slate-navy heading + muted slate subtitle.
+                      Text(
+                        'PHASE TRACKING',
+                        style: GoogleFonts.gelasio(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 2,
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF0C312B),
+                        ),
                       ),
-                    ),
-                    Text(
-                      'REAL-TIME DEVELOPMENT STATUS',
-                      style: GoogleFonts.inter(
-                        fontSize: 8,
-                        fontWeight: FontWeight.bold,
-                        color: isDark
-                            ? Colors.white38
-                            : const Color(0xFFC5A35B),
-                        letterSpacing: 0.5,
+                      Text(
+                        'REAL-TIME DEVELOPMENT STATUS',
+                        style: GoogleFonts.inter(
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                          color: isDark
+                              ? Colors.white38
+                              : const Color(0xFFC5A35B),
+                          letterSpacing: 0.5,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(

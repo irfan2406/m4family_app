@@ -4295,30 +4295,35 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'PHASE TRACKING',
-                    style: GoogleFonts.gelasio(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : const Color(0xFF0C312B),
-                      letterSpacing: 4,
+              // The title column takes the room it needs and the badge keeps the
+              // rest; without a flex here a longer title (or a phone with the
+              // system font turned up) pushed the badge off the right edge.
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'PHASE TRACKING',
+                      style: GoogleFonts.gelasio(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
+                        letterSpacing: 4,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'REAL-TIME DEVELOPMENT STATUS',
-                    style: GoogleFonts.gelasio(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w700,
-                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                          .withOpacity(0.5),
-                      letterSpacing: 1.5,
+                    const SizedBox(height: 4),
+                    Text(
+                      'REAL-TIME DEVELOPMENT STATUS',
+                      style: GoogleFonts.gelasio(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w700,
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                            .withOpacity(0.5),
+                        letterSpacing: 1.5,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(

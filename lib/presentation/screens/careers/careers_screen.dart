@@ -17,7 +17,12 @@ import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'package:go_router/go_router.dart';
 
 class CareersScreen extends ConsumerStatefulWidget {
-  const CareersScreen({super.key});
+  /// True when this is a tab inside a shell, which already owns the menu.
+  /// A nested drawer of our own would open underneath the shell's floating
+  /// nav pill instead of over it.
+  final bool embedded;
+
+  const CareersScreen({super.key, this.embedded = false});
 
   @override
   ConsumerState<CareersScreen> createState() => _CareersScreenState();
@@ -158,7 +163,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
           ),
         ],
       ),
-      drawer: const ConditionalDrawer(),
+      drawer: widget.embedded ? null : const ConditionalDrawer(),
       body: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,

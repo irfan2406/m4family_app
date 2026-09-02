@@ -59,7 +59,13 @@ class ProjectListScreen extends ConsumerWidget {
     super.key,
     this.cpCatalogMode = false,
     this.guestMode = false,
+    this.embedded = false,
   });
+
+  /// True when this is a tab inside a shell, which already owns the menu.
+  /// A nested drawer of our own would open underneath the shell's floating
+  /// nav pill instead of over it.
+  final bool embedded;
 
   final bool cpCatalogMode;
 
@@ -348,7 +354,10 @@ class ProjectListScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      drawer: cpCatalogMode
+      // A tab inside a shell leaves the menu to the shell (see [embedded]).
+      drawer: embedded
+          ? null
+          : cpCatalogMode
           ? const CpSidebarMenu()
           : guestMode
           ? const GuestSidebarMenu()

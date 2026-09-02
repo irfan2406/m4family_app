@@ -1119,17 +1119,25 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          isCommunity
-                              ? 'EXPLORE COMMUNITY'
-                              : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
-                          style: GoogleFonts.inter(
+                        // The label takes the room left over and the
+                        // arrow keeps its circle; without a flex the pair was
+                        // wider than the card on a 361dp screen.
+                        Expanded(
+                          child: Text(
+                            isCommunity
+                                ? 'EXPLORE COMMUNITY'
+                                : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w400,
-                            letterSpacing: 1.2,
+                              letterSpacing: 1.2,
+                            ),
                           ),
                         ),
+                        const SizedBox(width: 8),
                         Container(
                           width: 44,
                           height: 44,

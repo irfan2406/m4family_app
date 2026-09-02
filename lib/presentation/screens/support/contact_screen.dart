@@ -168,7 +168,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       // between the form and the keys. Only resize when pushed standalone,
       // where this is the only Scaffold.
       resizeToAvoidBottomInset: !widget.embedded,
-      drawer: const ConditionalDrawer(),
+      drawer: widget.embedded ? null : const ConditionalDrawer(),
       // Own nav pill ONLY when pushed standalone (from the menu). As a tab
       // inside GuestMainShell the shell already draws one — rendering both
       // stacked two navigation bars on top of each other.

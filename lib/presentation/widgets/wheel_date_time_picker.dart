@@ -412,16 +412,18 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
     );
   }
 
+  // [flex] is the column's share of the row, keeping the old fixed widths as
+  // proportions so the wheels look the same but can never outgrow the box.
   Widget _wheel({
     required FixedExtentScrollController controller,
     required int count,
     required String Function(int) label,
     required ValueChanged<int> onChanged,
-    double width = 44,
+    int flex = 44,
   }) {
     final isDark = widget.isDark;
-    return SizedBox(
-      width: width,
+    return Expanded(
+      flex: flex,
       child: CupertinoPicker(
         scrollController: controller,
         itemExtent: 36,
@@ -480,6 +482,9 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
               ),
             ),
           ),
+          // The columns share the width instead of each claiming a fixed
+          // number of pixels: the fixed set added up to more than the box on a
+          // 361dp screen (Realme GT 60) and pushed AM/PM past the edge.
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -488,21 +493,21 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
                 count: days.length,
                 label: (i) => '${days[i]}',
                 onChanged: _onDay,
-                width: 40,
+                flex: 40,
               ),
               _wheel(
                 controller: _monthCtrl,
                 count: months.length,
                 label: (i) => _months[months[i]],
                 onChanged: _onMonth,
-                width: 56,
+                flex: 56,
               ),
               _wheel(
                 controller: _yearCtrl,
                 count: _years.length,
                 label: (i) => '${_years[i]}',
                 onChanged: _onYear,
-                width: 60,
+                flex: 60,
               ),
               if (widget.showTime) ...[
                 const SizedBox(width: 10),
@@ -511,7 +516,7 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
                   count: 12,
                   label: (i) => '${i + 1}',
                   onChanged: _onHour,
-                  width: 34,
+                  flex: 34,
                 ),
                 Text(
                   ':',
@@ -527,14 +532,14 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
                   count: 60,
                   label: (i) => i.toString().padLeft(2, '0'),
                   onChanged: _onMinute,
-                  width: 34,
+                  flex: 34,
                 ),
                 _wheel(
                   controller: _ampmCtrl!,
                   count: 2,
                   label: (i) => i == 0 ? 'AM' : 'PM',
                   onChanged: _onAmPm,
-                  width: 44,
+                  flex: 44,
                 ),
               ],
             ],

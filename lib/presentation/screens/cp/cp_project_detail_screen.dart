@@ -2111,29 +2111,34 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'PHASE TRACKING',
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 2,
-                    color: scheme.onSurface,
+            // The title column takes the room it needs and the badge keeps the
+            // rest; without a flex here a longer title (or a phone with the
+            // system font turned up) pushed the badge off the right edge.
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'PHASE TRACKING',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2,
+                      color: scheme.onSurface,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'REAL-TIME DEVELOPMENT STATUS',
-                  style: GoogleFonts.inter(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 1,
-                    color: scheme.onSurfaceVariant,
+                  const SizedBox(height: 4),
+                  Text(
+                    'REAL-TIME DEVELOPMENT STATUS',
+                    style: GoogleFonts.inter(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1,
+                      color: scheme.onSurfaceVariant,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

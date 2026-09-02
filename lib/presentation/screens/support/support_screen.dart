@@ -360,8 +360,14 @@ class _MatrixItem extends StatelessWidget {
               child: Icon(icon, color: color, size: 20),
             ),
             const Spacer(),
+            // The grid gives every card the same fixed height, so the text
+            // has to stay within it: at a larger system font 'WhatsApp
+            // Support' wrapped onto a second line and ran past the bottom.
+            // Both lines fit as they are at the design size.
             Text(
               title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.inter(
                 color: scheme.onSurface,
                 fontWeight: FontWeight.w500,
@@ -372,6 +378,8 @@ class _MatrixItem extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               subtitle.toUpperCase(),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.inter(
                 color: scheme.onSurface.withValues(alpha: 0.68),
                 fontSize: 10,

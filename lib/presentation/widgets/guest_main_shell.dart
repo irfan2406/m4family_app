@@ -37,9 +37,11 @@ class GuestMainShell extends ConsumerWidget {
 
     final List<Widget> screens = [
       showcase(const GuestDashboardScreen()), // 0: Home     — green
-      showcase(const ProjectListScreen(guestMode: true)), // 1: Projects — green
-      const AboutScreen(), // 2: About    — cream
-      const CareersScreen(), // 3: Careers  — cream
+      showcase(
+        const ProjectListScreen(guestMode: true, embedded: true),
+      ), // 1: Projects — green
+      const AboutScreen(embedded: true), // 2: About    — cream
+      const CareersScreen(embedded: true), // 3: Careers  — cream
       const ContactScreen(embedded: true), // 4: Contact  — cream
     ];
 

@@ -231,8 +231,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   : const Color(0xFF155A4F),
                             ),
                             const SizedBox(width: 6),
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 150),
+                            // Takes whatever width is left rather than a flat
+                            // 150: at a larger system font the fixed box plus
+                            // the pill's own padding outgrew the card.
+                            Flexible(
                               child: Text(
                                 address.toUpperCase(),
                                 maxLines: 1,

@@ -16,8 +16,66 @@ import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 
+
+/// A toast that sits ABOVE an open dialog.
+///
+/// [ScaffoldMessenger] hands its SnackBar to the nearest [Scaffold], which for
+/// a dialog route is the page underneath — so a message raised from inside the
+/// custom-views enquiry popup was drawn behind it. The root [Overlay] is above
+/// every route, dialogs included.
+void _showTopToast(
+  BuildContext context,
+  String message, {
+  bool success = false,
+}) {
+  final overlay = Overlay.of(context, rootOverlay: true);
+  late final OverlayEntry entry;
+  entry = OverlayEntry(
+    builder: (ctx) => Positioned(
+      top: MediaQuery.of(ctx).padding.top + 16,
+      left: 20,
+      right: 20,
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          decoration: BoxDecoration(
+            color: success ? const Color(0xFF163A2C) : const Color(0xFFC65B46),
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.22),
+                blurRadius: 18,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Text(
+            message,
+            style: GoogleFonts.inter(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              height: 1.4,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+  overlay.insert(entry);
+  Future.delayed(const Duration(seconds: 3), () {
+    if (entry.mounted) entry.remove();
+  });
+}
+
 class AboutScreen extends ConsumerStatefulWidget {
-  const AboutScreen({super.key});
+  /// True when this is a tab inside [GuestMainShell], which already owns the
+  /// menu. A nested drawer of our own would open underneath the shell's
+  /// floating nav pill instead of over it.
+  final bool embedded;
+
+  const AboutScreen({super.key, this.embedded = false});
 
   @override
   ConsumerState<AboutScreen> createState() => _AboutScreenState();
@@ -237,7 +295,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           ),
         ],
       ),
-      drawer: const ConditionalDrawer(),
+      drawer: widget.embedded ? null : const ConditionalDrawer(),
       body: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
@@ -1244,16 +1302,26 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            ref.read(authProvider).status ==
-                                    AuthStatus.authenticated
-                                ? 'CUSTOM VIEWS'
-                                : 'ENQUIRE FOR CUSTOM VIEWS',
-                            style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 11,
-                              letterSpacing: 1,
+                          // 'ENQUIRE FOR CUSTOM VIEWS' at letterSpacing 1 is
+                          // wider than the button on a 361dp screen; let it
+                          // shrink rather than run past the edge. At the width
+                          // it was drawn for nothing is scaled.
+                          Flexible(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                ref.read(authProvider).status ==
+                                        AuthStatus.authenticated
+                                    ? 'CUSTOM VIEWS'
+                                    : 'ENQUIRE FOR CUSTOM VIEWS',
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 11,
+                                  letterSpacing: 1,
+                                ),
+                              ),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -1435,14 +1503,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                               _emailController.text,
                                             ));
                                   if (vErr != null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: const Color(
-                                          0xFFC65B46,
-                                        ),
-                                        content: Text(vErr),
-                                      ),
-                                    );
+                                    // Above the popup, not behind it.
+                                    _showTopToast(context, vErr);
                                     return;
                                   }
 
@@ -1467,17 +1529,15 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                     });
 
                                     if (context.mounted) {
-                                      Navigator.pop(context);
-                                      ScaffoldMessenger.of(
+                                      // Raised before the pop so it is anchored
+                                      // to the root overlay, and shown above
+                                      // the popup either way.
+                                      _showTopToast(
                                         context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          backgroundColor: Color(0xFF163A2C),
-                                          content: Text(
-                                            'Enquiry submitted successfully! We will contact you soon.',
-                                          ),
-                                        ),
+                                        'Enquiry submitted successfully! We will contact you soon.',
+                                        success: true,
                                       );
+                                      Navigator.pop(context);
                                       _nameController.clear();
                                       _phoneController.clear();
                                       _emailController.clear();
