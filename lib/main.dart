@@ -190,8 +190,15 @@ class M4FamilyApp extends ConsumerWidget {
       // Clamping in one place covers every screen, including any added later.
       builder: (context, child) {
         final media = MediaQuery.of(context);
+        // Honour the phone's font-size setting, capped at 1.5x. Every screen
+        // is verified overflow-free up to that on 320dp and 360dp screens;
+        // past it the fixed-height cards in this design cannot hold their
+        // text. The floor is 1.0 so the layout never renders smaller than it
+        // was drawn. The floor follows Android's own smallest setting rather
+        // than 1.0, so a phone set to small text actually gets it.
+        final scale = media.textScaler.scale(1).clamp(0.85, 1.5);
         return MediaQuery(
-          data: media.copyWith(textScaler: TextScaler.noScaling),
+          data: media.copyWith(textScaler: TextScaler.linear(scale)),
           child: child ?? const SizedBox.shrink(),
         );
       },

@@ -1708,6 +1708,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               child: Text(
                 desc,
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.inter(
                   color: (isDark ? Colors.white : const Color(0xFF0C312B))
                       .withValues(alpha: 0.5),

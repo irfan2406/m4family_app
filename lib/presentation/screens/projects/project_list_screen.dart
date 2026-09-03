@@ -342,6 +342,65 @@ class ProjectListScreen extends ConsumerWidget {
     );
   }
 
+  /// Shown when the selected status tab holds nothing. Cream on the green
+  /// showcase surface, forest green on cream — the same pair the rest of the
+  /// app uses, so it reads as part of the page rather than a system message.
+  Widget _buildNoMatches(bool isDark) {
+    final Color ink = isDark
+        ? const Color(0xFFF4EFE3)
+        : const Color(0xFF0C312B);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(40, 0, 40, 120),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 86,
+              height: 86,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: ink.withValues(alpha: 0.05),
+                shape: BoxShape.circle,
+                border: Border.all(color: ink.withValues(alpha: 0.08)),
+              ),
+              child: Icon(
+                LucideIcons.layoutGrid,
+                size: 30,
+                color: ink.withValues(alpha: 0.35),
+              ),
+            ),
+            const SizedBox(height: 26),
+            Text(
+              'NO ARCHITECTURAL MATCHES',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.gelasio(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 2,
+                color: ink.withValues(alpha: 0.85),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Try expanding your search criteria.',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: ink.withValues(alpha: 0.5),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -753,109 +812,116 @@ class ProjectListScreen extends ConsumerWidget {
                   child: Stack(
                     children: [
                       projectsAsync.when(
-                        data: (projects) => ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(
-                            24,
-                            0,
-                            24,
-                            120,
-                          ), // Bottom padding for shell nav
-                          itemCount: filteredProjects.length,
-                          itemBuilder: (context, index) {
-                            final project = filteredProjects[index];
-                            final projectId = project['_id']?.toString() ?? '';
-                            // Thumbnail source, in order of preference. The
-                            // catalog populates `heroImage` (SINGULAR) on every
-                            // project and that is the image the web card shows;
-                            // `heroImages` (plural) is not a field the payload
-                            // has at all, so the old chain always skipped
-                            // straight to the galleries — and for a project
-                            // with no gallery (Skyline Heights, M4 Aura
-                            // Heights) all the way to one shared stock photo,
-                            // which is why those cards showed the same
-                            // building. `heroImage` is a plain string: either
-                            // an http URL or a base64 `data:` URI, both of
-                            // which _projListImage renders.
-                            String? plainOf(String key) {
-                              final v = project[key];
-                              if (v is String && v.trim().isNotEmpty) return v;
-                              return null;
-                            }
+                        data: (projects) => filteredProjects.isEmpty
+                            ? _buildNoMatches(isDark)
+                            : ListView.builder(
+                                padding: const EdgeInsets.fromLTRB(
+                                  24,
+                                  0,
+                                  24,
+                                  120,
+                                ), // Bottom padding for shell nav
+                                itemCount: filteredProjects.length,
+                                itemBuilder: (context, index) {
+                                  final project = filteredProjects[index];
+                                  final projectId =
+                                      project['_id']?.toString() ?? '';
+                                  // Thumbnail source, in order of preference. The
+                                  // catalog populates `heroImage` (SINGULAR) on every
+                                  // project and that is the image the web card shows;
+                                  // `heroImages` (plural) is not a field the payload
+                                  // has at all, so the old chain always skipped
+                                  // straight to the galleries — and for a project
+                                  // with no gallery (Skyline Heights, M4 Aura
+                                  // Heights) all the way to one shared stock photo,
+                                  // which is why those cards showed the same
+                                  // building. `heroImage` is a plain string: either
+                                  // an http URL or a base64 `data:` URI, both of
+                                  // which _projListImage renders.
+                                  String? plainOf(String key) {
+                                    final v = project[key];
+                                    if (v is String && v.trim().isNotEmpty)
+                                      return v;
+                                    return null;
+                                  }
 
-                            String? firstOf(String key) {
-                              final v = project[key];
-                              if (v is List && v.isNotEmpty) {
-                                final f = v.first;
-                                final str = f is Map
-                                    ? (f['url'] ?? f['image'] ?? '').toString()
-                                    : f.toString();
-                                return str.isEmpty ? null : str;
-                              }
-                              return null;
-                            }
+                                  String? firstOf(String key) {
+                                    final v = project[key];
+                                    if (v is List && v.isNotEmpty) {
+                                      final f = v.first;
+                                      final str = f is Map
+                                          ? (f['url'] ?? f['image'] ?? '')
+                                                .toString()
+                                          : f.toString();
+                                      return str.isEmpty ? null : str;
+                                    }
+                                    return null;
+                                  }
 
-                            final rawHero =
-                                plainOf('heroImage') ??
-                                firstOf('heroImages') ??
-                                firstOf('exteriorImages') ??
-                                firstOf('interiorImages') ??
-                                firstOf('media');
-                            final imageUrl =
-                                (rawHero == null || rawHero.isEmpty)
-                                ? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'
-                                : apiClient.resolveUrl(rawHero);
-                            return GestureDetector(
-                              onTap: () {
-                                if (projectId.isEmpty) return;
-                                if (cpCatalogMode) {
-                                  final map = project is Map<String, dynamic>
-                                      ? project as Map<String, dynamic>
-                                      : Map<String, dynamic>.from(
-                                          project as Map,
+                                  final rawHero =
+                                      plainOf('heroImage') ??
+                                      firstOf('heroImages') ??
+                                      firstOf('exteriorImages') ??
+                                      firstOf('interiorImages') ??
+                                      firstOf('media');
+                                  final imageUrl =
+                                      (rawHero == null || rawHero.isEmpty)
+                                      ? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'
+                                      : apiClient.resolveUrl(rawHero);
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (projectId.isEmpty) return;
+                                      if (cpCatalogMode) {
+                                        final map =
+                                            project is Map<String, dynamic>
+                                            ? project as Map<String, dynamic>
+                                            : Map<String, dynamic>.from(
+                                                project as Map,
+                                              );
+                                        context.push(
+                                          '/cp/projects/$projectId',
+                                          extra: map,
                                         );
-                                  context.push(
-                                    '/cp/projects/$projectId',
-                                    extra: map,
-                                  );
-                                  return;
-                                }
-                                final authState = ref.read(authProvider);
-                                if (authState.status ==
-                                    AuthStatus.authenticated) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ProjectDetailScreen(
-                                        projectId: projectId,
-                                        projectData: project,
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          GuestProjectDetailScreen(
-                                            projectId: projectId,
-                                            projectData: project,
+                                        return;
+                                      }
+                                      final authState = ref.read(authProvider);
+                                      if (authState.status ==
+                                          AuthStatus.authenticated) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ProjectDetailScreen(
+                                                  projectId: projectId,
+                                                  projectData: project,
+                                                ),
                                           ),
-                                    ),
+                                        );
+                                      } else {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                GuestProjectDetailScreen(
+                                                  projectId: projectId,
+                                                  projectData: project,
+                                                ),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    child: isGridView
+                                        ? _ProjectGridItem(
+                                            project: project,
+                                            imageUrl: imageUrl,
+                                          )
+                                        : _ProjectListRowItem(
+                                            project: project,
+                                            imageUrl: imageUrl,
+                                          ),
                                   );
-                                }
-                              },
-                              child: isGridView
-                                  ? _ProjectGridItem(
-                                      project: project,
-                                      imageUrl: imageUrl,
-                                    )
-                                  : _ProjectListRowItem(
-                                      project: project,
-                                      imageUrl: imageUrl,
-                                    ),
-                            );
-                          },
-                        ),
+                                },
+                              ),
                         loading: () => const Center(
                           child: CircularProgressIndicator(
                             color: M4Theme.premiumBlue,

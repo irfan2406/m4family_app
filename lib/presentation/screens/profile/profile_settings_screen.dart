@@ -854,27 +854,55 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     );
   }
 
-  // Web parity: a plain red ghost "Deactivate Account" text button — no
-  // "Security & Access" label, no border, no icon.
+  // The last action on the page, and the only destructive one, so it is
+  // picked out rather than left as flat text: a soft red wash, a hairline of
+  // the same red and a low lift under it. Pressing (or hovering, on a desktop
+  // build) deepens the wash instead of flashing a grey ripple.
   Widget _buildAccountManagement(bool isDark) {
+    const danger = Color(0xFFC65B46);
     return SizedBox(
       width: double.infinity,
-      child: TextButton(
-        onPressed: () => GoRouter.of(context).push('/profile/deactivate'),
-        style: TextButton.styleFrom(
-          foregroundColor: const Color(0xFFC65B46).withOpacity(0.75),
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: danger.withOpacity(0.10),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: danger.withOpacity(0.22)),
+          boxShadow: [
+            BoxShadow(
+              color: danger.withOpacity(isDark ? 0.10 : 0.16),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
-        child: Text(
-          'DEACTIVATE ACCOUNT',
-          style: GoogleFonts.gelasio(
-            textStyle: const TextStyle(inherit: true),
-            fontSize: 9,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.5,
+        child: TextButton(
+          onPressed: () => GoRouter.of(context).push('/profile/deactivate'),
+          style:
+              TextButton.styleFrom(
+                foregroundColor: danger,
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ).copyWith(
+                overlayColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return danger.withOpacity(0.22);
+                  }
+                  if (states.contains(WidgetState.hovered)) {
+                    return danger.withOpacity(0.14);
+                  }
+                  return null;
+                }),
+              ),
+          child: Text(
+            'DEACTIVATE ACCOUNT',
+            style: GoogleFonts.gelasio(
+              textStyle: const TextStyle(inherit: true),
+              fontSize: 9,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.5,
+            ),
           ),
         ),
       ),

@@ -1171,145 +1171,203 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       initialPage: initialIndex,
     );
 
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'Lightbox',
-      barrierColor: Colors.black.withOpacity(0.9),
-      transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (context, anim1, anim2) {
-        return Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Stack(
-            fit: StackFit.expand,
-            children: [
-              PageView.builder(
-                controller: pageController,
-                itemCount: urls.length,
-                itemBuilder: (context, index) {
-                  return Center(
-                    child: InteractiveViewer(
-                      child: Image.network(
-                        urls[index],
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(
-                              LucideIcons.image,
-                              color: Colors.white24,
-                              size: 50,
+    // /uploads serves the original files, several MB each, so fetching one
+    // only when the swipe lands on it left a long stall between pictures.
+    // Keep a window either side of the current page downloaded in advance —
+    // starting the moment the viewer opens, not on the first page change.
+    // Fetch the gallery in order, one file at a time, starting from wherever
+    // it opens and wrapping around. Sequential on purpose: parallel fetches of
+    // 6-16MB originals starve the picture the user is looking at. A new call
+    // supersedes the previous walk, so jumping ahead re-aims the queue.
+    var warmToken = 0;
+    Future<void> warmFrom(int start) async {
+      final token = ++warmToken;
+      for (var step = 0; step < urls.length; step++) {
+        if (token != warmToken || !mounted) return;
+        final j = (start + step) % urls.length;
+        try {
+          await precacheImage(CachedNetworkImageProvider(urls[j]), context);
+        } catch (_) {
+          // One unreachable file must not stop the rest of the gallery.
+        }
+      }
+    }
+
+    // Room to keep the gallery resident while it is open, handed back on the
+    // way out so the rest of the app keeps its normal budget.
+    final imageCache = PaintingBinding.instance.imageCache;
+    final previousCacheBytes = imageCache.maximumSizeBytes;
+    final previousCacheCount = imageCache.maximumSize;
+    imageCache.maximumSizeBytes = 256 << 20;
+    imageCache.maximumSize = 200;
+
+    warmFrom(initialIndex);
+
+    // A route of its own rather than a dialog laid over the detail page:
+    // the gallery gets the back gesture and its own entry in the stack, which
+    // is what "opens in a separate page" means here.
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) {
+              return Scaffold(
+                backgroundColor: Colors.black,
+                body: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    PageView.builder(
+                      controller: pageController,
+                      itemCount: urls.length,
+                      onPageChanged: warmFrom,
+                      itemBuilder: (context, index) {
+                        return Center(
+                          child: InteractiveViewer(
+                            // Cached, so a second visit is instant instead of
+                            // re-fetching the full-size file from /uploads every
+                            // time the gallery is opened.
+                            child: CachedNetworkImage(
+                              imageUrl: urls[index],
+                              fit: BoxFit.contain,
+                              // The catalog holds 6000px originals; decoding one
+                              // at full size costs hundreds of milliseconds and
+                              // ~90MB of heap. 1600 is still sharper than the
+                              // screen and leaves room to pinch-zoom.
+                              memCacheWidth: 1600,
+                              fadeInDuration: const Duration(milliseconds: 120),
+                              placeholder: (context, url) => const SizedBox(
+                                width: 34,
+                                height: 34,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white24,
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => const Icon(
+                                LucideIcons.image,
+                                color: Colors.white24,
+                                size: 50,
+                              ),
                             ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-              Positioned(
-                left: 10,
-                top: 0,
-                bottom: 0,
-                child: Center(
-                  child: IconButton(
-                    icon: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                        color: Colors.black26,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        LucideIcons.chevronLeft,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                    onPressed: () => pageController.previousPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 10,
-                top: 0,
-                bottom: 0,
-                child: Center(
-                  child: IconButton(
-                    icon: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                        color: Colors.black26,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        LucideIcons.chevronRight,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                    onPressed: () => pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: MediaQuery.of(context).padding.top + 20,
-                right: 20,
-                child: IconButton(
-                  icon: const Icon(LucideIcons.x, color: Colors.white),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-              if (urls.length > 1)
-                Positioned(
-                  bottom: 40,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black54,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: ListenableBuilder(
-                        listenable: pageController,
-                        builder: (context, child) {
-                          final current =
-                              (pageController.hasClients
-                                  ? pageController.page?.round() ?? initialIndex
-                                  : initialIndex) +
-                              1;
-                          return Text(
-                            '$current / ${urls.length}',
-                            style: GoogleFonts.inter(
+                    Positioned(
+                      left: 10,
+                      top: 0,
+                      bottom: 0,
+                      child: Center(
+                        child: IconButton(
+                          icon: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              color: Colors.black26,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              LucideIcons.chevronLeft,
                               color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                              size: 24,
                             ),
-                          );
-                        },
+                          ),
+                          onPressed: () => pageController.previousPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    Positioned(
+                      right: 10,
+                      top: 0,
+                      bottom: 0,
+                      child: Center(
+                        child: IconButton(
+                          icon: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              color: Colors.black26,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              LucideIcons.chevronRight,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                          onPressed: () => pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: MediaQuery.of(context).padding.top + 20,
+                      right: 20,
+                      child: IconButton(
+                        icon: const Icon(LucideIcons.x, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    if (urls.length > 1)
+                      Positioned(
+                        bottom: 40,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black54,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: ListenableBuilder(
+                              listenable: pageController,
+                              builder: (context, child) {
+                                final current =
+                                    (pageController.hasClients
+                                        ? pageController.page?.round() ??
+                                              initialIndex
+                                        : initialIndex) +
+                                    1;
+                                return Text(
+                                  '$current / ${urls.length}',
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (type == 'VIDEO')
+                      const Center(
+                        child: Icon(
+                          LucideIcons.playCircle,
+                          color: Colors.white,
+                          size: 60,
+                        ),
+                      ),
+                  ],
                 ),
-              if (type == 'VIDEO')
-                const Center(
-                  child: Icon(
-                    LucideIcons.playCircle,
-                    color: Colors.white,
-                    size: 60,
-                  ),
-                ),
-            ],
+              );
+            },
           ),
-        );
-      },
-    );
+        )
+        .then((_) {
+          // Leaving the gallery: stop the background walk and hand the image
+          // cache budget back to the rest of the app.
+          warmToken++;
+          imageCache.maximumSizeBytes = previousCacheBytes;
+          imageCache.maximumSize = previousCacheCount;
+        });
   }
 
   @override
@@ -1580,6 +1638,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     );
   }
 
+  /// Guards the one-time gallery warm-up in [_buildMediaQuickActions].
+  bool _galleryWarmed = false;
+
   Widget _buildMediaQuickActions(dynamic project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
     // A photo tile is rendered only when the catalog actually holds images
@@ -1594,6 +1655,25 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     final interiorImages = project?['interiorImages'] as List?;
     final hasExterior = exteriorImages != null && exteriorImages.isNotEmpty;
     final hasInterior = interiorImages != null && interiorImages.isNotEmpty;
+
+    // Decode the first picture of each gallery while the user is still
+    // reading the page, so opening one is instant rather than a spinner. The
+    // tiles already fetch these exact URLs, so this only pays for the
+    // full-size decode, and it runs once per screen.
+    if (!_galleryWarmed) {
+      _galleryWarmed = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        for (final first in [
+          if (hasExterior) exteriorImages[0],
+          if (hasInterior) interiorImages[0],
+        ]) {
+          final url = apiClient.resolveUrl(first.toString());
+          if (url.isEmpty) continue;
+          precacheImage(CachedNetworkImageProvider(url), context);
+        }
+      });
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -1679,13 +1759,18 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           ),
         ),
         const SizedBox(height: 32),
-        _MultimediaAssetCard(
-          title: 'PROJECT FLYER',
-          subtitle: 'HIGH RES • PDF',
-          icon: LucideIcons.fileText,
-          onView: () => _launchAction('Opening...', project?['flyer']),
-          onDownload: () => _launchAction('Downloading...', project?['flyer']),
-        ),
+        // Only when the project actually carries one. Clédor's `flyer` is
+        // null, and the card was still drawn with VIEW / DOWNLOAD buttons that
+        // had nothing to open.
+        if (project?['flyer']?.toString().trim().isNotEmpty ?? false)
+          _MultimediaAssetCard(
+            title: 'PROJECT FLYER',
+            subtitle: 'HIGH RES • PDF',
+            icon: LucideIcons.fileText,
+            onView: () => _launchAction('Opening...', project?['flyer']),
+            onDownload: () =>
+                _launchAction('Downloading...', project?['flyer']),
+          ),
         // Web parity: E-BROCHURE shows only when the project actually has a
         // brochure (Cledor Mazgaon has one; Cledor Mumbai does not).
         if (project?['brochure']?.toString().trim().isNotEmpty ?? false) ...[
@@ -1702,36 +1787,60 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         const SizedBox(height: 12),
         // Web parity: floor plans appear here as resource cards
         // (e.g. "2BHK, MASTER BEDROOM" — CONFIGURATION N/A • AREA N/A).
-        ...(((project?['plans'] as List?) ?? []).map((plan) {
-          final cfg = plan is Map ? plan['config']?.toString() : null;
-          final area = plan is Map ? plan['area']?.toString() : null;
-          final planImg = plan is Map ? plan['image']?.toString() : null;
-          final planTitle = (plan is Map ? plan['title']?.toString() : null);
-          return Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: _MultimediaAssetCard(
-              title: (planTitle == null || planTitle.isEmpty)
-                  ? 'FLOOR PLAN'
-                  : planTitle,
-              subtitle:
-                  '${(cfg == null || cfg.isEmpty) ? 'CONFIGURATION N/A' : cfg}'
-                  ' • '
-                  '${(area == null || area.isEmpty) ? 'AREA N/A' : area}',
-              icon: LucideIcons.layoutGrid,
-              onView: () => _launchAction('Opening plan...', planImg),
-              onDownload: () => _launchAction('Downloading plan...', planImg),
-            ),
-          );
-        })),
-        const SizedBox(height: 12),
-        _MultimediaAssetCard(
-          title: 'WALKTHROUGH',
-          subtitle: 'CINEMATIC TOUR • 4K',
-          icon: LucideIcons.video,
-          isPrimary: true,
-          onView: () =>
-              _launchAction('Watching Story...', project?['walkthrough']),
-        ),
+        ...(((project?['plans'] as List?) ?? [])
+            .where((plan) {
+              // A plan with neither a file nor a name is an empty admin row.
+              final img = plan is Map ? plan['image']?.toString().trim() : null;
+              final t = plan is Map ? plan['title']?.toString().trim() : null;
+              return (img != null && img.isNotEmpty) ||
+                  (t != null && t.isNotEmpty);
+            })
+            .map((plan) {
+              final cfg = plan is Map
+                  ? plan['config']?.toString().trim()
+                  : null;
+              final area = plan is Map ? plan['area']?.toString().trim() : null;
+              final planImg = plan is Map ? plan['image']?.toString() : null;
+              final planTitle = (plan is Map
+                  ? plan['title']?.toString().trim()
+                  : null);
+              // Say only what the record holds. Clédor's plans have no config and
+              // no area, and the card used to fill both gaps with "N/A"; now it
+              // falls back to the file's own type.
+              final parts = <String>[
+                if (cfg != null && cfg.isNotEmpty) cfg,
+                if (area != null && area.isNotEmpty) area,
+              ];
+              final ext = (planImg ?? '').split('.').last.toUpperCase();
+              final subtitle = parts.isNotEmpty
+                  ? parts.join(' • ')
+                  : (ext.isNotEmpty && ext.length <= 4 ? ext : 'FLOOR PLAN');
+              return Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: _MultimediaAssetCard(
+                  title: (planTitle == null || planTitle.isEmpty)
+                      ? 'FLOOR PLAN'
+                      : planTitle,
+                  subtitle: subtitle,
+                  icon: LucideIcons.layoutGrid,
+                  onView: () => _launchAction('Opening plan...', planImg),
+                  onDownload: () =>
+                      _launchAction('Downloading plan...', planImg),
+                ),
+              );
+            })),
+        // Same rule: Clédor has no walkthrough, so the card is not drawn.
+        if (project?['walkthrough']?.toString().trim().isNotEmpty ?? false) ...[
+          const SizedBox(height: 12),
+          _MultimediaAssetCard(
+            title: 'WALKTHROUGH',
+            subtitle: 'CINEMATIC TOUR • 4K',
+            icon: LucideIcons.video,
+            isPrimary: true,
+            onView: () =>
+                _launchAction('Watching Story...', project?['walkthrough']),
+          ),
+        ],
       ],
     );
   }
@@ -3615,7 +3724,9 @@ class _HeroMediaThumb extends StatelessWidget {
         height: 68,
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFEDE5D6),
-          borderRadius: BorderRadius.circular(18),
+          // Rounded square, matching the reference shot — a full circle
+          // (radius 34) crowded the EXTERIOR / INTERIOR labels.
+          borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: isDark
                 ? Colors.white.withOpacity(0.1)

@@ -453,6 +453,15 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     bool isOverMedia = false,
   }) {
     final scheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Only the share button asks for the filled treatment; the back button
+    // takes the surface colour as before.
+    final Color solid = isDark
+        ? const Color(0xFFF4EFE3)
+        : const Color(0xFF0C312B);
+    final Color onSolid = isDark
+        ? const Color(0xFF0C312B)
+        : const Color(0xFFF4EFE3);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -461,7 +470,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         decoration: BoxDecoration(
           color: isOverMedia
               ? Colors.black.withOpacity(0.3)
-              : (isBlack ? const Color(0xFF141B3A) : scheme.surface),
+              : (isBlack ? solid : scheme.surface),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isOverMedia
@@ -483,20 +492,27 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           size: 20,
           color: isOverMedia
               ? Colors.white
-              : (isBlack ? Colors.white : scheme.onSurface),
+              : (isBlack ? onSolid : scheme.onSurface),
         ),
       ),
     );
   }
 
   Widget _buildShareButton(ApiClient apiClient) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color fill = isDark
+        ? const Color(0xFFF4EFE3)
+        : const Color(0xFF0C312B);
+    final Color onFill = isDark
+        ? const Color(0xFF0C312B)
+        : const Color(0xFFF4EFE3);
     return GestureDetector(
       onTap: () => _shareContent(apiClient),
       child: Container(
         width: double.infinity,
         height: 65,
         decoration: BoxDecoration(
-          color: const Color(0xFF141B3A),
+          color: fill,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -514,12 +530,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               style: GoogleFonts.gelasio(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: onFill,
                 letterSpacing: 2,
               ),
             ),
             const SizedBox(width: 15),
-            const Icon(LucideIcons.share2, size: 20, color: Colors.white),
+            Icon(LucideIcons.share2, size: 20, color: onFill),
           ],
         ),
       ),

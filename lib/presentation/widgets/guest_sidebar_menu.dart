@@ -517,7 +517,14 @@ class _SubItem extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         dense: true,
-        leading: Icon(icon, size: 16, color: color ?? Colors.white),
+        // Same glyph colour as the rows above: M4Drawer.creamGlow at the
+        // 0.80 alpha M4DrawerTile uses for an inactive item. These were pure
+        // white, so they read brighter than the menu they sit inside.
+        leading: Icon(
+          icon,
+          size: 16,
+          color: color ?? M4Drawer.creamGlow.withValues(alpha: 0.80),
+        ),
         title: Text(
           label,
           style: GoogleFonts.inter(
@@ -557,7 +564,12 @@ class _QuickActionItem extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(icon, color: Colors.white, size: 18),
+        // Matches the menu rows: creamGlow at 0.80, not pure white.
+        child: Icon(
+          icon,
+          color: M4Drawer.creamGlow.withValues(alpha: 0.80),
+          size: 18,
+        ),
       ),
       title: Text(
         label,

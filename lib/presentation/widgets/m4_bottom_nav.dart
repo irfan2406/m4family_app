@@ -80,10 +80,22 @@ class M4BottomNav extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: List.generate(
                         icons.length,
-                        (i) => _M4NavTab(
-                          icon: icons[i],
-                          isActive: currentIndex == i,
-                          onTap: () => onTap(i),
+                        // Each tab takes an equal share of the bar. The discs
+                        // keep their size while they fit — the same even
+                        // spacing spaceEvenly gave — and scale down only on a
+                        // screen too narrow to hold five of them, instead of
+                        // the last one running off the right edge.
+                        (i) => Expanded(
+                          child: Center(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: _M4NavTab(
+                                icon: icons[i],
+                                isActive: currentIndex == i,
+                                onTap: () => onTap(i),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),

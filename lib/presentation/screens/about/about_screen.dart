@@ -757,8 +757,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     child: Icon(iconData, color: colorScheme.primary, size: 22),
                   ),
                   const SizedBox(height: 16),
+                  // The grid fixes each cell's height from its width, so the
+                  // text has to give way at a larger system font rather than
+                  // run past the bottom of the card.
                   Text(
                     pillar['title'].toString().toUpperCase(),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
                     style: GoogleFonts.gelasio(
                       color: isDark ? Colors.white : const Color(0xFF0C312B),
                       fontSize: 11,
@@ -767,16 +773,20 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    pillar['desc'],
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                          .withOpacity(0.68),
-                      fontSize: 9,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.5,
-                      height: 1.4,
+                  Flexible(
+                    child: Text(
+                      pillar['desc'],
+                      textAlign: TextAlign.center,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                            .withOpacity(0.68),
+                        fontSize: 9,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.5,
+                        height: 1.4,
+                      ),
                     ),
                   ),
                 ],
@@ -1009,13 +1019,17 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           ),
         ),
         const SizedBox(width: 16),
-        Text(
-          title,
-          style: GoogleFonts.gelasio(
-            color: isDark ? Colors.white : const Color(0xFF0C312B),
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -1,
+        // Takes the width left beside the icon instead of pushing past the
+        // edge once a larger system font makes it wider.
+        Flexible(
+          child: Text(
+            title,
+            style: GoogleFonts.gelasio(
+              color: isDark ? Colors.white : const Color(0xFF0C312B),
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -1,
+            ),
           ),
         ),
       ],

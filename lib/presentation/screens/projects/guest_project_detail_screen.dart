@@ -1302,6 +1302,10 @@ class _GuestProjectDetailScreenState
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Row(
+                    // All three cards take the height of the tallest, so a
+                    // card that has grown for larger text does not leave the
+                    // other two short.
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
                         child: _OverviewActionCard(
@@ -2147,7 +2151,11 @@ class _OverviewActionCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 140,
+        // A minimum, not a fixed height: at a larger system font size the
+        // label and value together needed more than 140 and ran past the
+        // bottom of the card. 140 is still what it measures at the design
+        // text size, so nothing moves on a default phone.
+        constraints: const BoxConstraints(minHeight: 140),
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
         decoration: BoxDecoration(
           color: isDark

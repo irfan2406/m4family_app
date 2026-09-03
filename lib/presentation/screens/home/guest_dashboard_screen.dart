@@ -2004,6 +2004,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               child: Text(
                 desc,
                 textAlign: TextAlign.center,
+                // Two lines, as designed. Without an explicit maxLines the
+                // ellipsis collapses it to one even when there is room.
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.inter(
                   color: (isDark ? Colors.white : const Color(0xFF0C312B))
