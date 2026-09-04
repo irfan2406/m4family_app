@@ -1301,45 +1301,52 @@ class _GuestProjectDetailScreenState
                 const SizedBox(height: 24),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    // All three cards take the height of the tallest, so a
-                    // card that has grown for larger text does not leave the
-                    // other two short.
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: _OverviewActionCard(
-                          label: 'VIDEO CALL',
-                          value: 'Connect Now',
-                          icon: LucideIcons.video,
-                          isAction: true,
-                          onTap: () =>
-                              _showRequestDetailsDialog(project, null, 'VC'),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _OverviewActionCard(
-                          label: 'COMPLETION',
-                          value: '${project?['completion'] ?? 0}%',
-                          icon: LucideIcons.calendar,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _OverviewActionCard(
-                          label: 'SITE VISIT',
-                          value: 'Book Tour',
-                          icon: LucideIcons.eye,
-                          isAction: true,
-                          onTap: () => _showRequestDetailsDialog(
-                            project,
-                            null,
-                            'Site Visit',
+                  // IntrinsicHeight measures the tallest card and gives the Row
+                  // a bounded height. Without it, stretch inside this vertical
+                  // scroll view hands the cards an INFINITE height, which fails
+                  // BoxConstraints and aborts layout for the whole page — the
+                  // screen then rendered completely blank.
+                  child: IntrinsicHeight(
+                    child: Row(
+                      // All three cards take the height of the tallest, so a
+                      // card that has grown for larger text does not leave the
+                      // other two short.
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: _OverviewActionCard(
+                            label: 'VIDEO CALL',
+                            value: 'Connect Now',
+                            icon: LucideIcons.video,
+                            isAction: true,
+                            onTap: () =>
+                                _showRequestDetailsDialog(project, null, 'VC'),
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _OverviewActionCard(
+                            label: 'COMPLETION',
+                            value: '${project?['completion'] ?? 0}%',
+                            icon: LucideIcons.calendar,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _OverviewActionCard(
+                            label: 'SITE VISIT',
+                            value: 'Book Tour',
+                            icon: LucideIcons.eye,
+                            isAction: true,
+                            onTap: () => _showRequestDetailsDialog(
+                              project,
+                              null,
+                              'Site Visit',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -1630,6 +1637,7 @@ class _GuestProjectDetailScreenState
                 setState(() => _showFullProgress = !_showFullProgress),
             onPhaseTap: (url) => _showMediaLightbox([url], 'IMAGE'),
             projectName: project?['title'] ?? 'PROJECT',
+            fallbackImage: _resolveHeroUrl(project),
           ),
         ],
       ),
@@ -2615,6 +2623,11 @@ class _ConstructionDashboardCard extends ConsumerWidget {
   final Function(String) onPhaseTap;
   final String projectName;
 
+  /// Shown when a phase carries no photo of its own — the catalog returns
+  /// "images": [] for every one of Clédor's phases. Same source
+  /// _guestFallbackPhases uses when it has to invent phases.
+  final String fallbackImage;
+
   const _ConstructionDashboardCard({
     required this.overallProgress,
     required this.estimatedCompletion,
@@ -2623,6 +2636,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
     required this.onToggleReadMore,
     required this.onPhaseTap,
     required this.projectName,
+    this.fallbackImage = '',
   });
 
   @override
@@ -2828,9 +2842,14 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       (phaseImages != null && phaseImages.isNotEmpty)
                       ? phaseImages[0]
                       : '';
-                  final imageUrl = apiClient.resolveUrl(
+                  var imageUrl = apiClient.resolveUrl(
                     phase['image'] ?? firstPhaseImg,
                   );
+                  // No phase photo uploaded: show the project's own image
+                  // rather than an empty grey placeholder.
+                  if (imageUrl.trim().isEmpty && fallbackImage.isNotEmpty) {
+                    imageUrl = fallbackImage;
+                  }
                   final status =
                       phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
 
