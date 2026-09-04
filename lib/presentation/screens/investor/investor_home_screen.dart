@@ -1688,10 +1688,14 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                 size: 20,
               ),
             ),
+            // Every cell in the grid gets the same height, so the text has to
+            // give way on a narrow screen rather than run past the bottom.
             const SizedBox(height: 16),
             Text(
               title,
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.inter(
                 color: isDark ? Colors.white : const Color(0xFF155A4F),
                 fontWeight: FontWeight.w600,
@@ -1700,15 +1704,19 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               ),
             ),
             const SizedBox(height: 6),
-            Text(
-              desc,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                    .withValues(alpha: 0.5),
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                height: 1.4,
+            Flexible(
+              child: Text(
+                desc,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.inter(
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.5),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  height: 1.4,
+                ),
               ),
             ),
           ],

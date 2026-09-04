@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/custom_views_provider.dart';
@@ -22,6 +23,101 @@ class CustomViewsScreen extends ConsumerStatefulWidget {
 }
 
 class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
+  /// True while a save is in flight, so repeat taps cannot stack requests.
+  bool _saving = false;
+
+  /// Saves the selections and reports what actually happened.
+  Future<void> _confirmSelections() async {
+    if (_saving) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => _saving = true);
+    // Acknowledge the tap now. The round trip is what takes a moment, and a
+    // notice that only appears afterwards reads as an unresponsive button.
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      const SnackBar(
+        content: Text('Saving your selections…'),
+        duration: Duration(seconds: 10),
+      ),
+    );
+
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final auth = ref.read(authProvider);
+      final selections = ref.read(customViewsSelectionsProvider);
+
+      // The materials step falls back to a literal 'Full Unit' when no space
+      // was picked, so the summary can read "FULL UNIT / FLOORING" while
+      // selections['space'] is still null — and the API rejects that with
+      // "Space and selections are required". Send the space the selections
+      // were really recorded under.
+      final spacesList = selections['spaces'] is List
+          ? List<String>.from(selections['spaces'] as List)
+          : const <String>[];
+      final rawSpace = selections['space']?.toString().trim() ?? '';
+      final space = rawSpace.isNotEmpty
+          ? rawSpace
+          : (spacesList.isNotEmpty ? spacesList.join(', ') : 'Full Unit');
+
+      final response = await apiClient.submitCustomViews({
+        'project': ref.read(customViewsProjectProvider),
+        'unitType': ref.read(customViewsUnitProvider),
+        'unitNumber': ref.read(customViewsUnitNumberProvider),
+        'block': ref.read(customViewsBlockProvider),
+        'wing': ref.read(customViewsWingProvider),
+        'bookingId': ref.read(customViewsBookingIdProvider),
+        'space': space,
+        'selections': selections,
+        'guestName': auth.identifier ?? 'App Guest',
+        'guestPhone': 'N/A',
+        'guestEmail': 'app@m4family.com',
+        'status': 'SUBMITTED',
+      });
+
+      if (!mounted) return;
+      messenger.hideCurrentSnackBar();
+
+      final data = response.data;
+      if (data is Map && data['status'] == true) {
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text('Selections successfully saved!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        ref.read(customViewsStepProvider.notifier).state = -1;
+      } else {
+        // A 200 that still reports a failure used to do nothing at all: no
+        // notice, no state change, the button just looked dead.
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(
+              (data is Map ? data['message']?.toString() : null) ??
+                  'Failed to save selections.',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          // Say what the server said, rather than one opaque line for every
+          // possible cause.
+          content: Text(
+            friendlyApiError(e, fallback: 'Failed to save selections.'),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -432,7 +528,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                     ),
                                     const SizedBox(height: 18),
                                     GestureDetector(
-                                      onTap: () async {
+                                      onTap: () {
                                         if (activeStep < 3) {
                                           ref
                                                   .read(
@@ -441,84 +537,9 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                                   )
                                                   .state =
                                               activeStep + 1;
-                                        } else {
-                                          final messenger =
-                                              ScaffoldMessenger.of(context);
-                                          try {
-                                            final apiClient = ref.read(
-                                              apiClientProvider,
-                                            );
-                                            final auth = ref.read(authProvider);
-                                            final selectedProject = ref.read(
-                                              customViewsProjectProvider,
-                                            );
-                                            final selectedUnit = ref.read(
-                                              customViewsUnitProvider,
-                                            );
-                                            final selections = ref.read(
-                                              customViewsSelectionsProvider,
-                                            );
-
-                                            final response = await apiClient
-                                                .submitCustomViews({
-                                                  'project': selectedProject,
-                                                  'unitType': selectedUnit,
-                                                  'unitNumber': ref.read(
-                                                    customViewsUnitNumberProvider,
-                                                  ),
-                                                  'block': ref.read(
-                                                    customViewsBlockProvider,
-                                                  ),
-                                                  'wing': ref.read(
-                                                    customViewsWingProvider,
-                                                  ),
-                                                  'bookingId': ref.read(
-                                                    customViewsBookingIdProvider,
-                                                  ),
-                                                  'space': selections['space'],
-                                                  'selections': selections,
-                                                  'guestName':
-                                                      auth.identifier ??
-                                                      'App Guest',
-                                                  'guestPhone': 'N/A',
-                                                  'guestEmail':
-                                                      'app@m4family.com',
-                                                  'status': 'SUBMITTED',
-                                                });
-
-                                            if (context.mounted) {
-                                              if (response.data['status'] ==
-                                                  true) {
-                                                messenger.showSnackBar(
-                                                  const SnackBar(
-                                                    content: Text(
-                                                      'Selections successfully saved!',
-                                                    ),
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                  ),
-                                                );
-                                                ref
-                                                        .read(
-                                                          customViewsStepProvider
-                                                              .notifier,
-                                                        )
-                                                        .state =
-                                                    -1;
-                                              }
-                                            }
-                                          } catch (e) {
-                                            if (context.mounted)
-                                              messenger.showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                    'Failed to save selections.',
-                                                  ),
-                                                  backgroundColor: Colors.red,
-                                                ),
-                                              );
-                                          }
+                                          return;
                                         }
+                                        _confirmSelections();
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
@@ -536,7 +557,9 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                         child: Text(
                                           activeStep < 3
                                               ? 'NEXT STEP'
-                                              : 'CONFIRM SELECTIONS',
+                                              : (_saving
+                                                    ? 'SAVING…'
+                                                    : 'CONFIRM SELECTIONS'),
                                           style: GoogleFonts.gelasio(
                                             fontSize: 9,
                                             fontWeight: FontWeight.w700,

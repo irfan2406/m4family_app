@@ -78,6 +78,22 @@ class AuthNotifier extends StateNotifier<AuthState> {
     if (mounted) state = state.copyWith(bootstrapped: true);
   }
 
+  /// A response body only counts as an account if it actually identifies
+  /// one. A 200 with an unexpected shape used to be stored as the user, which
+  /// left the role null — and a null role lands in the customer portal.
+  static Map<String, dynamic>? _asUserMap(dynamic raw) {
+    Map<String, dynamic>? m;
+    if (raw is Map<String, dynamic>) {
+      m = raw;
+    } else if (raw is Map) {
+      m = Map<String, dynamic>.from(raw);
+    }
+    if (m == null) return null;
+    final hasId = (m['_id'] ?? m['id'])?.toString().isNotEmpty ?? false;
+    final hasRole = m['role']?.toString().isNotEmpty ?? false;
+    return (hasId || hasRole) ? m : null;
+  }
+
   /// Applies an already-known user payload (e.g. the body a PATCH /me returns)
   /// so the UI reflects a save immediately, without waiting on [fetchMe].
   void setUser(Map<String, dynamic> user) {
@@ -89,8 +105,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final response = await _apiClient.getCurrentUser();
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final user = response.data['data'] ?? response.data;
-        state = state.copyWith(status: AuthStatus.authenticated, user: user);
+        final user = _asUserMap(response.data['data'] ?? response.data);
+        if (user == null) {
+          // Signing in with no resolvable account means a null role, and a
+          // null role silently means "customer". Fall back to the cached
+          // profile instead of guessing the portal.
+          await _restoreCachedUser();
+          return;
+        }
+        state = state.copyWith(
+          status: AuthStatus.authenticated,
+          user: user,
+          role: user['role']?.toString(),
+        );
         // Cache the profile so a later network blip cannot cost the session.
         unawaited(_storage.write(key: 'cached_user', value: jsonEncode(user)));
       }
@@ -276,14 +303,64 @@ class AuthNotifier extends StateNotifier<AuthState> {
         }
         await _storage.write(key: 'jwt_token', value: token);
 
-        // Fetch user data FIRST
+        // Resolve the account the token actually belongs to. Its own role
+        // decides the portal — never the role this gateway asked for, since
+        // send-otp accepts any identifier under any role and so proves
+        // nothing about the account behind it.
         final userResponse = await _apiClient.getCurrentUser();
-        final userData = userResponse.data['data'] ?? userResponse.data;
+        final resolved =
+            _asUserMap(userResponse.data['data'] ?? userResponse.data) ??
+            _asUserMap(data is Map ? data['user'] : null);
 
-        // THEN update state with BOTH status and user
+        if (resolved == null) {
+          await _storage.delete(key: 'jwt_token');
+          state = state.copyWith(
+            status: AuthStatus.error,
+            error:
+                'Could not confirm which account this number belongs to. '
+                'Please try again.',
+          );
+          return;
+        }
+
+        // The gateway this sign-in came through, and the account's own role.
+        final realRole = resolved['role']?.toString().toLowerCase() ?? '';
+        final gateway = (state.role ?? 'CUSTOMER').toUpperCase();
+
+        String? denial;
+        if (gateway == 'INVESTOR') {
+          if (realRole != 'investor') {
+            denial =
+                'Access denied. This number is not registered to an '
+                'Investor account.';
+          }
+        } else {
+          // Customer gateway. The two portals that have their own sign-in must
+          // use it rather than arriving through here.
+          if (realRole == 'cp') {
+            denial =
+                'This number is registered as a Channel Partner. '
+                'Please sign in from the Channel Partner login.';
+          } else if (realRole == 'investor') {
+            denial =
+                'This number is registered as an Investor. '
+                'Please sign in from the Investor Portal login.';
+          }
+        }
+
+        if (denial != null) {
+          // The token was stored a moment ago to read /me; drop it, or the
+          // next cold start would restore the very session just refused.
+          await _storage.delete(key: 'jwt_token');
+          await _storage.delete(key: 'cached_user');
+          state = state.copyWith(status: AuthStatus.error, error: denial);
+          return;
+        }
+
         state = state.copyWith(
           status: AuthStatus.authenticated,
-          user: userData,
+          user: resolved,
+          role: resolved['role']?.toString(),
         );
       } else {
         state = state.copyWith(status: AuthStatus.error, error: 'Invalid OTP');

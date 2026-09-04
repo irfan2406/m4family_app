@@ -101,6 +101,16 @@ List<dynamic> _placeholderProjects() => [
   },
 ];
 
+/// The one live catalog fetch of this app session, shared by every run of
+/// [projectsProvider].
+///
+/// The payload is ~9 MB and takes ~100s, so it must be downloaded once and
+/// once only: without this memo the `invalidateSelf` below (which fires as soon
+/// as the real catalog is ready to replace the fallback) would start a second
+/// identical download. Cleared again when a fetch fails, so the RETRY button
+/// and the AsyncError recovery in the home screens still re-issue it.
+Future<List<dynamic>>? _liveCatalog;
+
 final projectsProvider = FutureProvider<List<dynamic>>((ref) async {
   final apiClient = ref.watch(apiClientProvider);
 
@@ -133,48 +143,66 @@ final projectsProvider = FutureProvider<List<dynamic>>((ref) async {
     throw lastError ?? Exception('Failed to load projects');
   }
 
+  // Start that fetch at most once per session, and persist each success right
+  // here so the 9 MB cache is written once rather than on every provider run.
+  Future<List<dynamic>> liveOnce() {
+    final pending = _liveCatalog;
+    if (pending != null) return pending;
+    final started = fetchLive().then((data) async {
+      if (data.isNotEmpty) await _saveCachedProjects(data);
+      return data;
+    });
+    _liveCatalog = started;
+    // Forget a failed attempt so the next read hits the network again. Uses
+    // then(onError:) rather than catchError so the derived future completes
+    // normally and never reports an unhandled async error.
+    unawaited(
+      started.then((_) {}, onError: (Object _) {
+        if (identical(_liveCatalog, started)) _liveCatalog = null;
+      }),
+    );
+    return started;
+  }
+
   // Fallback shown while / instead of the live data: the last cached payload,
   // else placeholder projects (so the screen never dead-ends on an error and
   // never spins for a minute while the bloated endpoint times out).
   final cached = await _loadCachedProjects();
   final fallback = cached ?? _placeholderProjects();
-  // True when the only thing we can show is the placeholder set, whose ids are
-  // slugs — anything booked against those is rejected server-side.
-  final servingPlaceholders = cached == null;
 
   var disposed = false;
   ref.onDispose(() => disposed = true);
 
   // Stale-while-revalidate: race the live fetch against a short grace window.
-  // If it wins with fresh data, use it; if the backend is slow or 504s (the
-  // projects payload is bloated by a multi-MB base64 hero), return the fallback
-  // at ~8s instead of blocking until fetchLive exhausts all its retries (~60s+).
-  final live = fetchLive()
+  // If it wins with fresh data, use it; if the backend is slow (the projects
+  // payload is bloated by a multi-MB base64 hero), return the fallback at ~8s
+  // instead of blocking the screen for the full ~100s.
+  final live = liveOnce()
       .then<List<dynamic>?>((v) => v)
       .catchError((_) => null);
-
-  // Let the live fetch finish even when the grace window wins, and PERSIST it.
-  // Previously its result was simply dropped, so the app never obtained real
-  // projects and stayed on the slug-id placeholders — which made every booking
-  // fail with `Cast to ObjectId failed for value "cledor"`. Now the next read
-  // (or app start) picks up real projects with real ObjectIds.
-  unawaited(
-    live.then((data) async {
-      if (data == null || data.isEmpty) return;
-      await _saveCachedProjects(data);
-      // If all we could show was placeholders, swap them for the real catalog
-      // as soon as it lands — without this the session stayed on slug ids and
-      // every booking failed until the app was restarted. Guarded on
-      // `servingPlaceholders` so a re-run (which now reads a real cache) can't
-      // invalidate itself again and loop.
-      if (servingPlaceholders && !disposed) ref.invalidateSelf();
-    }),
-  );
 
   final result = await Future.any<List<dynamic>?>([
     live,
     Future<List<dynamic>?>.delayed(const Duration(seconds: 8), () => null),
   ]);
+
+  // Served the fallback because the grace window won? Then re-read this
+  // provider the moment the real catalog arrives, so the list replaces the
+  // placeholders — or a stale cache — on its own instead of showing the wrong
+  // properties until the app is restarted. This used to be guarded on "the
+  // cache was empty", which left a cache of placeholders (the guest home can
+  // persist one) stuck on screen for good. The re-read resolves instantly
+  // from the memo above and takes the `result != null` branch, so it happens
+  // exactly once: no loop, and no second download.
+  if (result == null) {
+    unawaited(
+      live.then((data) {
+        if (data == null || data.isEmpty || disposed) return;
+        ref.invalidateSelf();
+      }),
+    );
+  }
+
   return result ?? fallback;
 });
 

@@ -5,7 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/presentation/widgets/wheel_date_picker.dart';
+import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 import 'package:go_router/go_router.dart';
 
 class FamilyMembersScreen extends ConsumerStatefulWidget {
@@ -247,7 +247,14 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
               } catch (_) {
                 initial = DateTime(2000);
               }
-              final picked = await showWheelDatePicker(ctx, initial: initial);
+              // The one M4 chooser, same as every booking sheet: starts on
+              // today and runs forward.
+              final now = DateTime.now();
+              final picked = await showM4DateTimeSheet(
+                ctx,
+                initial: initial,
+                minDate: DateTime(now.year, now.month, now.day),
+              );
               if (picked != null) {
                 setDialogState(
                   () => dob = DateFormat('yyyy-MM-dd').format(picked),

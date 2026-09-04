@@ -5,6 +5,11 @@
          "Failed host lookup". -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- DownloadManager writes project documents into the public Downloads
+         folder. From API 29 it needs no permission to do so; below that it
+         does, hence the cap. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"/>
     <application
         android:label="M4 Family"
         android:name="${applicationName}"

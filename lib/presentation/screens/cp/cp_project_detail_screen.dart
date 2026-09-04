@@ -246,6 +246,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     String? raw, {
     BoxFit fit = BoxFit.cover,
     Widget? errorWidget,
+
+    /// Decode width in device pixels. Defaults to the full-bleed hero's size;
+    /// a small tile should pass its own, or it pays a full-size decode to
+    /// paint a thumbnail.
+    int cacheWidth = 1080,
+    Widget? placeholder,
   }) {
     final fallback =
         errorWidget ??
@@ -274,9 +280,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ? s
         : ref.read(apiClientProvider).resolveUrl(s);
     return CachedNetworkImage(
-      memCacheWidth: 1080,
+      memCacheWidth: cacheWidth,
       imageUrl: url,
       fit: fit,
+      fadeInDuration: const Duration(milliseconds: 120),
+      placeholder: placeholder == null ? null : (_, __) => placeholder,
       errorWidget: (_, __, ___) => fallback,
     );
   }
@@ -562,8 +570,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   // iOS-style wheel date+time picker (matches the web IOSDateTimePicker).
   Future<void> _pickVideoDt() async {
     final now = DateTime.now();
-    DateTime temp = _videoCallDt ?? now.add(const Duration(minutes: 30));
-    if (temp.isBefore(now)) temp = now.add(const Duration(minutes: 30));
+    // Tomorrow onwards, like every other booking sheet in the app. Flooring
+    // at `now` left today selectable, and the hour/minute wheels are not
+    // filtered — so an already-past slot on today was still on screen.
+    final minSchedule = DateTime(now.year, now.month, now.day + 1);
+    DateTime temp = _videoCallDt ?? now.add(const Duration(days: 1));
+    if (temp.isBefore(minSchedule)) {
+      temp = now.add(const Duration(days: 1));
+    }
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final result = await showModalBottomSheet<DateTime>(
       context: context,
@@ -609,7 +623,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             // labels with no way to disable them, so this is a custom picker.
             WheelDateTimePicker(
               initial: temp,
-              minDate: now,
+              minDate: minSchedule,
               isDark: isDark,
               onChanged: (dt) => temp = dt,
             ),
@@ -1281,7 +1295,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           clipBehavior: Clip.antiAlias,
           child: Stack(
             children: [
-              Positioned.fill(child: _projectImage(url, fit: BoxFit.cover)),
+              Positioned.fill(
+                child: _projectImage(
+                  url,
+                  fit: BoxFit.cover,
+                  // The tile is 66dp: decode to that, in device pixels.
+                  cacheWidth: (66 * MediaQuery.of(context).devicePixelRatio)
+                      .round(),
+                  placeholder: Container(
+                    color: scheme.onSurface.withValues(alpha: 0.06),
+                  ),
+                ),
+              ),
               Positioned(
                 left: 0,
                 right: 0,
@@ -2105,29 +2130,34 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'PHASE TRACKING',
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 2,
-                    color: scheme.onSurface,
+            // The title column takes the room it needs and the badge keeps the
+            // rest; without a flex here a longer title (or a phone with the
+            // system font turned up) pushed the badge off the right edge.
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'PHASE TRACKING',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2,
+                      color: scheme.onSurface,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'REAL-TIME DEVELOPMENT STATUS',
-                  style: GoogleFonts.inter(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 1,
-                    color: scheme.onSurfaceVariant,
+                  const SizedBox(height: 4),
+                  Text(
+                    'REAL-TIME DEVELOPMENT STATUS',
+                    style: GoogleFonts.inter(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1,
+                      color: scheme.onSurfaceVariant,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

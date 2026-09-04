@@ -33,6 +33,39 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
   List<dynamic> _referrals = [];
   List<dynamic> _history = [];
 
+  /// Which stat tile is selected: 'active', 'closed', or null for all.
+  /// Drives the pipeline list below, so the tile that shows a count also
+  /// shows the leads behind it.
+  String? _statFilter;
+  final _pipelineKey = GlobalKey();
+  final _historyKey = GlobalKey();
+
+  /// The leads the pipeline shows for the current tile selection.
+  List<dynamic> get _pipelineLeads {
+    switch (_statFilter) {
+      case 'active':
+        return _activeReferrals;
+      case 'closed':
+        return _referrals.where(_isClosed).toList();
+      default:
+        return _referrals;
+    }
+  }
+
+  void _selectStat(String? filter, GlobalKey target) {
+    setState(() => _statFilter = _statFilter == filter ? null : filter);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = target.currentContext;
+      if (ctx == null) return;
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        alignment: 0.05,
+      );
+    });
+  }
+
   bool _isClosed(dynamic r) =>
       _closedStatuses.contains((r is Map ? r['status'] : null)?.toString());
 
@@ -122,16 +155,24 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                             const SizedBox(height: 20),
                             _buildActionGrid(),
                             const SizedBox(height: 24),
-                            _buildSectionHeader(
-                              'ACTIVE PIPELINE',
-                              LucideIcons.trendingUp,
+                            Container(
+                              key: _pipelineKey,
+                              child: _buildSectionHeader(
+                                _statFilter == 'closed'
+                                    ? 'CLOSED REFERRALS'
+                                    : 'ACTIVE PIPELINE',
+                                LucideIcons.trendingUp,
+                              ),
                             ),
                             const SizedBox(height: 12),
                             _buildLeadsPipeline(),
                             const SizedBox(height: 24),
-                            _buildSectionHeader(
-                              'POINT HISTORY',
-                              LucideIcons.history,
+                            Container(
+                              key: _historyKey,
+                              child: _buildSectionHeader(
+                                'POINT HISTORY',
+                                LucideIcons.history,
+                              ),
                             ),
                             const SizedBox(height: 12),
                             _buildHistoryList(),
@@ -283,63 +324,91 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           child: _statCard(
             'POINTS',
             NumberFormat('#,###').format(_walletBalance),
+            // POINTS is not a pipeline filter: it clears any selection
+            // and jumps to the transactions the balance came from.
+            onTap: () => _selectStat(null, _historyKey),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _statCard('REFERRALS', _activeReferrals.length.toString()),
+          child: _statCard(
+            'REFERRALS',
+            _activeReferrals.length.toString(),
+            onTap: () => _selectStat('active', _pipelineKey),
+            selected: _statFilter == 'active',
+          ),
         ),
         const SizedBox(width: 12),
-        Expanded(child: _statCard('CLOSED', _closedCount.toString())),
+        Expanded(
+          child: _statCard(
+            'CLOSED',
+            _closedCount.toString(),
+            onTap: () => _selectStat('closed', _pipelineKey),
+            selected: _statFilter == 'closed',
+          ),
+        ),
       ],
     );
   }
 
-  Widget _statCard(String label, String value) {
+  Widget _statCard(
+    String label,
+    String value, {
+    VoidCallback? onTap,
+    bool selected = false,
+  }) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final fg = theme.colorScheme.onSurface;
     final card = isDark
         ? Colors.white.withOpacity(0.03)
         : const Color(0xFFF4EFE3);
-    final border = isDark
+    // A selected tile carries a solid outline so it is obvious which count
+    // the list below is showing.
+    final border = selected
+        ? fg.withOpacity(0.45)
+        : isDark
         ? Colors.white.withOpacity(0.08)
         : const Color(0xFF0C312B).withOpacity(0.06);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 8),
-      decoration: BoxDecoration(
-        color: card,
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: border),
-      ),
-      child: Column(
-        children: [
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.gelasio(
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.5,
-              color: fg.withOpacity(0.75),
-            ),
-          ),
-          const SizedBox(height: 10),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              value,
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 8),
+        decoration: BoxDecoration(
+          color: card,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: border),
+        ),
+        child: Column(
+          children: [
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.gelasio(
-                fontSize: 24,
+                fontSize: 10,
                 fontWeight: FontWeight.w700,
-                color: fg,
-                height: 1,
+                letterSpacing: 1.5,
+                color: fg.withOpacity(0.75),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 10),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: GoogleFonts.gelasio(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: fg,
+                  height: 1,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -471,7 +540,8 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
   }
 
   Widget _buildLeadsPipeline() {
-    if (_referrals.isEmpty) {
+    final leads = _pipelineLeads;
+    if (leads.isEmpty) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 40),
@@ -488,9 +558,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       );
     }
 
-    return Column(
-      children: _referrals.map((lead) => _buildLeadCard(lead)).toList(),
-    );
+    return Column(children: leads.map((lead) => _buildLeadCard(lead)).toList());
   }
 
   Widget _buildLeadCard(dynamic lead) {

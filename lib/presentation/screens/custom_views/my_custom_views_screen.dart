@@ -22,6 +22,21 @@ class MyCustomViewsScreen extends ConsumerStatefulWidget {
       _MyCustomViewsScreenState();
 }
 
+/// First of [keys] that the record actually carries a value for, else null.
+/// The unit payload names these differently depending on where the record was
+/// created, and an empty string must read as "absent" so the summary can fall
+/// back to N/A rather than printing a blank row.
+String? _firstValue(dynamic record, List<String> keys) {
+  if (record is! Map) return null;
+  for (final key in keys) {
+    final value = record[key];
+    if (value == null) continue;
+    final text = value.toString().trim();
+    if (text.isNotEmpty && text.toUpperCase() != 'N/A') return text;
+  }
+  return null;
+}
+
 class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
   int _activeTab = 0; // 0 for Selection, 1 for History
   String _historyQuery = ''; // Web parity: history search-by-project-or-id
@@ -747,6 +762,18 @@ class _UnitCard extends ConsumerWidget {
                     ?.toString();
                 ref.read(customViewsUnitProvider.notifier).state =
                     config ?? '3 BHK';
+                // Carried over too, or the summary's Block / Tower and Wing
+                // rows fall back to their null default and read N/A. A unit
+                // stores this as block on the CustomView record and as
+                // tower in inventory.
+                ref.read(customViewsBlockProvider.notifier).state = _firstValue(
+                  unit,
+                  const ['block', 'tower', 'blockTower', 'towerName'],
+                );
+                ref.read(customViewsWingProvider.notifier).state = _firstValue(
+                  unit,
+                  const ['wing', 'wingName'],
+                );
                 ref.read(customViewsEditModeProvider.notifier).state = [
                   'SUBMITTED',
                   'APPROVED',
@@ -754,9 +781,20 @@ class _UnitCard extends ConsumerWidget {
                 ].contains(currentStatus);
                 ref.read(customViewsSelectionsProvider.notifier).state = {};
 
-                ref.read(customViewsStepProvider.notifier).state = 0;
-                ref.read(previousNavigationProvider.notifier).state = 7;
-                ref.read(navigationProvider.notifier).state = 6;
+                // The unit is already allotted here — project, unit and config
+                // are set just above and the wizard locks them — so open on
+                // SELECT SPACE rather than the ALLOTTED step.
+                ref.read(customViewsStepProvider.notifier).state = 1;
+
+                if (context.canPop()) {
+                  // Reached as a pushed route (from MY PROPERTIES): push the
+                  // wizard too. Switching a shell tab from here would change
+                  // the screen underneath this route and leave it on top.
+                  context.push('/custom-views');
+                } else {
+                  ref.read(previousNavigationProvider.notifier).state = 7;
+                  ref.read(navigationProvider.notifier).state = 6;
+                }
               },
               borderRadius: BorderRadius.circular(20),
               child: Container(

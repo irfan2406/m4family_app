@@ -27,10 +27,17 @@ class SideMenuButton extends StatelessWidget {
       onTap:
           onTap ??
           () {
-            final scaffold = Scaffold.maybeOf(context);
-            if (scaffold?.hasDrawer ?? false) {
-              scaffold!.openDrawer();
+            // Walk out to the first Scaffold that actually owns a drawer. A
+            // tab screen nested in a shell has a Scaffold of its own with no
+            // drawer; the shell above it holds the menu, and opening that one
+            // gives the full-height panel that draws over the nav pill —
+            // exactly what the Home tab shows.
+            ScaffoldState? scaffold = Scaffold.maybeOf(context);
+            while (scaffold != null && !scaffold.hasDrawer) {
+              scaffold = scaffold.context
+                  .findAncestorStateOfType<ScaffoldState>();
             }
+            scaffold?.openDrawer();
           },
       child: Container(
         width: 56,

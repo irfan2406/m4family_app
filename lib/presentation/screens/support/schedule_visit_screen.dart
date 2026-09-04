@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show TextInputFormatter;
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
@@ -22,15 +24,72 @@ class ScheduleVisitScreen extends ConsumerStatefulWidget {
 
 class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   final _notesController = TextEditingController();
+  // CP parity: the partner's version of this form also captures who is
+  // visiting and which of the partner's employees is handling it. Both stay
+  // hidden for a customer / investor account, whose web page does not ask.
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  bool _prefilled = false;
+  bool _isCp = false;
+  List<Map<String, dynamic>> _employees = [];
+  String? _employeeId;
+  bool _isEmployeeDropdownOpen = false;
+  String? _nameError;
+  String? _phoneError;
 
   String? _selectedProjectId;
   DateTime? _scheduledAt;
   bool _isProjectDropdownOpen = false;
   bool _isSubmitting = false;
 
+  /// Reads the signed-in account once. The role decides which version of the
+  /// form is drawn, and a logged-in partner does not retype what we know.
+  void _prefillFromAccount() {
+    if (_prefilled) return;
+    final u = ref.read(authProvider).user;
+    if (u == null) return;
+    _prefilled = true;
+    _isCp = u['role']?.toString().toLowerCase() == 'cp';
+    if (_isCp) {
+      _nameController.text = (u['fullName'] ?? u['username'] ?? '').toString();
+      _phoneController.text = (u['phone'] ?? '').toString();
+      _fetchEmployees();
+    }
+  }
+
+  /// GET /api/cp/employees is CP-scoped, so it is only called for a CP
+  /// account. A failure leaves the field empty rather than blocking booking.
+  Future<void> _fetchEmployees() async {
+    try {
+      final res = await ref.read(apiClientProvider).getCpEmployees();
+      final body = res.data;
+      if (body is Map && body['data'] is List && mounted) {
+        setState(() {
+          _employees = (body['data'] as List)
+              .whereType<Map>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList();
+        });
+      }
+    } catch (_) {
+      // Non-fatal: the field stays empty rather than blocking the booking.
+    }
+  }
+
+  String get _employeeName {
+    for (final e in _employees) {
+      if (e['_id']?.toString() == _employeeId) {
+        return (e['name'] ?? '').toString();
+      }
+    }
+    return '';
+  }
+
   @override
   void dispose() {
     _notesController.dispose();
+    _nameController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -157,8 +216,22 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   }
 
   Future<void> _submit() async {
-    // Web parity: only Property + Schedule are required; client details come
-    // from the logged-in account (web pre-fills these from the stored user).
+    // The CP form asks for the visitor's name and number, so those are checked
+    // with the same rules the app's other forms use, on the field itself.
+    if (_isCp) {
+      final nameErr = Validators.nameError(
+        _nameController.text,
+        field: 'full name',
+      );
+      final phoneErr = Validators.phoneError(_phoneController.text);
+      setState(() {
+        _nameError = nameErr;
+        _phoneError = phoneErr;
+      });
+      if (nameErr != null || phoneErr != null) return;
+    }
+    // Customer / investor: only Property + Schedule are required; their client
+    // details come from the logged-in account, as on their web page.
     if (_selectedProjectId == null || _scheduledAt == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -174,15 +247,27 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       final apiClient = ref.read(apiClientProvider);
       final authUser = ref.read(authProvider).user;
 
+      // /api/leads has no employee column, so the handler is also written
+      // into the message — that way the assignment reaches the CRM as text
+      // even if the id below is dropped by the schema.
+      final handler = _employeeName.isNotEmpty
+          ? ' Handled by: $_employeeName.'
+          : '';
       final String visitDetails =
-          "Date: ${DateFormat('yyyy-MM-dd').format(_scheduledAt!)}, Time: ${DateFormat('hh:mm a').format(_scheduledAt!)}. Notes: ${_notesController.text}";
+          "Date: ${DateFormat('yyyy-MM-dd').format(_scheduledAt!)}, Time: ${DateFormat('hh:mm a').format(_scheduledAt!)}.$handler Notes: ${_notesController.text}";
 
       final response = await apiClient.submitLead({
-        'name':
-            authUser?['fullName']?.toString() ??
-            authUser?['username']?.toString() ??
-            'App User',
-        'phone': authUser?['phone']?.toString() ?? '',
+        // Whatever the partner typed wins; the account is the fallback for the
+        // shorter customer / investor form, which has no such fields.
+        'name': _nameController.text.trim().isNotEmpty
+            ? _nameController.text.trim()
+            : (authUser?['fullName']?.toString() ??
+                  authUser?['username']?.toString() ??
+                  'App User'),
+        'phone': _phoneController.text.trim().isNotEmpty
+            ? _phoneController.text.trim()
+            : (authUser?['phone']?.toString() ?? ''),
+        if (_employeeId != null) 'employeeId': _employeeId,
         'interest': 'Site Visit',
         // Only ever send a real ObjectId (CastToObjectId/BSONError otherwise).
         if ((_selectedProjectId?.length ?? 0) == 24)
@@ -229,6 +314,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _prefillFromAccount();
     final projectsAsync = ref.watch(projectsProvider);
 
     return Scaffold(
@@ -275,7 +361,8 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         title: Column(
           children: [
             Text(
-              'SCHEDULE VISIT',
+              // The CP web page titles this SITE VISIT / PROTOCOL VERIFICATION.
+              _isCp ? 'SITE VISIT' : 'SCHEDULE VISIT',
               style: GoogleFonts.inter(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -284,7 +371,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               ),
             ),
             Text(
-              'PREMIUM PROTOCOL',
+              _isCp ? 'PROTOCOL VERIFICATION' : 'PREMIUM PROTOCOL',
               style: GoogleFonts.inter(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
@@ -342,7 +429,9 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      'NOTE: OUR RELATIONSHIP MANAGER WILL CONTACT YOU WITHIN 2 HOURS TO CONFIRM YOUR SCHEDULE.',
+                      _isCp
+                          ? 'NOTE: OUR MANAGER WILL CONTACT YOU WITHIN 2 HOURS TO CONFIRM YOUR SCHEDULE.'
+                          : 'NOTE: OUR RELATIONSHIP MANAGER WILL CONTACT YOU WITHIN 2 HOURS TO CONFIRM YOUR SCHEDULE.',
                       style: GoogleFonts.inter(
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
@@ -359,9 +448,32 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             ).animate().fadeIn().slideY(begin: -0.1),
             const SizedBox(height: 32),
 
-            // Web parity: no Name / Phone / Employee fields — the form starts
-            // at Select Property, then Schedule, then Additional Notes.
-            _buildLabel('SELECT PROPERTY'),
+            // Customer / investor start at Select Property, matching their
+            // own web page. CP gets the longer web form.
+            if (_isCp) ...[
+              _buildLabel('FULL NAME'),
+              const SizedBox(height: 12),
+              _buildTextField(
+                controller: _nameController,
+                hint: 'Enter Name',
+                icon: LucideIcons.user,
+                inputFormatters: Validators.nameFormatters,
+                errorText: _nameError,
+              ),
+              const SizedBox(height: 24),
+              _buildLabel('PHONE NUMBER'),
+              const SizedBox(height: 12),
+              _buildTextField(
+                controller: _phoneController,
+                hint: '+91 XXXXX XXXXX',
+                icon: LucideIcons.phone,
+                keyboardType: TextInputType.phone,
+                inputFormatters: Validators.phoneFormatters,
+                errorText: _phoneError,
+              ),
+              const SizedBox(height: 24),
+            ],
+            _buildLabel(_isCp ? 'SELECT PROJECT' : 'SELECT PROPERTY'),
             const SizedBox(height: 12),
             projectsAsync.when(
               data: (projects) => _buildDropdown(projects),
@@ -374,6 +486,13 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               ),
             ),
             const SizedBox(height: 24),
+
+            if (_isCp) ...[
+              _buildLabel('HANDLED BY (EMPLOYEE)'),
+              const SizedBox(height: 12),
+              _buildEmployeeDropdown(),
+              const SizedBox(height: 24),
+            ],
 
             _buildLabel('SCHEDULE'),
             const SizedBox(height: 12),
@@ -437,19 +556,23 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     IconData? icon,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
+    String? errorText,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     // Web parity: a bright "enabled-looking" card (bg-card + shadow-xl)
     // instead of a near-invisible tinted fill — InputDecoration alone can't
     // draw a drop shadow, so this wraps the field in a shadowed Container.
-    return Container(
+    final field = Container(
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
-            0.06,
-          ),
+          color: errorText != null
+              ? const Color(0xFFC65B46)
+              : (isDark ? Colors.white : const Color(0xFF0C312B)).withOpacity(
+                  0.06,
+                ),
         ),
         boxShadow: isDark
             ? null
@@ -465,6 +588,9 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         controller: controller,
         maxLines: maxLines,
         keyboardType: keyboardType,
+        // Type-blocking, as on the app's other forms: letters only in a name,
+        // digits only in a number.
+        inputFormatters: inputFormatters,
         style: GoogleFonts.inter(
           color: isDark ? Colors.white : const Color(0xFF155A4F),
           fontSize: 15,
@@ -502,6 +628,153 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         ),
       ),
     ).animate().fadeIn(delay: 100.ms);
+
+    if (errorText == null) return field;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        field,
+        Padding(
+          padding: const EdgeInsets.only(top: 8, left: 4),
+          child: Text(
+            errorText,
+            style: GoogleFonts.inter(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFFC65B46),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// HANDLED BY (EMPLOYEE). Same expanding panel as the project select, so the
+  /// two read as one form rather than two different controls.
+  Widget _buildEmployeeDropdown() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color ink = isDark ? Colors.white : const Color(0xFF0C312B);
+    final selectedName = _employeeName;
+
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: _employees.isEmpty
+              ? null
+              : () => setState(
+                  () => _isEmployeeDropdownOpen = !_isEmployeeDropdownOpen,
+                ),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: _isEmployeeDropdownOpen
+                    ? ink.withOpacity(0.2)
+                    : ink.withOpacity(0.06),
+              ),
+              boxShadow: isDark
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.06),
+                        blurRadius: 24,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    selectedName.isNotEmpty
+                        ? selectedName.toUpperCase()
+                        : (_employees.isEmpty
+                              ? 'NO EMPLOYEES ADDED'
+                              : 'SELECT EMPLOYEE'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      color: selectedName.isNotEmpty
+                          ? ink
+                          : ink.withOpacity(0.68),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+                Icon(
+                  _isEmployeeDropdownOpen
+                      ? LucideIcons.chevronUp
+                      : LucideIcons.chevronDown,
+                  color: ink.withOpacity(0.6),
+                  size: 18,
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (_isEmployeeDropdownOpen && _employees.isNotEmpty)
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: isDark
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+              border: Border.all(color: ink.withOpacity(0.05)),
+            ),
+            child: Column(
+              children: _employees.map((emp) {
+                final isSelected = _employeeId == emp['_id']?.toString();
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      _employeeId = emp['_id']?.toString();
+                      _isEmployeeDropdownOpen = false;
+                    });
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? ink.withOpacity(0.05)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      (emp['name'] ?? '').toString().toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        color: isDark && !isSelected ? Colors.white70 : ink,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ).animate().fadeIn(duration: 200.ms).slideY(begin: -0.05, end: 0),
+      ],
+    );
   }
 
   // Web parity: SelectItem renders `{proj.title} - {proj.location.name}`.
@@ -549,18 +822,24 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  selectedProject != null
-                      ? _projectLabel(selectedProject)
-                      : 'CHOOSE PROPERTY',
-                  style: GoogleFonts.inter(
-                    color: selectedProject != null
-                        ? (isDark ? Colors.white : const Color(0xFF0C312B))
-                        : (isDark ? Colors.white : const Color(0xFF0C312B))
-                              .withOpacity(0.68),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1,
+                // Flexed: a long project name, or a larger system font, used
+                // to push the chevron off the right edge.
+                Expanded(
+                  child: Text(
+                    selectedProject != null
+                        ? _projectLabel(selectedProject)
+                        : (_isCp ? 'CHOOSE PROJECT' : 'CHOOSE PROPERTY'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      color: selectedProject != null
+                          ? (isDark ? Colors.white : const Color(0xFF0C312B))
+                          : (isDark ? Colors.white : const Color(0xFF0C312B))
+                                .withOpacity(0.68),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1,
+                    ),
                   ),
                 ),
                 Icon(
@@ -736,13 +1015,18 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'SECURE BOOKING',
-                    style: GoogleFonts.gelasio(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                      letterSpacing: 2,
+                  Flexible(
+                    child: Text(
+                      'SECURE BOOKING',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.gelasio(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                        letterSpacing: 2,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),

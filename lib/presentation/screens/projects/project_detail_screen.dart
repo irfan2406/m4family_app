@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -19,6 +21,7 @@ import 'dart:math' as math;
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:m4_mobile/presentation/screens/booking/booking_start_screen.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
@@ -113,6 +116,123 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  /// URLs currently downloading, so a second tap on the same card is
+  /// ignored rather than starting the fetch again.
+  final Set<String> _downloading = <String>{};
+
+  /// Android's DownloadManager, bridged in MainActivity.kt.
+  static const MethodChannel _downloadChannel = MethodChannel('m4/download');
+
+  /// Saves the file to the device rather than opening it in a browser.
+  ///
+  /// On Android the URL goes to the system DownloadManager: the file lands in
+  /// the phone's own Downloads folder and Android shows its progress and
+  /// completion notification, so the app adds no toast of its own. Only a
+  /// failure to start one is worth saying, since nothing else would.
+  Future<void> _downloadAsset(String? rawUrl, String title) async {
+    final raw = rawUrl?.trim() ?? '';
+    if (raw.isEmpty) {
+      _showMessage('That file is not available yet.');
+      return;
+    }
+
+    final apiClient = ref.read(apiClientProvider);
+    final url = apiClient.resolveUrl(raw);
+    if (_downloading.contains(url)) return;
+    _downloading.add(url);
+
+    if (Platform.isAndroid) {
+      try {
+        await _downloadChannel.invokeMethod<Object?>('enqueue', {
+          'url': url,
+          'fileName': _downloadFileName(url, title),
+          'title': title,
+        });
+      } catch (e) {
+        debugPrint('Download enqueue failed: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text('Could not start the download for $title.'),
+                backgroundColor: const Color(0xFFC65B46),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+        }
+      } finally {
+        _downloading.remove(url);
+      }
+      return;
+    }
+
+    // iOS and anything else: no public Downloads folder, so keep the file in
+    // the app's own storage and offer to hand it on.
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text('Downloading $title…'),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 30),
+      ),
+    );
+
+    try {
+      final base = Platform.isAndroid
+          ? (await getExternalStorageDirectory() ??
+                await getApplicationDocumentsDirectory())
+          : await getApplicationDocumentsDirectory();
+      final dir = Directory('${base.path}/M4 Family');
+      if (!await dir.exists()) await dir.create(recursive: true);
+
+      final name = _downloadFileName(url, title);
+      final file = File('${dir.path}/$name');
+      await apiClient.dio.download(url, file.path);
+
+      if (!mounted) return;
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Saved $name'),
+          backgroundColor: const Color(0xFF163A2C),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 6),
+          action: SnackBarAction(
+            label: 'OPEN',
+            textColor: const Color(0xFFF4EFE3),
+            onPressed: () =>
+                Share.shareXFiles([XFile(file.path)], subject: title),
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            friendlyApiError(e, fallback: 'Could not download $title.'),
+          ),
+          backgroundColor: const Color(0xFFC65B46),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } finally {
+      _downloading.remove(url);
+    }
+  }
+
+  /// A readable filename: the card's own title plus the URL's extension.
+  String _downloadFileName(String url, String title) {
+    final path = Uri.tryParse(url)?.path ?? url;
+    final ext = path.contains('.') ? path.split('.').last : '';
+    final safe = title.trim().replaceAll(RegExp(r'[^A-Za-z0-9 _-]'), '').trim();
+    final base = safe.isEmpty ? 'M4-Document' : safe;
+    return (ext.isEmpty || ext.length > 5) ? base : '$base.$ext';
   }
 
   void _launchAction(String message, [String? url]) async {
@@ -1047,107 +1167,17 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   Future<DateTime?> _pickInquiryDateTime() async {
     final now = DateTime.now();
-    DateTime temp = _inquiryDateTime ?? now.add(const Duration(minutes: 30));
-    if (temp.isBefore(now)) temp = now.add(const Duration(minutes: 30));
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    // Web parity: an absolute Day/Month/Year + time wheel picker, shown
-    // centered on screen (not the Material calendar dialog).
-    return showDialog<DateTime>(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.55),
-      builder: (dCtx) => Dialog(
-        backgroundColor: isDark
-            ? const Color(0xFF141B3A)
-            : const Color(0xFFF4EFE3),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'SELECT DATE & TIME',
-                  style: GoogleFonts.inter(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                    color: isDark ? Colors.white : const Color(0xFF155A4F),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              WheelDateTimePicker(
-                initial: temp,
-                minDate: now,
-                isDark: isDark,
-                onChanged: (dt) => temp = dt,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(dCtx),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(52),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        side: BorderSide(
-                          color:
-                              (isDark ? Colors.white : const Color(0xFF0C312B))
-                                  .withOpacity(0.2),
-                        ),
-                        foregroundColor: isDark
-                            ? Colors.white
-                            : const Color(0xFF0C312B),
-                      ),
-                      child: Text(
-                        'CANCEL',
-                        style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: () => Navigator.pop(dCtx, temp),
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size.fromHeight(52),
-                        backgroundColor: isDark
-                            ? Colors.white
-                            : const Color(0xFF0C312B),
-                        foregroundColor: isDark
-                            ? Colors.black
-                            : const Color(0xFFF4EFE3),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: Text(
-                        'CONFIRM',
-                        style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    // The one M4 chooser, same bottom sheet as every other date field in the
+    // app. This screen used to open its own centred dialog — same wheels, but
+    // a card in the middle of the screen instead of the sheet.
+    //
+    // Tomorrow onwards, matching the other booking sheets: flooring at `now`
+    // kept today selectable and the unfiltered hour wheel then displayed
+    // slots that had already passed.
+    final minSchedule = DateTime(now.year, now.month, now.day + 1);
+    var temp = _inquiryDateTime ?? now.add(const Duration(days: 1));
+    if (temp.isBefore(minSchedule)) temp = now.add(const Duration(days: 1));
+    return showM4DateTimeSheet(context, initial: temp, minDate: minSchedule);
   }
 
   String _formatInquiryDateTime(DateTime dt) {
@@ -1261,145 +1291,203 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       initialPage: initialIndex,
     );
 
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'Lightbox',
-      barrierColor: Colors.black.withOpacity(0.9),
-      transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (context, anim1, anim2) {
-        return Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Stack(
-            fit: StackFit.expand,
-            children: [
-              PageView.builder(
-                controller: pageController,
-                itemCount: urls.length,
-                itemBuilder: (context, index) {
-                  return Center(
-                    child: InteractiveViewer(
-                      child: Image.network(
-                        urls[index],
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(
-                              LucideIcons.image,
-                              color: Colors.white24,
-                              size: 50,
+    // /uploads serves the original files, several MB each, so fetching one
+    // only when the swipe lands on it left a long stall between pictures.
+    // Keep a window either side of the current page downloaded in advance —
+    // starting the moment the viewer opens, not on the first page change.
+    // Fetch the gallery in order, one file at a time, starting from wherever
+    // it opens and wrapping around. Sequential on purpose: parallel fetches of
+    // 6-16MB originals starve the picture the user is looking at. A new call
+    // supersedes the previous walk, so jumping ahead re-aims the queue.
+    var warmToken = 0;
+    Future<void> warmFrom(int start) async {
+      final token = ++warmToken;
+      for (var step = 0; step < urls.length; step++) {
+        if (token != warmToken || !mounted) return;
+        final j = (start + step) % urls.length;
+        try {
+          await precacheImage(CachedNetworkImageProvider(urls[j]), context);
+        } catch (_) {
+          // One unreachable file must not stop the rest of the gallery.
+        }
+      }
+    }
+
+    // Room to keep the gallery resident while it is open, handed back on the
+    // way out so the rest of the app keeps its normal budget.
+    final imageCache = PaintingBinding.instance.imageCache;
+    final previousCacheBytes = imageCache.maximumSizeBytes;
+    final previousCacheCount = imageCache.maximumSize;
+    imageCache.maximumSizeBytes = 256 << 20;
+    imageCache.maximumSize = 200;
+
+    warmFrom(initialIndex);
+
+    // A route of its own rather than a dialog laid over the detail page:
+    // the gallery gets the back gesture and its own entry in the stack, which
+    // is what "opens in a separate page" means here.
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) {
+              return Scaffold(
+                backgroundColor: Colors.black,
+                body: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    PageView.builder(
+                      controller: pageController,
+                      itemCount: urls.length,
+                      onPageChanged: warmFrom,
+                      itemBuilder: (context, index) {
+                        return Center(
+                          child: InteractiveViewer(
+                            // Cached, so a second visit is instant instead of
+                            // re-fetching the full-size file from /uploads every
+                            // time the gallery is opened.
+                            child: CachedNetworkImage(
+                              imageUrl: urls[index],
+                              fit: BoxFit.contain,
+                              // The catalog holds 6000px originals; decoding one
+                              // at full size costs hundreds of milliseconds and
+                              // ~90MB of heap. 1600 is still sharper than the
+                              // screen and leaves room to pinch-zoom.
+                              memCacheWidth: 1600,
+                              fadeInDuration: const Duration(milliseconds: 120),
+                              placeholder: (context, url) => const SizedBox(
+                                width: 34,
+                                height: 34,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white24,
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => const Icon(
+                                LucideIcons.image,
+                                color: Colors.white24,
+                                size: 50,
+                              ),
                             ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-              Positioned(
-                left: 10,
-                top: 0,
-                bottom: 0,
-                child: Center(
-                  child: IconButton(
-                    icon: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                        color: Colors.black26,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        LucideIcons.chevronLeft,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                    onPressed: () => pageController.previousPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 10,
-                top: 0,
-                bottom: 0,
-                child: Center(
-                  child: IconButton(
-                    icon: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                        color: Colors.black26,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        LucideIcons.chevronRight,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                    onPressed: () => pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: MediaQuery.of(context).padding.top + 20,
-                right: 20,
-                child: IconButton(
-                  icon: const Icon(LucideIcons.x, color: Colors.white),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-              if (urls.length > 1)
-                Positioned(
-                  bottom: 40,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black54,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: ListenableBuilder(
-                        listenable: pageController,
-                        builder: (context, child) {
-                          final current =
-                              (pageController.hasClients
-                                  ? pageController.page?.round() ?? initialIndex
-                                  : initialIndex) +
-                              1;
-                          return Text(
-                            '$current / ${urls.length}',
-                            style: GoogleFonts.inter(
+                    Positioned(
+                      left: 10,
+                      top: 0,
+                      bottom: 0,
+                      child: Center(
+                        child: IconButton(
+                          icon: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              color: Colors.black26,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              LucideIcons.chevronLeft,
                               color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                              size: 24,
                             ),
-                          );
-                        },
+                          ),
+                          onPressed: () => pageController.previousPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    Positioned(
+                      right: 10,
+                      top: 0,
+                      bottom: 0,
+                      child: Center(
+                        child: IconButton(
+                          icon: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              color: Colors.black26,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              LucideIcons.chevronRight,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                          onPressed: () => pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: MediaQuery.of(context).padding.top + 20,
+                      right: 20,
+                      child: IconButton(
+                        icon: const Icon(LucideIcons.x, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    if (urls.length > 1)
+                      Positioned(
+                        bottom: 40,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black54,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: ListenableBuilder(
+                              listenable: pageController,
+                              builder: (context, child) {
+                                final current =
+                                    (pageController.hasClients
+                                        ? pageController.page?.round() ??
+                                              initialIndex
+                                        : initialIndex) +
+                                    1;
+                                return Text(
+                                  '$current / ${urls.length}',
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (type == 'VIDEO')
+                      const Center(
+                        child: Icon(
+                          LucideIcons.playCircle,
+                          color: Colors.white,
+                          size: 60,
+                        ),
+                      ),
+                  ],
                 ),
-              if (type == 'VIDEO')
-                const Center(
-                  child: Icon(
-                    LucideIcons.playCircle,
-                    color: Colors.white,
-                    size: 60,
-                  ),
-                ),
-            ],
+              );
+            },
           ),
-        );
-      },
-    );
+        )
+        .then((_) {
+          // Leaving the gallery: stop the background walk and hand the image
+          // cache budget back to the rest of the app.
+          warmToken++;
+          imageCache.maximumSizeBytes = previousCacheBytes;
+          imageCache.maximumSize = previousCacheCount;
+        });
   }
 
   @override
@@ -1670,6 +1758,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     );
   }
 
+  /// Guards the one-time gallery warm-up in [_buildMediaQuickActions].
+  bool _galleryWarmed = false;
+
   Widget _buildMediaQuickActions(dynamic project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
     // A photo tile is rendered only when the catalog actually holds images
@@ -1684,6 +1775,25 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     final interiorImages = project?['interiorImages'] as List?;
     final hasExterior = exteriorImages != null && exteriorImages.isNotEmpty;
     final hasInterior = interiorImages != null && interiorImages.isNotEmpty;
+
+    // Decode the first picture of each gallery while the user is still
+    // reading the page, so opening one is instant rather than a spinner. The
+    // tiles already fetch these exact URLs, so this only pays for the
+    // full-size decode, and it runs once per screen.
+    if (!_galleryWarmed) {
+      _galleryWarmed = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        for (final first in [
+          if (hasExterior) exteriorImages[0],
+          if (hasInterior) interiorImages[0],
+        ]) {
+          final url = apiClient.resolveUrl(first.toString());
+          if (url.isEmpty) continue;
+          precacheImage(CachedNetworkImageProvider(url), context);
+        }
+      });
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -1769,13 +1879,18 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           ),
         ),
         const SizedBox(height: 32),
-        _MultimediaAssetCard(
-          title: 'PROJECT FLYER',
-          subtitle: 'HIGH RES • PDF',
-          icon: LucideIcons.fileText,
-          onView: () => _launchAction('Opening...', project?['flyer']),
-          onDownload: () => _launchAction('Downloading...', project?['flyer']),
-        ),
+        // Only when the project actually carries one. Clédor's `flyer` is
+        // null, and the card was still drawn with VIEW / DOWNLOAD buttons that
+        // had nothing to open.
+        if (project?['flyer']?.toString().trim().isNotEmpty ?? false)
+          _MultimediaAssetCard(
+            title: 'PROJECT FLYER',
+            subtitle: 'HIGH RES • PDF',
+            icon: LucideIcons.fileText,
+            onView: () => _launchAction('Opening...', project?['flyer']),
+            onDownload: () =>
+                _downloadAsset(project?['flyer']?.toString(), 'PROJECT FLYER'),
+          ),
         // Web parity: E-BROCHURE shows only when the project actually has a
         // brochure (Cledor Mazgaon has one; Cledor Mumbai does not).
         if (project?['brochure']?.toString().trim().isNotEmpty ?? false) ...[
@@ -1786,42 +1901,66 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             icon: LucideIcons.layers,
             onView: () => _launchAction('Opening...', project?['brochure']),
             onDownload: () =>
-                _launchAction('Downloading...', project?['brochure']),
+                _downloadAsset(project?['brochure']?.toString(), 'E-BROCHURE'),
           ),
         ],
         const SizedBox(height: 12),
         // Web parity: floor plans appear here as resource cards
         // (e.g. "2BHK, MASTER BEDROOM" — CONFIGURATION N/A • AREA N/A).
-        ...(((project?['plans'] as List?) ?? []).map((plan) {
-          final cfg = plan is Map ? plan['config']?.toString() : null;
-          final area = plan is Map ? plan['area']?.toString() : null;
-          final planImg = plan is Map ? plan['image']?.toString() : null;
-          final planTitle = (plan is Map ? plan['title']?.toString() : null);
-          return Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: _MultimediaAssetCard(
-              title: (planTitle == null || planTitle.isEmpty)
+        ...(((project?['plans'] as List?) ?? [])
+            .where((plan) {
+              // A plan with neither a file nor a name is an empty admin row.
+              final img = plan is Map ? plan['image']?.toString().trim() : null;
+              final t = plan is Map ? plan['title']?.toString().trim() : null;
+              return (img != null && img.isNotEmpty) ||
+                  (t != null && t.isNotEmpty);
+            })
+            .map((plan) {
+              final cfg = plan is Map
+                  ? plan['config']?.toString().trim()
+                  : null;
+              final area = plan is Map ? plan['area']?.toString().trim() : null;
+              final planImg = plan is Map ? plan['image']?.toString() : null;
+              final planTitle = (plan is Map
+                  ? plan['title']?.toString().trim()
+                  : null);
+              // Say only what the record holds. Clédor's plans have no config and
+              // no area, and the card used to fill both gaps with "N/A"; now it
+              // falls back to the file's own type.
+              final parts = <String>[
+                if (cfg != null && cfg.isNotEmpty) cfg,
+                if (area != null && area.isNotEmpty) area,
+              ];
+              final ext = (planImg ?? '').split('.').last.toUpperCase();
+              final subtitle = parts.isNotEmpty
+                  ? parts.join(' • ')
+                  : (ext.isNotEmpty && ext.length <= 4 ? ext : 'FLOOR PLAN');
+              final cardTitle = (planTitle == null || planTitle.isEmpty)
                   ? 'FLOOR PLAN'
-                  : planTitle,
-              subtitle:
-                  '${(cfg == null || cfg.isEmpty) ? 'CONFIGURATION N/A' : cfg}'
-                  ' • '
-                  '${(area == null || area.isEmpty) ? 'AREA N/A' : area}',
-              icon: LucideIcons.layoutGrid,
-              onView: () => _launchAction('Opening plan...', planImg),
-              onDownload: () => _launchAction('Downloading plan...', planImg),
-            ),
-          );
-        })),
-        const SizedBox(height: 12),
-        _MultimediaAssetCard(
-          title: 'WALKTHROUGH',
-          subtitle: 'CINEMATIC TOUR • 4K',
-          icon: LucideIcons.video,
-          isPrimary: true,
-          onView: () =>
-              _launchAction('Watching Story...', project?['walkthrough']),
-        ),
+                  : planTitle;
+              return Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: _MultimediaAssetCard(
+                  title: cardTitle,
+                  subtitle: subtitle,
+                  icon: LucideIcons.layoutGrid,
+                  onView: () => _launchAction('Opening plan...', planImg),
+                  onDownload: () => _downloadAsset(planImg, cardTitle),
+                ),
+              );
+            })),
+        // Same rule: Clédor has no walkthrough, so the card is not drawn.
+        if (project?['walkthrough']?.toString().trim().isNotEmpty ?? false) ...[
+          const SizedBox(height: 12),
+          _MultimediaAssetCard(
+            title: 'WALKTHROUGH',
+            subtitle: 'CINEMATIC TOUR • 4K',
+            icon: LucideIcons.video,
+            isPrimary: true,
+            onView: () =>
+                _launchAction('Watching Story...', project?['walkthrough']),
+          ),
+        ],
       ],
     );
   }
@@ -3701,22 +3840,29 @@ class _HeroMediaThumb extends StatelessWidget {
     return _ScaleButton(
       onTap: onTap,
       child: Container(
-        width: 68,
-        height: 68,
+        width: 66,
+        height: 66,
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFEDE5D6),
+          // Same tile as the CP project detail: 66 square at radius 18, and no
+          // border on the photos — a 1.5px ring insets the child and leaves a
+          // strip down all four sides instead of the picture filling the tile.
+          // The 360 tile keeps its outline: it is cream-on-cream and would
+          // vanish without one.
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withOpacity(0.1)
-                : Colors.black.withOpacity(0.08),
-            width: 1.5,
-          ),
+          border: isVR
+              ? Border.all(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.1)
+                      : Colors.black.withOpacity(0.08),
+                  width: 1.5,
+                )
+              : null,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(0.35),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
@@ -3757,7 +3903,15 @@ class _HeroMediaThumb extends StatelessWidget {
                 ),
               )
             else if (imageUrl != null)
-              _ProjectImage(url: imageUrl!, isDark: isDark, memCacheWidth: 900),
+              _ProjectImage(
+                url: imageUrl!,
+                isDark: isDark,
+                // The tile is 66dp: decode to that, in device pixels. It was
+                // decoding these multi-MB originals to 900px wide to paint a
+                // thumbnail, which is what made the row slow to appear.
+                memCacheWidth: (66 * MediaQuery.of(context).devicePixelRatio)
+                    .round(),
+              ),
 
             if (!isVR) ...[
               // Gradient Overlay for text readability
@@ -4385,30 +4539,35 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'PHASE TRACKING',
-                    style: GoogleFonts.gelasio(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : const Color(0xFF0C312B),
-                      letterSpacing: 4,
+              // The title column takes the room it needs and the badge keeps the
+              // rest; without a flex here a longer title (or a phone with the
+              // system font turned up) pushed the badge off the right edge.
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'PHASE TRACKING',
+                      style: GoogleFonts.gelasio(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
+                        letterSpacing: 4,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'REAL-TIME DEVELOPMENT STATUS',
-                    style: GoogleFonts.gelasio(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w700,
-                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                          .withOpacity(0.5),
-                      letterSpacing: 1.5,
+                    const SizedBox(height: 4),
+                    Text(
+                      'REAL-TIME DEVELOPMENT STATUS',
+                      style: GoogleFonts.gelasio(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w700,
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                            .withOpacity(0.5),
+                        letterSpacing: 1.5,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(

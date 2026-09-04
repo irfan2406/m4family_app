@@ -670,6 +670,85 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     );
   }
 
+  /// The rows behind whichever tab is selected. Was inlined twice in the
+  /// list below — once for the count, once for the item — which is what let
+  /// an empty list fall through to a blank strip unnoticed.
+  List<dynamic> get _activeTabItems => _activeTab == 'Communities'
+      ? _communities
+      : (_activeTab == 'Media' ? _media : _projects);
+
+  /// Drawn in place of the card strip when the active tab has no rows. The
+  /// backend returning an empty list is a normal state, not a failure, so it
+  /// says so in the page's own palette rather than leaving dead space.
+  Widget _buildTabEmpty(bool isDark) {
+    final Color ink = isDark
+        ? const Color(0xFFF4EFE3)
+        : const Color(0xFF0C312B);
+
+    final (IconData icon, String title, String line) = switch (_activeTab) {
+      'Communities' => (
+        LucideIcons.mapPin,
+        'NO COMMUNITIES YET',
+        'Communities will appear here once they are published.',
+      ),
+      'Media' => (
+        LucideIcons.image,
+        'NO MEDIA YET',
+        'Films and renders will appear here once they are published.',
+      ),
+      _ => (
+        LucideIcons.layoutGrid,
+        'NO PROPERTIES YET',
+        'Properties will appear here once they are published.',
+      ),
+    };
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 44),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 86,
+            height: 86,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: ink.withValues(alpha: 0.05),
+              shape: BoxShape.circle,
+              border: Border.all(color: ink.withValues(alpha: 0.08)),
+            ),
+            child: Icon(icon, size: 30, color: ink.withValues(alpha: 0.35)),
+          ),
+          const SizedBox(height: 26),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.gelasio(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 2,
+              color: ink.withValues(alpha: 0.85),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            line,
+            textAlign: TextAlign.center,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: ink.withValues(alpha: 0.5),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTabsSection() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
@@ -735,22 +814,19 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           ],
         ),
         const SizedBox(height: 32),
-        SizedBox(
-          height: 360,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            itemCount: _activeTab == 'Communities'
-                ? _communities.length
-                : (_activeTab == 'Media' ? _media.length : _projects.length),
-            itemBuilder: (context, index) {
-              final item = _activeTab == 'Communities'
-                  ? _communities[index]
-                  : (_activeTab == 'Media' ? _media[index] : _projects[index]);
-              return _buildTabCard(item);
-            },
+        if (_activeTabItems.isEmpty)
+          _buildTabEmpty(isDark)
+        else
+          SizedBox(
+            height: 360,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              itemCount: _activeTabItems.length,
+              itemBuilder: (context, index) =>
+                  _buildTabCard(_activeTabItems[index]),
+            ),
           ),
-        ),
       ],
     );
   }
@@ -926,17 +1002,25 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          isCommunity
-                              ? 'EXPLORE COMMUNITY'
-                              : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
-                          style: GoogleFonts.inter(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 1.2,
+                        // The label takes the room left over and the
+                        // arrow keeps its circle; without a flex the pair was
+                        // wider than the card on a 361dp screen.
+                        Expanded(
+                          child: Text(
+                            isCommunity
+                                ? 'EXPLORE COMMUNITY'
+                                : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: 1.2,
+                            ),
                           ),
                         ),
+                        const SizedBox(width: 8),
                         Container(
                           width: 44,
                           height: 44,
@@ -1489,48 +1573,59 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              mainAxisSpacing: 1,
-              crossAxisSpacing: 1,
-              childAspectRatio: 0.95,
-              children: [
-                _buildConnectItem(
-                  LucideIcons.building2,
-                  'EXPLORE PROJECTS',
-                  'Browse our portfolio of properties',
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      // Green showcase, same as the Properties tab in the shell.
-                      builder: (context) => Theme(
-                        data: M4Theme.darkTheme,
-                        child: const ProjectListScreen(cpCatalogMode: true),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // A cell has to hold the 48px icon, a two-line title and a
+                // two-line description: about 178px once the 20px padding on
+                // each side is counted. Below that the ratio would make it
+                // shorter than its own content.
+                final cellWidth = (constraints.maxWidth - 1) / 2;
+                final designHeight = cellWidth / 0.95;
+                final cellHeight = designHeight < 178 ? 178.0 : designHeight;
+                return GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 1,
+                  crossAxisSpacing: 1,
+                  childAspectRatio: cellWidth / cellHeight,
+                  children: [
+                    _buildConnectItem(
+                      LucideIcons.building2,
+                      'EXPLORE PROJECTS',
+                      'Browse our portfolio of properties',
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          // Green showcase, same as the Properties tab in the shell.
+                          builder: (context) => Theme(
+                            data: M4Theme.darkTheme,
+                            child: const ProjectListScreen(cpCatalogMode: true),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                _buildConnectItem(
-                  LucideIcons.calendarDays,
-                  'BOOK A VIEWING',
-                  'Schedule a visit to our show apartment',
-                  _scrollToInterestForm,
-                ),
-                _buildConnectItem(
-                  LucideIcons.image,
-                  'MEDIA GALLERY',
-                  'Watch films and view property renders',
-                  () => context.push('/cp/media'),
-                ),
-                _buildConnectItem(
-                  LucideIcons.user,
-                  'REGISTER INTEREST',
-                  'Register your interest in our properties',
-                  _scrollToInterestForm,
-                ),
-              ],
+                    _buildConnectItem(
+                      LucideIcons.calendarDays,
+                      'BOOK A VIEWING',
+                      'Schedule a visit to our show apartment',
+                      _scrollToInterestForm,
+                    ),
+                    _buildConnectItem(
+                      LucideIcons.image,
+                      'MEDIA GALLERY',
+                      'Watch films and view property renders',
+                      () => context.push('/cp/media'),
+                    ),
+                    _buildConnectItem(
+                      LucideIcons.user,
+                      'REGISTER INTEREST',
+                      'Register your interest in our properties',
+                      _scrollToInterestForm,
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -1570,10 +1665,14 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 size: 20,
               ),
             ),
+            // Every cell in the grid gets the same height, so the text has to
+            // give way on a narrow screen rather than run past the bottom.
             const SizedBox(height: 16),
             Text(
               title,
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.inter(
                 color: isDark ? Colors.white : const Color(0xFF155A4F),
                 fontWeight: FontWeight.w600,
@@ -1582,15 +1681,21 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               ),
             ),
             const SizedBox(height: 6),
-            Text(
-              desc,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                    .withValues(alpha: 0.68),
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                height: 1.4,
+            Flexible(
+              child: Text(
+                desc,
+                textAlign: TextAlign.center,
+                // Two lines, as designed. Without an explicit maxLines the
+                // ellipsis collapses it to one even when there is room.
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.inter(
+                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                      .withValues(alpha: 0.68),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  height: 1.4,
+                ),
               ),
             ),
           ],

@@ -18,6 +18,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final navigationProvider = StateProvider<int>((ref) => 0);
 final previousNavigationProvider = StateProvider<int>((ref) => 0);
+
+/// Where the system back button lands from tab [current].
+///
+/// Tabs 0-3 are the bottom bar, and back from those goes Home as it always
+/// has. Tabs 4 and up are opened from the sidebar or a profile tile, so they
+/// return to whatever opened them — [previous], recorded by the opener — and
+/// only fall back to Home when that is missing or nonsensical. Sending those
+/// to Home unconditionally is what made MY CUSTOM VIEWS, opened from the
+/// profile, drop the user on the dashboard.
+int backTargetIndex({
+  required int current,
+  required int previous,
+  required int tabCount,
+}) {
+  if (current == 0) return 0;
+  if (current >= 4 &&
+      previous != current &&
+      previous >= 0 &&
+      previous < tabCount) {
+    return previous;
+  }
+  return 0;
+}
+
 final inquiryScrollTriggerProvider = StateProvider<int>((ref) => 0);
 final contentHubTypeProvider = StateProvider<String>((ref) => 'media');
 
@@ -63,9 +87,12 @@ class _MainShellState extends ConsumerState<MainShell> {
       canPop: currentIndex == 0,
       onPopInvoked: (didPop) {
         if (didPop) return;
-        if (currentIndex != 0) {
-          ref.read(navigationProvider.notifier).state = 0;
-        }
+        if (currentIndex == 0) return;
+        ref.read(navigationProvider.notifier).state = backTargetIndex(
+          current: currentIndex,
+          previous: ref.read(previousNavigationProvider),
+          tabCount: _screens.length,
+        );
       },
       child: Scaffold(
         extendBody: true,

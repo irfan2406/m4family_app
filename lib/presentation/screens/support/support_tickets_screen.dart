@@ -260,12 +260,16 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'FILTER LOGS',
-                    style: GoogleFonts.gelasio(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: ink,
+                  Flexible(
+                    child: Text(
+                      'FILTER LOGS',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.gelasio(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: ink,
+                      ),
                     ),
                   ),
                   GestureDetector(
@@ -320,6 +324,10 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       ),
                       child: Text(
                         t.toUpperCase(),
+                        // The grid fixes each cell at width / 2.6, so a label
+                        // that wraps would run past the bottom.
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -402,18 +410,26 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               ),
             ),
           ),
-          Column(
-            children: [
-              Text(
-                'OPERATIONAL LOGS',
-                style: GoogleFonts.gelasio(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: scheme.onSurface,
-                  letterSpacing: 1.5,
+          // The title had no flex between the back button and the balancing
+          // spacer, so at a larger system font it ran past them. It still
+          // sits centred; it just gives way now instead of overflowing.
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  'OPERATIONAL LOGS',
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: scheme.onSurface,
+                    letterSpacing: 1.5,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(width: 48), // Spacer for balance
         ],
@@ -521,37 +537,45 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
       padding: const EdgeInsets.fromLTRB(24, 4, 24, 4),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: scheme.onSurface.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(99),
-              border: Border.all(
-                color: scheme.outlineVariant.withValues(alpha: 0.3),
+          // The chip carries a server-supplied type name, so it shrinks rather
+          // than running past the row.
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: scheme.onSurface.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(99),
+                border: Border.all(
+                  color: scheme.outlineVariant.withValues(alpha: 0.3),
+                ),
               ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'TYPE: ${_selectedType!.toUpperCase()}',
-                  style: GoogleFonts.inter(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w600,
-                    color: scheme.onSurface,
-                    letterSpacing: 1,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      'TYPE: ${_selectedType!.toUpperCase()}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w600,
+                        color: scheme.onSurface,
+                        letterSpacing: 1,
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: () => setState(() => _selectedType = null),
-                  child: Icon(
-                    LucideIcons.x,
-                    size: 11,
-                    color: scheme.onSurface.withValues(alpha: 0.6),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () => setState(() => _selectedType = null),
+                    child: Icon(
+                      LucideIcons.x,
+                      size: 11,
+                      color: scheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -681,47 +705,62 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                 Expanded(
                   child: Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: scheme.onSurface.withValues(alpha: 0.04),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(
-                            color: scheme.outlineVariant.withValues(alpha: 0.3),
+                      // The two badges had no flex, so a long id or type ran
+                      // them past the row: 53px over at the design text size,
+                      // 108px at 1.3x. They give way now instead.
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
                           ),
-                        ),
-                        child: Text(
-                          log['id'] as String,
-                          style: GoogleFonts.inter(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w500,
-                            color: scheme.onSurface.withValues(alpha: 0.68),
-                            letterSpacing: 1,
+                          decoration: BoxDecoration(
+                            color: scheme.onSurface.withValues(alpha: 0.04),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: scheme.outlineVariant.withValues(
+                                alpha: 0.3,
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            log['id'] as String,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w500,
+                              color: scheme.onSurface.withValues(alpha: 0.68),
+                              letterSpacing: 1,
+                            ),
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(
-                            color: scheme.outlineVariant.withValues(alpha: 0.4),
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
                           ),
-                        ),
-                        child: Text(
-                          (log['type'] as String).toUpperCase(),
-                          style: GoogleFonts.inter(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w500,
-                            color: scheme.onSurface.withValues(alpha: 0.68),
-                            letterSpacing: 1,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: scheme.outlineVariant.withValues(
+                                alpha: 0.4,
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            (log['type'] as String).toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w500,
+                              color: scheme.onSurface.withValues(alpha: 0.68),
+                              letterSpacing: 1,
+                            ),
                           ),
                         ),
                       ),
@@ -729,22 +768,28 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    (log['status'] as String).toUpperCase(),
-                    style: GoogleFonts.inter(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w600,
-                      color: statusColor,
-                      letterSpacing: 1,
+                // The status comes from the server, so its length is not ours
+                // to assume; let the badge shrink rather than push the row.
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: statusColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      (log['status'] as String).toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w600,
+                        color: statusColor,
+                        letterSpacing: 1,
+                      ),
                     ),
                   ),
                 ),
@@ -785,34 +830,49 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      LucideIcons.clock,
-                      size: 12,
-                      color: scheme.onSurface.withValues(alpha: 0.4),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      (log['date'] as String).toUpperCase(),
-                      style: GoogleFonts.inter(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w600,
-                        color: scheme.onSurface.withValues(alpha: 0.68),
-                        letterSpacing: 1,
+                // Date on the left, action on the right: neither had a flex,
+                // so together they outgrew the card at a larger font.
+                Flexible(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        LucideIcons.clock,
+                        size: 12,
+                        color: scheme.onSurface.withValues(alpha: 0.4),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          (log['date'] as String).toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: scheme.onSurface.withValues(alpha: 0.68),
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      'VIEW DETAILS',
-                      style: GoogleFonts.inter(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w600,
-                        color: scheme.onSurface.withValues(alpha: 0.68),
-                        letterSpacing: 1,
+                    Flexible(
+                      child: Text(
+                        'VIEW DETAILS',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          fontSize: 8,
+                          fontWeight: FontWeight.w600,
+                          color: scheme.onSurface.withValues(alpha: 0.68),
+                          letterSpacing: 1,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -930,13 +990,17 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                               color: labelGrey,
                             ),
                             const SizedBox(width: 8),
-                            Text(
-                              'LOG SUMMARY',
-                              style: GoogleFonts.gelasio(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: labelGrey,
-                                letterSpacing: 2,
+                            Flexible(
+                              child: Text(
+                                'LOG SUMMARY',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.gelasio(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: labelGrey,
+                                  letterSpacing: 2,
+                                ),
                               ),
                             ),
                           ],
@@ -976,13 +1040,17 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                               color: labelGrey,
                             ),
                             const SizedBox(width: 8),
-                            Text(
-                              'STRUCTURAL DATA',
-                              style: GoogleFonts.gelasio(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: labelGrey,
-                                letterSpacing: 2,
+                            Flexible(
+                              child: Text(
+                                'STRUCTURAL DATA',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.gelasio(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: labelGrey,
+                                  letterSpacing: 2,
+                                ),
                               ),
                             ),
                           ],

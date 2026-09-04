@@ -250,11 +250,29 @@ class ApiClient {
 
   // Catalog Methods
   Future<Response> getProjects() async {
-    return dio.get('/api/catalog/projects');
+    // Measured: this endpoint sits ~100s in the server before the first byte
+    // (one project carries an 8.6 MB base64 heroImage, and Mongo + JSON
+    // serialisation of it dominates the request), then streams 9 MB in ~2s.
+    // Dio applies `receiveTimeout` to the response HEADERS, so the 90s global
+    // limit fired just before every response arrived: the catalog never
+    // loaded, never cached, and the Properties screen stayed on fallback
+    // projects forever. Nothing blocks on this call — projectsProvider paints
+    // cached/fallback data after 8s and swaps the real catalog in when it
+    // lands — so the longer limit costs the user no waiting.
+    return dio.get(
+      '/api/catalog/projects',
+      options: Options(receiveTimeout: const Duration(minutes: 4)),
+    );
   }
 
   Future<Response> getProjectDetails(String id) async {
-    return dio.get('/api/catalog/projects/$id');
+    // Same wall as getProjects(): the heaviest project answers in ~88s, right
+    // on top of the 90s global limit, so opening it was a coin toss between
+    // the page and a timeout. Every other project answers in ~0.2s.
+    return dio.get(
+      '/api/catalog/projects/$id',
+      options: Options(receiveTimeout: const Duration(minutes: 4)),
+    );
   }
 
   Future<Response> getProjectUpdates(String projectId) async {

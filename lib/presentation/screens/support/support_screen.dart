@@ -238,22 +238,30 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'OPERATIONAL LOGS',
-              style: GoogleFonts.gelasio(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                color: scheme.onSurface,
-                letterSpacing: 2,
+        // Neither side had a flex, so the two labels together were wider than
+        // the row on a narrow screen (or at a larger system font) and ran off
+        // the right edge. The heading takes what it needs, the action shrinks.
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'OPERATIONAL LOGS',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.gelasio(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: scheme.onSurface,
+                  letterSpacing: 2,
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Container(width: 32, height: 2, color: scheme.onSurface),
-          ],
+              const SizedBox(height: 4),
+              Container(width: 32, height: 2, color: scheme.onSurface),
+            ],
+          ),
         ),
+        const SizedBox(width: 12),
         GestureDetector(
           onTap: () {
             Navigator.push(
@@ -263,13 +271,17 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               ),
             );
           },
-          child: Text(
-            'VIEW ALL LOGS',
-            style: GoogleFonts.inter(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: scheme.onSurface.withValues(alpha: 0.6),
-              letterSpacing: 1.2,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              'VIEW ALL LOGS',
+              maxLines: 1,
+              style: GoogleFonts.inter(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: scheme.onSurface.withValues(alpha: 0.6),
+                letterSpacing: 1.2,
+              ),
             ),
           ),
         ),
@@ -360,8 +372,14 @@ class _MatrixItem extends StatelessWidget {
               child: Icon(icon, color: color, size: 20),
             ),
             const Spacer(),
+            // The grid gives every card the same fixed height, so the text
+            // has to stay within it: at a larger system font 'WhatsApp
+            // Support' wrapped onto a second line and ran past the bottom.
+            // Both lines fit as they are at the design size.
             Text(
               title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.inter(
                 color: scheme.onSurface,
                 fontWeight: FontWeight.w500,
@@ -372,6 +390,8 @@ class _MatrixItem extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               subtitle.toUpperCase(),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.inter(
                 color: scheme.onSurface.withValues(alpha: 0.68),
                 fontSize: 10,

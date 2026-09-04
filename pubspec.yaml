@@ -56,6 +56,9 @@ dependencies:
   url_launcher: ^6.3.1
   image_picker: ^1.1.2
   share_plus: ^10.1.4
+
+  # Saving downloaded project documents to disk.
+  path_provider: ^2.1.6
   flutter_dotenv: ^5.1.0
 
 
