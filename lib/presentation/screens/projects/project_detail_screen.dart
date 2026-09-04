@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -19,6 +21,7 @@ import 'dart:math' as math;
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:m4_mobile/presentation/screens/booking/booking_start_screen.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
@@ -113,6 +116,123 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  /// URLs currently downloading, so a second tap on the same card is
+  /// ignored rather than starting the fetch again.
+  final Set<String> _downloading = <String>{};
+
+  /// Android's DownloadManager, bridged in MainActivity.kt.
+  static const MethodChannel _downloadChannel = MethodChannel('m4/download');
+
+  /// Saves the file to the device rather than opening it in a browser.
+  ///
+  /// On Android the URL goes to the system DownloadManager: the file lands in
+  /// the phone's own Downloads folder and Android shows its progress and
+  /// completion notification, so the app adds no toast of its own. Only a
+  /// failure to start one is worth saying, since nothing else would.
+  Future<void> _downloadAsset(String? rawUrl, String title) async {
+    final raw = rawUrl?.trim() ?? '';
+    if (raw.isEmpty) {
+      _showMessage('That file is not available yet.');
+      return;
+    }
+
+    final apiClient = ref.read(apiClientProvider);
+    final url = apiClient.resolveUrl(raw);
+    if (_downloading.contains(url)) return;
+    _downloading.add(url);
+
+    if (Platform.isAndroid) {
+      try {
+        await _downloadChannel.invokeMethod<Object?>('enqueue', {
+          'url': url,
+          'fileName': _downloadFileName(url, title),
+          'title': title,
+        });
+      } catch (e) {
+        debugPrint('Download enqueue failed: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text('Could not start the download for $title.'),
+                backgroundColor: const Color(0xFFC65B46),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+        }
+      } finally {
+        _downloading.remove(url);
+      }
+      return;
+    }
+
+    // iOS and anything else: no public Downloads folder, so keep the file in
+    // the app's own storage and offer to hand it on.
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text('Downloading $title…'),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 30),
+      ),
+    );
+
+    try {
+      final base = Platform.isAndroid
+          ? (await getExternalStorageDirectory() ??
+                await getApplicationDocumentsDirectory())
+          : await getApplicationDocumentsDirectory();
+      final dir = Directory('${base.path}/M4 Family');
+      if (!await dir.exists()) await dir.create(recursive: true);
+
+      final name = _downloadFileName(url, title);
+      final file = File('${dir.path}/$name');
+      await apiClient.dio.download(url, file.path);
+
+      if (!mounted) return;
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Saved $name'),
+          backgroundColor: const Color(0xFF163A2C),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 6),
+          action: SnackBarAction(
+            label: 'OPEN',
+            textColor: const Color(0xFFF4EFE3),
+            onPressed: () =>
+                Share.shareXFiles([XFile(file.path)], subject: title),
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            friendlyApiError(e, fallback: 'Could not download $title.'),
+          ),
+          backgroundColor: const Color(0xFFC65B46),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } finally {
+      _downloading.remove(url);
+    }
+  }
+
+  /// A readable filename: the card's own title plus the URL's extension.
+  String _downloadFileName(String url, String title) {
+    final path = Uri.tryParse(url)?.path ?? url;
+    final ext = path.contains('.') ? path.split('.').last : '';
+    final safe = title.trim().replaceAll(RegExp(r'[^A-Za-z0-9 _-]'), '').trim();
+    final base = safe.isEmpty ? 'M4-Document' : safe;
+    return (ext.isEmpty || ext.length > 5) ? base : '$base.$ext';
   }
 
   void _launchAction(String message, [String? url]) async {
@@ -1769,7 +1889,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             icon: LucideIcons.fileText,
             onView: () => _launchAction('Opening...', project?['flyer']),
             onDownload: () =>
-                _launchAction('Downloading...', project?['flyer']),
+                _downloadAsset(project?['flyer']?.toString(), 'PROJECT FLYER'),
           ),
         // Web parity: E-BROCHURE shows only when the project actually has a
         // brochure (Cledor Mazgaon has one; Cledor Mumbai does not).
@@ -1781,7 +1901,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             icon: LucideIcons.layers,
             onView: () => _launchAction('Opening...', project?['brochure']),
             onDownload: () =>
-                _launchAction('Downloading...', project?['brochure']),
+                _downloadAsset(project?['brochure']?.toString(), 'E-BROCHURE'),
           ),
         ],
         const SizedBox(height: 12),
@@ -1815,17 +1935,17 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               final subtitle = parts.isNotEmpty
                   ? parts.join(' • ')
                   : (ext.isNotEmpty && ext.length <= 4 ? ext : 'FLOOR PLAN');
+              final cardTitle = (planTitle == null || planTitle.isEmpty)
+                  ? 'FLOOR PLAN'
+                  : planTitle;
               return Padding(
                 padding: const EdgeInsets.only(top: 12),
                 child: _MultimediaAssetCard(
-                  title: (planTitle == null || planTitle.isEmpty)
-                      ? 'FLOOR PLAN'
-                      : planTitle,
+                  title: cardTitle,
                   subtitle: subtitle,
                   icon: LucideIcons.layoutGrid,
                   onView: () => _launchAction('Opening plan...', planImg),
-                  onDownload: () =>
-                      _launchAction('Downloading plan...', planImg),
+                  onDownload: () => _downloadAsset(planImg, cardTitle),
                 ),
               );
             })),
@@ -3720,24 +3840,29 @@ class _HeroMediaThumb extends StatelessWidget {
     return _ScaleButton(
       onTap: onTap,
       child: Container(
-        width: 68,
-        height: 68,
+        width: 66,
+        height: 66,
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF141B3A) : const Color(0xFFEDE5D6),
-          // Rounded square, matching the reference shot — a full circle
-          // (radius 34) crowded the EXTERIOR / INTERIOR labels.
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withOpacity(0.1)
-                : Colors.black.withOpacity(0.08),
-            width: 1.5,
-          ),
+          // Same tile as the CP project detail: 66 square at radius 18, and no
+          // border on the photos — a 1.5px ring insets the child and leaves a
+          // strip down all four sides instead of the picture filling the tile.
+          // The 360 tile keeps its outline: it is cream-on-cream and would
+          // vanish without one.
+          borderRadius: BorderRadius.circular(18),
+          border: isVR
+              ? Border.all(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.1)
+                      : Colors.black.withOpacity(0.08),
+                  width: 1.5,
+                )
+              : null,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(0.35),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
@@ -3778,7 +3903,15 @@ class _HeroMediaThumb extends StatelessWidget {
                 ),
               )
             else if (imageUrl != null)
-              _ProjectImage(url: imageUrl!, isDark: isDark, memCacheWidth: 900),
+              _ProjectImage(
+                url: imageUrl!,
+                isDark: isDark,
+                // The tile is 66dp: decode to that, in device pixels. It was
+                // decoding these multi-MB originals to 900px wide to paint a
+                // thumbnail, which is what made the row slow to appear.
+                memCacheWidth: (66 * MediaQuery.of(context).devicePixelRatio)
+                    .round(),
+              ),
 
             if (!isVR) ...[
               // Gradient Overlay for text readability

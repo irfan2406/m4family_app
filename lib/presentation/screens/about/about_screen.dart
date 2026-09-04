@@ -16,7 +16,6 @@ import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 
-
 /// A toast that sits ABOVE an open dialog.
 ///
 /// [ScaffoldMessenger] hands its SnackBar to the nearest [Scaffold], which for
@@ -219,7 +218,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       extendBody: true,
       // Bottom nav — shown only when pushed standalone (from the menu), not
       // when embedded as a shell tab (the shell provides its own nav).
-      bottomNavigationBar: Navigator.of(context).canPop()
+      // canPop() alone is not the test: inside the guest shell the navigator
+      // can still pop, so this drew a second pill over the shell's own.
+      bottomNavigationBar: (!widget.embedded && Navigator.of(context).canPop())
           ? NavigationPill(
               currentIndex: -1,
               onTap: (i) {
@@ -350,12 +351,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       decoration: BoxDecoration(
+        // No bottom rule: the strip already reads as its own band against the
+        // page, and the extra full-width line under the labels was showing as
+        // a second line below the icons' connector.
         color: isDark
             ? const Color(0xFF0B1026)
             : Theme.of(context).scaffoldBackgroundColor,
-        border: Border(
-          bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
-        ),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {

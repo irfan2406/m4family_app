@@ -670,6 +670,85 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     );
   }
 
+  /// The rows behind whichever tab is selected. Was inlined twice in the
+  /// list below — once for the count, once for the item — which is what let
+  /// an empty list fall through to a blank strip unnoticed.
+  List<dynamic> get _activeTabItems => _activeTab == 'Communities'
+      ? _communities
+      : (_activeTab == 'Media' ? _media : _projects);
+
+  /// Drawn in place of the card strip when the active tab has no rows. The
+  /// backend returning an empty list is a normal state, not a failure, so it
+  /// says so in the page's own palette rather than leaving dead space.
+  Widget _buildTabEmpty(bool isDark) {
+    final Color ink = isDark
+        ? const Color(0xFFF4EFE3)
+        : const Color(0xFF0C312B);
+
+    final (IconData icon, String title, String line) = switch (_activeTab) {
+      'Communities' => (
+        LucideIcons.mapPin,
+        'NO COMMUNITIES YET',
+        'Communities will appear here once they are published.',
+      ),
+      'Media' => (
+        LucideIcons.image,
+        'NO MEDIA YET',
+        'Films and renders will appear here once they are published.',
+      ),
+      _ => (
+        LucideIcons.layoutGrid,
+        'NO PROPERTIES YET',
+        'Properties will appear here once they are published.',
+      ),
+    };
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 44),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 86,
+            height: 86,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: ink.withValues(alpha: 0.05),
+              shape: BoxShape.circle,
+              border: Border.all(color: ink.withValues(alpha: 0.08)),
+            ),
+            child: Icon(icon, size: 30, color: ink.withValues(alpha: 0.35)),
+          ),
+          const SizedBox(height: 26),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.gelasio(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 2,
+              color: ink.withValues(alpha: 0.85),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            line,
+            textAlign: TextAlign.center,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: ink.withValues(alpha: 0.5),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTabsSection() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
@@ -735,22 +814,19 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           ],
         ),
         const SizedBox(height: 32),
-        SizedBox(
-          height: 360,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            itemCount: _activeTab == 'Communities'
-                ? _communities.length
-                : (_activeTab == 'Media' ? _media.length : _projects.length),
-            itemBuilder: (context, index) {
-              final item = _activeTab == 'Communities'
-                  ? _communities[index]
-                  : (_activeTab == 'Media' ? _media[index] : _projects[index]);
-              return _buildTabCard(item);
-            },
+        if (_activeTabItems.isEmpty)
+          _buildTabEmpty(isDark)
+        else
+          SizedBox(
+            height: 360,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              itemCount: _activeTabItems.length,
+              itemBuilder: (context, index) =>
+                  _buildTabCard(_activeTabItems[index]),
+            ),
           ),
-        ),
       ],
     );
   }

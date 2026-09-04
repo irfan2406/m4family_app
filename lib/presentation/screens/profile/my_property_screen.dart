@@ -359,7 +359,9 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                   width: double.infinity,
                   height: 54,
                   child: ElevatedButton.icon(
-                    onPressed: () => context.push('/custom-views'),
+                    // The Portfolio Suite, which lists the units and their
+                    // personalisation status, rather than the wizard directly.
+                    onPressed: () => context.push('/my-custom-views'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isDark
                           ? const Color(0xFF1C4535)

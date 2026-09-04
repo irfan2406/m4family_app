@@ -47,10 +47,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         const SizedBox(height: 12),
                         _buildProfileCard(user, isDark),
                         const SizedBox(height: 32),
-                        _SectionTitle(title: 'FAMILY', isDark: isDark),
-                        const SizedBox(height: 12),
-                        _buildFamilySection(user, isDark),
-                        const SizedBox(height: 32),
                         _SectionTitle(
                           title: 'PROPERTY SERVICES',
                           isDark: isDark,
@@ -323,17 +319,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  // Web parity: single "My Family" card with a subtitle.
-  Widget _buildFamilySection(dynamic user, bool isDark) {
-    return _SupportTile(
-      label: 'MY FAMILY',
-      subtitle: 'MANAGE YOUR FAMILY DETAILS',
-      icon: LucideIcons.users,
-      isDark: isDark,
-      onTap: () => context.push('/profile/family'),
-    );
-  }
-
   // Web parity: a single full-width "My Properties" card (no "Visits").
   Widget _buildPropertyServices(BuildContext context, bool isDark) {
     return _SupportTile(
@@ -354,7 +339,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           subtitle: 'PERSONALISE YOUR PURCHASED UNITS',
           icon: LucideIcons.palette,
           isDark: isDark,
-          onTap: () => ref.read(navigationProvider.notifier).state = 7,
+          onTap: () {
+            // Record the origin so the system back button comes back here
+            // rather than falling through to Home.
+            ref.read(previousNavigationProvider.notifier).state = 3;
+            ref.read(navigationProvider.notifier).state = 7;
+          },
         ),
         const SizedBox(height: 12),
         _SupportTile(

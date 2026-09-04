@@ -1185,6 +1185,10 @@ class ConditionalHomeShell extends ConsumerWidget {
       if (role == 'investor') {
         return const InvestorMainShell();
       }
+      // Authenticated but the account has not resolved: hold the splash rather
+      // than assuming customer. This fall-through is what let an account with
+      // no readable role open the customer portal.
+      if (user == null) return const SplashScreen();
       return const MainShell();
     }
 

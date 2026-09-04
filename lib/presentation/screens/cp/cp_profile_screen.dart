@@ -553,7 +553,20 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final maxW = constraints.maxWidth;
-        final side = (maxW * 0.58).clamp(72.0, 100.0);
+        final desired = (maxW * 0.58).clamp(72.0, 100.0);
+        // Room the label and the tile's own padding need underneath the icon
+        // box: 2 + 2 padding, the 6px gap, and one line at 9.5 x 1.15.
+        final labelRoom =
+            4 + 6 + MediaQuery.textScalerOf(context).scale(9.5) * 1.15;
+        final available = constraints.maxHeight - labelRoom;
+        // The clamp above floors the box at 72, which on a 70-wide cell is
+        // taller than the cell can hold — that is the overflow. Cap it by
+        // what is actually there; on wider screens available exceeds the
+        // desired size and nothing changes.
+        final side =
+            (available.isFinite && available > 0 && available < desired)
+            ? available
+            : desired;
         return Material(
           color: Colors.transparent,
           child: InkWell(
@@ -587,17 +600,21 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    label.toUpperCase(),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
-                      fontSize: 9.5,
-                      fontWeight: FontWeight.w600,
-                      color: scheme.onSurface,
-                      letterSpacing: 1.2,
-                      height: 1.15,
+                  // Flexed: the label gives way rather than pushing the column
+                  // past the cell if a label wraps or the font scale grows.
+                  Flexible(
+                    child: Text(
+                      label.toUpperCase(),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w600,
+                        color: scheme.onSurface,
+                        letterSpacing: 1.2,
+                        height: 1.15,
+                      ),
                     ),
                   ),
                 ],

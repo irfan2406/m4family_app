@@ -78,13 +78,15 @@ class ProjectListScreen extends ConsumerWidget {
   // parity (screenshot has only the grid/list toggle and the "..." menu).
   // ignore: unused_element
   void _showFilterBottomSheet(BuildContext context, WidgetRef ref) {
-    final locationOptions = [
-      "SOUTH MUMBAI",
-      "WORLI",
-      "BANDRA",
-      "JUHU",
-      "POWAI",
-    ];
+    // From the catalog, so a chip always corresponds to a real property.
+    final catalogLocations = ref
+        .read(projectLocationsProvider)
+        .map((l) => l.toUpperCase())
+        .where((l) => l.isNotEmpty)
+        .toList();
+    final locationOptions = catalogLocations.isNotEmpty
+        ? catalogLocations
+        : const ["SOUTH MUMBAI", "WORLI", "BANDRA", "JUHU", "POWAI"];
     final configOptions = [
       "1 BHK",
       "2 BHK",
@@ -345,10 +347,18 @@ class ProjectListScreen extends ConsumerWidget {
   /// Shown when the selected status tab holds nothing. Cream on the green
   /// showcase surface, forest green on cream — the same pair the rest of the
   /// app uses, so it reads as part of the page rather than a system message.
-  Widget _buildNoMatches(bool isDark) {
+  Widget _buildNoMatches(bool isDark, WidgetRef ref) {
     final Color ink = isDark
         ? const Color(0xFFF4EFE3)
         : const Color(0xFF0C312B);
+    // A refine-search filter left on hides everything and looks identical to
+    // an empty catalog, so the two are told apart here.
+    final filtersOn =
+        ref.watch(selectedLocationsProvider).isNotEmpty ||
+        ref.watch(selectedBudgetsProvider).isNotEmpty ||
+        ref.watch(selectedTypesProvider).isNotEmpty ||
+        ref.watch(selectedConfigsProvider).isNotEmpty ||
+        ref.watch(selectedAreasProvider).isNotEmpty;
     return Center(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(40, 0, 40, 120),
@@ -385,9 +395,11 @@ class ProjectListScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              'Try expanding your search criteria.',
+              filtersOn
+                  ? 'Your refine-search filters are hiding every property here.'
+                  : 'Try expanding your search criteria.',
               textAlign: TextAlign.center,
-              maxLines: 2,
+              maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.inter(
                 fontSize: 12,
@@ -395,6 +407,40 @@ class ProjectListScreen extends ConsumerWidget {
                 color: ink.withValues(alpha: 0.5),
               ),
             ),
+            if (filtersOn) ...[
+              const SizedBox(height: 22),
+              GestureDetector(
+                onTap: () {
+                  ref.read(selectedLocationsProvider.notifier).state = [];
+                  ref.read(selectedBudgetsProvider.notifier).state = [];
+                  ref.read(selectedTypesProvider.notifier).state = [];
+                  ref.read(selectedConfigsProvider.notifier).state = [];
+                  ref.read(selectedAreasProvider.notifier).state = [];
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: ink.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(99),
+                    border: Border.all(color: ink.withValues(alpha: 0.18)),
+                  ),
+                  child: Text(
+                    'CLEAR FILTERS',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.gelasio(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 2,
+                      color: ink.withValues(alpha: 0.9),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -813,7 +859,7 @@ class ProjectListScreen extends ConsumerWidget {
                     children: [
                       projectsAsync.when(
                         data: (projects) => filteredProjects.isEmpty
-                            ? _buildNoMatches(isDark)
+                            ? _buildNoMatches(isDark, ref)
                             : ListView.builder(
                                 padding: const EdgeInsets.fromLTRB(
                                   24,

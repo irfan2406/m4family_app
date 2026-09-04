@@ -246,6 +246,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     String? raw, {
     BoxFit fit = BoxFit.cover,
     Widget? errorWidget,
+
+    /// Decode width in device pixels. Defaults to the full-bleed hero's size;
+    /// a small tile should pass its own, or it pays a full-size decode to
+    /// paint a thumbnail.
+    int cacheWidth = 1080,
+    Widget? placeholder,
   }) {
     final fallback =
         errorWidget ??
@@ -274,9 +280,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ? s
         : ref.read(apiClientProvider).resolveUrl(s);
     return CachedNetworkImage(
-      memCacheWidth: 1080,
+      memCacheWidth: cacheWidth,
       imageUrl: url,
       fit: fit,
+      fadeInDuration: const Duration(milliseconds: 120),
+      placeholder: placeholder == null ? null : (_, __) => placeholder,
       errorWidget: (_, __, ___) => fallback,
     );
   }
@@ -1287,7 +1295,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           clipBehavior: Clip.antiAlias,
           child: Stack(
             children: [
-              Positioned.fill(child: _projectImage(url, fit: BoxFit.cover)),
+              Positioned.fill(
+                child: _projectImage(
+                  url,
+                  fit: BoxFit.cover,
+                  // The tile is 66dp: decode to that, in device pixels.
+                  cacheWidth: (66 * MediaQuery.of(context).devicePixelRatio)
+                      .round(),
+                  placeholder: Container(
+                    color: scheme.onSurface.withValues(alpha: 0.06),
+                  ),
+                ),
+              ),
               Positioned(
                 left: 0,
                 right: 0,
