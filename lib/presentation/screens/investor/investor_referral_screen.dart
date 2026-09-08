@@ -306,6 +306,10 @@ class _InvestorReferralScreenState
             _activeReferrals.length.toString(),
             isDark,
             textPrimary,
+            // Opens the Active Referrals list. The screen and its route were
+            // already there; nothing had ever linked to them, so the count
+            // just sat inert.
+            onTap: () => context.push('/investor/referral/active'),
           ),
         ),
         const SizedBox(width: 12),
@@ -315,20 +319,31 @@ class _InvestorReferralScreenState
             _closedCount.toString(),
             isDark,
             textPrimary,
+            // Opens the Closed Referrals list — the same situation REFERRALS
+            // was in: screen and route already built, nothing linking to them.
+            onTap: () => context.push('/investor/referral/closed'),
           ),
         ),
       ],
     );
   }
 
-  Widget _statCard(String label, String value, bool isDark, Color textPrimary) {
+  /// One stat tile. [onTap] is optional — a card without one is drawn
+  /// exactly as before, with no gesture attached to it at all.
+  Widget _statCard(
+    String label,
+    String value,
+    bool isDark,
+    Color textPrimary, {
+    VoidCallback? onTap,
+  }) {
     final card = isDark
         ? Colors.white.withValues(alpha: 0.03)
         : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    return Container(
+    final tile = Container(
       padding: const EdgeInsets.symmetric(vertical: 22),
       decoration: BoxDecoration(
         color: card,
@@ -358,6 +373,14 @@ class _InvestorReferralScreenState
           ),
         ],
       ),
+    );
+
+    if (onTap == null) return tile;
+    return GestureDetector(
+      // The whole tile, padding included — not just the two text runs.
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: tile,
     );
   }
 
@@ -912,45 +935,69 @@ class _InvestorReferralScreenState
                             height: 56,
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             decoration: _inputBox(isDark, textPrimary),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                isExpanded: true,
-                                value: selectedProjectId,
-                                hint: Text(
-                                  'SELECT PROJECT',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500,
-                                    color: textPrimary.withValues(alpha: 0.72),
+                            // The menu's selected row is painted with
+                            // Theme.focusColor by the framework itself, so the
+                            // harsh default grey can only be replaced here —
+                            // DropdownButton.focusColor never reaches it.
+                            child: Theme(
+                              data: Theme.of(ctx).copyWith(
+                                focusColor: textPrimary.withValues(alpha: 0.06),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  isExpanded: true,
+                                  value: selectedProjectId,
+                                  // Matches the 16-radius input boxes around it;
+                                  // the popup used to have square corners.
+                                  borderRadius: BorderRadius.circular(16),
+                                  // 8 is the default and drops a heavy shadow
+                                  // across the form underneath.
+                                  elevation: 3,
+                                  // So a longer project list cannot cover the
+                                  // whole sheet.
+                                  menuMaxHeight: 280,
+                                  hint: Text(
+                                    'SELECT PROJECT',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                      color: textPrimary.withValues(
+                                        alpha: 0.72,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                dropdownColor: isDark
-                                    ? const Color(0xFF141B3A)
-                                    : const Color(0xFFF4EFE3),
-                                icon: Icon(
-                                  LucideIcons.chevronDown,
-                                  size: 16,
-                                  color: textPrimary.withValues(alpha: 0.3),
-                                ),
-                                items: [
-                                  for (final p in projects)
-                                    if ((p['_id']?.toString() ?? '').isNotEmpty)
-                                      DropdownMenuItem(
-                                        value: p['_id'].toString(),
-                                        child: Text(
-                                          (p['title'] ?? p['name'] ?? 'PROJECT')
-                                              .toString()
-                                              .toUpperCase(),
-                                          style: GoogleFonts.inter(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w500,
-                                            color: textPrimary,
+                                  dropdownColor: isDark
+                                      ? const Color(0xFF141B3A)
+                                      : const Color(0xFFF4EFE3),
+                                  icon: Icon(
+                                    LucideIcons.chevronDown,
+                                    size: 16,
+                                    color: textPrimary.withValues(alpha: 0.3),
+                                  ),
+                                  items: [
+                                    for (final p in projects)
+                                      if ((p['_id']?.toString() ?? '')
+                                          .isNotEmpty)
+                                        DropdownMenuItem(
+                                          value: p['_id'].toString(),
+                                          child: Text(
+                                            (p['title'] ??
+                                                    p['name'] ??
+                                                    'PROJECT')
+                                                .toString()
+                                                .toUpperCase(),
+                                            style: GoogleFonts.inter(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w500,
+                                              color: textPrimary,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                ],
-                                onChanged: (v) =>
-                                    setModalState(() => selectedProjectId = v),
+                                  ],
+                                  onChanged: (v) => setModalState(
+                                    () => selectedProjectId = v,
+                                  ),
+                                ),
                               ),
                             ),
                           ),

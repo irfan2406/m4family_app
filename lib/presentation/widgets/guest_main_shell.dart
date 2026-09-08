@@ -90,7 +90,7 @@ class GuestMainShell extends ConsumerWidget {
               child: Theme(
                 data: navTheme,
                 child: M4BottomNav(
-                  icons: _guestIcons,
+                  icons: guestNavIcons,
                   currentIndex: currentIndex,
                   onTap: (index) =>
                       ref.read(guestNavigationProvider.notifier).state = index,
@@ -105,7 +105,9 @@ class GuestMainShell extends ConsumerWidget {
 
 // Guest tab glyphs, in tab order. The bar itself is M4BottomNav — the one
 // component every portal renders.
-const List<IconData> _guestIcons = <IconData>[
+/// The guest shell's tabs, in order. Shared so a pushed screen can draw
+/// the same bar (see PortalBottomNav).
+const List<IconData> guestNavIcons = <IconData>[
   LucideIcons.home,
   LucideIcons.building2,
   LucideIcons.info,

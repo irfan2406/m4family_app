@@ -910,6 +910,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   );
                 }
               }
+              // Nothing published for this tab: say so rather than leaving a
+              // 320px blank band under the tab row.
+              if (items.isEmpty) return _buildTabEmpty();
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
@@ -934,6 +937,81 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       if (s.isNotEmpty) return s;
     }
     return fallback;
+  }
+
+  /// Drawn in place of the card strip when the active tab has no rows. An
+  /// empty list from the backend is a normal state, not a failure, so it says
+  /// so in the page's own palette. Matches the CP home's version.
+  Widget _buildTabEmpty() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color ink = isDark
+        ? const Color(0xFFF4EFE3)
+        : const Color(0xFF0C312B);
+
+    final (IconData icon, String title, String line) = switch (_activeTab) {
+      'Communities' => (
+        LucideIcons.mapPin,
+        'NO COMMUNITIES YET',
+        'Communities will appear here once they are published.',
+      ),
+      'Media' => (
+        LucideIcons.image,
+        'NO MEDIA YET',
+        'Films and renders will appear here once they are published.',
+      ),
+      _ => (
+        LucideIcons.layoutGrid,
+        'NO PROPERTIES YET',
+        'Properties will appear here once they are published.',
+      ),
+    };
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 86,
+              height: 86,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: ink.withValues(alpha: 0.05),
+                shape: BoxShape.circle,
+                border: Border.all(color: ink.withValues(alpha: 0.08)),
+              ),
+              child: Icon(icon, size: 30, color: ink.withValues(alpha: 0.35)),
+            ),
+            const SizedBox(height: 26),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.gelasio(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 2,
+                color: ink.withValues(alpha: 0.85),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              line,
+              textAlign: TextAlign.center,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: ink.withValues(alpha: 0.5),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildTabCard(dynamic item) {

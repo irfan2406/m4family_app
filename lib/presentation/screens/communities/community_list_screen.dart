@@ -104,35 +104,21 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            // Web parity: header reads "M4 FAMILY / DEVELOPMENTS".
-                            'M4 FAMILY',
-                            style: GoogleFonts.inter(
-                              color: isDark
-                                  ? Colors.white
-                                  : const Color(0xFF155A4F),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.3,
-                            ),
-                          ),
-                          Text(
-                            'DEVELOPMENTS',
-                            style: GoogleFonts.gelasio(
-                              color:
-                                  (isDark
-                                          ? Colors.white
-                                          : const Color(0xFF0C312B))
-                                      .withOpacity(0.55),
-                              fontSize: 9,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 3,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        // Web parity: the page header is a single
+                        // "COMMUNITIES" — it used to read
+                        // "M4 FAMILY / DEVELOPMENTS".
+                        'COMMUNITIES',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF155A4F),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.3,
+                        ),
                       ),
                     ],
                   ),
@@ -151,7 +137,9 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                 children: [
                   Text(
                     'ABOUT THE COMMUNITIES',
-                    maxLines: 1,
+                    // Two lines, as the web wraps it. Pinned to one line the
+                    // word COMMUNITIES was simply clipped off the heading.
+                    maxLines: 2,
                     overflow: TextOverflow.visible,
                     style: GoogleFonts.gelasio(
                       // Web parity: thin elegant serif on one line (not heavy bold).
@@ -248,6 +236,39 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     state.error!,
                     style: TextStyle(
                       color: isDark ? Colors.white38 : const Color(0xFF155A4F),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          else if (state.communities.isEmpty)
+            // Web parity: an empty catalog shows a bordered card rather than
+            // ending the page after "Read more".
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(40, 20, 40, 100),
+              sliver: SliverToBoxAdapter(
+                child: Container(
+                  height: 170,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withValues(alpha: 0.15),
+                    ),
+                  ),
+                  child: Text(
+                    'NO ACTIVE COMMUNITIES FOUND',
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.5,
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withValues(alpha: 0.55),
                     ),
                   ),
                 ),

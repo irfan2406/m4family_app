@@ -4,8 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
-import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
-import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/portal_bottom_nav.dart';
 
 /// Web `/cp/support/help-center` (`app/(cp)/cp/support/help-center/page.tsx`) —
 /// "Support Index / FAQ & Governance": circular back button + title, search,
@@ -78,13 +77,9 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBody: true,
-      bottomNavigationBar: NavigationPill(
-        currentIndex: -1,
-        onTap: (i) {
-          ref.read(navigationProvider.notifier).state = i;
-          Navigator.of(context).popUntil((r) => r.isFirst);
-        },
-      ),
+      // The portal's own nav: this used to be the customer pill whatever
+      // portal opened the screen.
+      bottomNavigationBar: const PortalBottomNav(),
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(

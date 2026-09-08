@@ -418,8 +418,15 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                           imageUrl: avatarUrl,
                           fit: BoxFit.cover,
                           alignment: Alignment.center,
-                          memCacheWidth: 160,
-                          memCacheHeight: 160,
+                          // Decode by WIDTH only. Setting a width AND a
+                          // height resizes the source to exactly that box
+                          // and ignores its aspect ratio, so a portrait photo
+                          // arrived already squashed into a square and
+                          // BoxFit.cover had nothing left to crop — that is
+                          // the stretch. One dimension keeps the proportions.
+                          memCacheWidth:
+                              (92 * MediaQuery.of(context).devicePixelRatio)
+                                  .round(),
                           fadeInDuration: Duration.zero,
                           errorWidget: (_, __, ___) => Icon(
                             LucideIcons.user,

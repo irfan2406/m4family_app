@@ -988,66 +988,82 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     // drops BELOW the control (Radix popper) with the trigger still visible.
     // Material's DropdownButton instead lays its menu OVER the button, hiding
     // it — hence PopupMenuButton with a downward offset.
-    return PopupMenuButton<String>(
-      offset: const Offset(0, 64),
-      constraints: const BoxConstraints(minWidth: 240),
-      color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-      elevation: 8,
-      // Web popup: `rounded-2xl border shadow-2xl`.
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: textColor.withValues(alpha: 0.08)),
-      ),
-      onSelected: (value) => setState(() => _selectedProject = value),
-      itemBuilder: (context) => [
-        PopupMenuItem<String>(
-          value: 'Any',
-          height: 40,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: _dropdownItem('Any Project / Property', 'Any', textColor),
-        ),
-        ..._projects.map((project) {
-          final title = (project['title'] ?? '').toString();
-          return PopupMenuItem<String>(
-            value: title,
-            height: 40,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: _dropdownItem(title, title, textColor),
-          );
-        }),
-      ],
-      child: Container(
-        height: 56,
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        decoration: BoxDecoration(
-          color: textColor.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: textColor.withValues(alpha: 0.05)),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                // Title case on the trigger — only the web's *placeholder* is
-                // uppercased; the list itself renders caps.
-                closedLabel,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.inter(
-                  color: textColor,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+    //
+    // LayoutBuilder is here to measure the trigger: the menu is pinned to that
+    // exact width below, so it reads as this field's list rather than a box
+    // floating beside it.
+    return LayoutBuilder(
+      builder: (context, layout) {
+        // Bounded everywhere it is used (a Column inside the padded form), but
+        // an unbounded parent would make the width infinite rather than wrong.
+        final menuWidth = layout.maxWidth.isFinite ? layout.maxWidth : 240.0;
+        return PopupMenuButton<String>(
+          offset: const Offset(0, 64),
+          // Exactly the trigger's width. This used to be a minWidth of 240 with no
+          // ceiling, so the menu shrank to its content and left the field's right
+          // half uncovered.
+          constraints: BoxConstraints(minWidth: menuWidth, maxWidth: menuWidth),
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          elevation: 8,
+          // Web popup: `rounded-2xl border shadow-2xl`.
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: textColor.withValues(alpha: 0.08)),
+          ),
+          onSelected: (value) => setState(() => _selectedProject = value),
+          itemBuilder: (context) => [
+            PopupMenuItem<String>(
+              value: 'Any',
+              // 40 was under the 48 minimum for a touch target and cramped for a
+              // list; the row's own padding brings it the rest of the way.
+              height: 46,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: _dropdownItem('Any Project / Property', 'Any', textColor),
             ),
-            Icon(
-              LucideIcons.chevronDown,
-              color: textColor.withValues(alpha: 0.4),
-              size: 18,
-            ),
+            ..._projects.map((project) {
+              final title = (project['title'] ?? '').toString();
+              return PopupMenuItem<String>(
+                value: title,
+                height: 46,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: _dropdownItem(title, title, textColor),
+              );
+            }),
           ],
-        ),
-      ),
+          child: Container(
+            height: 56,
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            decoration: BoxDecoration(
+              color: textColor.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: textColor.withValues(alpha: 0.05)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    // Title case on the trigger — only the web's *placeholder* is
+                    // uppercased; the list itself renders caps.
+                    closedLabel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      color: textColor,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Icon(
+                  LucideIcons.chevronDown,
+                  color: textColor.withValues(alpha: 0.4),
+                  size: 18,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

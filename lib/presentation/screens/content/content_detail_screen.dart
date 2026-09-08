@@ -29,6 +29,38 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   ChewieController? _chewieController;
   bool _isVideoInitialized = false;
 
+  /// Whether a body is really markup.
+  ///
+  /// The catalog stores blog bodies as plain prose. HtmlWidget renders that as
+  /// bare text nodes, which customStylesBuilder never sees, so it could not be
+  /// justified — Text can be.
+  static bool _isHtmlBody(dynamic raw) {
+    final body = raw?.toString() ?? '';
+    return RegExp(r'<[a-z!/][^>]*>', caseSensitive: false).hasMatch(body);
+  }
+
+  /// Whether a videoUrl really points at something video_player can open.
+  ///
+  /// The catalog puts each blog own web page in videoUrl
+  /// (https://m4group.in/<slug>/), and initialising a player against an HTML
+  /// page never completes — which left every blog behind a spinner. Only a
+  /// direct media file or an HLS playlist counts.
+  static bool _playableVideo(dynamic raw) {
+    final url = raw?.toString().trim() ?? '';
+    if (url.isEmpty) return false;
+    final path = (Uri.tryParse(url)?.path ?? url).toLowerCase();
+    const playable = <String>[
+      '.mp4',
+      '.m4v',
+      '.mov',
+      '.webm',
+      '.mkv',
+      '.avi',
+      '.m3u8',
+    ];
+    return playable.any(path.endsWith);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -37,7 +69,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
   Future<void> _initializePlayer() async {
     final videoUrl = widget.content['videoUrl'];
-    if (videoUrl != null && videoUrl.toString().isNotEmpty) {
+    if (_playableVideo(videoUrl)) {
       final apiClient = ref.read(apiClientProvider);
       final resolvedUrl = apiClient.resolveUrl(videoUrl);
       final imageUrl = apiClient.resolveUrl(
@@ -188,9 +220,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     final date =
         DateTime.tryParse(widget.content['createdAt'] ?? '') ?? DateTime.now();
     final formattedDate = DateFormat('MM/dd/yyyy').format(date);
-    final hasVideo =
-        widget.content['videoUrl'] != null &&
-        widget.content['videoUrl'].toString().isNotEmpty;
+    final hasVideo = _playableVideo(widget.content['videoUrl']);
 
     return Scaffold(
       backgroundColor: scheme.surface,
@@ -368,32 +398,60 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           ),
                         ),
 
-                        const SizedBox(height: 30),
-
-                        Text(
-                          widget.content['description'] ??
-                              'No description provided.',
-                          style: GoogleFonts.inter(
-                            fontSize: 15,
-                            color: scheme.onSurface.withOpacity(0.6),
-                            height: 1.8,
-                            fontWeight: FontWeight.w400,
+                        // Only when there IS a description. It arrives as an
+                        // empty string on these blogs, and an empty Text still
+                        // takes a full line — which is where most of the gap
+                        // under the title came from.
+                        if (widget.content['description']
+                                ?.toString()
+                                .trim()
+                                .isNotEmpty ??
+                            false) ...[
+                          const SizedBox(height: 30),
+                          Text(
+                            widget.content['description'].toString().trim(),
+                            // Justified, as the article reads on the web.
+                            textAlign: TextAlign.justify,
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: scheme.onSurface.withOpacity(0.6),
+                              height: 1.8,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
+                        ],
 
                         if (widget.content['content'] != null &&
                             widget.content['content']
                                 .toString()
                                 .isNotEmpty) ...[
                           const SizedBox(height: 20),
-                          HtmlWidget(
-                            widget.content['content'],
-                            textStyle: GoogleFonts.inter(
-                              fontSize: 15,
-                              color: scheme.onSurface.withOpacity(0.6),
-                              height: 1.8,
+                          if (_isHtmlBody(widget.content['content']))
+                            HtmlWidget(
+                              widget.content['content'],
+                              // Justified, as the article reads on the web.
+                              customStylesBuilder: (element) => const {
+                                'text-align': 'justify',
+                              },
+                              textStyle: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: scheme.onSurface.withOpacity(0.6),
+                                height: 1.8,
+                              ),
+                            )
+                          else
+                            // Plain prose: justified here, where it actually
+                            // takes effect. The blank lines between paragraphs
+                            // are preserved as they arrive.
+                            Text(
+                              widget.content['content'].toString(),
+                              textAlign: TextAlign.justify,
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: scheme.onSurface.withOpacity(0.6),
+                                height: 1.8,
+                              ),
                             ),
-                          ),
                         ],
 
                         // 📅 EVENT-SPECIFIC SECTIONS (only for type == 'event' and when API provides the fields)

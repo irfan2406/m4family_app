@@ -12,7 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
-import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
+import 'package:m4_mobile/presentation/widgets/portal_bottom_nav.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 
@@ -221,13 +221,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       // canPop() alone is not the test: inside the guest shell the navigator
       // can still pop, so this drew a second pill over the shell's own.
       bottomNavigationBar: (!widget.embedded && Navigator.of(context).canPop())
-          ? NavigationPill(
-              currentIndex: -1,
-              onTap: (i) {
-                ref.read(navigationProvider.notifier).state = i;
-                Navigator.of(context).popUntil((r) => r.isFirst);
-              },
-            )
+          ? const PortalBottomNav()
           : null,
       appBar: AppBar(
         centerTitle: true,

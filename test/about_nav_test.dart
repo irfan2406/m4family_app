@@ -6,7 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
+import 'package:m4_mobile/presentation/widgets/m4_bottom_nav.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
+import 'package:m4_mobile/presentation/widgets/portal_bottom_nav.dart';
 
 /// Guest portal > WHO WE ARE.
 ///
@@ -63,14 +65,22 @@ void main() {
     await pump(tester, embedded: true);
 
     // The shell supplies the only nav; a second one here is the reported bug.
+    expect(find.byType(PortalBottomNav), findsNothing);
     expect(find.byType(NavigationPill), findsNothing);
+    expect(find.byType(M4BottomNav), findsNothing);
     expect(find.text('WHO WE ARE'), findsOneWidget);
   });
 
-  testWidgets('pushed standalone: keeps its own pill', (tester) async {
+  testWidgets('pushed standalone: keeps a nav, and it is the visitor one', (
+    tester,
+  ) async {
     await pump(tester, embedded: false);
 
     // Opened from the menu there is no shell underneath, so it still needs one.
-    expect(find.byType(NavigationPill), findsOneWidget);
+    // Nobody is signed in here, so this is a visitor: the guest shell's own
+    // bar, NOT the customer pill it used to draw for every portal.
+    expect(find.byType(PortalBottomNav), findsOneWidget);
+    expect(find.byType(M4BottomNav), findsOneWidget);
+    expect(find.byType(NavigationPill), findsNothing);
   });
 }

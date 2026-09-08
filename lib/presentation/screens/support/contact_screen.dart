@@ -10,8 +10,7 @@ import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
-import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/portal_bottom_nav.dart';
 
 /// Web `/contact` (`app/(user)/contact/page.tsx`) — "M4 Family Developments /
 /// Get in touch with us": a gradient intro + contact form (name/email/phone/
@@ -172,15 +171,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       // Own nav pill ONLY when pushed standalone (from the menu). As a tab
       // inside GuestMainShell the shell already draws one — rendering both
       // stacked two navigation bars on top of each other.
-      bottomNavigationBar: widget.embedded
-          ? null
-          : NavigationPill(
-              currentIndex: -1,
-              onTap: (i) {
-                ref.read(navigationProvider.notifier).state = i;
-                Navigator.of(context).popUntil((r) => r.isFirst);
-              },
-            ),
+      // The portal's own nav: this used to be the customer pill whatever
+      // portal opened the screen. Embedded as a shell tab it still draws none.
+      bottomNavigationBar: widget.embedded ? null : const PortalBottomNav(),
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
@@ -346,7 +339,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         const SizedBox(height: 16),
         _formField(
           _phoneController,
-          '+91 98653 21250 *',
+          // Was a real-looking number, '+91 98653 21250 *', which reads as a
+          // value already typed in rather than a prompt.
+          'Enter Number *',
           keyboardType: TextInputType.phone,
           inputFormatters: Validators.phoneFormatters,
         ),

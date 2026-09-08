@@ -251,23 +251,31 @@ class _GuestProjectDetailScreenState
     }
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: isError ? Colors.white : const Color(0xFF0C312B),
+    // Replace whatever is showing rather than queueing behind it: repeated
+    // taps on VIEW / DOWNLOAD used to stack a 4s toast each, so the message
+    // sat on screen long after the taps stopped.
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          duration: const Duration(milliseconds: 1100),
+          content: Text(
+            message,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: isError ? Colors.white : const Color(0xFF0C312B),
+            ),
+          ),
+          backgroundColor: isError
+              ? const Color(0xFFC65B46)
+              : const Color(0xFF163A2C),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
-        backgroundColor: isError
-            ? const Color(0xFFC65B46)
-            : const Color(0xFF163A2C),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
+      );
   }
 
   // The one M4 chooser — the same sheet every other date field in the app
@@ -1540,7 +1548,12 @@ class _GuestProjectDetailScreenState
           _buildSectionHeader('Overview'),
           const SizedBox(height: 24),
           Text(
-            'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
+            // The project's own copy, the way the web shows it. This was a
+            // fixed sentence that ignored the record; it now only stands in
+            // for a project with no description at all.
+            (project?['description']?.toString().trim().isNotEmpty ?? false)
+                ? project['description'].toString().trim().toUpperCase()
+                : 'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
             style: GoogleFonts.inter(
               fontSize: 11,
               color: isDark

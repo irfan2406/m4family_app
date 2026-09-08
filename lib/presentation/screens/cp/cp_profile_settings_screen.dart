@@ -1029,8 +1029,17 @@ class _CpProfileSettingsScreenState
                                     .resolveUrl(_avatarUrl!),
                                 fit: BoxFit.cover,
                                 alignment: Alignment.center,
-                                memCacheWidth: 192,
-                                memCacheHeight: 192,
+                                // Decode by WIDTH only. A width AND a height
+                                // resizes the source to exactly that square and
+                                // ignores its aspect ratio, so the photo arrived
+                                // already squashed and BoxFit.cover had nothing
+                                // left to crop — that is the stretch.
+                                memCacheWidth:
+                                    (92 *
+                                            MediaQuery.of(
+                                              context,
+                                            ).devicePixelRatio)
+                                        .round(),
                                 fadeInDuration: Duration.zero,
                                 errorWidget: (_, __, ___) => Icon(
                                   LucideIcons.user,

@@ -88,7 +88,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   final _regLocation = TextEditingController();
 
   // Lightbox (Exterior/Interior/Floor plans/Progress)
-  bool _galleryOpen = false;
+  /// Refreshes the gallery ROUTE's builder. A pushed route does not rebuild
+  /// when this State calls setState, so page changes go through here.
+  void Function(void Function())? _gallerySetState;
   List<String> _gallery = const [];
   int _galleryIndex = 0;
   PageController? _galleryCtrl;
@@ -352,12 +354,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   void _openOrWarn(String? url, [String message = 'Not available']) {
     if (url == null || url.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: const Color(0xFFC65B46),
-          content: Text(message),
-        ),
-      );
+      // Replace whatever is showing rather than queueing behind it: repeated
+      // taps used to stack a 4s toast each, so the message sat on screen long
+      // after the taps stopped.
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFC65B46),
+            duration: const Duration(milliseconds: 1100),
+            content: Text(message),
+          ),
+        );
       return;
     }
     _openUrl(url);
@@ -391,13 +399,31 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   void _openGallery(List<String> urls, {int initial = 0}) {
     if (urls.isEmpty) return;
-    setState(() {
-      _galleryOpen = true;
-      _gallery = urls;
-      _galleryIndex = initial.clamp(0, urls.length - 1);
-      _galleryCtrl?.dispose();
-      _galleryCtrl = PageController(initialPage: _galleryIndex);
-    });
+    _gallery = urls;
+    _galleryIndex = initial.clamp(0, urls.length - 1);
+    _galleryCtrl?.dispose();
+    _galleryCtrl = PageController(initialPage: _galleryIndex);
+
+    final scheme = Theme.of(context).colorScheme;
+    // A route rather than an overlay in this page's Stack: the detail used to
+    // show through the scrim and the shell's nav pill sat on top of the photo.
+    // A page is opaque, full screen, and gets the back gesture for free.
+    Navigator.of(context, rootNavigator: true)
+        .push(
+          MaterialPageRoute(
+            fullscreenDialog: true,
+            builder: (_) => StatefulBuilder(
+              builder: (context, setGalleryState) {
+                _gallerySetState = setGalleryState;
+                return Scaffold(
+                  backgroundColor: Colors.black,
+                  body: Stack(children: [_galleryOverlay(scheme)]),
+                );
+              },
+            ),
+          ),
+        )
+        .then((_) => _gallerySetState = null);
   }
 
   Future<void> _openVideoCallSheet() async {
@@ -1111,7 +1137,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         _sectionTitle('Overview', scheme, accent),
                         const SizedBox(height: 12),
                         Text(
-                          'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
+                          // The project's own copy, the way the web shows it.
+                          // This was a fixed sentence that ignored the record;
+                          // it now only stands in for a project with no
+                          // description at all.
+                          (p['description']?.toString().trim().isNotEmpty ??
+                                  false)
+                              ? p['description'].toString().trim().toUpperCase()
+                              : 'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
                           style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
@@ -1224,7 +1257,6 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             ],
           ),
           if (_leadOpen) _videoCallSheet(scheme),
-          if (_galleryOpen) _galleryOverlay(scheme),
         ],
       ),
     );
@@ -3081,7 +3113,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               PageView.builder(
                 controller: ctrl,
                 itemCount: _gallery.length,
-                onPageChanged: (i) => setState(() => _galleryIndex = i),
+                onPageChanged: (i) {
+                  _galleryIndex = i;
+                  // Refresh the route's builder — the counter, the dots and
+                  // the arrows' enabled state all read _galleryIndex.
+                  _gallerySetState?.call(() {});
+                },
                 itemBuilder: (context, i) {
                   return InteractiveViewer(
                     minScale: 1,
@@ -3103,7 +3140,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 top: 10,
                 left: 10,
                 child: IconButton(
-                  onPressed: () => setState(() => _galleryOpen = false),
+                  onPressed: () =>
+                      Navigator.of(context, rootNavigator: true).pop(),
                   icon: const Icon(LucideIcons.x),
                   color: Colors.white,
                 ),

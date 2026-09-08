@@ -768,36 +768,55 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: border),
           ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: value,
-              isExpanded: true,
-              isDense: true,
-              icon: Icon(
-                LucideIcons.chevronDown,
-                size: 16,
-                color: scheme.onSurfaceVariant,
-              ),
-              style: GoogleFonts.inter(
-                fontSize: 9,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.8,
-                color: scheme.onSurface,
-              ),
-              items: projects
-                  .map(
-                    (n) => DropdownMenuItem(
-                      value: n,
-                      child: Text(
-                        n.toUpperCase(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+          // The grey slab over the selected row is Theme.focusColor, which is
+          // 0x1F000000 by default — 12% black, which on this cream page reads
+          // as a dirty grey band and is most of why the open menu looked
+          // broken. The framework paints that row from the ambient theme
+          // (material/dropdown.dart:238) and never reads
+          // DropdownButton.focusColor, which only reaches the closed button
+          // (dropdown.dart:1768) — so it can only be replaced here.
+          child: Theme(
+            data: Theme.of(
+              context,
+            ).copyWith(focusColor: scheme.onSurface.withValues(alpha: 0.06)),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: value,
+                isExpanded: true,
+                isDense: true,
+                // Matches the search box and the button it drops from; the
+                // menu had square corners against two 16-radius boxes.
+                borderRadius: BorderRadius.circular(16),
+                // 8 is the default and drops a heavy shadow over the header.
+                elevation: 3,
+                // So a long project list cannot cover the page.
+                menuMaxHeight: 280,
+                icon: Icon(
+                  LucideIcons.chevronDown,
+                  size: 16,
+                  color: scheme.onSurfaceVariant,
+                ),
+                style: GoogleFonts.inter(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.8,
+                  color: scheme.onSurface,
+                ),
+                items: projects
+                    .map(
+                      (n) => DropdownMenuItem(
+                        value: n,
+                        child: Text(
+                          n.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (v) =>
-                  setState(() => _selectedProject = v ?? 'All Projects'),
+                    )
+                    .toList(),
+                onChanged: (v) =>
+                    setState(() => _selectedProject = v ?? 'All Projects'),
+              ),
             ),
           ),
         ),
