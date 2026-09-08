@@ -84,10 +84,18 @@ void main() {
     expect(find.text('SITE VISIT'), findsOneWidget);
 
     final heights = ['VIDEO CALL', 'COMPLETION', 'SITE VISIT']
-        .map((l) => tester.getSize(find.ancestor(
-              of: find.text(l),
-              matching: find.byType(Container),
-            ).first).height)
+        .map(
+          (l) => tester
+              .getSize(
+                find
+                    .ancestor(
+                      of: find.text(l),
+                      matching: find.byType(Container),
+                    )
+                    .first,
+              )
+              .height,
+        )
         .toSet();
     expect(heights, hasLength(1));
   });

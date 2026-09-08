@@ -156,18 +156,21 @@ void main() {
     });
   });
 
-  test('an unresolvable account is refused rather than assumed a customer', () async {
-    // A 200 carrying no account. This used to be stored as the user, leaving
-    // the role null — and a null role falls through to the customer portal.
-    final state = await signInThrough(
-      'CUSTOMER',
-      _FakeApi(meBody: {'status': true, 'data': null}),
-    );
+  test(
+    'an unresolvable account is refused rather than assumed a customer',
+    () async {
+      // A 200 carrying no account. This used to be stored as the user, leaving
+      // the role null — and a null role falls through to the customer portal.
+      final state = await signInThrough(
+        'CUSTOMER',
+        _FakeApi(meBody: {'status': true, 'data': null}),
+      );
 
-    expect(state.status, AuthStatus.error);
-    expect(state.user, isNull);
-    expect(store['jwt_token'], isNull);
-  });
+      expect(state.status, AuthStatus.error);
+      expect(state.user, isNull);
+      expect(store['jwt_token'], isNull);
+    },
+  );
 
   test('the account from verify-otp is used when /me carries none', () async {
     // verify-otp returns the account too, so a thin /me response must not lose

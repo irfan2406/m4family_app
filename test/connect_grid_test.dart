@@ -114,9 +114,7 @@ void main() {
     addTearDown(tester.view.reset);
   }
 
-  testWidgets('361dp (Realme GT 60): the old cell overflowed', (
-    tester,
-  ) async {
+  testWidgets('361dp (Realme GT 60): the old cell overflowed', (tester) async {
     await atWidth(tester, 361);
     await tester.pumpWidget(grid(ratio: 0.95, old: true));
     expect(

@@ -123,20 +123,26 @@ void main() {
     expect(target.lengthSync(), _pdfBytes.length);
   });
 
-  test('a failed download surfaces as an error, leaving no partial file', () async {
-    final api = ApiClient(baseUrl: 'https://api.example.test');
-    api.dio.httpClientAdapter = _FailingAdapter();
+  test(
+    'a failed download surfaces as an error, leaving no partial file',
+    () async {
+      final api = ApiClient(baseUrl: 'https://api.example.test');
+      api.dio.httpClientAdapter = _FailingAdapter();
 
-    final dir = Directory('${tempDir.path}/M4 Family');
-    await dir.create(recursive: true);
-    final target = File('${dir.path}/missing.pdf');
+      final dir = Directory('${tempDir.path}/M4 Family');
+      await dir.create(recursive: true);
+      final target = File('${dir.path}/missing.pdf');
 
-    await expectLater(
-      api.dio.download(api.resolveUrl('/uploads/media/nope.pdf'), target.path),
-      throwsA(isA<DioException>()),
-    );
-    expect(target.existsSync(), isFalse);
-  });
+      await expectLater(
+        api.dio.download(
+          api.resolveUrl('/uploads/media/nope.pdf'),
+          target.path,
+        ),
+        throwsA(isA<DioException>()),
+      );
+      expect(target.existsSync(), isFalse);
+    },
+  );
 }
 
 class _FailingAdapter implements HttpClientAdapter {
