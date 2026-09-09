@@ -15,6 +15,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/favorites_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
@@ -369,7 +370,6 @@ class _GuestProjectDetailScreenState
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
-  bool _isFavorited = false;
   String _mediaFilter = 'ALL';
   String _selectedConfig = '3 BHK';
   bool _showFullOverview = false;
@@ -1805,6 +1805,61 @@ class _GuestProjectDetailScreenState
                       onTap: () => Share.share(
                         'Check out ${project?['title']} on M4 Family!',
                       ),
+                    ),
+                    const SizedBox(width: 8),
+                    Builder(
+                      builder: (context) {
+                        final projectId =
+                            (project?['_id'] ??
+                                    project?['id'] ??
+                                    widget.projectId)
+                                .toString();
+                        final isFavorited = ref
+                            .watch(favoritesProvider)
+                            .any((p) => p.id == projectId);
+                        return _SquareAction(
+                              icon: isFavorited
+                                  ? Icons.favorite
+                                  : LucideIcons.heart,
+                              onTap: () async {
+                                final map = project is Map
+                                    ? Map<String, dynamic>.from(project as Map)
+                                    : <String, dynamic>{
+                                        '_id': projectId,
+                                        'title': project?['title'],
+                                        'location': project?['location'],
+                                        'heroImage':
+                                            project?['heroImage'] ??
+                                            project?['image'],
+                                        'status': project?['status'],
+                                      };
+                                if ((map['_id'] ?? '').toString().isEmpty) {
+                                  map['_id'] = projectId;
+                                }
+                                await ref
+                                    .read(favoritesProvider.notifier)
+                                    .toggle(map);
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: const Color(0xFF163A2C),
+                                    content: Text(
+                                      isFavorited
+                                          ? 'Removed from saved projects'
+                                          : 'Saved to your projects',
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                            .animate(key: ValueKey(isFavorited))
+                            .scaleXY(
+                              begin: 0.6,
+                              end: 1.0,
+                              duration: 320.ms,
+                              curve: Curves.elasticOut,
+                            );
+                      },
                     ),
                     const SizedBox(width: 8),
                     _SquareAction(

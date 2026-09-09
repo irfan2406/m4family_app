@@ -341,6 +341,34 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         ),
                         const SizedBox(height: 12),
                         _QuickActionItem(
+                          label: 'Book a Visit',
+                          icon: LucideIcons.calendarDays,
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            ref.read(guestNavigationProvider.notifier).state =
+                                2;
+                            context.go('/home');
+                          },
+                        ),
+                        _QuickActionItem(
+                          label: 'Saved',
+                          icon: LucideIcons.heart,
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            ref.read(guestNavigationProvider.notifier).state =
+                                3;
+                            context.go('/home');
+                          },
+                        ),
+                        _QuickActionItem(
+                          label: 'EMI Calculator',
+                          icon: LucideIcons.calculator,
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            context.push('/guest/calculator');
+                          },
+                        ),
+                        _QuickActionItem(
                           label: 'Enquiry',
                           icon: LucideIcons.mail,
                           // Go to the home page and scroll straight to its

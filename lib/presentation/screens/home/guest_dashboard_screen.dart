@@ -17,7 +17,6 @@ import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
-import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_list_screen.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
@@ -1896,34 +1895,26 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 _buildConnectItem(
                   LucideIcons.building2,
                   'EXPLORE PROJECTS',
-                  'Browse our portfolio of properties',
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Theme(
-                        data: M4Theme.darkTheme,
-                        child: const ProjectListScreen(guestMode: true),
-                      ),
-                    ),
-                  ),
+                  'Compare live projects and configurations',
+                  () => ref.read(guestNavigationProvider.notifier).state = 1,
                 ),
                 _buildConnectItem(
                   LucideIcons.calendarDays,
                   'BOOK A VIEWING',
-                  'Schedule a visit to our show apartment',
-                  _scrollToInterestForm,
+                  'Schedule a site visit with date and time',
+                  () => ref.read(guestNavigationProvider.notifier).state = 2,
                 ),
                 _buildConnectItem(
-                  LucideIcons.image,
-                  'MEDIA GALLERY',
-                  'Watch films and view property renders',
-                  () => context.push('/media'),
+                  LucideIcons.calculator,
+                  'EMI CALCULATOR',
+                  'Estimate monthly payments for a property',
+                  () => context.push('/guest/calculator'),
                 ),
                 _buildConnectItem(
-                  LucideIcons.user,
-                  'REGISTER INTEREST',
-                  'Register your interest in our properties',
-                  _scrollToInterestForm,
+                  LucideIcons.heart,
+                  'SAVED PROJECTS',
+                  'Revisit properties you have shortlisted',
+                  () => ref.read(guestNavigationProvider.notifier).state = 3,
                 ),
               ],
             ),

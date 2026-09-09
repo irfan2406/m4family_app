@@ -14,6 +14,7 @@ import 'package:m4_mobile/presentation/screens/auth/cp_forgot_password_screen.da
 import 'package:m4_mobile/presentation/screens/auth/onboarding_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/profile_settings_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/guest_profile_screen.dart';
+import 'package:m4_mobile/presentation/screens/home/guest_calculator_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/family_members_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/app_settings_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/portfolio_screen.dart';
@@ -918,6 +919,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/guest/profile',
       builder: (context, state) => const GuestProfileScreen(),
+    ),
+    GoRoute(
+      path: '/guest/calculator',
+      builder: (context, state) => const GuestCalculatorScreen(),
     ),
     GoRoute(
       path: '/profile/family',

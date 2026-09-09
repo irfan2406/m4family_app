@@ -6,14 +6,19 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 
 class ScheduleVisitScreen extends ConsumerStatefulWidget {
-  const ScheduleVisitScreen({super.key});
+  /// When true, rendered as a guest shell tab (no pop nav / pill).
+  final bool embedded;
+
+  const ScheduleVisitScreen({super.key, this.embedded = false});
 
   @override
   ConsumerState<ScheduleVisitScreen> createState() =>
@@ -22,15 +27,26 @@ class ScheduleVisitScreen extends ConsumerStatefulWidget {
 
 class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   final _notesController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
 
   String? _selectedProjectId;
   DateTime? _scheduledAt;
   bool _isProjectDropdownOpen = false;
   bool _isSubmitting = false;
 
+  bool get _needsGuestContact {
+    final user = ref.read(authProvider).user;
+    return widget.embedded || user == null;
+  }
+
   @override
   void dispose() {
     _notesController.dispose();
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -157,8 +173,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   }
 
   Future<void> _submit() async {
-    // Web parity: only Property + Schedule are required; client details come
-    // from the logged-in account (web pre-fills these from the stored user).
+    // Property + Schedule are always required. Guests also provide contact.
     if (_selectedProjectId == null || _scheduledAt == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -169,20 +184,52 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       return;
     }
 
+    final authUser = ref.read(authProvider).user;
+    String name;
+    String phone;
+    String? email;
+
+    if (_needsGuestContact) {
+      final vErr =
+          Validators.nameError(_nameController.text, field: 'full name') ??
+          Validators.phoneError(_phoneController.text) ??
+          (_emailController.text.trim().isEmpty
+              ? null
+              : Validators.emailError(_emailController.text));
+      if (vErr != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFC65B46),
+            content: Text(vErr),
+          ),
+        );
+        return;
+      }
+      name = _nameController.text.trim();
+      phone = _phoneController.text.trim();
+      email = _emailController.text.trim().isEmpty
+          ? null
+          : _emailController.text.trim();
+    } else {
+      name =
+          authUser?['fullName']?.toString() ??
+          authUser?['username']?.toString() ??
+          'App User';
+      phone = authUser?['phone']?.toString() ?? '';
+      email = authUser?['email']?.toString();
+    }
+
     setState(() => _isSubmitting = true);
     try {
       final apiClient = ref.read(apiClientProvider);
-      final authUser = ref.read(authProvider).user;
 
       final String visitDetails =
           "Date: ${DateFormat('yyyy-MM-dd').format(_scheduledAt!)}, Time: ${DateFormat('hh:mm a').format(_scheduledAt!)}. Notes: ${_notesController.text}";
 
       final response = await apiClient.submitLead({
-        'name':
-            authUser?['fullName']?.toString() ??
-            authUser?['username']?.toString() ??
-            'App User',
-        'phone': authUser?['phone']?.toString() ?? '',
+        'name': name,
+        'phone': phone,
+        if (email != null && email.isNotEmpty) 'email': email,
         'interest': 'Site Visit',
         // Only ever send a real ObjectId (CastToObjectId/BSONError otherwise).
         if ((_selectedProjectId?.length ?? 0) == 24)
@@ -203,7 +250,18 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             ),
           ),
         );
-        Navigator.pop(context);
+        if (widget.embedded) {
+          setState(() {
+            _selectedProjectId = null;
+            _scheduledAt = null;
+            _notesController.clear();
+            _nameController.clear();
+            _phoneController.clear();
+            _emailController.clear();
+          });
+        } else {
+          Navigator.pop(context);
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -230,52 +288,63 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   @override
   Widget build(BuildContext context) {
     final projectsAsync = ref.watch(projectsProvider);
+    final showGuestFields = _needsGuestContact;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBody: true,
-      bottomNavigationBar: NavigationPill(
-        currentIndex: -1,
-        onTap: (i) {
-          ref.read(navigationProvider.notifier).state = i;
-          Navigator.of(context).popUntil((r) => r.isFirst);
-        },
-      ),
+      bottomNavigationBar: widget.embedded
+          ? null
+          : NavigationPill(
+              currentIndex: -1,
+              onTap: (i) {
+                ref.read(navigationProvider.notifier).state = i;
+                Navigator.of(context).popUntil((r) => r.isFirst);
+              },
+            ),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: Center(
-            child: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withOpacity(0.05),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withOpacity(0.1),
+        centerTitle: !widget.embedded,
+        leading: widget.embedded
+            ? const Padding(
+                padding: EdgeInsets.only(left: 8),
+                child: Center(child: SideMenuButton()),
+              )
+            : Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.05),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.1),
+                        ),
+                      ),
+                      child: Icon(
+                        LucideIcons.chevronLeft,
+                        color: Theme.of(context).colorScheme.onSurface,
+                        size: 16,
+                      ),
+                    ),
                   ),
                 ),
-                child: Icon(
-                  LucideIcons.chevronLeft,
-                  color: Theme.of(context).colorScheme.onSurface,
-                  size: 16,
-                ),
               ),
-            ),
-          ),
-        ),
         title: Column(
+          crossAxisAlignment: widget.embedded
+              ? CrossAxisAlignment.start
+              : CrossAxisAlignment.center,
           children: [
             Text(
-              'SCHEDULE VISIT',
+              'BOOK A VISIT',
               style: GoogleFonts.inter(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -284,7 +353,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               ),
             ),
             Text(
-              'PREMIUM PROTOCOL',
+              'SCHEDULE A SITE VIEWING',
               style: GoogleFonts.inter(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
@@ -358,6 +427,35 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               ),
             ).animate().fadeIn().slideY(begin: -0.1),
             const SizedBox(height: 32),
+
+            if (showGuestFields) ...[
+              _buildLabel('FULL NAME *'),
+              const SizedBox(height: 12),
+              _buildTextField(
+                controller: _nameController,
+                hint: 'Your full name',
+                icon: LucideIcons.user,
+              ),
+              const SizedBox(height: 24),
+              _buildLabel('PHONE *'),
+              const SizedBox(height: 12),
+              _buildTextField(
+                controller: _phoneController,
+                hint: 'Mobile number',
+                icon: LucideIcons.phone,
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 24),
+              _buildLabel('EMAIL'),
+              const SizedBox(height: 12),
+              _buildTextField(
+                controller: _emailController,
+                hint: 'Email address (optional)',
+                icon: LucideIcons.mail,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 24),
+            ],
 
             // Web parity: no Name / Phone / Employee fields — the form starts
             // at Select Property, then Schedule, then Additional Notes.

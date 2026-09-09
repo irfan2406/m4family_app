@@ -5,10 +5,10 @@ import 'package:m4_mobile/presentation/widgets/m4_bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/screens/home/guest_dashboard_screen.dart';
+import 'package:m4_mobile/presentation/screens/home/guest_saved_screen.dart';
+import 'package:m4_mobile/presentation/screens/profile/guest_profile_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
-import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
-import 'package:m4_mobile/presentation/screens/careers/careers_screen.dart';
-import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/schedule_visit_screen.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,21 +30,21 @@ class GuestMainShell extends ConsumerWidget {
     // hidden and the space it reserves is given back to the content.
     final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
-    // Home (0) & Properties (1) are the deep-green "showcase" screens (white
-    // typography); the info tabs stay cream with green typography.
+    // Home (0) & Projects (1) are the deep-green "showcase" screens (white
+    // typography); utility tabs stay cream with green typography.
     Widget showcase(Widget child) =>
         Theme(data: M4Theme.darkTheme, child: child);
 
     final List<Widget> screens = [
-      showcase(const GuestDashboardScreen()), // 0: Home     — green
-      showcase(const ProjectListScreen(guestMode: true)), // 1: Projects — green
-      const AboutScreen(), // 2: About    — cream
-      const CareersScreen(), // 3: Careers  — cream
-      const ContactScreen(embedded: true), // 4: Contact  — cream
+      showcase(const GuestDashboardScreen()), // 0: Home
+      showcase(const ProjectListScreen(guestMode: true)), // 1: Projects
+      const ScheduleVisitScreen(embedded: true), // 2: Book Visit
+      const GuestSavedScreen(), // 3: Saved
+      const GuestProfileScreen(embedded: true), // 4: Account
     ];
 
     // Nav pill follows the active tab's surface: green on the showcase tabs,
-    // cream on the info tabs, navy in dark mode.
+    // cream on the utility tabs, navy in dark mode.
     final ThemeData navTheme = currentIndex <= 1
         ? M4Theme.darkTheme
         : M4Theme.lightTheme;
@@ -106,9 +106,9 @@ class GuestMainShell extends ConsumerWidget {
 const List<IconData> _guestIcons = <IconData>[
   LucideIcons.home,
   LucideIcons.building2,
-  LucideIcons.info,
-  LucideIcons.briefcase,
-  LucideIcons.headphones,
+  LucideIcons.calendarDays,
+  LucideIcons.heart,
+  LucideIcons.user,
 ];
 
 /// Height the floating pill occupies: the bar plus its bottom float margin.
