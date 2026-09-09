@@ -31,8 +31,10 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   // CP parity: the partner's version of this form also captures who is
   // visiting and which of the partner's employees is handling it. Both stay
   // hidden for a customer / investor account, whose web page does not ask.
+  // Guest / embedded mode also needs name + phone (no logged-in account).
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
   bool _prefilled = false;
   bool _isCp = false;
   List<Map<String, dynamic>> _employees = [];
@@ -40,11 +42,21 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   bool _isEmployeeDropdownOpen = false;
   String? _nameError;
   String? _phoneError;
+  String? _emailError;
 
   String? _selectedProjectId;
   DateTime? _scheduledAt;
   bool _isProjectDropdownOpen = false;
   bool _isSubmitting = false;
+
+  /// Guests (and anyone not signed in) must enter contact details.
+  bool get _needsGuestContact {
+    final user = ref.read(authProvider).user;
+    return widget.embedded || user == null;
+  }
+
+  /// Name/phone fields: CP form, guest tab, or unauthenticated push.
+  bool get _showContactFields => _isCp || _needsGuestContact;
 
   /// Reads the signed-in account once. The role decides which version of the
   /// form is drawn, and a logged-in partner does not retype what we know.
@@ -94,6 +106,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     _notesController.dispose();
     _nameController.dispose();
     _phoneController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -220,22 +233,25 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   }
 
   Future<void> _submit() async {
-    // The CP form asks for the visitor's name and number, so those are checked
-    // with the same rules the app's other forms use, on the field itself.
-    if (_isCp) {
+    // CP and guest forms collect contact details on-screen; validate those
+    // first. Signed-in customers / investors use their account profile.
+    if (_showContactFields) {
       final nameErr = Validators.nameError(
         _nameController.text,
         field: 'full name',
       );
       final phoneErr = Validators.phoneError(_phoneController.text);
+      final emailErr = (!_needsGuestContact || _emailController.text.trim().isEmpty)
+          ? null
+          : Validators.emailError(_emailController.text);
       setState(() {
         _nameError = nameErr;
         _phoneError = phoneErr;
+        _emailError = emailErr;
       });
-      if (nameErr != null || phoneErr != null) return;
+      if (nameErr != null || phoneErr != null || emailErr != null) return;
     }
-    // Customer / investor: only Property + Schedule are required; their client
-    // details come from the logged-in account, as on their web page.
+
     if (_selectedProjectId == null || _scheduledAt == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -247,39 +263,17 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     }
 
     final authUser = ref.read(authProvider).user;
-    String name;
-    String phone;
-    String? email;
-
-    if (_needsGuestContact) {
-      final vErr =
-          Validators.nameError(_nameController.text, field: 'full name') ??
-          Validators.phoneError(_phoneController.text) ??
-          (_emailController.text.trim().isEmpty
-              ? null
-              : Validators.emailError(_emailController.text));
-      if (vErr != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: const Color(0xFFC65B46),
-            content: Text(vErr),
-          ),
-        );
-        return;
-      }
-      name = _nameController.text.trim();
-      phone = _phoneController.text.trim();
-      email = _emailController.text.trim().isEmpty
-          ? null
-          : _emailController.text.trim();
-    } else {
-      name =
-          authUser?['fullName']?.toString() ??
-          authUser?['username']?.toString() ??
-          'App User';
-      phone = authUser?['phone']?.toString() ?? '';
-      email = authUser?['email']?.toString();
-    }
+    final name = _nameController.text.trim().isNotEmpty
+        ? _nameController.text.trim()
+        : (authUser?['fullName']?.toString() ??
+              authUser?['username']?.toString() ??
+              'App User');
+    final phone = _phoneController.text.trim().isNotEmpty
+        ? _phoneController.text.trim()
+        : (authUser?['phone']?.toString() ?? '');
+    final email = _emailController.text.trim().isNotEmpty
+        ? _emailController.text.trim()
+        : authUser?['email']?.toString();
 
     setState(() => _isSubmitting = true);
     try {
@@ -295,16 +289,9 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
           "Date: ${DateFormat('yyyy-MM-dd').format(_scheduledAt!)}, Time: ${DateFormat('hh:mm a').format(_scheduledAt!)}.$handler Notes: ${_notesController.text}";
 
       final response = await apiClient.submitLead({
-        // Whatever the partner typed wins; the account is the fallback for the
-        // shorter customer / investor form, which has no such fields.
-        'name': _nameController.text.trim().isNotEmpty
-            ? _nameController.text.trim()
-            : (authUser?['fullName']?.toString() ??
-                  authUser?['username']?.toString() ??
-                  'App User'),
-        'phone': _phoneController.text.trim().isNotEmpty
-            ? _phoneController.text.trim()
-            : (authUser?['phone']?.toString() ?? ''),
+        'name': name,
+        'phone': phone,
+        if (email != null && email.isNotEmpty) 'email': email,
         if (_employeeId != null) 'employeeId': _employeeId,
         'interest': 'Site Visit',
         // Only ever send a real ObjectId (CastToObjectId/BSONError otherwise).
@@ -334,6 +321,9 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             _nameController.clear();
             _phoneController.clear();
             _emailController.clear();
+            _nameError = null;
+            _phoneError = null;
+            _emailError = null;
           });
         } else {
           Navigator.pop(context);
@@ -365,7 +355,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   Widget build(BuildContext context) {
     _prefillFromAccount();
     final projectsAsync = ref.watch(projectsProvider);
-    final showGuestFields = _needsGuestContact;
+    final showContact = _showContactFields;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -421,8 +411,10 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               : CrossAxisAlignment.center,
           children: [
             Text(
-              // The CP web page titles this SITE VISIT / PROTOCOL VERIFICATION.
-              _isCp ? 'SITE VISIT' : 'SCHEDULE VISIT',
+              // Guest tab: Book a Visit. CP web: SITE VISIT. Else schedule.
+              widget.embedded
+                  ? 'BOOK A VISIT'
+                  : (_isCp ? 'SITE VISIT' : 'SCHEDULE VISIT'),
               style: GoogleFonts.inter(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -431,7 +423,9 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               ),
             ),
             Text(
-              _isCp ? 'PROTOCOL VERIFICATION' : 'PREMIUM PROTOCOL',
+              widget.embedded
+                  ? 'SCHEDULE A SITE VIEWING'
+                  : (_isCp ? 'PROTOCOL VERIFICATION' : 'PREMIUM PROTOCOL'),
               style: GoogleFonts.inter(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
@@ -508,10 +502,10 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             ).animate().fadeIn().slideY(begin: -0.1),
             const SizedBox(height: 32),
 
-            // Customer / investor start at Select Property, matching their
-            // own web page. CP gets the longer web form.
-            if (_isCp) ...[
-              _buildLabel('FULL NAME'),
+            // Contact fields for CP and guests. Signed-in customers/investors
+            // skip these — details come from their account.
+            if (showContact) ...[
+              _buildLabel(_needsGuestContact ? 'FULL NAME *' : 'FULL NAME'),
               const SizedBox(height: 12),
               _buildTextField(
                 controller: _nameController,
@@ -521,7 +515,9 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                 errorText: _nameError,
               ),
               const SizedBox(height: 24),
-              _buildLabel('PHONE NUMBER'),
+              _buildLabel(
+                _needsGuestContact ? 'PHONE NUMBER *' : 'PHONE NUMBER',
+              ),
               const SizedBox(height: 12),
               _buildTextField(
                 controller: _phoneController,
@@ -532,6 +528,18 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                 errorText: _phoneError,
               ),
               const SizedBox(height: 24),
+              if (_needsGuestContact) ...[
+                _buildLabel('EMAIL'),
+                const SizedBox(height: 12),
+                _buildTextField(
+                  controller: _emailController,
+                  hint: 'Email address (optional)',
+                  icon: LucideIcons.mail,
+                  keyboardType: TextInputType.emailAddress,
+                  errorText: _emailError,
+                ),
+                const SizedBox(height: 24),
+              ],
             ],
             _buildLabel(_isCp ? 'SELECT PROJECT' : 'SELECT PROPERTY'),
             const SizedBox(height: 12),

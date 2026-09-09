@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
+import 'package:m4_mobile/core/utils/feature_flags.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 
@@ -16,6 +17,7 @@ class GuestProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final showPortalLogins = watchShowLoginOption(ref);
 
     final Color bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final Color textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
@@ -123,7 +125,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                 ),
                                 child: Center(
                                   child: Icon(
-                                    LucideIcons.user,
+                                    LucideIcons.sparkles,
                                     size: 32,
                                     color: textMuted,
                                   ),
@@ -131,7 +133,9 @@ class GuestProfileScreen extends ConsumerWidget {
                               ),
                               const SizedBox(height: 20),
                               Text(
-                                'YOUR M4 ACCOUNT',
+                                showPortalLogins
+                                    ? 'YOUR M4 ACCOUNT'
+                                    : 'M4 FAMILY TOOLS',
                                 style: GoogleFonts.gelasio(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -141,7 +145,9 @@ class GuestProfileScreen extends ConsumerWidget {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'Sign in to track bookings, open support tickets, manage referrals, and access your property documents.',
+                                showPortalLogins
+                                    ? 'Sign in to track bookings, open support tickets, manage referrals, and access your property documents.'
+                                    : 'Browse projects, schedule a site visit, save favourites, and estimate EMI — all without creating an account.',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.inter(
                                   fontSize: 12,
@@ -150,26 +156,28 @@ class GuestProfileScreen extends ConsumerWidget {
                                   height: 1.5,
                                 ),
                               ),
-                              const SizedBox(height: 22),
-                              _PrimaryButton(
-                                label: 'CUSTOMER SIGN IN',
-                                icon: LucideIcons.logIn,
-                                filled: true,
-                                onTap: () => context.go('/login'),
-                              ),
-                              const SizedBox(height: 12),
-                              _PrimaryButton(
-                                label: 'CREATE CUSTOMER ACCOUNT',
-                                icon: LucideIcons.userPlus,
-                                filled: false,
-                                onTap: () => context.go('/login'),
-                              ),
+                              if (showPortalLogins) ...[
+                                const SizedBox(height: 22),
+                                _PrimaryButton(
+                                  label: 'CUSTOMER SIGN IN',
+                                  icon: LucideIcons.logIn,
+                                  filled: true,
+                                  onTap: () => context.go('/login'),
+                                ),
+                                const SizedBox(height: 12),
+                                _PrimaryButton(
+                                  label: 'CREATE CUSTOMER ACCOUNT',
+                                  icon: LucideIcons.userPlus,
+                                  filled: false,
+                                  onTap: () => context.go('/login'),
+                                ),
+                              ],
                             ],
                           ),
                         ),
                         const SizedBox(height: 28),
                         Text(
-                          'PORTALS & TOOLS',
+                          showPortalLogins ? 'PORTALS & TOOLS' : 'TOOLS',
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
@@ -178,34 +186,36 @@ class GuestProfileScreen extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        _PortalCard(
-                          icon: LucideIcons.home,
-                          title: 'Customer',
-                          body:
-                              'Track bookings, site visits, support tickets, and your property portfolio.',
-                          actionLabel: 'Sign in',
-                          onTap: () => context.go('/login'),
-                        ),
-                        const SizedBox(height: 10),
-                        _PortalCard(
-                          icon: LucideIcons.briefcase,
-                          title: 'Channel Partner',
-                          body:
-                              'Manage referrals, commissions, visit tracker, and your CP wallet.',
-                          actionLabel: 'CP login',
-                          onTap: () =>
-                              context.push('/auth/cp/login?from=guest'),
-                        ),
-                        const SizedBox(height: 10),
-                        _PortalCard(
-                          icon: LucideIcons.trendingUp,
-                          title: 'Investor',
-                          body:
-                              'Documents vault, installment schedule, payments, and portfolio.',
-                          actionLabel: 'Investor login',
-                          onTap: () => context.go('/investor/login'),
-                        ),
-                        const SizedBox(height: 10),
+                        if (showPortalLogins) ...[
+                          _PortalCard(
+                            icon: LucideIcons.home,
+                            title: 'Customer',
+                            body:
+                                'Track bookings, site visits, support tickets, and your property portfolio.',
+                            actionLabel: 'Sign in',
+                            onTap: () => context.go('/login'),
+                          ),
+                          const SizedBox(height: 10),
+                          _PortalCard(
+                            icon: LucideIcons.briefcase,
+                            title: 'Channel Partner',
+                            body:
+                                'Manage referrals, commissions, visit tracker, and your CP wallet.',
+                            actionLabel: 'CP login',
+                            onTap: () =>
+                                context.push('/auth/cp/login?from=guest'),
+                          ),
+                          const SizedBox(height: 10),
+                          _PortalCard(
+                            icon: LucideIcons.trendingUp,
+                            title: 'Investor',
+                            body:
+                                'Documents vault, installment schedule, payments, and portfolio.',
+                            actionLabel: 'Investor login',
+                            onTap: () => context.go('/investor/login'),
+                          ),
+                          const SizedBox(height: 10),
+                        ],
                         _PortalCard(
                           icon: LucideIcons.calculator,
                           title: 'EMI Calculator',
@@ -224,6 +234,19 @@ class GuestProfileScreen extends ConsumerWidget {
                           onTap: () {
                             ref.read(guestNavigationProvider.notifier).state =
                                 2;
+                            context.go('/home');
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        _PortalCard(
+                          icon: LucideIcons.heart,
+                          title: 'Saved Projects',
+                          body:
+                              'Revisit properties you have shortlisted with the heart button.',
+                          actionLabel: 'Open',
+                          onTap: () {
+                            ref.read(guestNavigationProvider.notifier).state =
+                                3;
                             context.go('/home');
                           },
                         ),

@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:m4_mobile/core/utils/feature_flags.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 
 class GuestSidebarMenu extends ConsumerStatefulWidget {
@@ -151,6 +152,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final showPortalLogins = watchShowLoginOption(ref);
 
     // The drawer can be opened from a screen pushed with Navigator.push (e.g.
     // the guest project detail), which is NOT under a GoRoute builder — so
@@ -290,40 +292,41 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                             onTap: () => context.push('/about'),
                           ),
 
-                          _DropdownMenuItem(
-                            label: 'Connect',
-                            icon: LucideIcons.share2,
-                            isOpen: _isConnectOpen,
-                            onToggle: () => setState(
-                              () => _isConnectOpen = !_isConnectOpen,
+                          if (showPortalLogins)
+                            _DropdownMenuItem(
+                              label: 'Connect',
+                              icon: LucideIcons.share2,
+                              isOpen: _isConnectOpen,
+                              onToggle: () => setState(
+                                () => _isConnectOpen = !_isConnectOpen,
+                              ),
+                              subItems: [
+                                _SubItem(
+                                  label: 'CP Login',
+                                  icon: LucideIcons.logIn,
+                                  onTap: () {
+                                    context.push('/auth/cp/login?from=guest');
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                _SubItem(
+                                  label: 'Investor Login',
+                                  icon: LucideIcons.logIn,
+                                  onTap: () {
+                                    context.push('/investor/login');
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                _SubItem(
+                                  label: 'Customer Login',
+                                  icon: LucideIcons.logIn,
+                                  onTap: () {
+                                    context.push('/login?step=1');
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
                             ),
-                            subItems: [
-                              _SubItem(
-                                label: 'CP Login',
-                                icon: LucideIcons.logIn,
-                                onTap: () {
-                                  context.push('/auth/cp/login?from=guest');
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              _SubItem(
-                                label: 'Investor Login',
-                                icon: LucideIcons.logIn,
-                                onTap: () {
-                                  context.push('/investor/login');
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              _SubItem(
-                                label: 'Customer Login',
-                                icon: LucideIcons.logIn,
-                                onTap: () {
-                                  context.push('/login?step=1');
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                          ),
 
                           _MenuItem(
                             label: 'Careers',
