@@ -13,9 +13,13 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 
 class ScheduleVisitScreen extends ConsumerStatefulWidget {
-  const ScheduleVisitScreen({super.key});
+  /// When true, rendered as a guest shell tab (no pop nav / pill).
+  final bool embedded;
+
+  const ScheduleVisitScreen({super.key, this.embedded = false});
 
   @override
   ConsumerState<ScheduleVisitScreen> createState() =>
@@ -242,10 +246,44 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       return;
     }
 
+    final authUser = ref.read(authProvider).user;
+    String name;
+    String phone;
+    String? email;
+
+    if (_needsGuestContact) {
+      final vErr =
+          Validators.nameError(_nameController.text, field: 'full name') ??
+          Validators.phoneError(_phoneController.text) ??
+          (_emailController.text.trim().isEmpty
+              ? null
+              : Validators.emailError(_emailController.text));
+      if (vErr != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFC65B46),
+            content: Text(vErr),
+          ),
+        );
+        return;
+      }
+      name = _nameController.text.trim();
+      phone = _phoneController.text.trim();
+      email = _emailController.text.trim().isEmpty
+          ? null
+          : _emailController.text.trim();
+    } else {
+      name =
+          authUser?['fullName']?.toString() ??
+          authUser?['username']?.toString() ??
+          'App User';
+      phone = authUser?['phone']?.toString() ?? '';
+      email = authUser?['email']?.toString();
+    }
+
     setState(() => _isSubmitting = true);
     try {
       final apiClient = ref.read(apiClientProvider);
-      final authUser = ref.read(authProvider).user;
 
       // /api/leads has no employee column, so the handler is also written
       // into the message — that way the assignment reaches the CRM as text
@@ -288,7 +326,18 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             ),
           ),
         );
-        Navigator.pop(context);
+        if (widget.embedded) {
+          setState(() {
+            _selectedProjectId = null;
+            _scheduledAt = null;
+            _notesController.clear();
+            _nameController.clear();
+            _phoneController.clear();
+            _emailController.clear();
+          });
+        } else {
+          Navigator.pop(context);
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -316,49 +365,60 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   Widget build(BuildContext context) {
     _prefillFromAccount();
     final projectsAsync = ref.watch(projectsProvider);
+    final showGuestFields = _needsGuestContact;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBody: true,
-      bottomNavigationBar: NavigationPill(
-        currentIndex: -1,
-        onTap: (i) {
-          ref.read(navigationProvider.notifier).state = i;
-          Navigator.of(context).popUntil((r) => r.isFirst);
-        },
-      ),
+      bottomNavigationBar: widget.embedded
+          ? null
+          : NavigationPill(
+              currentIndex: -1,
+              onTap: (i) {
+                ref.read(navigationProvider.notifier).state = i;
+                Navigator.of(context).popUntil((r) => r.isFirst);
+              },
+            ),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: Center(
-            child: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withOpacity(0.05),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withOpacity(0.1),
+        centerTitle: !widget.embedded,
+        leading: widget.embedded
+            ? const Padding(
+                padding: EdgeInsets.only(left: 8),
+                child: Center(child: SideMenuButton()),
+              )
+            : Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.05),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.1),
+                        ),
+                      ),
+                      child: Icon(
+                        LucideIcons.chevronLeft,
+                        color: Theme.of(context).colorScheme.onSurface,
+                        size: 16,
+                      ),
+                    ),
                   ),
                 ),
-                child: Icon(
-                  LucideIcons.chevronLeft,
-                  color: Theme.of(context).colorScheme.onSurface,
-                  size: 16,
-                ),
               ),
-            ),
-          ),
-        ),
         title: Column(
+          crossAxisAlignment: widget.embedded
+              ? CrossAxisAlignment.start
+              : CrossAxisAlignment.center,
           children: [
             Text(
               // The CP web page titles this SITE VISIT / PROTOCOL VERIFICATION.

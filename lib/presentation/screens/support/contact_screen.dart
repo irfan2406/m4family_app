@@ -299,11 +299,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         ),
         const SizedBox(height: 18),
         _introText(
-          "Thank you for visiting our website! We would love to hear from "
-          "you. Whether you have a question, feedback, or simply want to say "
-          "hello we're here to help. Please feel free to get in touch with us "
-          "using the contact information below or by filling out the contact "
-          "form. We strive to respond to all inquiries promptly.",
+          "We would love to hear from you. Whether you have a question about a "
+          "project, need help scheduling a visit, or want support with your "
+          "account — reach us using the details below or send a message through "
+          "this form. Our team responds promptly.",
           GoogleFonts.inter(
             fontSize: 14,
             fontWeight: FontWeight.w500,

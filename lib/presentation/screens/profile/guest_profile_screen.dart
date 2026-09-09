@@ -3,12 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
+import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 
-/// Guest profile screen — mirrors the web `/guest/profile` page.
-/// Unauthenticated state: sign-in / create-account CTAs, "why join" grid,
-/// dark-mode preference toggle, and an investor login shortcut.
+/// Guest profile / Account tab — sign-in CTAs, portal feature cards, tools.
 class GuestProfileScreen extends ConsumerWidget {
-  const GuestProfileScreen({super.key});
+  /// When true, shown as the guest shell Account tab (side menu, no back).
+  final bool embedded;
+
+  const GuestProfileScreen({super.key, this.embedded = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,7 +33,6 @@ class GuestProfileScreen extends ConsumerWidget {
       backgroundColor: bg,
       body: Stack(
         children: [
-          // Ambient glow (matches web primary/5 blur)
           Positioned(
             top: -60,
             left: -60,
@@ -45,30 +47,30 @@ class GuestProfileScreen extends ConsumerWidget {
             ),
           ),
           SafeArea(
-            // Edge-to-edge: content runs under the gesture bar so scrolling fills
-            // the screen. Trailing padding keeps the last item reachable.
             bottom: false,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+                  padding: const EdgeInsets.fromLTRB(20, 12, 24, 8),
                   child: Row(
                     children: [
-                      _CircleButton(
-                        icon: LucideIcons.chevronLeft,
-                        onTap: () {
-                          if (context.canPop()) {
-                            context.pop();
-                          } else {
-                            context.go('/home');
-                          }
-                        },
-                      ),
-                      const SizedBox(width: 16),
+                      if (embedded)
+                        const SideMenuButton()
+                      else
+                        _CircleButton(
+                          icon: LucideIcons.chevronLeft,
+                          onTap: () {
+                            if (context.canPop()) {
+                              context.pop();
+                            } else {
+                              context.go('/home');
+                            }
+                          },
+                        ),
+                      const SizedBox(width: 14),
                       Text(
-                        'MY PROFILE',
+                        'ACCOUNT',
                         style: GoogleFonts.gelasio(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -86,12 +88,11 @@ class GuestProfileScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Guest profile card
                         Container(
-                          padding: const EdgeInsets.all(32),
+                          padding: const EdgeInsets.all(28),
                           decoration: BoxDecoration(
                             color: cardColor,
-                            borderRadius: BorderRadius.circular(40),
+                            borderRadius: BorderRadius.circular(32),
                             border: Border.all(color: borderColor),
                             boxShadow: isDark
                                 ? []
@@ -108,8 +109,8 @@ class GuestProfileScreen extends ConsumerWidget {
                           child: Column(
                             children: [
                               Container(
-                                width: 96,
-                                height: 96,
+                                width: 88,
+                                height: 88,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: isDark
@@ -118,25 +119,21 @@ class GuestProfileScreen extends ConsumerWidget {
                                   border: Border.all(
                                     color: borderColor,
                                     width: 2,
-                                    style: BorderStyle.solid,
                                   ),
                                 ),
                                 child: Center(
-                                  child: Text(
-                                    '?',
-                                    style: GoogleFonts.gelasio(
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.bold,
-                                      color: textMuted,
-                                    ),
+                                  child: Icon(
+                                    LucideIcons.user,
+                                    size: 32,
+                                    color: textMuted,
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 24),
+                              const SizedBox(height: 20),
                               Text(
-                                'GUEST USER',
+                                'YOUR M4 ACCOUNT',
                                 style: GoogleFonts.gelasio(
-                                  fontSize: 22,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: textPrimary,
                                   letterSpacing: -0.5,
@@ -144,26 +141,25 @@ class GuestProfileScreen extends ConsumerWidget {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'SIGN IN TO ACCESS YOUR PERSONALIZED DASHBOARD, DOCUMENTS, AND EXCLUSIVE OFFERS.',
+                                'Sign in to track bookings, open support tickets, manage referrals, and access your property documents.',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.inter(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
                                   color: textMuted,
-                                  letterSpacing: 1,
-                                  height: 1.6,
+                                  height: 1.5,
                                 ),
                               ),
-                              const SizedBox(height: 24),
+                              const SizedBox(height: 22),
                               _PrimaryButton(
-                                label: 'SIGN IN',
+                                label: 'CUSTOMER SIGN IN',
                                 icon: LucideIcons.logIn,
                                 filled: true,
                                 onTap: () => context.go('/login'),
                               ),
                               const SizedBox(height: 12),
                               _PrimaryButton(
-                                label: 'CREATE ACCOUNT',
+                                label: 'CREATE CUSTOMER ACCOUNT',
                                 icon: LucideIcons.userPlus,
                                 filled: false,
                                 onTap: () => context.go('/login'),
@@ -171,90 +167,74 @@ class GuestProfileScreen extends ConsumerWidget {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 32),
-                        // Why join
-                        Center(
-                          child: Text(
-                            'WHY JOIN M4 FAMILY?',
-                            style: GoogleFonts.gelasio(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              color: textMuted,
-                              letterSpacing: 2,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        const Row(
-                          children: [
-                            Expanded(
-                              child: _InfoTile(
-                                title: 'EXCLUSIVE ACCESS',
-                                body:
-                                    'Get early access to new project launches.',
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: _InfoTile(
-                                title: 'PERSONALIZED',
-                                body:
-                                    'Track your favorite properties and visits.',
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 32),
-                        // Preferences
+                        const SizedBox(height: 28),
                         Text(
-                          'PREFERENCES',
+                          'PORTALS & TOOLS',
                           style: GoogleFonts.gelasio(
-                            fontSize: 9,
+                            fontSize: 10,
                             fontWeight: FontWeight.w700,
                             color: textMuted,
                             letterSpacing: 2,
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        // Investor login
-                        _ScaleTap(
+                        const SizedBox(height: 12),
+                        _PortalCard(
+                          icon: LucideIcons.home,
+                          title: 'Customer',
+                          body:
+                              'Track bookings, site visits, support tickets, and your property portfolio.',
+                          actionLabel: 'Sign in',
+                          onTap: () => context.go('/login'),
+                        ),
+                        const SizedBox(height: 10),
+                        _PortalCard(
+                          icon: LucideIcons.briefcase,
+                          title: 'Channel Partner',
+                          body:
+                              'Manage referrals, commissions, visit tracker, and your CP wallet.',
+                          actionLabel: 'CP login',
+                          onTap: () =>
+                              context.push('/auth/cp/login?from=guest'),
+                        ),
+                        const SizedBox(height: 10),
+                        _PortalCard(
+                          icon: LucideIcons.trendingUp,
+                          title: 'Investor',
+                          body:
+                              'Documents vault, installment schedule, payments, and portfolio.',
+                          actionLabel: 'Investor login',
                           onTap: () => context.go('/investor/login'),
-                          child: Container(
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color: const Color(
-                                0xFFC5A35B,
-                              ).withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: const Color(
-                                  0xFFC5A35B,
-                                ).withValues(alpha: 0.25),
-                              ),
-                            ),
-                            child: Center(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    LucideIcons.trendingUp,
-                                    size: 16,
-                                    color: Color(0xFFC65B46),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'INVESTOR LOGIN',
-                                    style: GoogleFonts.gelasio(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xFFC65B46),
-                                      letterSpacing: 1.5,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        _PortalCard(
+                          icon: LucideIcons.calculator,
+                          title: 'EMI Calculator',
+                          body:
+                              'Estimate monthly payments for a property — no sign-in required.',
+                          actionLabel: 'Open',
+                          onTap: () => context.push('/guest/calculator'),
+                        ),
+                        const SizedBox(height: 10),
+                        _PortalCard(
+                          icon: LucideIcons.calendarDays,
+                          title: 'Book a Visit',
+                          body:
+                              'Schedule a site viewing with date, time, and project selection.',
+                          actionLabel: 'Schedule',
+                          onTap: () {
+                            ref.read(guestNavigationProvider.notifier).state =
+                                2;
+                            context.go('/home');
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        _PortalCard(
+                          icon: LucideIcons.phone,
+                          title: 'Contact Support',
+                          body:
+                              'Message our team from the app for questions about projects or visits.',
+                          actionLabel: 'Contact',
+                          onTap: () => context.push('/contact'),
                         ),
                       ],
                     ),
@@ -269,52 +249,102 @@ class GuestProfileScreen extends ConsumerWidget {
   }
 }
 
-class _InfoTile extends StatelessWidget {
+class _PortalCard extends StatelessWidget {
+  final IconData icon;
   final String title;
   final String body;
-  const _InfoTile({required this.title, required this.body});
+  final String actionLabel;
+  final VoidCallback onTap;
+
+  const _PortalCard({
+    required this.icon,
+    required this.title,
+    required this.body,
+    required this.actionLabel,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
-    final Color textMuted = isDark
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
+    final textMuted = isDark
         ? Colors.white.withValues(alpha: 0.5)
         : Colors.black.withValues(alpha: 0.5);
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
-          alpha: 0.03,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : Colors.black.withValues(alpha: 0.06),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: GoogleFonts.inter(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: textPrimary,
+
+    return Material(
+      color: isDark
+          ? Colors.white.withValues(alpha: 0.03)
+          : Colors.white.withValues(alpha: 0.85),
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.06),
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            body,
-            style: GoogleFonts.inter(
-              fontSize: 9,
-              color: textMuted,
-              height: 1.4,
-            ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: textPrimary.withValues(alpha: 0.06),
+                ),
+                child: Icon(icon, size: 18, color: textPrimary),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      body,
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        height: 1.4,
+                        color: textMuted,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      actionLabel.toUpperCase(),
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.2,
+                        color: const Color(0xFF155A4F),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                LucideIcons.chevronRight,
+                size: 16,
+                color: textMuted,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -344,11 +374,11 @@ class _PrimaryButton extends StatelessWidget {
     return _ScaleTap(
       onTap: onTap,
       child: Container(
-        height: 56,
+        height: 52,
         width: double.infinity,
         decoration: BoxDecoration(
           color: bg,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(16),
           border: filled
               ? null
               : Border.all(
@@ -369,7 +399,7 @@ class _PrimaryButton extends StatelessWidget {
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   color: fg,
-                  letterSpacing: 1.5,
+                  letterSpacing: 1.2,
                 ),
               ),
             ],
