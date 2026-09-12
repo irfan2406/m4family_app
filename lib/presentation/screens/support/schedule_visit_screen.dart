@@ -49,26 +49,26 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   bool _isProjectDropdownOpen = false;
   bool _isSubmitting = false;
 
-  /// Guests (and anyone not signed in) must enter contact details.
-  bool get _needsGuestContact {
-    final user = ref.read(authProvider).user;
-    return widget.embedded || user == null;
-  }
+  /// Guests always enter contact details (no login-based branching).
+  bool get _needsGuestContact => true;
 
-  /// Name/phone fields: CP form, guest tab, or unauthenticated push.
-  bool get _showContactFields => _isCp || _needsGuestContact;
+  /// Name/phone fields always shown — same empty form for everyone.
+  bool get _showContactFields => true;
 
-  /// Reads the signed-in account once. The role decides which version of the
-  /// form is drawn, and a logged-in partner does not retype what we know.
+  /// Role-only: CP employee picker. Never prefills name/phone from profile
+  /// (matches Android / guest booking sheets — empty placeholders).
   void _prefillFromAccount() {
     if (_prefilled) return;
+    _prefilled = true;
+    // Guest Book Visit tab: ignore any leftover session entirely.
+    if (widget.embedded) {
+      _isCp = false;
+      return;
+    }
     final u = ref.read(authProvider).user;
     if (u == null) return;
-    _prefilled = true;
     _isCp = u['role']?.toString().toLowerCase() == 'cp';
     if (_isCp) {
-      _nameController.text = (u['fullName'] ?? u['username'] ?? '').toString();
-      _phoneController.text = (u['phone'] ?? '').toString();
       _fetchEmployees();
     }
   }

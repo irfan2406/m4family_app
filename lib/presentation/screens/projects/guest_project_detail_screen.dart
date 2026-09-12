@@ -485,6 +485,222 @@ class _GuestProjectDetailScreenState
     }
   }
 
+  /// Same “HOW CAN WE HELP?” sheet as Android `project_detail_screen`.
+  void _showBookingOptionsDialog(dynamic project) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.1),
+            width: 0.5,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white24 : Colors.black12,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            Text(
+              'HOW CAN\nWE HELP?',
+              style: GoogleFonts.gelasio(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
+                height: 0.9,
+                letterSpacing: -1.5,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'INTERESTED IN ${project?['title']?.toString().toUpperCase() ?? 'PROJECT'}?\nCHOOSE HOW YOU\'D LIKE TO PROCEED.',
+              style: GoogleFonts.gelasio(
+                fontSize: 9,
+                color: isDark ? Colors.white38 : const Color(0xFF155A4F),
+                fontWeight: FontWeight.w700,
+                letterSpacing: 2,
+              ),
+            ),
+            const SizedBox(height: 40),
+            _buildBookingOption(
+              icon: LucideIcons.messageSquare,
+              title: 'SEND INQUIRY',
+              desc: 'Get detailed brochure and pricing via email/WhatsApp.',
+              color: const Color(0xFF163A2C),
+              onTap: () {
+                Navigator.pop(context);
+                _showRequestDetailsDialog(project, null, 'General');
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildBookingOption(
+              icon: LucideIcons.calendar,
+              title: 'SCHEDULE SITE VISIT',
+              desc: 'Book a personalized tour with our project manager.',
+              color: const Color(0xFF163A2C),
+              onTap: () {
+                Navigator.pop(context);
+                _showRequestDetailsDialog(project, null, 'Site Visit');
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildBookingOption(
+              icon: LucideIcons.creditCard,
+              title: 'TOKEN BOOKING',
+              desc: 'Lock your preferred unit with a refundable token amount.',
+              color: const Color(0xFF163A2C),
+              onTap: () {
+                Navigator.pop(context);
+                _showRequestDetailsDialog(project, 'TOKEN BOOKING', 'General');
+              },
+            ),
+            const SizedBox(height: 32),
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: M4Theme.premiumBlue.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: M4Theme.premiumBlue.withValues(alpha: 0.1),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: M4Theme.premiumBlue,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      LucideIcons.info,
+                      color: Colors.white,
+                      size: 14,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      'M4 FAMILY MEMBERS GET PRIORITY SITE VISITS AND EXCLUSIVE UNIT SELECTION WINDOWS.',
+                      style: GoogleFonts.inter(
+                        fontSize: 8,
+                        color: isDark
+                            ? Colors.white70
+                            : const Color(0xFF0C312B).withValues(alpha: 0.8),
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBookingOption({
+    required IconData icon,
+    required String title,
+    required String desc,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return _ScaleButton(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.black.withValues(alpha: 0.05),
+          ),
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    desc,
+                    style: GoogleFonts.inter(
+                      fontSize: 9,
+                      color: isDark ? Colors.white38 : const Color(0xFF155A4F),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              LucideIcons.chevronRight,
+              color: isDark ? Colors.white12 : const Color(0x1F0C312B),
+              size: 18,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showRequestDetailsDialog(
     dynamic project, [
     dynamic plan,
@@ -494,21 +710,17 @@ class _GuestProjectDetailScreenState
     final planName = plan is Map ? plan['name']?.toString() : plan?.toString();
     final projectTitle = project?['title'] ?? 'this project';
 
-    final authUser = ref.read(authProvider).user;
-    if (authUser != null) {
-      _nameController.text =
-          authUser['fullName']?.toString() ??
-          authUser['username']?.toString() ??
-          '';
-      _phoneController.text = authUser['phone']?.toString() ?? '';
-      _emailController.text = authUser['email']?.toString() ?? '';
-    }
+    // Same as Android: always open empty — never prefill from a logged-in profile.
+    _nameController.clear();
+    _phoneController.clear();
+    _emailController.clear();
+    _notesController.clear();
+    _modalErrorMessage = null;
+    _selectedConfig = '3 BHK';
     // Reset booking state for this open (web: leadType/date/time/notes).
     _leadType = type == 'Site Visit' ? 'Site Visit' : 'VC';
     _leadDate = null;
     _leadTime = null;
-    _modalErrorMessage = null;
-    _notesController.clear();
 
     showDialog(
       context: context,
@@ -574,9 +786,11 @@ class _GuestProjectDetailScreenState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _leadType == 'VC'
+                          type == 'VC'
                               ? 'BOOK A VIDEO CALL'
-                              : 'BOOK A SITE VISIT',
+                              : type == 'Site Visit'
+                              ? 'BOOK A SITE VISIT'
+                              : 'REQUEST DETAILS',
                           style: GoogleFonts.gelasio(
                             fontSize: 26,
                             fontWeight: FontWeight.w700,
@@ -589,8 +803,11 @@ class _GuestProjectDetailScreenState
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'A BESPOKE SHOWCASE OF LUXURY AT ${projectTitle.toUpperCase()}.',
-                          // Web parity: slate-blue subtitle.
+                          planName != null
+                              ? 'INQUIRY FOR "$planName" PAYMENT PLAN'
+                              : type == 'General'
+                              ? 'A BESPOKE SHOWCASE OF LUXURY AT ${projectTitle.toUpperCase()}.'
+                              : 'INQUIRY FOR ${projectTitle.toUpperCase()}',
                           style: GoogleFonts.inter(
                             fontSize: 9,
                             color: isDark ? Colors.white54 : _kBookingBlue,
@@ -624,6 +841,91 @@ class _GuestProjectDetailScreenState
                           inputFormatters: Validators.phoneFormatters,
                         ),
 
+                        // Same configuration chips as Android project detail.
+                        if (type != 'General') ...[
+                          const SizedBox(height: 28),
+                          Text(
+                            'PREFERRED CONFIGURATION *',
+                            style: GoogleFonts.inter(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? Colors.white70 : _kBookingBlue,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          GridView.count(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: EdgeInsets.zero,
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
+                            childAspectRatio: 2.8,
+                            children:
+                                const [
+                                  '1 BHK',
+                                  '2 BHK',
+                                  '3 BHK',
+                                  '4 BHK',
+                                  'PENTHOUSE',
+                                ].map((config) {
+                                  final isActive = _selectedConfig == config;
+                                  return GestureDetector(
+                                    onTap: () => setModalState(
+                                      () => _selectedConfig = config,
+                                    ),
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: isActive
+                                            ? (isDark
+                                                  ? Colors.white
+                                                  : const Color(0xFF0C312B))
+                                            : (isDark
+                                                  ? Colors.white.withValues(
+                                                      alpha: 0.03,
+                                                    )
+                                                  : Colors.black.withValues(
+                                                      alpha: 0.04,
+                                                    )),
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                          color: isActive
+                                              ? (isDark
+                                                    ? Colors.white
+                                                    : const Color(0xFF0C312B))
+                                              : (isDark
+                                                    ? Colors.white.withValues(
+                                                        alpha: 0.1,
+                                                      )
+                                                    : Colors.black.withValues(
+                                                        alpha: 0.08,
+                                                      )),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        config,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 0.5,
+                                          color: isActive
+                                              ? (isDark
+                                                    ? const Color(0xFF0C312B)
+                                                    : Colors.white)
+                                              : (isDark
+                                                    ? Colors.white54
+                                                    : const Color(0xFF155A4F)),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                          ),
+                        ],
+
+                        if (type == 'VC' || type == 'Site Visit') ...[
                         const SizedBox(height: 28),
                         // Visit Type toggle (web parity)
                         Text(
@@ -834,6 +1136,7 @@ class _GuestProjectDetailScreenState
                             ),
                           ),
                         ),
+                        ], // end VC / Site Visit section
 
                         const SizedBox(height: 40),
                         if (_modalErrorMessage != null) ...[
@@ -863,6 +1166,8 @@ class _GuestProjectDetailScreenState
                           onTap: () {
                             final name = _nameController.text.trim();
                             final phone = _phoneController.text.trim();
+                            final isVisit =
+                                type == 'VC' || type == 'Site Visit';
                             // Valid name + phone (email only when provided).
                             final vErr =
                                 Validators.nameError(name, field: 'name') ??
@@ -876,7 +1181,8 @@ class _GuestProjectDetailScreenState
                               setModalState(() => _modalErrorMessage = vErr);
                               return;
                             }
-                            if (_leadDate == null || _leadTime == null) {
+                            if (isVisit &&
+                                (_leadDate == null || _leadTime == null)) {
                               setModalState(
                                 () => _modalErrorMessage =
                                     'Please schedule a date and time for your visit',
@@ -885,22 +1191,30 @@ class _GuestProjectDetailScreenState
                             }
                             // The free-scrolling wheels allow earlier-today
                             // selections; reject a past slot at submit.
-                            final composed = DateTime(
-                              _leadDate!.year,
-                              _leadDate!.month,
-                              _leadDate!.day,
-                              _leadTime!.hour,
-                              _leadTime!.minute,
-                            );
-                            if (composed.isBefore(DateTime.now())) {
-                              setModalState(
-                                () => _modalErrorMessage =
-                                    'Please pick a future date and time',
+                            if (isVisit &&
+                                _leadDate != null &&
+                                _leadTime != null) {
+                              final composed = DateTime(
+                                _leadDate!.year,
+                                _leadDate!.month,
+                                _leadDate!.day,
+                                _leadTime!.hour,
+                                _leadTime!.minute,
                               );
-                              return;
+                              if (composed.isBefore(DateTime.now())) {
+                                setModalState(
+                                  () => _modalErrorMessage =
+                                      'Please pick a future date and time',
+                                );
+                                return;
+                              }
                             }
                             setModalState(() => _modalErrorMessage = null);
-                            _submitInquiry(_leadType, planName, setModalState);
+                            _submitInquiry(
+                              isVisit ? _leadType : type,
+                              planName,
+                              setModalState,
+                            );
                           },
                           child: Container(
                             width: double.infinity,
@@ -913,7 +1227,9 @@ class _GuestProjectDetailScreenState
                             ),
                             child: Center(
                               child: Text(
-                                'CONFIRM BOOKING',
+                                type == 'General'
+                                    ? 'CONFIRM BOOKING'
+                                    : 'SUBMIT INQUIRY',
                                 style: GoogleFonts.gelasio(
                                   color: isDark
                                       ? const Color(0xFF0C312B)
@@ -1309,52 +1625,45 @@ class _GuestProjectDetailScreenState
                 const SizedBox(height: 24),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  // IntrinsicHeight measures the tallest card and gives the Row
-                  // a bounded height. Without it, stretch inside this vertical
-                  // scroll view hands the cards an INFINITE height, which fails
-                  // BoxConstraints and aborts layout for the whole page — the
-                  // screen then rendered completely blank.
-                  child: IntrinsicHeight(
-                    child: Row(
-                      // All three cards take the height of the tallest, so a
-                      // card that has grown for larger text does not leave the
-                      // other two short.
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: _OverviewActionCard(
-                            label: 'VIDEO CALL',
-                            value: 'Connect Now',
-                            icon: LucideIcons.video,
-                            isAction: true,
-                            onTap: () =>
-                                _showRequestDetailsDialog(project, null, 'VC'),
+                  // Do NOT use CrossAxisAlignment.stretch here: this Row sits
+                  // in a vertical SingleChildScrollView, so stretch would pass
+                  // h=Infinity into the cards and crash layout (blank screen).
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _OverviewActionCard(
+                          label: 'VIDEO CALL',
+                          value: 'Connect Now',
+                          icon: LucideIcons.video,
+                          isAction: true,
+                          onTap: () =>
+                              _showRequestDetailsDialog(project, null, 'VC'),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _OverviewActionCard(
+                          label: 'COMPLETION',
+                          value: '${project?['completion'] ?? 0}%',
+                          icon: LucideIcons.calendar,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _OverviewActionCard(
+                          label: 'SITE VISIT',
+                          value: 'Book Tour',
+                          icon: LucideIcons.eye,
+                          isAction: true,
+                          onTap: () => _showRequestDetailsDialog(
+                            project,
+                            null,
+                            'Site Visit',
                           ),
                         ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: _OverviewActionCard(
-                            label: 'COMPLETION',
-                            value: '${project?['completion'] ?? 0}%',
-                            icon: LucideIcons.calendar,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: _OverviewActionCard(
-                            label: 'SITE VISIT',
-                            value: 'Book Tour',
-                            icon: LucideIcons.eye,
-                            isAction: true,
-                            onTap: () => _showRequestDetailsDialog(
-                              project,
-                              null,
-                              'Site Visit',
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -1825,20 +2134,20 @@ class _GuestProjectDetailScreenState
       right: 20,
       child: Container(
         height: 80,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         decoration: BoxDecoration(
           color: const Color(0xFFF4EFE3),
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+              color: Colors.black.withValues(alpha: 0.2),
+              blurRadius: 40,
+              offset: const Offset(0, 20),
             ),
           ],
         ),
         child: Row(
           children: [
-            const SizedBox(width: 20),
             _BottomIconAction(
               icon: LucideIcons.phone,
               onTap: () => SupportHandlers.launchCall(
@@ -1846,9 +2155,19 @@ class _GuestProjectDetailScreenState
               ),
             ),
             const SizedBox(width: 12),
+            _BottomIconAction(
+              icon: LucideIcons.messageSquare,
+              onTap: () => SupportHandlers.launchWhatsApp(
+                project?['whatsapp'] ??
+                    project?['phone'] ??
+                    project?['contactPhone'],
+              ),
+            ),
+            const SizedBox(width: 12),
             Expanded(
               child: _ScaleButton(
-                onTap: () => _showRequestDetailsDialog(project, null),
+                // Same options sheet as Android (Send Inquiry / Site Visit / Token).
+                onTap: () => _showBookingOptionsDialog(project),
                 child: Container(
                   height: 56,
                   decoration: BoxDecoration(
@@ -1869,7 +2188,6 @@ class _GuestProjectDetailScreenState
                 ),
               ),
             ),
-            const SizedBox(width: 20),
           ],
         ),
       ),
@@ -2227,11 +2545,9 @@ class _OverviewActionCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        // A minimum, not a fixed height: at a larger system font size the
-        // label and value together needed more than 140 and ran past the
-        // bottom of the card. 140 is still what it measures at the design
-        // text size, so nothing moves on a default phone.
-        constraints: const BoxConstraints(minHeight: 140),
+        // Fixed height keeps cards even without CrossAxisAlignment.stretch
+        // (stretch is unsafe inside a vertical scroll view).
+        height: 140,
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
         decoration: BoxDecoration(
           color: isDark
@@ -2263,6 +2579,7 @@ class _OverviewActionCard extends StatelessWidget {
               size: 24,
             ),
             Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   label.toUpperCase(),
@@ -2273,6 +2590,8 @@ class _OverviewActionCard extends StatelessWidget {
                     letterSpacing: 1.5,
                   ),
                   textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -2284,6 +2603,8 @@ class _OverviewActionCard extends StatelessWidget {
                     letterSpacing: -0.2,
                   ),
                   textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
