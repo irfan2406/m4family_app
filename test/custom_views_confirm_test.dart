@@ -46,10 +46,7 @@ DioException get _spaceRequired => DioException(
   response: Response(
     requestOptions: RequestOptions(path: '/api/custom-views'),
     statusCode: 400,
-    data: {
-      'status': false,
-      'message': 'Space and selections are required',
-    },
+    data: {'status': false, 'message': 'Space and selections are required'},
   ),
   type: DioExceptionType.badResponse,
 );

@@ -28,7 +28,10 @@ class InvestorProfileDetailsScreen extends ConsumerStatefulWidget {
 
 class _InvestorProfileDetailsScreenState
     extends ConsumerState<InvestorProfileDetailsScreen> {
-  static const _gold = Color(0xFFC5A35B);
+  // The ink green the rest of the app uses. This screen was the last one
+  // still on the gold accent; its CP twin already draws these same fifteen
+  // places in this colour.
+  static const _ink = Color(0xFF0C312B);
 
   final _name = TextEditingController();
   final _email = TextEditingController();
@@ -492,14 +495,14 @@ class _InvestorProfileDetailsScreenState
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      _gold.withValues(alpha: 0.2),
-                      _gold.withValues(alpha: 0.1),
+                      _ink.withValues(alpha: 0.2),
+                      _ink.withValues(alpha: 0.1),
                     ],
                   ),
-                  border: Border.all(color: _gold.withValues(alpha: 0.3)),
+                  border: Border.all(color: _ink.withValues(alpha: 0.3)),
                   boxShadow: [
                     BoxShadow(
-                      color: _gold.withValues(alpha: 0.1),
+                      color: _ink.withValues(alpha: 0.1),
                       blurRadius: 16,
                       offset: const Offset(0, 8),
                     ),
@@ -514,17 +517,21 @@ class _InvestorProfileDetailsScreenState
                               .resolveUrl(_avatarUrl!),
                           fit: BoxFit.cover,
                           alignment: Alignment.center,
-                          memCacheWidth: 192,
-                          memCacheHeight: 192,
+                          // Width only. Constraining BOTH resizes the source
+                          // to an exact square and throws the aspect ratio
+                          // away, which left every non-square photo squeezed.
+                          memCacheWidth:
+                              (96 * MediaQuery.of(context).devicePixelRatio)
+                                  .round(),
                           fadeInDuration: Duration.zero,
                           errorWidget: (_, __, ___) => const Icon(
                             LucideIcons.user,
                             size: 40,
-                            color: _gold,
+                            color: _ink,
                           ),
                         )
                       : const Center(
-                          child: Icon(LucideIcons.user, size: 40, color: _gold),
+                          child: Icon(LucideIcons.user, size: 40, color: _ink),
                         ),
                 ),
               ),
@@ -552,7 +559,7 @@ class _InvestorProfileDetailsScreenState
                   bottom: -8,
                   right: -8,
                   child: Material(
-                    color: _gold,
+                    color: _ink,
                     shape: const CircleBorder(),
                     elevation: 4,
                     child: InkWell(
@@ -563,7 +570,9 @@ class _InvestorProfileDetailsScreenState
                         child: Icon(
                           LucideIcons.camera,
                           size: 16,
-                          color: const Color(0xFF0C312B),
+                          // Flipped with the badge: dark-on-green would be an
+                          // invisible icon.
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -575,9 +584,9 @@ class _InvestorProfileDetailsScreenState
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: _gold.withValues(alpha: 0.1),
+              color: _ink.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: _gold.withValues(alpha: 0.2)),
+              border: Border.all(color: _ink.withValues(alpha: 0.2)),
             ),
             child: Text(
               'PLATINUM MEMBER',
@@ -585,7 +594,7 @@ class _InvestorProfileDetailsScreenState
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 2,
-                color: _gold,
+                color: _ink,
               ),
             ),
           ),
@@ -610,7 +619,7 @@ class _InvestorProfileDetailsScreenState
     final fillColor = isDark
         ? Colors.white.withValues(alpha: 0.03)
         : Colors.black.withValues(alpha: 0.02);
-    final borderColor = enabled ? _gold.withValues(alpha: 0.5) : border;
+    final borderColor = enabled ? _ink.withValues(alpha: 0.5) : border;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -672,7 +681,7 @@ class _InvestorProfileDetailsScreenState
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: _gold),
+              borderSide: const BorderSide(color: _ink),
             ),
           ),
         ),
@@ -686,7 +695,7 @@ class _InvestorProfileDetailsScreenState
     final fillColor = isDark
         ? Colors.white.withValues(alpha: 0.03)
         : Colors.black.withValues(alpha: 0.02);
-    final borderColor = enabled ? _gold.withValues(alpha: 0.5) : border;
+    final borderColor = enabled ? _ink.withValues(alpha: 0.5) : border;
     String display = 'SELECT DATE';
     if (_dob.isNotEmpty) {
       try {
@@ -794,7 +803,7 @@ class _InvestorProfileDetailsScreenState
         const SizedBox(width: 12),
         Expanded(
           child: Material(
-            color: _gold,
+            color: _ink,
             borderRadius: BorderRadius.circular(14),
             child: InkWell(
               onTap: _saving ? null : _save,
@@ -808,7 +817,7 @@ class _InvestorProfileDetailsScreenState
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       )
                     : Text(
@@ -817,7 +826,8 @@ class _InvestorProfileDetailsScreenState
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
-                          color: const Color(0xFF0C312B),
+                          // Flipped with the button fill, same as CP.
+                          color: Colors.white,
                         ),
                       ),
               ),

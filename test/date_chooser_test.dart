@@ -11,18 +11,18 @@ import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
 
-  Future<void> openChooser(WidgetTester tester, {required DateTime floor}) async {
+  Future<void> openChooser(
+    WidgetTester tester, {
+    required DateTime floor,
+  }) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Builder(
           builder: (ctx) => Scaffold(
             body: Center(
               child: ElevatedButton(
-                onPressed: () => showM4DateTimeSheet(
-                  ctx,
-                  initial: floor,
-                  minDate: floor,
-                ),
+                onPressed: () =>
+                    showM4DateTimeSheet(ctx, initial: floor, minDate: floor),
                 child: const Text('open'),
               ),
             ),

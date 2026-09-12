@@ -251,23 +251,31 @@ class _GuestProjectDetailScreenState
     }
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: isError ? Colors.white : const Color(0xFF0C312B),
+    // Replace whatever is showing rather than queueing behind it: repeated
+    // taps on VIEW / DOWNLOAD used to stack a 4s toast each, so the message
+    // sat on screen long after the taps stopped.
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          duration: const Duration(milliseconds: 1100),
+          content: Text(
+            message,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: isError ? Colors.white : const Color(0xFF0C312B),
+            ),
+          ),
+          backgroundColor: isError
+              ? const Color(0xFFC65B46)
+              : const Color(0xFF163A2C),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
-        backgroundColor: isError
-            ? const Color(0xFFC65B46)
-            : const Color(0xFF163A2C),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
+      );
   }
 
   // The one M4 chooser — the same sheet every other date field in the app
@@ -1301,45 +1309,52 @@ class _GuestProjectDetailScreenState
                 const SizedBox(height: 24),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    // All three cards take the height of the tallest, so a
-                    // card that has grown for larger text does not leave the
-                    // other two short.
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: _OverviewActionCard(
-                          label: 'VIDEO CALL',
-                          value: 'Connect Now',
-                          icon: LucideIcons.video,
-                          isAction: true,
-                          onTap: () =>
-                              _showRequestDetailsDialog(project, null, 'VC'),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _OverviewActionCard(
-                          label: 'COMPLETION',
-                          value: '${project?['completion'] ?? 0}%',
-                          icon: LucideIcons.calendar,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _OverviewActionCard(
-                          label: 'SITE VISIT',
-                          value: 'Book Tour',
-                          icon: LucideIcons.eye,
-                          isAction: true,
-                          onTap: () => _showRequestDetailsDialog(
-                            project,
-                            null,
-                            'Site Visit',
+                  // IntrinsicHeight measures the tallest card and gives the Row
+                  // a bounded height. Without it, stretch inside this vertical
+                  // scroll view hands the cards an INFINITE height, which fails
+                  // BoxConstraints and aborts layout for the whole page — the
+                  // screen then rendered completely blank.
+                  child: IntrinsicHeight(
+                    child: Row(
+                      // All three cards take the height of the tallest, so a
+                      // card that has grown for larger text does not leave the
+                      // other two short.
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: _OverviewActionCard(
+                            label: 'VIDEO CALL',
+                            value: 'Connect Now',
+                            icon: LucideIcons.video,
+                            isAction: true,
+                            onTap: () =>
+                                _showRequestDetailsDialog(project, null, 'VC'),
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _OverviewActionCard(
+                            label: 'COMPLETION',
+                            value: '${project?['completion'] ?? 0}%',
+                            icon: LucideIcons.calendar,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _OverviewActionCard(
+                            label: 'SITE VISIT',
+                            value: 'Book Tour',
+                            icon: LucideIcons.eye,
+                            isAction: true,
+                            onTap: () => _showRequestDetailsDialog(
+                              project,
+                              null,
+                              'Site Visit',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -1588,7 +1603,12 @@ class _GuestProjectDetailScreenState
           _buildSectionHeader('Overview'),
           const SizedBox(height: 24),
           Text(
-            'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
+            // The project's own copy, the way the web shows it. This was a
+            // fixed sentence that ignored the record; it now only stands in
+            // for a project with no description at all.
+            (project?['description']?.toString().trim().isNotEmpty ?? false)
+                ? project['description'].toString().trim().toUpperCase()
+                : 'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
             style: GoogleFonts.inter(
               fontSize: 11,
               color: isDark
@@ -1685,6 +1705,7 @@ class _GuestProjectDetailScreenState
                 setState(() => _showFullProgress = !_showFullProgress),
             onPhaseTap: (url) => _showMediaLightbox([url], 'IMAGE'),
             projectName: project?['title'] ?? 'PROJECT',
+            fallbackImage: _resolveHeroUrl(project),
           ),
         ],
       ),
@@ -2670,6 +2691,11 @@ class _ConstructionDashboardCard extends ConsumerWidget {
   final Function(String) onPhaseTap;
   final String projectName;
 
+  /// Shown when a phase carries no photo of its own — the catalog returns
+  /// "images": [] for every one of Clédor's phases. Same source
+  /// _guestFallbackPhases uses when it has to invent phases.
+  final String fallbackImage;
+
   const _ConstructionDashboardCard({
     required this.overallProgress,
     required this.estimatedCompletion,
@@ -2678,6 +2704,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
     required this.onToggleReadMore,
     required this.onPhaseTap,
     required this.projectName,
+    this.fallbackImage = '',
   });
 
   @override
@@ -2883,9 +2910,14 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       (phaseImages != null && phaseImages.isNotEmpty)
                       ? phaseImages[0]
                       : '';
-                  final imageUrl = apiClient.resolveUrl(
+                  var imageUrl = apiClient.resolveUrl(
                     phase['image'] ?? firstPhaseImg,
                   );
+                  // No phase photo uploaded: show the project's own image
+                  // rather than an empty grey placeholder.
+                  if (imageUrl.trim().isEmpty && fallbackImage.isNotEmpty) {
+                    imageUrl = fallbackImage;
+                  }
                   final status =
                       phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
 

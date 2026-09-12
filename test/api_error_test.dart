@@ -50,11 +50,14 @@ void main() {
 
   test('reads mongoose-style field errors', () {
     final msg = friendlyApiError(
-      _resp(400, body: {
-        'errors': {
-          'interest': {'message': 'interest is not a valid enum value'},
+      _resp(
+        400,
+        body: {
+          'errors': {
+            'interest': {'message': 'interest is not a valid enum value'},
+          },
         },
-      }),
+      ),
     );
     expect(msg, contains('not a valid enum value'));
   });
@@ -65,7 +68,10 @@ void main() {
   });
 
   test('honours the caller fallback for 400', () {
-    expect(friendlyApiError(_resp(400), fallback: 'Custom copy'), 'Custom copy');
+    expect(
+      friendlyApiError(_resp(400), fallback: 'Custom copy'),
+      'Custom copy',
+    );
   });
 
   test('non-Dio errors still produce a clean sentence', () {

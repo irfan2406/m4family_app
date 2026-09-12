@@ -13,10 +13,13 @@ void main() {
       backTargetIndex(current: current, previous: previous, tabCount: tabCount);
 
   group('sidebar / profile tabs return to their origin', () {
-    test('My Custom Views opened from the profile goes back to the profile', () {
-      // 7 = My Custom Views, 3 = Profile. This is the reported case.
-      expect(target(7, 3), 3);
-    });
+    test(
+      'My Custom Views opened from the profile goes back to the profile',
+      () {
+        // 7 = My Custom Views, 3 = Profile. This is the reported case.
+        expect(target(7, 3), 3);
+      },
+    );
 
     test('opened from Home, back goes Home', () {
       expect(target(7, 0), 0);

@@ -17,11 +17,7 @@ import 'package:m4_mobile/presentation/screens/support/support_tickets_screen.da
 void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
 
-  Future<void> pumpAt(
-    WidgetTester tester,
-    double dp,
-    double textScale,
-  ) async {
+  Future<void> pumpAt(WidgetTester tester, double dp, double textScale) async {
     tester.view.devicePixelRatio = 1.0;
     tester.view.physicalSize = Size(dp, 900);
     tester.platformDispatcher.textScaleFactorTestValue = textScale;
@@ -31,9 +27,7 @@ void main() {
     });
 
     await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: SupportTicketsScreen()),
-      ),
+      const ProviderScope(child: MaterialApp(home: SupportTicketsScreen())),
     );
     // Not pumpAndSettle: the cards carry entrance animations that would keep
     // the scheduler busy. A few frames is enough for layout to run.

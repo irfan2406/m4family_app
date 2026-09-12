@@ -5,8 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
-import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/portal_bottom_nav.dart';
 
 /// Mirrors web `app/(user)/support/new-ticket` — opened from the project
 /// detail's chat/contact action (subject prefilled with "INQUIRY: <project>").
@@ -135,13 +134,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
       extendBody: true,
       // Web parity: persistent bottom nav (this screen is pushed over the shell,
       // so a tab tap returns to the shell and selects that tab).
-      bottomNavigationBar: NavigationPill(
-        currentIndex: -1,
-        onTap: (i) {
-          ref.read(navigationProvider.notifier).state = i;
-          Navigator.of(context).popUntil((r) => r.isFirst);
-        },
-      ),
+      // The portal's own nav: this used to be the customer pill whatever
+      // portal opened the screen.
+      bottomNavigationBar: const PortalBottomNav(),
       body: SafeArea(
         // Edge-to-edge: content runs under the gesture bar so scrolling fills
         // the screen. Trailing padding keeps the last item reachable.

@@ -111,49 +111,57 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  } else {
-                    // Reset to index 0 for either shell
-                    ref.read(navigationProvider.notifier).state = 0;
-                    ref.read(cpNavigationIndexProvider.notifier).state = 0;
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: scheme.surfaceContainerHighest.withValues(
-                      alpha: isLight ? 0.65 : 0.25,
+          // Flexed: back button + title had no flex, so on a narrow screen the
+          // title ran past the menu button off the right edge.
+          Expanded(
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    } else {
+                      // Reset to index 0 for either shell
+                      ref.read(navigationProvider.notifier).state = 0;
+                      ref.read(cpNavigationIndexProvider.notifier).state = 0;
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: scheme.surfaceContainerHighest.withValues(
+                        alpha: isLight ? 0.65 : 0.25,
+                      ),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: scheme.outlineVariant.withValues(alpha: 0.5),
+                      ),
                     ),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: scheme.outlineVariant.withValues(alpha: 0.5),
+                    child: Icon(
+                      LucideIcons.arrowLeft,
+                      color: scheme.onSurface,
+                      size: 16,
                     ),
                   ),
-                  child: Icon(
-                    LucideIcons.arrowLeft,
-                    color: scheme.onSurface,
-                    size: 16,
+                ),
+                const SizedBox(width: 16),
+                // Web parity: no "M4 FAMILY" kicker on any portal's Support Hub
+                // header — just the title.
+                Flexible(
+                  child: Text(
+                    'SUPPORT HUB',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.gelasio(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: scheme.onSurface,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              // Web parity: no "M4 FAMILY" kicker on any portal's Support Hub
-              // header — just the title.
-              Text(
-                'SUPPORT HUB',
-                style: GoogleFonts.gelasio(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: scheme.onSurface,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SideMenuButton(),
         ],
@@ -176,57 +184,72 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 1.05,
-          children: [
-            _MatrixItem(
-              icon: LucideIcons.messageCircle,
-              title: 'WhatsApp Support',
-              subtitle: 'Instant help via WhatsApp',
-              color: scheme.onSurface,
-              onTap: SupportHandlers.launchWhatsApp,
-            ),
-            _MatrixItem(
-              icon: LucideIcons.calendar,
-              title: 'Schedule Visit',
-              subtitle: 'Book a site tour',
-              color: scheme.onSurface,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ScheduleVisitScreen(),
-                  ),
-                );
-              },
-            ),
-            _MatrixItem(
-              icon: LucideIcons.phone,
-              title: 'Call Us',
-              subtitle: 'Speak with our support team',
-              color: scheme.onSurface,
-              onTap: () => context.push('/support/contact'),
-            ),
-            _MatrixItem(
-              icon: LucideIcons.helpCircle,
-              title: 'Help Center',
-              subtitle: 'Read our FAQs & Guides',
-              color: scheme.onSurface,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HelpCenterScreen(),
-                  ),
-                );
-              },
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            const spacing = 12.0;
+            // One column per ~170dp of width: a phone in portrait keeps its
+            // two, a landscape phone or tablet fits all four in one row
+            // instead of stretching two across the screen.
+            final columns = (constraints.maxWidth / 170).floor().clamp(2, 4);
+            final cellWidth =
+                (constraints.maxWidth - spacing * (columns - 1)) / columns;
+            // The design shape, but never taller than a card needs to be —
+            // that cap is what stops a wide cell becoming a full-height panel.
+            final cellHeight = (cellWidth / 1.05).clamp(140.0, 200.0);
+
+            return GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: columns,
+              crossAxisSpacing: spacing,
+              mainAxisSpacing: spacing,
+              childAspectRatio: cellWidth / cellHeight,
+              children: [
+                _MatrixItem(
+                  icon: LucideIcons.messageCircle,
+                  title: 'WhatsApp Support',
+                  subtitle: 'Instant help via WhatsApp',
+                  color: scheme.onSurface,
+                  onTap: SupportHandlers.launchWhatsApp,
+                ),
+                _MatrixItem(
+                  icon: LucideIcons.calendar,
+                  title: 'Schedule Visit',
+                  subtitle: 'Book a site tour',
+                  color: scheme.onSurface,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ScheduleVisitScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _MatrixItem(
+                  icon: LucideIcons.phone,
+                  title: 'Call Us',
+                  subtitle: 'Speak with our support team',
+                  color: scheme.onSurface,
+                  onTap: () => context.push('/support/contact'),
+                ),
+                _MatrixItem(
+                  icon: LucideIcons.helpCircle,
+                  title: 'Help Center',
+                  subtitle: 'Read our FAQs & Guides',
+                  color: scheme.onSurface,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HelpCenterScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            );
+          },
         ),
       ],
     ).animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.98, 0.98));

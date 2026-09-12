@@ -362,33 +362,34 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   Future<void> _submitInquiry(String type, [String? plan]) async {
     final isVisit = type == 'VC' || type == 'Site Visit';
-    // Web parity: VC/Site Visit uses the toggled visit type + auth user + a
-    // required date/time + optional notes (no name/phone fields).
+    // Web parity: VC/Site Visit uses the toggled visit type + a required
+    // date/time + optional notes, on top of the shared contact fields.
     final effectiveType = isVisit ? _inquiryVisitType : type;
-    final authUser = ref.read(authProvider).user;
 
-    final name = isVisit
-        ? (authUser?['fullName']?.toString() ??
-              authUser?['username']?.toString() ??
-              'App User')
-        : _nameController.text.trim();
-    // `phone` is REQUIRED by the API. For visits it comes from the profile, but
-    // that can be blank — in which case the sheet shows a phone field and we
-    // fall back to it. Submitting blank used to reach the server and come back
-    // as a 400, which surfaced as a misleading "Connection error".
-    final authPhone = (authUser?['phone']?.toString() ?? '').trim();
-    final phone = isVisit
-        ? (authPhone.isNotEmpty ? authPhone : _phoneController.text.trim())
-        : _phoneController.text.trim();
+    // What the user typed, and only that — the sheet opens empty, so falling
+    // back to the profile would let an untouched form submit someone's details
+    // without them ever appearing on screen. Same rule as the guest sheet.
+    //
+    // `phone` is REQUIRED by the API: blank comes back as a 400, which the
+    // screen used to surface as a misleading "Connection error", so it is
+    // checked here first.
+    final name = _nameController.text.trim();
+    final phone = _phoneController.text.trim();
 
     if (isVisit) {
       if (_inquiryDateTime == null) {
         _showMessage('Please select a date & time for your visit');
         return;
       }
-      final pErr = Validators.phoneError(phone);
-      if (pErr != null) {
-        _showMessage(pErr);
+      // Same checks as the General sheet, now that the fields are shown.
+      final vErr =
+          Validators.nameError(name, field: 'name') ??
+          Validators.phoneError(phone) ??
+          (_emailController.text.trim().isEmpty
+              ? null
+              : Validators.emailError(_emailController.text));
+      if (vErr != null) {
+        _showMessage(vErr);
         return;
       }
     } else {
@@ -418,7 +419,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         'phone': phone,
         'email': _emailController.text.trim().isNotEmpty
             ? _emailController.text.trim()
-            : authUser?['email']?.toString(),
+            : null,
         'interest': effectiveType == 'VC'
             ? 'Video Call'
             : effectiveType == 'Site Visit'
@@ -688,20 +689,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     final planName = plan is Map ? plan['name']?.toString() : plan?.toString();
     final projectTitle = project?['title'] ?? 'this project';
 
-    // Prefill auth user data ONLY for General inquiries, not for Video Call or Site Visit
-    final authUser = ref.read(authProvider).user;
-    if (authUser != null && type == 'General') {
-      _nameController.text =
-          authUser['fullName']?.toString() ??
-          authUser['username']?.toString() ??
-          '';
-      _phoneController.text = authUser['phone']?.toString() ?? '';
-      _emailController.text = authUser['email']?.toString() ?? '';
-    } else {
-      _nameController.clear();
-      _phoneController.clear();
-      _emailController.clear();
-    }
+    // Opened empty, like the guest booking sheet. Prefilling from the
+    // profile hid the placeholders, which are the only labels these fields
+    // have — so the boxes read as three unlabelled greys.
+    _nameController.clear();
+    _phoneController.clear();
+    _emailController.clear();
     // Web parity: seed the visit-type toggle + reset schedule/notes.
     _inquiryVisitType = type == 'Site Visit' ? 'Site Visit' : 'VC';
     _inquiryDateTime = null;
@@ -776,6 +769,36 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                     ),
+                  ),
+                  const SizedBox(height: 28),
+
+                  // Contact fields, in the same place and the same style as the
+                  // guest booking sheet: the placeholder sits inside the box,
+                  // so the form reads as three clean fields rather than a
+                  // stack of caps labels. Shared by every variant of this
+                  // sheet, which is why they sit outside the branches below.
+                  _buildInquiryField(
+                    'Enter Full Name',
+                    _nameController,
+                    LucideIcons.user,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: Validators.nameFormatters,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInquiryField(
+                    'Enter Email Address (Optional)',
+                    _emailController,
+                    LucideIcons.mail,
+                    keyboardType: TextInputType.emailAddress,
+                    inputFormatters: Validators.emailFormatters,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInquiryField(
+                    'Enter Mobile Number',
+                    _phoneController,
+                    LucideIcons.phone,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: Validators.phoneFormatters,
                   ),
                   const SizedBox(height: 28),
 
@@ -982,22 +1005,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                         ),
                       ),
                     ),
-                    // The API requires a phone. Visits normally take it from
-                    // the profile — ask for it here when that's blank, instead
-                    // of submitting empty and failing with a 400.
-                    if ((authUser?['phone']?.toString() ?? '')
-                        .trim()
-                        .isEmpty) ...[
-                      const SizedBox(height: 24),
-                      _buildInquiryField(
-                        'PHONE NUMBER *',
-                        _phoneController,
-                        LucideIcons.phone,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: Validators.phoneFormatters,
-                      ),
-                    ],
-
                     // ADDITIONAL NOTES
                     const SizedBox(height: 24),
                     _inquiryLabel('ADDITIONAL NOTES', isDark),
@@ -1047,32 +1054,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                           ),
                         ),
                       ),
-                    ),
-                  ] else ...[
-                    // Web parity order: name, then email, then phone.
-                    const SizedBox(height: 24),
-                    _buildInquiryField(
-                      'FULL NAME *',
-                      _nameController,
-                      LucideIcons.user,
-                      keyboardType: TextInputType.name,
-                      inputFormatters: Validators.nameFormatters,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildInquiryField(
-                      'EMAIL ADDRESS (OPTIONAL)',
-                      _emailController,
-                      LucideIcons.mail,
-                      keyboardType: TextInputType.emailAddress,
-                      inputFormatters: Validators.emailFormatters,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildInquiryField(
-                      'PHONE NUMBER *',
-                      _phoneController,
-                      LucideIcons.phone,
-                      keyboardType: TextInputType.phone,
-                      inputFormatters: Validators.phoneFormatters,
                     ),
                   ],
 
@@ -1187,64 +1168,58 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     return '${dt.day}/${dt.month}/${dt.year}  •  $h:$m $ampm';
   }
 
+  /// One booking-sheet field, drawn exactly as the guest sheet draws it: the
+  /// placeholder lives inside the box, there is no caps label above it and no
+  /// icon inside it.
+  ///
+  /// [hint] is the placeholder ("Enter Full Name"). [icon] is kept so the call
+  /// sites read the same in both files; the guest sheet does not paint it
+  /// either.
   Widget _buildInquiryField(
-    String label,
+    String hint,
     TextEditingController controller,
     IconData icon, {
     TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white54 : const Color(0xFF155A4F),
-            letterSpacing: 1,
-          ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.08),
         ),
-        const SizedBox(height: 10),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          decoration: BoxDecoration(
-            color: isDark
-                ? Colors.white.withOpacity(0.03)
-                : Colors.black.withOpacity(0.04),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isDark
-                  ? Colors.white.withOpacity(0.05)
-                  : Colors.black.withOpacity(0.05),
-            ),
-          ),
-          child: TextField(
-            controller: controller,
-            keyboardType: keyboardType,
-            inputFormatters: inputFormatters,
-            style: GoogleFonts.inter(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : const Color(0xFF155A4F),
-            ),
-            decoration: InputDecoration(
-              filled: false,
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              icon: Icon(
-                icon,
-                color: isDark ? Colors.white24 : const Color(0x420C312B),
-                size: 16,
-              ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-          ),
+      ),
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
+        style: GoogleFonts.inter(
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+          color: isDark ? Colors.white : const Color(0xFF155A4F),
         ),
-      ],
+        decoration: InputDecoration(
+          filled: false,
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          hintText: hint,
+          // Web parity: clearly-legible slate-blue placeholder text.
+          hintStyle: GoogleFonts.inter(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: isDark ? Colors.white54 : const Color(0xFF141B3A),
+          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 16),
+        ),
+      ),
     );
   }
 
@@ -1861,9 +1836,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         _buildSectionHeader('Overview'),
         const SizedBox(height: 24),
         Text(
-          ('Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation. ${project?['description'] ?? ''}')
-              .toString()
-              .trim()
+          // The project's own copy. This used to PREPEND a fixed sentence to
+          // it, so every project showed the boilerplate and then its real
+          // description; the sentence is now only a fallback.
+          ((project?['description']?.toString().trim().isNotEmpty ?? false)
+                  ? project['description'].toString().trim()
+                  : 'Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation.')
               .toUpperCase(),
           // Web parity: overview copy capped at 3 lines.
           maxLines: 3,
@@ -2376,8 +2354,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
   }
 
   Widget _buildLocation(dynamic project) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final apiClient = ref.read(apiClientProvider);
     final locName =
         (project?['location'] is Map
                 ? project?['location']?['name']
@@ -2385,19 +2361,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             ?.toString() ??
         'Mazgaon, Mumbai';
 
-    return _buildTabContent(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 0),
-          M4MapView(
-            query: locName,
-            onOpen: () => _launchAction(
-              'Opening Maps...',
-              'https://www.google.com/maps?q=${Uri.encodeComponent(locName)}',
-            ),
-          ),
-        ],
+    // Returned bare, as the guest page returns it: the section is already
+    // inside the page's horizontal 24 padding, and wrapping it again made the
+    // card 48 a side while the CONTACT card above it stayed at 24.
+    return M4MapView(
+      query: locName,
+      onOpen: () => _launchAction(
+        'Opening Maps...',
+        'https://www.google.com/maps?q=${Uri.encodeComponent(locName)}',
       ),
     );
   }
@@ -3680,7 +3651,17 @@ class _TopIconButton extends StatelessWidget {
 class _ScaleButton extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
-  const _ScaleButton({required this.child, this.onTap});
+
+  /// Opacity while held. Defaults to 1.0, i.e. scale only — the behaviour
+  /// every existing caller had. Small buttons pass a lower value so the press
+  /// actually reads.
+  final double pressedOpacity;
+
+  const _ScaleButton({
+    required this.child,
+    this.onTap,
+    this.pressedOpacity = 1.0,
+  });
 
   @override
   State<_ScaleButton> createState() => _ScaleButtonState();
@@ -3699,7 +3680,11 @@ class _ScaleButtonState extends State<_ScaleButton> {
       child: AnimatedScale(
         scale: _isPressed ? 0.95 : 1.0,
         duration: const Duration(milliseconds: 100),
-        child: widget.child,
+        child: AnimatedOpacity(
+          opacity: _isPressed ? widget.pressedOpacity : 1.0,
+          duration: const Duration(milliseconds: 100),
+          child: widget.child,
+        ),
       ),
     );
   }
@@ -4037,6 +4022,9 @@ class _MultimediaAssetCard extends StatelessWidget {
             children: [
               _ScaleButton(
                 onTap: onView,
+                // Dim while held: the scale alone is not visible on a button
+                // this small, so a tap read as no response at all.
+                pressedOpacity: 0.45,
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
@@ -4063,6 +4051,7 @@ class _MultimediaAssetCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 _ScaleButton(
                   onTap: onDownload!,
+                  pressedOpacity: 0.45,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
@@ -4089,6 +4078,7 @@ class _MultimediaAssetCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 _ScaleButton(
                   onTap: onView,
+                  pressedOpacity: 0.45,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,

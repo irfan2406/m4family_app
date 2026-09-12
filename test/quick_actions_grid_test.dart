@@ -28,7 +28,8 @@ void main() {
       final labelRoom =
           4 + 6 + MediaQuery.textScalerOf(context).scale(9.5) * 1.15;
       final available = constraints.maxHeight - labelRoom;
-      final side = (capByHeight &&
+      final side =
+          (capByHeight &&
               available.isFinite &&
               available > 0 &&
               available < desired)
@@ -54,7 +55,11 @@ void main() {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(width: side, height: side, child: const ColoredBox(color: Colors.black12)),
+            SizedBox(
+              width: side,
+              height: side,
+              child: const ColoredBox(color: Colors.black12),
+            ),
             const SizedBox(height: 6),
             capByHeight ? Flexible(child: text) : text,
           ],

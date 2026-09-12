@@ -11,7 +11,7 @@ import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
-import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
+import 'package:m4_mobile/presentation/widgets/portal_bottom_nav.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 
@@ -360,15 +360,9 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBody: true,
-      bottomNavigationBar: widget.embedded
-          ? null
-          : NavigationPill(
-              currentIndex: -1,
-              onTap: (i) {
-                ref.read(navigationProvider.notifier).state = i;
-                Navigator.of(context).popUntil((r) => r.isFirst);
-              },
-            ),
+      // The portal's own nav: this used to be the customer pill whatever
+      // portal opened the screen.
+      bottomNavigationBar: widget.embedded ? null : const PortalBottomNav(),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
