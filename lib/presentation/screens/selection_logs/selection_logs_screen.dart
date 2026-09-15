@@ -145,15 +145,6 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
                     letterSpacing: -0.5,
                   ),
                 ),
-                Text(
-                  'PREVIOUS SELECTIONS',
-                  style: GoogleFonts.gelasio(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w700,
-                    color: foreground.withOpacity(0.72),
-                    letterSpacing: 4,
-                  ),
-                ),
               ],
             ),
           ),

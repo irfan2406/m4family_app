@@ -453,7 +453,7 @@ class _InvestorRelationsScreenState
   Widget _buildInvestorContact() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final contactEmail = _configData?['contact_email'] ?? 'sales@m4group.in';
-    final contactPhone = _configData?['contact_phone'] ?? '+91 22 4601 8844';
+    final contactPhone = _configData?['contact_phone'] ?? '+91 99308 50993';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

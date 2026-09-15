@@ -145,16 +145,6 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                           color: textPrimary,
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'SELECT YOUR PREFERRED SCHEDULE',
-                        style: GoogleFonts.gelasio(
-                          fontSize: 8,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 2,
-                          color: muted,
-                        ),
-                      ),
                     ],
                   ),
                 ],

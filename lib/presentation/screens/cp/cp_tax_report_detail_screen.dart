@@ -159,16 +159,6 @@ class _CpTaxReportDetailScreenState
                     color: textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  'FISCAL COMPLIANCE',
-                  style: GoogleFonts.inter(
-                    fontSize: 9,
-                    letterSpacing: 1.5,
-                    fontWeight: FontWeight.w600,
-                    color: muted,
-                  ),
-                ),
               ],
             ),
           ),

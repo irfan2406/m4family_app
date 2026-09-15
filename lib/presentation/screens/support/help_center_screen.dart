@@ -140,16 +140,6 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
                 letterSpacing: 1,
               ),
             ),
-            const SizedBox(height: 2),
-            Text(
-              'FAQ & GOVERNANCE',
-              style: GoogleFonts.gelasio(
-                fontSize: 9,
-                fontWeight: FontWeight.w700,
-                color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
-                letterSpacing: 2,
-              ),
-            ),
           ],
         ),
       ],

@@ -100,15 +100,6 @@ class _CpEliteInvestorConnectScreenState
                 fontSize: 16,
               ),
             ),
-            Text(
-              'INSTITUTIONAL PORTFOLIO ENGINE',
-              style: GoogleFonts.gelasio(
-                fontSize: 8,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 2,
-                color: scheme.primary,
-              ),
-            ),
           ],
         ),
       ),

@@ -142,17 +142,6 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                   letterSpacing: 2,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                'PLATFORM PREFERENCES',
-                style: GoogleFonts.gelasio(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                      .withValues(alpha: 0.5),
-                  letterSpacing: 2,
-                ),
-              ),
             ],
           ),
         ],

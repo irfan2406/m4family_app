@@ -377,20 +377,23 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                             label: 'Call',
                             icon: LucideIcons.phone,
                             onTap: () =>
-                                launchUrl(Uri.parse('tel:+912246018844')),
+                                launchUrl(Uri.parse('tel:+919930850993')),
                           ),
                           _QuickActionItem(
                             label: 'WhatsApp',
                             icon: LucideIcons.messageSquare,
                             onTap: () => launchUrl(
-                              Uri.parse('https://wa.me/912246018844'),
+                              Uri.parse('https://wa.me/919930850992'),
                             ),
                           ),
                           _QuickActionItem(
                             label: 'Location',
                             icon: LucideIcons.mapPin,
-                            onTap: () =>
-                                launchUrl(Uri.parse('https://maps.google.com')),
+                            onTap: () => launchUrl(
+                              Uri.parse(
+                                'https://share.google/jXui87FKhgmefEGZS',
+                              ),
+                            ),
                           ),
                         ],
                       ),

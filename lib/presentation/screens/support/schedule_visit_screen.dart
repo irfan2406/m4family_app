@@ -365,15 +365,6 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                 letterSpacing: 0,
               ),
             ),
-            Text(
-              _isCp ? 'PROTOCOL VERIFICATION' : 'PREMIUM PROTOCOL',
-              style: GoogleFonts.inter(
-                fontSize: 8,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                letterSpacing: 1,
-              ),
-            ),
           ],
         ),
       ),

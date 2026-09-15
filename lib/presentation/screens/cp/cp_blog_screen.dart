@@ -98,16 +98,6 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                     height: 1,
                   ),
                 ),
-                Text(
-                  'DEVELOPMENTS',
-                  style: GoogleFonts.gelasio(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 4,
-                    color: scheme.onSurface.withOpacity(isLight ? 0.7 : 0.68),
-                    height: 1.5,
-                  ),
-                ),
               ],
             ),
             actions: const [

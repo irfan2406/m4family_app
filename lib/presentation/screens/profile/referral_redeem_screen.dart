@@ -163,18 +163,6 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                 letterSpacing: 2,
               ),
             ),
-            const SizedBox(height: 2),
-            Text(
-              'CONVERT YOUR POINTS',
-              style: GoogleFonts.gelasio(
-                textStyle: const TextStyle(inherit: true),
-                color: (isDark ? Colors.white : const Color(0xFF155A4F))
-                    .withOpacity(0.75),
-                fontSize: 9,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.5,
-              ),
-            ),
           ],
         ),
         centerTitle: true,

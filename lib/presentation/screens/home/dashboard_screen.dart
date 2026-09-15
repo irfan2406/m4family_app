@@ -670,7 +670,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
           SliverToBoxAdapter(
             child: SizedBox(
-              height: 380,
+              // MEDIA renders landscape tiles (wider than tall); COMMUNITIES
+              // and PROPERTIES keep their portrait cards, so the row height
+              // follows the active tab. The media row adds 20 of vertical
+              // padding top and bottom, so 215 leaves the tile 175 tall
+              // against its 280 width.
+              height: _topTabCategory == 'MEDIA' ? 215 : 380,
               child:
                   (_topTabCategory == 'COMMUNITIES'
                       ? _communitiesLoading

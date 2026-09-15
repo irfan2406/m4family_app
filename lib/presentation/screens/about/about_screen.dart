@@ -752,19 +752,26 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     child: Icon(iconData, color: colorScheme.primary, size: 22),
                   ),
                   const SizedBox(height: 16),
-                  // The grid fixes each cell's height from its width, so the
-                  // text has to give way at a larger system font rather than
-                  // run past the bottom of the card.
-                  Text(
-                    pillar['title'].toString().toUpperCase(),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.gelasio(
-                      color: isDark ? Colors.white : const Color(0xFF0C312B),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2,
+                  // A pillar title is one label and has to read as one line.
+                  // Wrapping put the longest one over two lines and, having no
+                  // space to break at, split it mid-word ("TRANSPARE / NCY").
+                  // The grid fixes each cell's width, so the title keeps its
+                  // designed size whenever it fits and scales down just enough
+                  // when it does not — at any card width and any system font
+                  // size, and whatever length a CMS-supplied title is.
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      pillar['title'].toString().toUpperCase(),
+                      maxLines: 1,
+                      softWrap: false,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.gelasio(
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),

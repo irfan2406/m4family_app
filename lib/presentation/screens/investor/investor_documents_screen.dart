@@ -247,23 +247,6 @@ class _InvestorDocumentsScreenState
                     letterSpacing: -0.3,
                   ),
                 ),
-                const SizedBox(height: 3),
-                Row(
-                  children: [
-                    const Icon(LucideIcons.lock, size: 10, color: _gold),
-                    const SizedBox(width: 5),
-                    Text(
-                      'SECURE REPOSITORY',
-                      style: GoogleFonts.gelasio(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                            .withValues(alpha: 0.5),
-                        letterSpacing: 2,
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),

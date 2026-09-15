@@ -818,7 +818,13 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           _buildTabEmpty(isDark)
         else
           SizedBox(
-            height: 360,
+            // Media tiles are landscape (wider than tall); Communities and
+            // Properties keep their portrait cards, so the row height follows
+            // the active tab. 230 leaves the tile 220 tall after its 10 bottom
+            // margin — the overlay needs ~160 from the bottom (title, location,
+            // the 44 circle) and ~45 for the badge at the top, so anything
+            // shorter makes the two collide.
+            height: _activeTab.toLowerCase() == 'media' ? 230 : 360,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
@@ -863,7 +869,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         }
       },
       child: Container(
-        width: 300,
+        // Media is the landscape tile: wider against the shorter row height.
+        width: isMedia ? 320 : 300,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(40),

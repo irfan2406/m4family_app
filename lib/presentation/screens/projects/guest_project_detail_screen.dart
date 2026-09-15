@@ -2326,7 +2326,12 @@ class _HeroMediaThumb extends StatelessWidget {
     return _ScaleButton(
       onTap: onTap,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        // One radius, matching the CP portal's thumb (18). The outer clip used
+        // 20 and the inner container 16: the larger outer clip never touched
+        // the corner, so the shape came from the 16 while the border traced it
+        // — the two radii disagreeing is what made the corner read as hard
+        // instead of a single smooth curve.
+        borderRadius: BorderRadius.circular(18),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
@@ -2334,11 +2339,13 @@ class _HeroMediaThumb extends StatelessWidget {
             height: 66,
             decoration: BoxDecoration(
               color: Colors.black.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.35),
-                width: 1.5,
-              ),
+              borderRadius: BorderRadius.circular(18),
+              // No border, as on the CP tile. A ring at the same radius as the
+              // enclosing ClipRRect gets its outer half sliced off by that
+              // clip, which is what left the corner looking hard and jagged —
+              // and it insets the photo, leaving a pale strip down all four
+              // sides. Without it the image fills the 66x66 tile edge to edge
+              // and the corner is one clean curve.
             ),
             clipBehavior: Clip.antiAlias,
             child: Stack(

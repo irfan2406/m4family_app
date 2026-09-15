@@ -221,16 +221,6 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                 color: isDark ? Colors.white : const Color(0xFF155A4F),
               ),
             ),
-            Text(
-              'INSTITUTIONAL PROTOCOL',
-              style: GoogleFonts.gelasio(
-                fontSize: 8,
-                color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                    .withOpacity(0.68),
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.5,
-              ),
-            ),
           ],
         ),
       ),

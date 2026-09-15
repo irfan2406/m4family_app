@@ -124,26 +124,6 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
               letterSpacing: -0.5,
             ),
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                LucideIcons.paintBucket,
-                size: 10,
-                color: _kPortfolioOrange,
-              ),
-              const SizedBox(width: 5),
-              Text(
-                'ASSET DASHBOARD',
-                style: GoogleFonts.gelasio(
-                  fontSize: 8,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2,
-                  color: _kPortfolioOrange,
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );

@@ -893,7 +893,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               return SizedBox(height: 360, child: _buildTabEmpty());
             }
             return SizedBox(
-              height: 360,
+              // Media tiles are landscape (wider than tall); Communities and
+              // Properties keep their portrait cards, so the row height
+              // follows the active tab. 230 leaves the tile 220 tall after its
+              // 10 bottom margin — the overlay needs ~160 from the bottom
+              // (title, location, the 44 circle), so anything shorter clips it.
+              height: _activeTab.toLowerCase() == 'media' ? 230 : 360,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
@@ -1200,7 +1205,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         }
       },
       child: Container(
-        width: 300,
+        // Media is the landscape tile: wider against the shorter row height.
+        width: isMedia ? 320 : 300,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(isMedia ? 24 : 40),

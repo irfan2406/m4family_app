@@ -91,7 +91,9 @@ void main() {
       expect(tester.takeException(), isNull);
 
       expect(find.text('SITE VISIT'), findsOneWidget);
-      expect(find.text('PROTOCOL VERIFICATION'), findsOneWidget);
+      // The header kicker under the title was removed app-wide; only the
+      // title itself is drawn now.
+      expect(find.text('PROTOCOL VERIFICATION'), findsNothing);
       expect(find.text('FULL NAME'), findsOneWidget);
       expect(find.text('PHONE NUMBER'), findsOneWidget);
       expect(find.text('HANDLED BY (EMPLOYEE)'), findsOneWidget);
@@ -151,7 +153,8 @@ void main() {
         expect(tester.takeException(), isNull);
 
         expect(find.text('SCHEDULE VISIT'), findsOneWidget);
-        expect(find.text('PREMIUM PROTOCOL'), findsOneWidget);
+        // Header kicker removed app-wide (see the CP case above).
+        expect(find.text('PREMIUM PROTOCOL'), findsNothing);
         expect(find.text('SELECT PROPERTY'), findsOneWidget);
         expect(find.text('CHOOSE PROPERTY'), findsOneWidget);
         // None of the CP-only additions leak into the shorter form.

@@ -51,15 +51,6 @@ class _AboutScreenState extends State<AboutScreen> {
                 letterSpacing: 1,
               ),
             ),
-            Text(
-              'M4 FAMILY COLLECTIVE',
-              style: GoogleFonts.gelasio(
-                fontSize: 8,
-                fontWeight: FontWeight.w700,
-                color: M4Theme.premiumBlue,
-                letterSpacing: 1.5,
-              ),
-            ),
           ],
         ),
         actions: [

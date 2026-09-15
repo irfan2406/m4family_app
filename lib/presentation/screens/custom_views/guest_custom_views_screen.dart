@@ -110,16 +110,6 @@ class _GuestCustomViewsScreenState
                     letterSpacing: 0.5,
                   ),
                 ),
-                Text(
-                  'M4 CUSTOM SHOWCASE',
-                  style: GoogleFonts.gelasio(
-                    color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                        .withOpacity(0.68),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 7,
-                    letterSpacing: 1.5,
-                  ),
-                ),
               ],
             ),
           ),

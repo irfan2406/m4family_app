@@ -185,17 +185,6 @@ class _InvestorReferralClosedScreenState
                     color: textPrimary,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'CLOSED CONVERSIONS',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.gelasio(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 3,
-                    color: muted,
-                  ),
-                ),
               ],
             ),
           ),

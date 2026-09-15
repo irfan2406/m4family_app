@@ -99,15 +99,6 @@ class _CpEliteCpConnectScreenState
                 color: scheme.onSurface,
               ),
             ),
-            Text(
-              'INSTITUTIONAL CP NETWORK',
-              style: GoogleFonts.gelasio(
-                fontSize: 8,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 2,
-                color: scheme.primary,
-              ),
-            ),
           ],
         ),
       ),

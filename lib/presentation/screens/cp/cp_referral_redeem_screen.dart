@@ -185,17 +185,6 @@ class _CpReferralRedeemScreenState
                             letterSpacing: 1.5,
                           ),
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'CONVERT YOUR POINTS',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.gelasio(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w700,
-                            color: scheme.onSurface.withValues(alpha: 0.68),
-                            letterSpacing: 2,
-                          ),
-                        ),
                       ],
                     ),
                   ),

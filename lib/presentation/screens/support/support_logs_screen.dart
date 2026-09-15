@@ -154,15 +154,6 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                     letterSpacing: 0,
                   ),
                 ),
-                Text(
-                  'CONCIERGE HISTORY',
-                  style: GoogleFonts.inter(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white38 : const Color(0xFF155A4F),
-                    letterSpacing: 1,
-                  ),
-                ),
               ],
             ),
           ),

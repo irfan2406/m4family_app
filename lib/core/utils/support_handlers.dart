@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SupportHandlers {
-  static const String whatsappNumber = '919876543210';
+  static const String whatsappNumber = '919930850992';
   static const String supportPhone = '+919930850993';
   static const String supportEmail = 'sales@m4group.in';
   static const String helpCenterUrl =

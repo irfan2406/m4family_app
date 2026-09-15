@@ -177,15 +177,6 @@ class _InvestorPaymentsScreenState
                 fontSize: 16,
               ),
             ),
-            Text(
-              'FINANCIAL LEDGER',
-              style: GoogleFonts.gelasio(
-                color: muted,
-                fontWeight: FontWeight.w700,
-                fontSize: 10,
-                letterSpacing: 3,
-              ),
-            ),
           ],
         ),
       ),

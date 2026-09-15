@@ -109,18 +109,6 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                         letterSpacing: -1,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'DIRECT CONTENT ACCESS',
-                      style: GoogleFonts.gelasio(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withOpacity(0.72),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 2,
-                      ),
-                    ),
                   ],
                 ),
               ),

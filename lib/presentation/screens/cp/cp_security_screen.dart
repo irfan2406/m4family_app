@@ -106,18 +106,6 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 14, top: 1),
-              child: Text(
-                'ACCOUNT PROTECTION',
-                style: GoogleFonts.inter(
-                  fontSize: 9,
-                  letterSpacing: 1.5,
-                  fontWeight: FontWeight.w600,
-                  color: muted,
-                ),
-              ),
-            ),
           ],
         ),
       ),

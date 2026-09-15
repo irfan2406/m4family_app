@@ -183,15 +183,6 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                             color: scheme.onSurface,
                           ),
                         ),
-                        Text(
-                          'DEVELOPMENTS',
-                          style: GoogleFonts.gelasio(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 3.5,
-                            color: scheme.onSurface.withOpacity(0.68),
-                          ),
-                        ),
                       ],
                     ),
                     _buildMenuButton(),

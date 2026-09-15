@@ -283,17 +283,6 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                     color: _danger,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  'IRREVERSIBLE & PERMANENT',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.gelasio(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 2,
-                    color: muted,
-                  ),
-                ),
               ],
             ),
           ),

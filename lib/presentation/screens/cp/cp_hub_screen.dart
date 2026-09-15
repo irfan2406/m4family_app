@@ -875,16 +875,6 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   color: accent,
                 ),
               ),
-              const SizedBox(height: 2),
-              Text(
-                'Premium Access & Tools',
-                style: GoogleFonts.inter(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.4,
-                  color: scheme.onSurface.withValues(alpha: 0.68),
-                ),
-              ),
             ],
           ),
         ),

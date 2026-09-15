@@ -399,16 +399,6 @@ class _InvestorSettingsScreenState
                     letterSpacing: 2,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'PRIVATE OFFICE SETTINGS',
-                  style: GoogleFonts.gelasio(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: muted,
-                    letterSpacing: 2,
-                  ),
-                ),
               ],
             ),
           ),

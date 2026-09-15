@@ -255,16 +255,6 @@ class _InvestorInstallmentsScreenState
                             color: textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'PAYMENT PLAN',
-                          style: GoogleFonts.gelasio(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 2,
-                            color: muted,
-                          ),
-                        ),
                       ],
                     ),
                   ),

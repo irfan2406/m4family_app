@@ -102,15 +102,6 @@ class _InvestorEliteCpConnectScreenState
                 color: scheme.onSurface,
               ),
             ),
-            Text(
-              'INSTITUTIONAL CP NETWORK',
-              style: GoogleFonts.gelasio(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 2,
-                color: scheme.primary,
-              ),
-            ),
           ],
         ),
       ),

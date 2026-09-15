@@ -256,17 +256,6 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                 letterSpacing: -0.3,
               ),
             ),
-            const SizedBox(height: 2),
-            Text(
-              'DEVELOPMENTS',
-              style: GoogleFonts.gelasio(
-                fontSize: 9,
-                fontWeight: FontWeight.w700,
-                color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                    .withOpacity(0.68),
-                letterSpacing: 3.5,
-              ),
-            ),
           ],
         ),
         const Spacer(),
@@ -547,9 +536,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         _contactInfoRow(
           icon: LucideIcons.mail,
           label: 'OTHER INQUIRIES',
-          value: '+91 22 4601 8844',
+          value: '+91 99308 50993',
           sub: emailUpper,
-          onTap: () => _launchUrl('tel:+912246018844'),
+          onTap: () => _launchUrl('tel:+919930850993'),
           isDark: isDark,
         ),
         const SizedBox(height: 28),

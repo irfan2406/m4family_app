@@ -575,21 +575,6 @@ class ProjectListScreen extends ConsumerWidget {
                                         letterSpacing: -0.5,
                                       ),
                                     ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      'DISCOVER CURATED LUXURY',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.gelasio(
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.w700,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withOpacity(0.72),
-                                        letterSpacing: 1.5,
-                                      ),
-                                    ),
                                   ] else ...[
                                     Text(
                                       'DISCOVER',

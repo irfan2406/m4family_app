@@ -157,15 +157,6 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                 color: textPrimary,
               ),
             ),
-            Text(
-              'SYSTEM MAINTENANCE',
-              style: GoogleFonts.inter(
-                fontSize: 9,
-                letterSpacing: 1.5,
-                fontWeight: FontWeight.w600,
-                color: muted,
-              ),
-            ),
           ],
         ),
       ),

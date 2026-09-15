@@ -305,17 +305,6 @@ class _InvestorDeleteAccountScreenState
                     color: _danger,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  'PURGE PROTOCOL',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.gelasio(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 2,
-                    color: muted,
-                  ),
-                ),
               ],
             ),
           ),

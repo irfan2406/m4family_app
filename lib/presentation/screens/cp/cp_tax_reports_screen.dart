@@ -125,15 +125,6 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                 color: textPrimary,
               ),
             ),
-            Text(
-              'FISCAL COMPLIANCE',
-              style: GoogleFonts.inter(
-                fontSize: 9,
-                letterSpacing: 1.5,
-                fontWeight: FontWeight.w600,
-                color: muted,
-              ),
-            ),
           ],
         ),
       ),

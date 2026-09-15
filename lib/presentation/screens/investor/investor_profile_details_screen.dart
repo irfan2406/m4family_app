@@ -442,16 +442,6 @@ class _InvestorProfileDetailsScreenState
                     color: textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  'MANAGE YOUR PERSONAL DETAILS',
-                  style: GoogleFonts.gelasio(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.5,
-                    color: muted,
-                  ),
-                ),
               ],
             ),
           ),

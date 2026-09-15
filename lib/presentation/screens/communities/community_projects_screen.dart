@@ -298,16 +298,6 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
                       height: 1.0,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'COMMUNITY PORTFOLIO',
-                    style: GoogleFonts.gelasio(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w700,
-                      color: muted,
-                      letterSpacing: 3,
-                    ),
-                  ),
                 ],
               ),
             ],

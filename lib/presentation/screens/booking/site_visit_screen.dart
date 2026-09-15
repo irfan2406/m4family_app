@@ -391,16 +391,6 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                 color: isDark ? Colors.white : const Color(0xFF155A4F),
               ),
             ),
-            Text(
-              'PROTOCOL VERIFICATION',
-              style: GoogleFonts.inter(
-                fontSize: 8,
-                color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                    .withOpacity(0.68),
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1,
-              ),
-            ),
           ],
         ),
       ),

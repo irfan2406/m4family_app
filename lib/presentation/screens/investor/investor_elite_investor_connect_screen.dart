@@ -156,15 +156,6 @@ class _InvestorEliteInvestorConnectScreenState
                 color: textPrimary,
               ),
             ),
-            Text(
-              'ELITE INVESTOR NETWORK',
-              style: GoogleFonts.gelasio(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 2,
-                color: M4Theme.premiumBlue,
-              ),
-            ),
           ],
         ),
       ),

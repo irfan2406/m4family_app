@@ -259,18 +259,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                   color: scheme.onSurface,
                                 ),
                               ),
-                              // Web parity: "DEEP DIVE" kicker under the type.
-                              Text(
-                                'DEEP DIVE',
-                                style: GoogleFonts.gelasio(
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 3,
-                                  color: scheme.onSurface.withValues(
-                                    alpha: 0.4,
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
                           _buildCircleButton(

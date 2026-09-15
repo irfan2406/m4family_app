@@ -249,17 +249,6 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                             letterSpacing: 1.5,
                           ),
                         ),
-                        Text(
-                          'PERSONALISATION SUITE',
-                          style: GoogleFonts.gelasio(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.68),
-                            letterSpacing: 5.5,
-                          ),
-                        ),
                       ],
                     ),
                   ),

@@ -154,17 +154,6 @@ class _InvestorReferralActiveScreenState
                     color: textPrimary,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'LEAD MATRIX',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.gelasio(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 3,
-                    color: muted,
-                  ),
-                ),
               ],
             ),
           ),

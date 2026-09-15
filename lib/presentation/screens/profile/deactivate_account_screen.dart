@@ -109,16 +109,6 @@ class _DeactivateAccountScreenState
                 letterSpacing: 1,
               ),
             ),
-            Text(
-              'PURGE PROTOCOL',
-              style: GoogleFonts.gelasio(
-                textStyle: const TextStyle(inherit: true),
-                color: isDark ? Colors.white24 : const Color(0x420C312B),
-                fontSize: 8,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 2,
-              ),
-            ),
           ],
         ),
       ),

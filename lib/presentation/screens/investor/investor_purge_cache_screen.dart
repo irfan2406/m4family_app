@@ -210,15 +210,6 @@ class _InvestorPurgeCacheScreenState
                 color: textPrimary,
               ),
             ),
-            Text(
-              'RESET PLATFORM STATE',
-              style: GoogleFonts.inter(
-                fontSize: 11,
-                letterSpacing: 1.5,
-                fontWeight: FontWeight.w600,
-                color: muted,
-              ),
-            ),
           ],
         ),
       ),

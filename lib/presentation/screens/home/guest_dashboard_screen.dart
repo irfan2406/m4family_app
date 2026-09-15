@@ -874,7 +874,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           // than the image-overlay cards used by Communities/Media. Horizontal
           // lists stretch children to this height, so it matches the card's
           // content height exactly (image 180 + info section + margin).
-          height: _activeTab == 'Properties' ? 336 : 320,
+          // Media tiles are landscape (wider than tall); Communities and the
+          // Properties info-card stay portrait, so the row height follows the
+          // active tab rather than one shared value.
+          height: switch (_activeTab.toLowerCase()) {
+            'properties' => 336,
+            'media' => 200,
+            _ => 320,
+          },
           child: Builder(
             builder: (context) {
               final isCommunities = _activeTab == 'Communities';
@@ -1275,7 +1282,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       // which is the Properties tab's destination, not this one's.
       onTap: () => context.push('/media'),
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.56,
+        // Landscape tile: the row gives it 190dp of height, so this width
+        // keeps it wider than tall on every handset (≈1.4:1 at 320dp up to
+        // ≈1.8:1 at 411dp). Was 0.56, which read as a portrait card.
+        width: MediaQuery.of(context).size.width * 0.82,
         margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),

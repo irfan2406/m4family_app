@@ -305,16 +305,6 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 2),
-              Text(
-                'MANAGE YOUR PORTAL EMPLOYEES',
-                style: GoogleFonts.gelasio(
-                  fontSize: 8,
-                  fontWeight: FontWeight.w700,
-                  color: muted,
-                  letterSpacing: 1.5,
-                ),
-              ),
             ],
           ),
           IconButton(

@@ -205,16 +205,6 @@ class _InvestorPortfolioScreenState
                   height: 1,
                 ),
               ),
-              const SizedBox(height: 6),
-              Text(
-                'MY INVESTMENTS',
-                style: GoogleFonts.gelasio(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: M4Theme.premiumBlue.withValues(alpha: 0.6),
-                  letterSpacing: 3,
-                ),
-              ),
             ],
           ),
         ],
