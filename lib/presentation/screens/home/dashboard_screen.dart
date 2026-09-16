@@ -675,7 +675,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               // follows the active tab. The media row adds 20 of vertical
               // padding top and bottom, so 215 leaves the tile 175 tall
               // against its 280 width.
-              height: _topTabCategory == 'MEDIA' ? 215 : 380,
+              // Sized so the CARD matches the other portals, not just the row:
+              // this list pads 20 top and bottom and the cards carry a 10
+              // bottom margin, so 400 renders a 350-tall card and 260 a
+              // 220-tall landscape tile — the same as CP, Investor and Guest.
+              height: _topTabCategory == 'MEDIA' ? 260 : 400,
               child:
                   (_topTabCategory == 'COMMUNITIES'
                       ? _communitiesLoading
@@ -1489,10 +1493,13 @@ class _ProjectCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 280,
+        // Same card width as every other portal.
+        width: 300,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          color: scheme.surface,
+          // Property card colour, shared by every portal: the page's own
+          // background, so the panel under the photo sits flush with the page.
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -2490,7 +2497,8 @@ class _MediaCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 280,
+        // Same landscape tile width as every other portal.
+        width: 320,
         margin: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),

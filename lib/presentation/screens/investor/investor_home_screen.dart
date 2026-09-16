@@ -1007,7 +1007,9 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         width: 300,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          color: scheme.surface,
+          // Property card colour, shared by every portal: the page's own
+          // background, so the panel under the photo sits flush with the page.
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(

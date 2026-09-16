@@ -1,5 +1,9 @@
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:m4_mobile/core/utils/api_error.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -46,6 +50,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   Map<String, dynamic>? _project;
   List<dynamic> _progress = [];
   bool _liked = false;
+
+  /// URLs already downloading, so a second tap does not start the same file
+  /// again.
+  final Set<String> _downloading = <String>{};
+
+  /// Android hands the file to the system DownloadManager, which puts it in
+  /// the public Downloads folder and shows the usual notification.
+  static const MethodChannel _downloadChannel = MethodChannel('m4/download');
 
   /// Decoded base64 `data:` images cached by URI so a rebuild (e.g. the heart
   /// toggle's setState) reuses the SAME provider instead of re-decoding and
@@ -1153,43 +1165,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             height: 1.5,
                           ),
                         ),
-                        const SizedBox(height: 18),
-                        _assetRow(
-                          scheme,
-                          icon: LucideIcons.fileText,
-                          title: 'Project Flyer',
-                          subtitle: 'High Res • PDF',
-                          url: p['flyer']?.toString(),
-                        ),
-                        const SizedBox(height: 10),
-                        _assetRow(
-                          scheme,
-                          icon: LucideIcons.layers,
-                          title: 'E-Brochure',
-                          subtitle: 'Full Showcase • PDF',
-                          url: p['brochure']?.toString(),
-                        ),
-                        const SizedBox(height: 10),
-                        _assetRow(
-                          scheme,
-                          icon: LucideIcons.image,
-                          title: 'Floor Plans',
-                          subtitle: 'Images • JPG/PNG',
-                          url:
-                              (p['plans'] is List &&
-                                  (p['plans'] as List).isNotEmpty)
-                              ? _stringUrl((p['plans'] as List).first)
-                              : null,
-                        ),
-                        const SizedBox(height: 10),
-                        _assetRow(
-                          scheme,
-                          icon: LucideIcons.video,
-                          title: 'Walkthrough',
-                          subtitle: 'Cinematic Tour • 4K',
-                          url: p['walkthrough']?.toString(),
-                          watchOnly: true,
-                        ),
+                        ..._assetRows(p, scheme),
                         const SizedBox(height: 26),
                         _sectionTitle('Amenities', scheme, accent),
                         const SizedBox(height: 12),
@@ -1515,6 +1491,180 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     );
   }
 
+  /// Downloads a document instead of just opening it.
+  ///
+  /// The download button used to call the same opener as VIEW, so it handed
+  /// the URL to the browser and the partner still had to save the file
+  /// themselves. This is the customer screen's proven path: Android enqueues
+  /// with the system DownloadManager (public Downloads folder + notification),
+  /// and every other platform — which has no such folder — writes into the
+  /// app's own storage and offers to share the file on.
+  Future<void> _downloadAsset(String? rawUrl, String title) async {
+    final raw = rawUrl?.trim() ?? '';
+    if (raw.isEmpty) {
+      _openOrWarn(null, '$title not available');
+      return;
+    }
+
+    final apiClient = ref.read(apiClientProvider);
+    final url = apiClient.resolveUrl(raw);
+    if (_downloading.contains(url)) return;
+    _downloading.add(url);
+
+    if (Platform.isAndroid) {
+      try {
+        await _downloadChannel.invokeMethod<Object?>('enqueue', {
+          'url': url,
+          'fileName': _downloadFileName(url, title),
+          'title': title,
+        });
+      } catch (e) {
+        debugPrint('Download enqueue failed: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text('Could not start the download for $title.'),
+                backgroundColor: const Color(0xFFC65B46),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+        }
+      } finally {
+        _downloading.remove(url);
+      }
+      return;
+    }
+
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text('Downloading $title…'),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 30),
+      ),
+    );
+
+    try {
+      final base = await getApplicationDocumentsDirectory();
+      final dir = Directory('${base.path}/M4 Family');
+      if (!await dir.exists()) await dir.create(recursive: true);
+
+      final name = _downloadFileName(url, title);
+      final file = File('${dir.path}/$name');
+      await apiClient.dio.download(url, file.path);
+
+      if (!mounted) return;
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Saved $name'),
+          backgroundColor: const Color(0xFF163A2C),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 6),
+          action: SnackBarAction(
+            label: 'OPEN',
+            textColor: const Color(0xFFF4EFE3),
+            onPressed: () =>
+                Share.shareXFiles([XFile(file.path)], subject: title),
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            friendlyApiError(e, fallback: 'Could not download $title.'),
+          ),
+          backgroundColor: const Color(0xFFC65B46),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } finally {
+      _downloading.remove(url);
+    }
+  }
+
+  /// A readable filename: the row's own title plus the URL's extension.
+  String _downloadFileName(String url, String title) {
+    final path = Uri.tryParse(url)?.path ?? url;
+    final ext = path.contains('.') ? path.split('.').last : '';
+    final safe = title.trim().replaceAll(RegExp(r'[^A-Za-z0-9 _-]'), '').trim();
+    final base = safe.isEmpty ? 'M4-Document' : safe;
+    return (ext.isEmpty || ext.length > 5) ? base : '$base.$ext';
+  }
+
+  /// The document rows this project actually has, with their spacing.
+  ///
+  /// Web parity: a document the backend has not supplied is not listed at all.
+  /// The four rows used to be built unconditionally with a possibly-null url,
+  /// so a project carrying none of them still showed four tiles whose VIEW and
+  /// DOWNLOAD buttons could only answer "not available". Returns an empty list
+  /// — including its leading gap — when there is nothing to show.
+  List<Widget> _assetRows(Map<String, dynamic> p, ColorScheme scheme) {
+    String? clean(dynamic v) {
+      final s = v?.toString().trim() ?? '';
+      return s.isEmpty ? null : s;
+    }
+
+    final rows = <Widget>[];
+    void add({
+      required IconData icon,
+      required String title,
+      required String subtitle,
+      required String? url,
+      bool watchOnly = false,
+    }) {
+      if (url == null) return;
+      if (rows.isNotEmpty) rows.add(const SizedBox(height: 10));
+      rows.add(
+        _assetRow(
+          scheme,
+          icon: icon,
+          title: title,
+          subtitle: subtitle,
+          url: url,
+          watchOnly: watchOnly,
+        ),
+      );
+    }
+
+    final plans = p['plans'];
+    add(
+      icon: LucideIcons.fileText,
+      title: 'Project Flyer',
+      subtitle: 'High Res • PDF',
+      url: clean(p['flyer']),
+    );
+    add(
+      icon: LucideIcons.layers,
+      title: 'E-Brochure',
+      subtitle: 'Full Showcase • PDF',
+      url: clean(p['brochure']),
+    );
+    add(
+      icon: LucideIcons.image,
+      title: 'Floor Plans',
+      subtitle: 'Images • JPG/PNG',
+      url: (plans is List && plans.isNotEmpty)
+          ? clean(_stringUrl(plans.first))
+          : null,
+    );
+    add(
+      icon: LucideIcons.video,
+      title: 'Walkthrough',
+      subtitle: 'Cinematic Tour • 4K',
+      url: clean(p['walkthrough']),
+      watchOnly: true,
+    );
+
+    return rows.isEmpty ? const [] : [const SizedBox(height: 18), ...rows];
+  }
+
   Widget _assetRow(
     ColorScheme scheme, {
     required IconData icon,
@@ -1642,7 +1792,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     color: scheme.onSurface,
                     borderRadius: BorderRadius.circular(12),
                     child: InkWell(
-                      onTap: () => _openOrWarn(url, '$title not available'),
+                      // Downloads the file rather than handing the URL to the
+                      // browser the way VIEW does.
+                      onTap: () => _downloadAsset(url, title),
                       borderRadius: BorderRadius.circular(12),
                       child: Center(
                         child: Icon(

@@ -399,9 +399,28 @@ class ApiClient {
   }
 
   Future<Response> createTicket(Map<String, dynamic> data) async {
-    if (data.containsKey('attachments') &&
-        (data['attachments'] as List).isNotEmpty) {
-      final List<String> filePaths = List<String>.from(data['attachments']);
+    final rawAttachments = data['attachments'];
+    final attachmentList = rawAttachments is List
+        ? List<String>.from(rawAttachments)
+        : const <String>[];
+
+    /// Already on the server: an absolute URL, or the API's own upload path.
+    /// Those are values to post, not files to read off the device.
+    bool isUploaded(String v) =>
+        v.startsWith('http://') ||
+        v.startsWith('https://') ||
+        v.startsWith('/uploads');
+
+    // POST /api/tickets is JSON-only — it has no multipart parser, so a
+    // multipart body leaves `req.body` undefined and the server answers
+    // "Cannot destructure property 'subject' of 'req.body'". When the caller
+    // has already uploaded its files and is passing URLs, post plain JSON.
+    if (attachmentList.isNotEmpty && attachmentList.every(isUploaded)) {
+      return dio.post('/api/tickets', data: data);
+    }
+
+    if (attachmentList.isNotEmpty) {
+      final List<String> filePaths = attachmentList;
       final Map<String, dynamic> formDataMap = Map<String, dynamic>.from(data);
 
       final List<MultipartFile> multipartFiles = [];

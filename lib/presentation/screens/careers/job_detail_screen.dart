@@ -41,17 +41,6 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
               ),
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 2),
-            Text(
-              (job['department'] ?? '').toString().toUpperCase(),
-              style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                    .withOpacity(0.68),
-                fontWeight: FontWeight.w400,
-                fontSize: 8,
-                letterSpacing: 2,
-              ),
-            ),
           ],
         ),
         backgroundColor: isDark

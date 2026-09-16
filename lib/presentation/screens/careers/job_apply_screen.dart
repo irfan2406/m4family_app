@@ -156,17 +156,6 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
               ),
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 2),
-            Text(
-              (widget.job['department'] ?? '').toString().toUpperCase(),
-              style: GoogleFonts.inter(
-                color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                    .withOpacity(0.68),
-                fontWeight: FontWeight.w400,
-                fontSize: 8,
-                letterSpacing: 2,
-              ),
-            ),
           ],
         ),
         backgroundColor: isDark
@@ -545,7 +534,13 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
-            borderSide: const BorderSide(color: Color(0xFFC5A35B), width: 1.5),
+            // The focused field follows the app's green, the same colour the
+            // global inputDecorationTheme uses. This was a one-off gold that
+            // matched nothing else in the form.
+            borderSide: const BorderSide(
+              color: M4Theme.forestGreen,
+              width: 1.5,
+            ),
           ),
         ),
       ),

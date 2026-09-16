@@ -168,16 +168,6 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     return '';
   }
 
-  String get _statusLabel {
-    final s = (_ticket?['status'] as String?) ?? 'Open';
-    return s.toUpperCase();
-  }
-
-  bool get _isOpen {
-    final s = (_ticket?['status'] as String?)?.toLowerCase() ?? 'open';
-    return s == 'open' || s == 'in progress';
-  }
-
   String get _displayId {
     final tid = _ticket?['ticketId'] as String?;
     if (tid != null && tid.isNotEmpty) return tid;
@@ -308,28 +298,6 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   ],
                 ),
               ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color:
-                  (_isOpen ? const Color(0xFFC5A35B) : const Color(0xFF163A2C))
-                      .withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: border),
-            ),
-            child: Text(
-              _statusLabel,
-              style: GoogleFonts.gelasio(
-                fontSize: 8,
-                fontWeight: FontWeight.w700,
-                color: _isOpen
-                    ? const Color(0xFFC5A35B)
-                    : const Color(0xFF163A2C),
-                letterSpacing: 2,
-              ),
             ),
           ),
         ],

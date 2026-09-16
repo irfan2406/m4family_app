@@ -577,21 +577,6 @@ class ProjectListScreen extends ConsumerWidget {
                                     ),
                                   ] else ...[
                                     Text(
-                                      'DISCOVER',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.gelasio(
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.w700,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withOpacity(0.72),
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
                                       'M4 PROPERTIES',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -1072,7 +1057,9 @@ class _ProjectGridItem extends StatelessWidget {
       height:
           200, // Enforce 16:9 aspect ratio parity with web (approx for mobile width)
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
+        // Same card colour as the home property cards: the page's own
+        // background, so the card sits flush with the page.
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(24),
         // Figma depth: the card sits ON the green, lifted by a soft shadow that
         // falls straight down and stays tucked under the card. The negative
@@ -1229,7 +1216,9 @@ class _ProjectListRowItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
+        // Same card colour as the home property cards: the page's own
+        // background, so the card sits flush with the page.
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(

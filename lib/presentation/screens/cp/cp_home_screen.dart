@@ -1079,10 +1079,14 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     return _ScaleButton(
       onTap: () => context.push('/cp/projects/${item['_id']}', extra: item),
       child: Container(
-        width: 288,
+        // Same card width as every other portal (was 288, the only outlier).
+        width: 300,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
+          // Property card colour, shared by every portal: the page's own
+          // background. Was a hardcoded pair (#1C4535 / cream) that made this
+          // card a third, different green.
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(

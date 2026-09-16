@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:m4_mobile/presentation/providers/support_provider.dart';
 import 'package:go_router/go_router.dart';
@@ -89,7 +90,25 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                         else
                           ...state.tickets
                               .take(3)
-                              .map((t) => _TicketPreviewItem(ticket: t)),
+                              .map(
+                                (t) => _TicketPreviewItem(
+                                  ticket: t,
+                                  // The card was display-only, so tapping a log
+                                  // did nothing. It opens its ticket now, on
+                                  // the route belonging to the portal the user
+                                  // is in.
+                                  onTap: () {
+                                    final id = (t.id).toString();
+                                    if (id.isEmpty) return;
+                                    final prefix = role == 'investor'
+                                        ? '/investor/support/tickets'
+                                        : role == 'cp'
+                                        ? '/cp/support/tickets'
+                                        : '/support/tickets';
+                                    context.push('$prefix/$id');
+                                  },
+                                ),
+                              ),
                       ],
                       const SizedBox(height: 120), // Bottom padding
                     ],
@@ -431,8 +450,9 @@ class _MatrixItem extends StatelessWidget {
 
 class _TicketPreviewItem extends StatelessWidget {
   final dynamic ticket;
+  final VoidCallback onTap;
 
-  const _TicketPreviewItem({required this.ticket});
+  const _TicketPreviewItem({required this.ticket, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -442,119 +462,127 @@ class _TicketPreviewItem extends StatelessWidget {
     final status = (ticket.status ?? 'Open').toString();
     final isOpen =
         status.toLowerCase() == 'open' || status.toLowerCase() == 'in progress';
+    // The status badge follows the app green. It was a one-off gold that
+    // belonged to no other surface on this screen.
     final badgeBg = isOpen
-        ? const Color(0xFFC5A35B).withOpacity(0.1)
+        ? M4Theme.forestGreen.withOpacity(0.1)
         : Colors.greenAccent.withOpacity(0.12);
-    final badgeFg = isOpen ? const Color(0xFFC5A35B) : Colors.greenAccent;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: isDark
-                ? const Color(0xFF141B3A).withOpacity(0.8)
-                : Colors.white.withOpacity(0.6),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
+    final badgeFg = isOpen ? M4Theme.forestGreen : Colors.greenAccent;
+    return GestureDetector(
+      onTap: onTap,
+      // Opaque so the whole card answers a tap, not only the painted pixels.
+      behavior: HitTestBehavior.opaque,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withOpacity(0.05)
+                  ? const Color(0xFF141B3A).withOpacity(0.8)
                   : Colors.white.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withOpacity(0.05)
+                    : Colors.white.withOpacity(0.6),
+              ),
             ),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              // Ticket id chip: app green, not the one-off gold.
+                              color: M4Theme.forestGreen.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              id.isEmpty
+                                  ? '—'
+                                  : id.substring(0, id.length.clamp(0, 8)),
+                              style: GoogleFonts.inter(
+                                color: M4Theme.forestGreen,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFC5A35B).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(6),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              title.toUpperCase(),
+                              style: GoogleFonts.inter(
+                                color: Theme.of(context).colorScheme.onSurface,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                              ),
+                              maxLines: 1,
+                              softWrap: false,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                          child: Text(
-                            id.isEmpty
-                                ? '—'
-                                : id.substring(0, id.length.clamp(0, 8)),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Icon(
+                            LucideIcons.clock,
+                            size: 12,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.2),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            DateFormat(
+                              'MMM d',
+                            ).format(ticket.createdAt).toUpperCase(),
                             style: GoogleFonts.inter(
-                              color: const Color(0xFFC5A35B),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withOpacity(0.62),
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            title.toUpperCase(),
-                            style: GoogleFonts.inter(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13,
-                            ),
-                            maxLines: 1,
-                            softWrap: false,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Icon(
-                          LucideIcons.clock,
-                          size: 12,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withOpacity(0.2),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          DateFormat(
-                            'MMM d',
-                          ).format(ticket.createdAt).toUpperCase(),
-                          style: GoogleFonts.inter(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withOpacity(0.62),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: badgeBg,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  status.toUpperCase(),
-                  style: GoogleFonts.inter(
-                    color: badgeFg,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: badgeBg,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    status.toUpperCase(),
+                    style: GoogleFonts.inter(
+                      color: badgeFg,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

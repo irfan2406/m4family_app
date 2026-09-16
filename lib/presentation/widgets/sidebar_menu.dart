@@ -343,39 +343,28 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                       ),
                     ),
 
-                    // Footer — divider line ABOVE the THEME MODE row + LOG OUT
-                    // (matches web: line separates QUICK ACTIONS from the footer).
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: Colors.white.withOpacity(
-                              isDark ? 0.05 : 0.2,
+                    // Footer — LOG OUT. No divider above it: the rule that used
+                    // to separate it from QUICK ACTIONS has been dropped.
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Bottom Actions (LOG OUT)
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                (isDark ? Colors.black : Colors.white)
+                                    .withOpacity(0.2),
+                              ],
                             ),
                           ),
+                          child: _SidebarExitButton(),
                         ),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Bottom Actions (LOG OUT)
-                          Container(
-                            padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  (isDark ? Colors.black : Colors.white)
-                                      .withOpacity(0.2),
-                                ],
-                              ),
-                            ),
-                            child: _SidebarExitButton(),
-                          ),
-                        ],
-                      ),
+                      ],
                     ),
                   ],
                 ),

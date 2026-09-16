@@ -3,12 +3,54 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-/// Flutter port of the web `components/shared/LuxuryAmenityIcon.tsx`.
-/// Renders amenity icons the SAME way as web so they match exactly:
-///  1. a backend-uploaded icon image (gold-tinted), when the amenity has one;
+/// Flutter port of the web `components/shared/LuxuryAmenityIcon.tsx`, built to
+/// the backend team's amenity spec. Three tiers, in order:
+///  1. a backend-uploaded icon (SVG or raster), gold-tinted when it is line art;
 ///  2. otherwise a hand-vectored thin-line luxury SVG mapped from the name;
-///  3. otherwise a Lucide fallback icon.
-const Color kAmenityGold = Color(0xFFC5A35B);
+///  3. otherwise a gold sparkle.
+///
+/// Luxury gold accent, per the spec.
+const Color kAmenityGold = Color(0xFFDFBA6B);
+
+/// True for formats that carry their own transparency, where the spec's
+/// `BlendMode.srcIn` gold tint does the right thing: it repaints the opaque
+/// (drawn) pixels gold and leaves the transparent ones alone.
+bool _hasOwnAlpha(String url) {
+  final path = (Uri.tryParse(url)?.path ?? url).toLowerCase();
+  return path.endsWith('.svg') || path.endsWith('.png');
+}
+
+bool _isSvgIcon(String url) =>
+    (Uri.tryParse(url)?.path ?? url).toLowerCase().endsWith('.svg');
+
+/// Gold tint for an OPAQUE image — black line art on a white background, which
+/// is how the backend uploads these icons (the "lobby" amenity is a 1254x1254
+/// JPEG of black art on white).
+///
+/// `BlendMode.srcIn` cannot be used on those: a JPEG has no alpha, so every
+/// pixel — the white background included — is opaque and srcIn repaints the
+/// whole square solid gold. This matrix instead derives ALPHA from luminance,
+/// the way the web's CSS filter behaves:
+///
+///   * RGB is fixed to the gold accent, so every drawn pixel is gold;
+///   * alpha rises with darkness, so black art becomes fully opaque gold and
+///     the white background falls away to nothing.
+///
+/// The alpha curve is `2 × (255 − luminance) − 60`, clamped, rather than a
+/// plain `255 − luminance`. A JPEG's background is not pure white — compression
+/// leaves it a degree or two off, with ringing along the art's edges — and a
+/// plain inversion turned that noise into a faint gold wash and a hairline down
+/// the picture's edge. The bias drops anything lighter than ~225 luminance to
+/// nothing, and the ×2 keeps the art itself fully solid.
+///
+/// The result is gold line art with no white block and no edge line behind it,
+/// on the cream and the green surfaces alike.
+const List<double> _goldFromLuminance = <double>[
+  0, 0, 0, 0, 223, // R -> gold 0xDF
+  0, 0, 0, 0, 186, // G -> gold 0xBA
+  0, 0, 0, 0, 107, // B -> gold 0x6B
+  -0.4252, -1.4304, -0.1444, 0, 450, // A -> 2*(255 - luminance) - 60
+];
 
 class LuxuryAmenityIcon extends StatelessWidget {
   final String name;
@@ -19,7 +61,7 @@ class LuxuryAmenityIcon extends StatelessWidget {
   final Color color;
 
   /// Bundled image shown when the uploaded icon fails to load (e.g. while the
-  /// backend /uploads endpoint is broken). Rendered untinted.
+  /// backend /uploads endpoint is broken). Gold-tinted like the rest.
   final String? fallbackAsset;
 
   const LuxuryAmenityIcon({
@@ -33,31 +75,77 @@ class LuxuryAmenityIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1) Backend-uploaded icon image -> gold tinted (web: getAssetUrl + CSS gold filter).
-    if (iconUrl != null && iconUrl!.isNotEmpty) {
+    // TIER 1 — a backend-uploaded icon.
+    final url = iconUrl;
+    if (url != null && url.isNotEmpty) {
+      final hasAlpha = _hasOwnAlpha(url);
+
+      // An uploaded SVG is line art by definition, so it is drawn through the
+      // gold tint like the spec asks.
+      if (_isSvgIcon(url)) {
+        return SizedBox(
+          width: size,
+          height: size,
+          child: SvgPicture.network(
+            url,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+            colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+            placeholderBuilder: (c) => const SizedBox.shrink(),
+          ),
+        );
+      }
+
       return SizedBox(
         width: size,
         height: size,
         child: CachedNetworkImage(
           memCacheWidth: 1080,
-          imageUrl: iconUrl!,
+          imageUrl: url,
           fit: BoxFit.contain,
           placeholder: (c, u) => const SizedBox.shrink(),
-          // Tint only successful loads — the fallback asset renders untinted
-          // (srcIn on a white-background bitmap would paint a solid square).
-          imageBuilder: (c, provider) => ColorFiltered(
-            colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-            child: Image(image: provider, fit: BoxFit.contain),
-          ),
+          imageBuilder: (c, provider) {
+            final image = Image(image: provider, fit: BoxFit.contain);
+            // PNG carries its own transparency, so the spec's srcIn is exact.
+            if (hasAlpha) {
+              return ColorFiltered(
+                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                child: image,
+              );
+            }
+            // JPEG is opaque, so its white background is dissolved by luminance
+            // instead — see _goldFromLuminance.
+            //
+            // The white backdrop matters: that matrix reads alpha out of RGB
+            // and ignores the incoming alpha, and a transparent pixel is
+            // RGB(0,0,0) — "black" — which it turns into SOLID GOLD. Drawing a
+            // 1254px square into a 42dp box leaves a sub-pixel transparent
+            // sliver down the edge, and that sliver was being painted as a gold
+            // hairline beside the icon. Backing the image with white gives
+            // every pixel in the layer a defined colour, and white maps to
+            // fully transparent, so the backdrop itself never shows.
+            return ColorFiltered(
+              colorFilter: const ColorFilter.matrix(_goldFromLuminance),
+              child: Container(color: Colors.white, child: image),
+            );
+          },
           // On failure (e.g. the /uploads endpoint is down) prefer the
-          // name-mapped luxury SVG — matches web — over a generic Lucide glyph.
+          // name-mapped luxury SVG — matches web — over a generic glyph.
           errorWidget: (c, u, e) => fallbackAsset != null
-              ? Image.asset(fallbackAsset!, fit: BoxFit.contain)
+              ? ColorFiltered(
+                  // The bundled snapshot is transparent line art, so it takes
+                  // the same gold as everything else rather than staying the
+                  // odd one out when the network icon fails.
+                  colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                  child: Image.asset(fallbackAsset!, fit: BoxFit.contain),
+                )
               : _fallbackGlyph(),
         ),
       );
     }
 
+    // TIER 2 and 3.
     return _fallbackGlyph();
   }
 
@@ -233,5 +321,6 @@ IconData _lucideFallback(String name) {
     return LucideIcons.toyBrick;
   if (n.contains('game')) return LucideIcons.dice5;
   if (n.contains('park') || n.contains('sun')) return LucideIcons.umbrella;
-  return LucideIcons.puzzle;
+  // Spec's tier 3: the luxury sparkle, not a puzzle piece.
+  return LucideIcons.sparkles;
 }

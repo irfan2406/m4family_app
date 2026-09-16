@@ -1706,11 +1706,12 @@ class _GuestProjectDetailScreenState
       itemCount: amenitiesRaw.length,
       itemBuilder: (context, index) {
         final amenity = amenitiesRaw[index];
-        final name =
-            (amenity is Map
-                    ? (amenity['name']?.toString() ?? 'Amenity')
-                    : amenity.toString())
-                .toUpperCase();
+        // The amenity is labelled exactly as the backend stores it ("lobby"),
+        // matching the web and the CP/Investor screens. It used to be forced
+        // to upper case here.
+        final name = amenity is Map
+            ? (amenity['name']?.toString() ?? 'Amenity')
+            : amenity.toString();
         final rawIcon = amenity is Map ? amenity['icon']?.toString() : null;
         final hasUploadedIcon =
             rawIcon != null &&
@@ -1729,7 +1730,9 @@ class _GuestProjectDetailScreenState
               size: 42,
               // Temporary: the backend /uploads endpoint is broken (302 loop);
               // bundled snapshot of the web's Lobby icon keeps parity.
-              fallbackAsset: name == 'LOBBY'
+              // Case-insensitive: the label is no longer upper-cased, so a
+              // literal 'LOBBY' comparison would never match again.
+              fallbackAsset: name.toUpperCase() == 'LOBBY'
                   ? 'assets/amenity_lobby.png'
                   : null,
             ),

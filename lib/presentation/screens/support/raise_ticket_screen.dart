@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/portal_bottom_nav.dart';
 
@@ -21,6 +24,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
   late final TextEditingController _subjectController;
   final TextEditingController _messageController = TextEditingController();
   String? _category;
+  bool _isCategoryOpen = false;
   bool _submitting = false;
   final List<String> _attachments = [];
 
@@ -83,37 +87,83 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
     }
     setState(() => _submitting = true);
     try {
-      final res = await ref.read(apiClientProvider).createTicket({
+      final api = ref.read(apiClientProvider);
+
+      // Files go to /api/upload FIRST and the ticket carries their URLs.
+      //
+      // Posting them inline made the request multipart, and POST /api/tickets
+      // has no multipart parser — the server read an empty body and answered
+      // "Cannot destructure property 'subject' of 'req.body' as it is
+      // undefined", so attaching anything made the ticket impossible to
+      // raise. This is the same two-step the résumé and avatar uploads use.
+      final uploaded = <String>[];
+      for (final path in _attachments) {
+        final res = await api.uploadFile(path);
+        final body = res.data;
+        final inner = body is Map ? body['data'] : null;
+        final url = inner is Map ? inner['fileUrl']?.toString() : null;
+        if (url == null || url.isEmpty) {
+          final name = path.split(Platform.pathSeparator).last.split('/').last;
+          throw Exception('Could not upload $name.');
+        }
+        uploaded.add(url);
+      }
+
+      final res = await api.createTicket({
         'subject': subject,
         'category': _category,
         'message': message,
-        if (_attachments.isNotEmpty) 'attachments': _attachments,
+        // The other ticket form (support_provider.createTicket) posts a
+        // priority with the note "Default priority as seen in web", and the
+        // ticket model carries the field too — this form was the only path
+        // leaving it out of the body.
+        'priority': 'Medium',
+        if (uploaded.isNotEmpty) 'attachments': uploaded,
       });
       if (!mounted) return;
       final ok = res.data is Map && (res.data['status'] == true);
+      // On a refusal say WHY. A 200 that is not `status: true` carries the
+      // server's own reason; showing a bare "Failed to raise ticket" left the
+      // user with nothing to act on.
+      final serverMessage = res.data is Map
+          ? res.data['message']?.toString()
+          : null;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFF163A2C),
+            backgroundColor: ok
+                ? const Color(0xFF163A2C)
+                : const Color(0xFFC65B46),
             content: Text(
-              ok ? 'Ticket raised successfully!' : 'Failed to raise ticket',
+              ok
+                  ? 'Ticket raised successfully!'
+                  : (serverMessage?.isNotEmpty ?? false)
+                  ? serverMessage!
+                  : 'Failed to raise ticket',
             ),
             behavior: SnackBarBehavior.floating,
-            duration: const Duration(milliseconds: 1800),
+            duration: const Duration(milliseconds: 2600),
           ),
         );
       if (ok) Navigator.pop(context);
-    } catch (_) {
+    } catch (e) {
       if (!mounted) return;
+      // Was `catch (_)` with a fixed string, so every cause — an expired
+      // session (the API answers 401 "Authentication required"), a validation
+      // refusal, no connection — looked identical and none of them could be
+      // acted on. friendlyApiError turns each into a sentence, preferring
+      // whatever the server said.
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            backgroundColor: Color(0xFFC65B46),
-            content: Text('Failed to raise ticket'),
+          SnackBar(
+            backgroundColor: const Color(0xFFC65B46),
+            content: Text(
+              friendlyApiError(e, fallback: 'Failed to raise ticket'),
+            ),
             behavior: SnackBarBehavior.floating,
-            duration: Duration(milliseconds: 1800),
+            duration: const Duration(milliseconds: 2600),
           ),
         );
     } finally {
@@ -125,7 +175,9 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final onSurface = isDark ? Colors.white : const Color(0xFF0C312B);
-    const amber = Color(0xFFC5A35B);
+    // The info box follows the app green. It was a one-off gold that matched
+    // nothing else on the form.
+    const accent = M4Theme.forestGreen;
 
     return Scaffold(
       backgroundColor: isDark
@@ -185,17 +237,23 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
+                // 120 of trailing room so RAISE TICKET comes to rest ABOVE the
+                // floating nav pill. The body is drawn behind that pill
+                // (extendBody: true) and the pill takes ~90 (M4Nav.height 65 +
+                // bottomInset 14 + the system inset), so the old 40 left the
+                // button half-hidden under it. Matches the other pushed
+                // support screens.
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Amber info box
+                    // Info box
                     Container(
                       padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
-                        color: amber.withOpacity(0.06),
+                        color: accent.withOpacity(0.06),
                         borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: amber.withOpacity(0.12)),
+                        border: Border.all(color: accent.withOpacity(0.12)),
                       ),
                       child: Row(
                         children: [
@@ -203,12 +261,12 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: amber.withOpacity(0.12),
+                              color: accent.withOpacity(0.12),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Icon(
                               LucideIcons.info,
-                              color: amber,
+                              color: accent,
                               size: 20,
                             ),
                           ),
@@ -219,7 +277,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                               style: GoogleFonts.inter(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w500,
-                                color: amber.withOpacity(0.75),
+                                color: accent.withOpacity(0.75),
                                 letterSpacing: 1,
                                 height: 1.6,
                               ),
@@ -252,50 +310,118 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                     const SizedBox(height: 22),
                     _label('CATEGORY', onSurface),
                     const SizedBox(height: 10),
-                    _fieldBox(
-                      isDark: isDark,
-                      onSurface: onSurface,
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: _category,
-                          isExpanded: true,
-                          hint: Text(
-                            'SELECT CATEGORY',
-                            style: GoogleFonts.inter(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: onSurface.withOpacity(0.68),
-                              letterSpacing: 1,
-                            ),
+                    // The list opens BELOW the field.
+                    //
+                    // This was a Material DropdownButton, whose menu is an
+                    // overlay positioned so the SELECTED item lands on the
+                    // button — so once a category further down the list was
+                    // chosen, reopening pushed the menu upwards and it covered
+                    // the subject field and the header. Anchoring the panel
+                    // under the field keeps it where the user is looking,
+                    // whatever is selected. Same construction as the CATEGORY
+                    // control on the other ticket form.
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => setState(
+                            () => _isCategoryOpen = !_isCategoryOpen,
                           ),
-                          icon: Icon(
-                            LucideIcons.chevronDown,
-                            color: onSurface.withOpacity(0.4),
-                            size: 18,
-                          ),
-                          dropdownColor: isDark
-                              ? const Color(0xFF141B3A)
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          items: _categories.entries
-                              .map(
-                                (e) => DropdownMenuItem<String>(
-                                  value: e.key,
-                                  child: Text(
-                                    e.value,
-                                    style: GoogleFonts.inter(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500,
-                                      color: onSurface,
-                                      letterSpacing: 1,
+                          child: _fieldBox(
+                            isDark: isDark,
+                            onSurface: onSurface,
+                            child: SizedBox(
+                              height: 48,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      _category == null
+                                          ? 'SELECT CATEGORY'
+                                          : _categories[_category]!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                        color: _category == null
+                                            ? onSurface.withOpacity(0.68)
+                                            : onSurface,
+                                        letterSpacing: 1,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (v) => setState(() => _category = v),
+                                  Icon(
+                                    _isCategoryOpen
+                                        ? LucideIcons.chevronUp
+                                        : LucideIcons.chevronDown,
+                                    color: onSurface.withOpacity(0.4),
+                                    size: 18,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        if (_isCategoryOpen) ...[
+                          const SizedBox(height: 8),
+                          Material(
+                            color: Colors.transparent,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                // The panel sits on the page's own cream, not
+                                // a plain white that stood out against it.
+                                color: isDark
+                                    ? const Color(0xFF141B3A)
+                                    : const Color(0xFFF4EFE3),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: onSurface.withOpacity(0.08),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(
+                                      isDark ? 0.5 : 0.1,
+                                    ),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: _categories.entries.map((e) {
+                                  return InkWell(
+                                    borderRadius: BorderRadius.circular(10),
+                                    onTap: () => setState(() {
+                                      _category = e.key;
+                                      _isCategoryOpen = false;
+                                    }),
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 14,
+                                      ),
+                                      child: Text(
+                                        e.value,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w500,
+                                          color: onSurface,
+                                          letterSpacing: 1,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     const SizedBox(height: 22),
                     _label('MESSAGE', onSurface),

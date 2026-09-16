@@ -520,25 +520,30 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     String mapsUrl,
     bool isDark,
   ) {
-    final emailUpper = email.toUpperCase();
     return Column(
       children: [
+        // The phone row carries the number only. The e-mail used to be
+        // repeated underneath both rows; it now lives once, on the row whose
+        // icon actually means e-mail.
         _contactInfoRow(
           icon: LucideIcons.phone,
           label: 'SALES INQUIRY',
           value: phone,
-          sub: emailUpper,
+          sub: null,
           onTap: () =>
               _launchUrl('tel:${phone.replaceAll(RegExp(r'[^+0-9]'), '')}'),
           isDark: isDark,
         ),
         const SizedBox(height: 28),
+        // The mail icon now shows the e-mail address itself — it used to show
+        // a phone number and dial it, which the envelope did not stand for.
+        // Tapping opens the mail client.
         _contactInfoRow(
           icon: LucideIcons.mail,
           label: 'OTHER INQUIRIES',
-          value: '+91 99308 50993',
-          sub: emailUpper,
-          onTap: () => _launchUrl('tel:+919930850993'),
+          value: email,
+          sub: null,
+          onTap: () => _launchUrl('mailto:$email'),
           isDark: isDark,
         ),
         const SizedBox(height: 28),

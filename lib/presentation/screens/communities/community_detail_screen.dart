@@ -71,6 +71,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
   List<dynamic> _projects = [];
   bool _projectsLoading = true;
   bool _isSubmitting = false;
+  bool _aboutExpanded = false;
   String _selectedProject = 'Any';
 
   final TextEditingController _nameController = TextEditingController();
@@ -460,18 +461,13 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         'About ${widget.community['title']?.toString() ?? 'Community'}',
                   ),
                   const SizedBox(height: 25),
-                  Text(
-                    widget.community['overview'] ??
-                        widget.community['description'] ??
-                        '',
-                    style: GoogleFonts.inter(
-                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                          .withOpacity(0.6),
-                      fontSize: 14,
-                      height: 1.8,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ).animate().fadeIn(delay: 200.ms),
+                  _buildAboutBody(
+                    (widget.community['overview'] ??
+                            widget.community['description'] ??
+                            '')
+                        .toString(),
+                    isDark,
+                  ),
 
                   const SizedBox(height: 50),
 
@@ -1067,25 +1063,136 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     );
   }
 
+  /// The "About the community" copy.
+  ///
+  /// The CMS stores one long string with a blank line between paragraphs. It
+  /// used to be handed to a single Text at height: 1.8, so every blank line
+  /// rendered as a full empty line on top of that generous leading — the wide
+  /// gaps down the section. Splitting on the blank lines and spacing the
+  /// paragraphs ourselves gives one even rhythm, and a single newline inside a
+  /// paragraph (the "A community that grows." run) still breaks the line.
+  ///
+  /// Long copy is collapsed to the first few paragraphs behind Read more,
+  /// matching the community list's control.
+  static const int _aboutCollapsedParagraphs = 3;
+
+  Widget _buildAboutBody(String raw, bool isDark) {
+    final fg = isDark ? Colors.white : const Color(0xFF0C312B);
+    final paragraphs = raw
+        .split(RegExp(r'\n[ \t]*\n'))
+        .map((p) => p.trim())
+        .where((p) => p.isNotEmpty)
+        .toList();
+
+    if (paragraphs.isEmpty) return const SizedBox.shrink();
+
+    final hasMore = paragraphs.length > _aboutCollapsedParagraphs;
+    final shown = (!hasMore || _aboutExpanded)
+        ? paragraphs
+        : paragraphs.take(_aboutCollapsedParagraphs).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 0; i < shown.length; i++) ...[
+          if (i > 0) const SizedBox(height: 14),
+          Text(
+            shown[i],
+            style: GoogleFonts.inter(
+              color: fg.withOpacity(0.6),
+              fontSize: 14,
+              height: 1.55,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+        if (hasMore) ...[
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () => setState(() => _aboutExpanded = !_aboutExpanded),
+            child: Container(
+              padding: const EdgeInsets.only(bottom: 2),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: fg.withOpacity(0.3), width: 1),
+                ),
+              ),
+              child: Text(
+                _aboutExpanded ? 'Read less' : 'Read more',
+                style: GoogleFonts.inter(
+                  color: isDark ? Colors.white : const Color(0xFF155A4F),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ],
+    ).animate().fadeIn(delay: 200.ms);
+  }
+
   IconData _getIcon(String icon) {
-    switch (icon) {
-      case 'LayoutGrid':
+    // The CMS is not consistent about how an icon name is written — the same
+    // glyph arrives as "LayoutGrid", "layout-grid" or "layout grid" depending
+    // on who typed it. Compare on letters only so every spelling resolves to
+    // the same icon instead of falling through to the unknown glyph.
+    final key = icon.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+    switch (key) {
+      case 'layoutgrid':
         return LucideIcons.layoutGrid;
-      case 'MapPin':
+      case 'mappin':
+      case 'map':
+      case 'location':
         return LucideIcons.mapPin;
-      case 'Trees':
+      case 'trees':
+      case 'tree':
+      case 'park':
         return LucideIcons.trees;
-      case 'Shield':
+      case 'shield':
+      case 'shieldcheck':
+      case 'security':
         return LucideIcons.shield;
-      case 'ShoppingBag':
+      case 'shoppingbag':
+      case 'shoppingcart':
+      case 'retail':
         return LucideIcons.shoppingBag;
-      case 'Bus':
+      case 'bus':
+      case 'train':
+      case 'transport':
         return LucideIcons.bus;
+      case 'building':
+      case 'building2':
+        return LucideIcons.building2;
+      case 'car':
+      case 'parking':
+        return LucideIcons.car;
+      case 'waves':
+      case 'water':
+      case 'waterfront':
+        return LucideIcons.waves;
+      case 'users':
+      case 'community':
+        return LucideIcons.users;
+      case 'sparkles':
+        return LucideIcons.sparkles;
+      case 'school':
+      case 'graduationcap':
+        return LucideIcons.graduationCap;
+      case 'hospital':
+      case 'heartpulse':
+        return LucideIcons.heartPulse;
       default:
-        // Web parity: unmapped icon names fall back to lucide's
-        // circle-question-mark (we showed sparkles), which is why e.g.
-        // CONNECTIVITY rendered a different glyph than the site.
-        return LucideIcons.helpCircle;
+        // Web parity: the site draws sparkles for an icon name it does not
+        // recognise — checked against the live community page, whose
+        // "Central Connect" and "Downtown Access" benefits (names the CMS
+        // stores in the icon field, so nothing can resolve them) render as
+        // sparkles there.
+        //
+        // This was switched to a circle-question-mark on the belief that the
+        // web showed one; it does not, and a question mark reads as an error
+        // rather than a benefit.
+        return LucideIcons.sparkles;
     }
   }
 }

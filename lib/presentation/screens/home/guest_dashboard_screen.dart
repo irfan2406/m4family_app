@@ -877,11 +877,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           // Media tiles are landscape (wider than tall); Communities and the
           // Properties info-card stay portrait, so the row height follows the
           // active tab rather than one shared value.
-          height: switch (_activeTab.toLowerCase()) {
-            'properties' => 336,
-            'media' => 200,
-            _ => 320,
-          },
+          // One row height for every portal: 360 for Communities/Properties
+          // and 230 for the landscape Media tiles. With the cards' 10 bottom
+          // margin that renders 350 / 220 — the same card the CP, Investor and
+          // Customer homes draw.
+          height: _activeTab.toLowerCase() == 'media' ? 230 : 360,
           child: Builder(
             builder: (context) {
               final isCommunities = _activeTab == 'Communities';
@@ -1064,7 +1064,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       child: Container(
         // Web parity: card ≈56% of screen width so ~1.7 cards peek into view,
         // with softer 24px corners.
-        width: MediaQuery.of(context).size.width * 0.56,
+        // Same card width as every other portal.
+        width: 300,
         margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
@@ -1285,7 +1286,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         // Landscape tile: the row gives it 190dp of height, so this width
         // keeps it wider than tall on every handset (≈1.4:1 at 320dp up to
         // ≈1.8:1 at 411dp). Was 0.56, which read as a portrait card.
-        width: MediaQuery.of(context).size.width * 0.82,
+        // Same landscape tile width as every other portal.
+        width: 320,
         margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
@@ -1355,10 +1357,18 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     return _ScaleButton(
       onTap: () => context.push('/projects/${item['_id']}', extra: item),
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.68,
+        // Same card width as every other portal.
+        width: 300,
         margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
-          color: const Color(0xFF0C312B),
+          // Property card colour, shared by every portal: the page's own
+          // background, so the panel under the photo sits flush with the page
+          // and only the photo and the READ MORE button carry the card.
+          //
+          // scaffoldBackgroundColor rather than a hardcoded #0C312B — it IS
+          // #0C312B under the green showcase theme these homes use, and a card
+          // shown on a cream surface still matches its page.
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(

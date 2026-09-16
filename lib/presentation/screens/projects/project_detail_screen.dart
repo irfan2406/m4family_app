@@ -2236,11 +2236,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       itemCount: amenitiesRaw.length,
       itemBuilder: (context, index) {
         final amenity = amenitiesRaw[index];
-        final name =
-            (amenity is Map
-                    ? (amenity['name']?.toString() ?? 'Amenity')
-                    : amenity.toString())
-                .toUpperCase();
+        // The amenity is labelled exactly as the backend stores it ("lobby"),
+        // matching the web and the CP/Investor screens. It used to be forced
+        // to upper case here.
+        final name = amenity is Map
+            ? (amenity['name']?.toString() ?? 'Amenity')
+            : amenity.toString();
         // Web parity: use the shared LuxuryAmenityIcon with the backend-uploaded
         // (gold-tinted) icon — the "Lobby" concierge glyph is an uploaded asset,
         // not a Lucide/SVG fallback.
