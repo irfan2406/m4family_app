@@ -471,15 +471,17 @@ class _LoadingSkeletons extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.only(bottom: i == 2 ? 0 : 24),
           child:
-              Container(
-                    height: 256,
-                    decoration: BoxDecoration(
-                      color: Color.alphaBlend(
-                        accent.withValues(alpha: 0.02),
-                        card,
+              AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Color.alphaBlend(
+                          accent.withValues(alpha: 0.02),
+                          card,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: border),
                       ),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: border),
                     ),
                   )
                   .animate(onPlay: (c) => c.repeat(reverse: true))
@@ -539,7 +541,6 @@ class _ResultCard extends StatelessWidget {
     return _PressableScale(
       onTap: onTap,
       child: Container(
-        height: 280,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
@@ -553,31 +554,38 @@ class _ResultCard extends StatelessWidget {
           ],
         ),
         child: Stack(
-          fit: StackFit.expand,
+          alignment: Alignment.bottomCenter,
           children: [
-            CachedNetworkImage(
-              memCacheWidth: 1080,
-              imageUrl: imageUrl,
-              fit: BoxFit.cover,
-              placeholder: (context, url) =>
-                  Container(color: Colors.black.withValues(alpha: 0.1)),
-              errorWidget: (context, url, error) => Container(
-                color: Colors.black.withValues(alpha: 0.2),
-                child: const Icon(LucideIcons.image, color: Colors.white38),
+            // 16:9 thumbnail frame — the ratio every card image uses. It was a
+            // flat 280, which is only 16:9 at one particular screen width.
+            const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
+            Positioned.fill(
+              child: CachedNetworkImage(
+                memCacheWidth: 1080,
+                imageUrl: imageUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    Container(color: Colors.black.withValues(alpha: 0.1)),
+                errorWidget: (context, url, error) => Container(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  child: const Icon(LucideIcons.image, color: Colors.white38),
+                ),
               ),
             ),
             // Gradient overlay: from-black/95 via-black/20 to-transparent
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withValues(alpha: 0.95),
-                    Colors.black.withValues(alpha: 0.20),
-                    Colors.transparent,
-                  ],
-                  stops: const [0.0, 0.55, 1.0],
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.95),
+                      Colors.black.withValues(alpha: 0.20),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.55, 1.0],
+                  ),
                 ),
               ),
             ),
@@ -617,93 +625,89 @@ class _ResultCard extends StatelessWidget {
                 ),
               ),
 
-            // Bottom content
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Padding(
-                padding: const EdgeInsets.all(28),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      title.toUpperCase(),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.gelasio(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        letterSpacing: -0.5,
-                      ),
+            // Bottom content — non-positioned so it can push the card past
+            // 16:9 rather than being clipped by it.
+            Padding(
+              padding: const EdgeInsets.all(28),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title.toUpperCase(),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.gelasio(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      letterSpacing: -0.5,
                     ),
-                    const SizedBox(height: 6),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Icon(
-                                LucideIcons.mapPin,
-                                size: 14,
-                                color: Colors.white.withValues(alpha: 0.7),
-                              ),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: Text(
-                                  locationShort.toUpperCase(),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.gelasio(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white.withValues(alpha: 0.7),
-                                    letterSpacing: 1.5,
-                                  ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(
+                              LucideIcons.mapPin,
+                              size: 14,
+                              color: Colors.white.withValues(alpha: 0.7),
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                locationShort.toUpperCase(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.gelasio(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white.withValues(alpha: 0.7),
+                                  letterSpacing: 1.5,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        if (showPrice) ...[
-                          const SizedBox(width: 12),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
+                      ),
+                      if (showPrice) ...[
+                        const SizedBox(width: 12),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.2),
                                 ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.2),
-                                  ),
-                                ),
-                                child: Text(
-                                  startingPrice,
-                                  style: GoogleFonts.gelasio(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.white,
-                                    letterSpacing: -0.5,
-                                  ),
+                              ),
+                              child: Text(
+                                startingPrice,
+                                style: GoogleFonts.gelasio(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.white,
+                                  letterSpacing: -0.5,
                                 ),
                               ),
                             ),
                           ),
-                        ],
+                        ),
                       ],
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],

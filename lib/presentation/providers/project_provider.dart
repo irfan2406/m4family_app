@@ -111,6 +111,25 @@ List<dynamic> _placeholderProjects() => [
 /// and the AsyncError recovery in the home screens still re-issue it.
 Future<List<dynamic>>? _liveCatalog;
 
+/// When [_liveCatalog] finished. Null while the request is still in flight.
+DateTime? _liveCatalogAt;
+
+/// How long a COMPLETED catalog fetch keeps being reused before the next read
+/// goes back to the network.
+///
+/// The memo used to have no expiry at all: the first successful fetch was held
+/// in [_liveCatalog] for the rest of the app session and only ever cleared on
+/// error. Every later `ref.invalidate(projectsProvider)` — the home screens'
+/// refresh, the RETRY buttons — re-ran this provider but was handed that same
+/// finished future straight back, so the network was never touched again and a
+/// project edited on the backend (a new hero image, say) could not appear until
+/// the app was killed and reopened.
+///
+/// A window rather than no memo at all: an in-flight request is still shared by
+/// every caller (see below), and the `invalidateSelf` re-read a few lines down
+/// still resolves instantly instead of downloading the multi-MB payload twice.
+const Duration _catalogFreshFor = Duration(seconds: 20);
+
 final projectsProvider = FutureProvider<List<dynamic>>((ref) async {
   final apiClient = ref.watch(apiClientProvider);
 
@@ -147,19 +166,39 @@ final projectsProvider = FutureProvider<List<dynamic>>((ref) async {
   // here so the 9 MB cache is written once rather than on every provider run.
   Future<List<dynamic>> liveOnce() {
     final pending = _liveCatalog;
-    if (pending != null) return pending;
+    final finishedAt = _liveCatalogAt;
+    // Still in flight (finishedAt == null): share it, so the screens that all
+    // read this on startup cause ONE download. Finished: reuse it only while
+    // it is still fresh, then fetch again so backend edits show up.
+    if (pending != null &&
+        (finishedAt == null ||
+            DateTime.now().difference(finishedAt) < _catalogFreshFor)) {
+      return pending;
+    }
     final started = fetchLive().then((data) async {
       if (data.isNotEmpty) await _saveCachedProjects(data);
       return data;
     });
     _liveCatalog = started;
-    // Forget a failed attempt so the next read hits the network again. Uses
-    // then(onError:) rather than catchError so the derived future completes
-    // normally and never reports an unhandled async error.
+    _liveCatalogAt = null;
+    // Stamp a success so it ages out, and forget a failure so the next read
+    // hits the network again. Uses then(onError:) rather than catchError so the
+    // derived future completes normally and never reports an unhandled async
+    // error.
     unawaited(
-      started.then((_) {}, onError: (Object _) {
-        if (identical(_liveCatalog, started)) _liveCatalog = null;
-      }),
+      started.then(
+        (_) {
+          if (identical(_liveCatalog, started)) {
+            _liveCatalogAt = DateTime.now();
+          }
+        },
+        onError: (Object _) {
+          if (identical(_liveCatalog, started)) {
+            _liveCatalog = null;
+            _liveCatalogAt = null;
+          }
+        },
+      ),
     );
     return started;
   }

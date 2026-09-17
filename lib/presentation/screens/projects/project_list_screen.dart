@@ -1054,8 +1054,6 @@ class _ProjectGridItem extends StatelessWidget {
       // Figma: cards stack close together and are softly rounded, not
       // pill-round.
       margin: const EdgeInsets.only(bottom: 12),
-      height:
-          200, // Enforce 16:9 aspect ratio parity with web (approx for mobile width)
       decoration: BoxDecoration(
         // Same card colour as the home property cards: the page's own
         // background, so the card sits flush with the page.
@@ -1079,21 +1077,26 @@ class _ProjectGridItem extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
-        fit: StackFit.expand,
+        alignment: Alignment.bottomCenter,
         children: [
-          _projListImage(imageUrl),
+          // 16:9 thumbnail frame — the ratio every card image uses. It was a
+          // flat 200, which is only 16:9 at one particular screen width.
+          const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
+          Positioned.fill(child: _projListImage(imageUrl)),
           // Subtle Gradient Overlay for text readability on images
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withOpacity(0.1),
-                  Colors.transparent,
-                  Colors.black.withOpacity(0.6),
-                ],
-                stops: const [0.0, 0.4, 1.0],
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.1),
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.6),
+                  ],
+                  stops: const [0.0, 0.4, 1.0],
+                ),
               ),
             ),
           ),
@@ -1128,10 +1131,8 @@ class _ProjectGridItem extends StatelessWidget {
             ),
 
           // Bottom Content
-          Positioned(
-            bottom: 24,
-            left: 24,
-            right: 24,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1236,14 +1237,15 @@ class _ProjectListRowItem extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Left Thumbnail
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: _projListImage(imageUrl),
+          // Left Thumbnail — 16:9, the ratio every card image uses.
+          SizedBox(
+            width: 128,
+            child: AspectRatio(
+              aspectRatio: 16 / 9,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: _projListImage(imageUrl),
+              ),
             ),
           ),
           const SizedBox(width: 16),

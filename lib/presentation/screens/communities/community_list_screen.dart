@@ -359,7 +359,6 @@ class _CommunityCard extends ConsumerWidget {
         ),
       ),
       child: Container(
-        height: 350,
         margin: const EdgeInsets.only(bottom: 30),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
@@ -373,7 +372,11 @@ class _CommunityCard extends ConsumerWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(
+          alignment: Alignment.bottomCenter,
           children: [
+            // 16:9 thumbnail frame — the ratio every card image uses. It was a
+            // flat 350, which is only 16:9 at one particular screen width.
+            const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
             Positioned.fill(child: _communityImage(imageUrl)),
             // Gradient
             Positioned.fill(
@@ -391,11 +394,10 @@ class _CommunityCard extends ConsumerWidget {
                 ),
               ),
             ),
-            // Content
-            Positioned(
-              bottom: 40,
-              left: 30,
-              right: 30,
+            // Content — non-positioned so it can push the card past 16:9
+            // rather than being clipped by it.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(30, 40, 30, 40),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [

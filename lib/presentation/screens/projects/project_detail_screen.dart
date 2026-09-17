@@ -3136,26 +3136,28 @@ class _FloorPlanItem extends StatelessWidget {
             onTap: () => onView(imageUrl, 'IMAGE'),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.cover,
-                height: 200,
-                width: double.infinity,
-                memCacheWidth: 900,
-                fadeInDuration: Duration.zero,
-                placeholder: (context, url) =>
-                    Container(height: 200, color: Colors.black12),
-                errorWidget: (context, url, error) => Container(
-                  height: 200,
-                  color: isDark
-                      ? Colors.white.withOpacity(0.05)
-                      : Colors.black.withOpacity(0.05),
-                  child: Center(
-                    child: Icon(
-                      LucideIcons.image,
-                      color: isDark
-                          ? Colors.white.withOpacity(0.1)
-                          : const Color(0xFF0C312B).withOpacity(0.1),
+              // 16:9 thumbnail — the ratio every card image uses.
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  memCacheWidth: 900,
+                  fadeInDuration: Duration.zero,
+                  placeholder: (context, url) =>
+                      Container(color: Colors.black12),
+                  errorWidget: (context, url, error) => Container(
+                    color: isDark
+                        ? Colors.white.withOpacity(0.05)
+                        : Colors.black.withOpacity(0.05),
+                    child: Center(
+                      child: Icon(
+                        LucideIcons.image,
+                        color: isDark
+                            ? Colors.white.withOpacity(0.1)
+                            : const Color(0xFF0C312B).withOpacity(0.1),
+                      ),
                     ),
                   ),
                 ),
@@ -3372,22 +3374,24 @@ class _ConstructionUpdateCard extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             child: Stack(
               children: [
-                CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  height: 180,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  memCacheWidth: 900,
-                  fadeInDuration: Duration.zero,
-                  placeholder: (context, url) =>
-                      Container(height: 180, color: Colors.black12),
-                  errorWidget: (context, url, error) => Container(
-                    height: 180,
-                    color: Colors.black.withOpacity(0.05),
-                    child: Center(
-                      child: Icon(
-                        LucideIcons.image,
-                        color: const Color(0xFF0C312B).withOpacity(0.1),
+                // 16:9 thumbnail — the ratio every card image uses.
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    memCacheWidth: 900,
+                    fadeInDuration: Duration.zero,
+                    placeholder: (context, url) =>
+                        Container(color: Colors.black12),
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.black.withOpacity(0.05),
+                      child: Center(
+                        child: Icon(
+                          LucideIcons.image,
+                          color: const Color(0xFF0C312B).withOpacity(0.1),
+                        ),
                       ),
                     ),
                   ),
@@ -4327,7 +4331,11 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white.withOpacity(0.03)
-                        : Colors.white,
+                        // Theme surface — M4Theme.lightCard, the warm cream the
+                        // rest of the app's cards use. A hardcoded white read
+                        // as a stark block on the cream page, and the theme
+                        // rules it out ("warm cream card (never white)").
+                        : Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(24),
                     // Subtle in dark so the border doesn't show as a bright edge
                     // behind the image.
@@ -4355,23 +4363,25 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                               borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(24),
                               ),
-                              child: CachedNetworkImage(
-                                imageUrl: imageUrl,
-                                // Same image size as the guest portal (220).
-                                height: 220,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                memCacheWidth: 600,
-                                fadeInDuration: Duration.zero,
-                                placeholder: (context, url) => Container(
-                                  height: 220,
+                              // 16:9 thumbnail — the ratio every card image
+                              // uses, the guest portal phase card included.
+                              child: AspectRatio(
+                                aspectRatio: 16 / 9,
+                                child: CachedNetworkImage(
+                                  imageUrl: imageUrl,
                                   width: double.infinity,
-                                  color: Colors.white10,
-                                ),
-                                errorWidget: (context, url, error) => Container(
-                                  height: 220,
-                                  width: double.infinity,
-                                  color: Colors.white10,
+                                  fit: BoxFit.cover,
+                                  memCacheWidth: 600,
+                                  fadeInDuration: Duration.zero,
+                                  placeholder: (context, url) => Container(
+                                    width: double.infinity,
+                                    color: Colors.white10,
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Container(
+                                        width: double.infinity,
+                                        color: Colors.white10,
+                                      ),
                                 ),
                               ),
                             ),
@@ -4636,7 +4646,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withOpacity(0.05)
-                          : Colors.white,
+                          // Theme surface (warm cream), not a hardcoded white.
+                          : Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: (isDark ? Colors.white : const Color(0xFF0C312B))

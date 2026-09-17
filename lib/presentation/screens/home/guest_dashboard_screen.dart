@@ -15,6 +15,7 @@ import 'dart:typed_data';
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/hero_slider_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
@@ -37,10 +38,17 @@ class GuestHomeData {
   final List<dynamic> projects;
   final List<dynamic> communities;
   final List<dynamic> media;
+
+  /// The admin's hero slides, cached alongside the catalog so a repeat mount
+  /// opens on the same slider the last fetch saw. Defaults to empty, which is
+  /// the "fall back to the catalog/asset slides" case.
+  final List<HeroSlide> heroSliderImages;
+
   const GuestHomeData({
     required this.projects,
     required this.communities,
     required this.media,
+    this.heroSliderImages = const <HeroSlide>[],
   });
 }
 
@@ -60,6 +68,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   int _heroIndex = 0;
+
+  /// Admin Panel hero slides from `GET /api/config`. Non-empty means the
+  /// carousel shows these instead of the catalog/asset fallback.
+  List<HeroSlide> _heroSliderImages = const <HeroSlide>[];
   List<dynamic> _projects = [];
   List<dynamic> _communities = [];
   List<dynamic> _media = [];
@@ -75,6 +87,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   // failed or is still in flight (e.g. offline cold start).
   bool _hasFreshFast = false;
   bool _hasFreshProjects = false;
+  bool _hasFreshHeroSlider = false;
   String _activeTab = 'Communities';
   int _featuredIndex = 0;
 
@@ -98,6 +111,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       _projects = cached.projects;
       _communities = cached.communities;
       _media = cached.media;
+      _heroSliderImages = cached.heroSliderImages;
       _loading = false;
     } else {
       // Cold start: render the last-known payload from disk immediately
@@ -144,6 +158,16 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   /// the web's ▶ play affordance. Falls back to curated stock shots while
   /// projects are still loading.
   List<Map<String, dynamic>> get _heroSlides {
+    // Admin Panel first: when `/api/config` carries heroSliderImages the web
+    // shows exactly those, so the app does too. They carry no project, so the
+    // slide is plain artwork — no ▶ affordance, nothing to open.
+    if (_heroSliderImages.isNotEmpty) {
+      return [
+        for (final slide in _heroSliderImages)
+          {'image': slide.url, 'label': slide.label, 'project': null},
+      ];
+    }
+
     // Web parity: the hero leads with the newest live (Ongoing) project and
     // then the completed showcases — Upcoming projects and additional
     // Ongoing ones never appear (matches the web's slide set).
@@ -206,6 +230,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           _communities = map['communities'] as List<dynamic>? ?? [];
           _media = map['media'] as List<dynamic>? ?? [];
         }
+        if (!_hasFreshHeroSlider) {
+          final cachedSlides = map['heroSliderImages'];
+          _heroSliderImages = cachedSlides is List
+              ? [for (final s in cachedSlides) HeroSlide.fromCache(s)]
+              : const <HeroSlide>[];
+        }
         _loading = false;
       });
     } catch (_) {
@@ -220,6 +250,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         'projects': _projects,
         'communities': _communities,
         'media': _media,
+        'heroSliderImages': [
+          for (final slide in _heroSliderImages) slide.toJson(),
+        ],
       });
       await _diskCacheFile.writeAsString(raw);
     } catch (_) {
@@ -293,6 +326,24 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           return false;
         });
 
+    // The hero slider config is a few hundred bytes. It goes through the
+    // shared provider so the other portals' dashboards reuse one fetch, and
+    // it never fails the page: an empty list just means the fallback slides.
+    final heroFetch = ref
+        .read(heroSliderProvider.future)
+        .then((slides) {
+          if (!mounted) return true;
+          setState(() {
+            _heroSliderImages = slides;
+            _hasFreshHeroSlider = true;
+            // The slide count can shrink, which would leave the cycling index
+            // past the end until the next tick.
+            if (slides.isNotEmpty) _heroIndex = _heroIndex % slides.length;
+          });
+          return true;
+        })
+        .catchError((_) => true);
+
     // Projects come through the shared [projectsProvider] so this screen and
     // ProjectListScreen (both alive in the guest IndexedStack) reuse ONE
     // download of the multi-MB payload instead of fetching it twice.
@@ -317,7 +368,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           return false;
         });
 
-    final ok = await Future.wait([fastPair, projectsFetch]);
+    final ok = await Future.wait([fastPair, projectsFetch, heroFetch]);
     if (!mounted || ok.contains(false)) return;
 
     // Cache the complete fresh payload so the next guest-home mount is
@@ -326,6 +377,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       projects: _projects,
       communities: _communities,
       media: _media,
+      heroSliderImages: _heroSliderImages,
     );
     _saveDiskCache();
   }
@@ -568,7 +620,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         return Stack(
                           children: [
                             AspectRatio(
-                              aspectRatio: 4 / 3,
+                              aspectRatio: 16 / 9,
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(24),
@@ -881,7 +933,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           // and 230 for the landscape Media tiles. With the cards' 10 bottom
           // margin that renders 350 / 220 — the same card the CP, Investor and
           // Customer homes draw.
-          height: _activeTab.toLowerCase() == 'media' ? 230 : 360,
+          // Every tab draws the same full-bleed 16:9 tile (320 wide -> 180
+          // tall) plus the card's 10dp bottom margin.
+          height: 190,
           child: Builder(
             builder: (context) {
               final isCommunities = _activeTab == 'Communities';
@@ -1062,10 +1116,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         }
       },
       child: Container(
-        // Web parity: card ≈56% of screen width so ~1.7 cards peek into view,
-        // with softer 24px corners.
-        // Same card width as every other portal.
-        width: 300,
+        // Web parity: soft 24px corners. Same landscape tile width as every
+        // other portal — at 320 the 16:9 thumbnail is 180 tall, which is the
+        // room this card's overlay needs.
+        width: 320,
         margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
@@ -1080,54 +1134,62 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
           child: Stack(
-            fit: StackFit.expand,
             children: [
+              // 🖼️ 16:9 thumbnail frame — the ratio every card image uses.
+              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
+
               // 🖼️ High Resolution Image
-              _buildProjectImage(rawImage, errorIconSize: 40),
+              Positioned.fill(
+                child: _buildProjectImage(rawImage, errorIconSize: 40),
+              ),
 
               // 🌫️ Text scrim (web parity: cards stay bright, only the
               // bottom label area gets a soft dark fade)
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: const [0.55, 1.0],
-                    colors: [
-                      Colors.transparent,
-                      const Color(0xFF0C312B).withValues(alpha: 0.82),
-                    ],
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.55, 1.0],
+                      colors: [
+                        Colors.transparent,
+                        const Color(0xFF0C312B).withValues(alpha: 0.82),
+                      ],
+                    ),
                   ),
                 ),
               ),
 
               // 🎬 Play Icon for Media
               if (isMedia)
-                Center(
-                  child:
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.4),
-                            width: 2,
+                Positioned.fill(
+                  child: Center(
+                    child:
+                        Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.4),
+                              width: 2,
+                            ),
                           ),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            LucideIcons.play,
-                            color: Colors.white,
-                            size: 30,
+                          child: const Center(
+                            child: Icon(
+                              LucideIcons.play,
+                              color: Colors.white,
+                              size: 30,
+                            ),
                           ),
+                        ).animate().scale(
+                          begin: const Offset(0.8, 0.8),
+                          curve: Curves.elasticOut,
+                          duration: 800.ms,
                         ),
-                      ).animate().scale(
-                        begin: const Offset(0.8, 0.8),
-                        curve: Curves.elasticOut,
-                        duration: 800.ms,
-                      ),
+                  ),
                 ),
 
               // 🏷️ Badge (for Properties/Media)
@@ -1175,6 +1237,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       (item['title'] ?? item['name'] ?? '')
                           .toString()
                           .toUpperCase(),
+                      // One line: a 16:9 tile fits one title line, two
+                      // description lines and the action row.
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.gelasio(
                         color: Colors.white,
                         fontSize: 22,
@@ -1302,20 +1368,25 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
           child: Stack(
-            fit: StackFit.expand,
             children: [
-              _buildProjectImage(rawImage, errorIconSize: 40),
+              // 16:9 thumbnail frame — the ratio every card image uses.
+              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
+              Positioned.fill(
+                child: _buildProjectImage(rawImage, errorIconSize: 40),
+              ),
               // Soft scrim so the title stays readable on bright images.
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: const [0.6, 1.0],
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.55),
-                    ],
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.6, 1.0],
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.55),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -1341,11 +1412,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     );
   }
 
-  /// Web-parity property card: image on top (status pill + ARTISTIC
-  /// IMPRESSION badge), then title, pinned location and a full-width dark
-  /// READ MORE button on a light card surface.
+  /// Web-parity property card: a full-bleed 16:9 photo with the status pill
+  /// top-right and the project name, locality and a round arrow over the bottom
+  /// of the image — the same shape the Communities and Media tiles use. It used
+  /// to be a photo above a light info panel with a full-width READ MORE button,
+  /// which the web does not have.
   Widget _buildPropertyCard(dynamic item, String rawImage) {
-    final scheme = Theme.of(context).colorScheme;
     final title = (item['title'] ?? item['name'] ?? '').toString();
     final location =
         (item['location'] is Map
@@ -1357,18 +1429,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     return _ScaleButton(
       onTap: () => context.push('/projects/${item['_id']}', extra: item),
       child: Container(
-        // Same card width as every other portal.
-        width: 300,
+        // Same landscape tile width as every other portal and every other tab.
+        width: 320,
         margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
-          // Property card colour, shared by every portal: the page's own
-          // background, so the panel under the photo sits flush with the page
-          // and only the photo and the READ MORE button carry the card.
-          //
-          // scaffoldBackgroundColor rather than a hardcoded #0C312B — it IS
-          // #0C312B under the green showcase theme these homes use, and a card
-          // shown on a cream surface still matches its page.
-          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -1378,145 +1442,126 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 🖼️ Image with badges
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            children: [
+              // 16:9 thumbnail frame — the ratio every card image uses.
+              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
+              Positioned.fill(
+                child: _buildProjectImage(
+                  rawImage,
+                  height: double.infinity,
+                  width: double.infinity,
+                  errorIconSize: 40,
+                ),
               ),
-              child: Stack(
-                children: [
-                  _buildProjectImage(
-                    rawImage,
-                    height: 180,
-                    width: double.infinity,
-                    errorIconSize: 40,
-                  ),
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.75),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        status.toUpperCase(),
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 8,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 10,
-                    right: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.55),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        'ARTISTIC IMPRESSION',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 6.5,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // 📄 Info section
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.gelasio(
-                      color: scheme.onSurface,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Icon(
-                        LucideIcons.mapPin,
-                        size: 12,
-                        color: scheme.onSurface.withValues(alpha: 0.55),
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          location.toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
-                            color: scheme.onSurface.withValues(alpha: 0.55),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  Container(
-                    width: double.infinity,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: scheme.onSurface,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'READ MORE',
-                          style: GoogleFonts.inter(
-                            color: scheme.surface,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Icon(
-                          LucideIcons.chevronRight,
-                          size: 14,
-                          color: scheme.surface,
-                        ),
+              // Text scrim so the name stays readable on bright images.
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.5, 1.0],
+                      colors: [
+                        Colors.transparent,
+                        const Color(0xFF0C312B).withValues(alpha: 0.82),
                       ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
+              // Status pill
+              Positioned(
+                top: 16,
+                right: 16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.75),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    status.toUpperCase(),
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ),
+              // Name + locality, held clear of the arrow on the right.
+              Positioned(
+                bottom: 18,
+                left: 20,
+                right: 72,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.gelasio(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          LucideIcons.mapPin,
+                          size: 11,
+                          color: Colors.white.withValues(alpha: 0.75),
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            location.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              color: Colors.white.withValues(alpha: 0.75),
+                              fontSize: 9,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              // Round arrow — the card's affordance now the panel button is gone.
+              Positioned(
+                bottom: 16,
+                right: 16,
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    LucideIcons.chevronRight,
+                    color: Color(0xFF0C312B),
+                    size: 18,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1676,25 +1721,30 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               borderRadius: BorderRadius.circular(50),
               child: Stack(
                 children: [
-                  _buildProjectImage(
-                    () {
-                      final hero = project['heroImages'];
-                      if (hero is List &&
-                          hero.isNotEmpty &&
-                          hero.first != null &&
-                          hero.first.toString().trim().isNotEmpty) {
-                        return hero.first.toString();
-                      }
-                      return (project['heroImage'] ??
-                              project['image'] ??
-                              project['coverImage'] ??
-                              '')
-                          .toString();
-                    }(),
-                    height: 520,
-                    width: double.infinity,
+                  // 16:9 thumbnail — the ratio every card image uses. The web
+                  // keeps the text on the photo and sizes it to fit the frame.
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: _buildProjectImage(
+                      () {
+                        final hero = project['heroImages'];
+                        if (hero is List &&
+                            hero.isNotEmpty &&
+                            hero.first != null &&
+                            hero.first.toString().trim().isNotEmpty) {
+                          return hero.first.toString();
+                        }
+                        return (project['heroImage'] ??
+                                project['image'] ??
+                                project['coverImage'] ??
+                                '')
+                            .toString();
+                      }(),
+                      height: double.infinity,
+                      width: double.infinity,
+                    ),
                   ),
-                  // Gradient Overlay
+                  // Text scrim so the type stays readable on the photo.
                   Positioned.fill(
                     child: Container(
                       decoration: BoxDecoration(
@@ -1737,11 +1787,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       ),
                     ),
                   ),
-                  // Content Overlay
                   Positioned(
-                    bottom: 40,
-                    left: 32,
-                    right: 32,
+                    bottom: 24,
+                    left: 24,
+                    right: 24,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -1754,24 +1803,26 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                             letterSpacing: 2.5,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         Text(
                           (project['title'] ?? '').toString(),
                           // Lighter serif: DM Serif Display ships only weight
                           // 400, so fontWeight can't thin it. Playfair Display
                           // at w400 reads noticeably less bold.
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.gelasio(
                             color: Colors.white,
-                            fontSize: 44,
+                            fontSize: 34,
                             fontWeight: FontWeight.w400,
                             height: 1,
                             letterSpacing: -1,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 6),
                         Text(
                           featuredDesc.toUpperCase(),
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
                             color: Colors.white.withOpacity(0.8),

@@ -16,6 +16,7 @@ import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:m4_mobile/core/utils/project_highlights.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/hero_slider_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
@@ -43,6 +44,27 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
   final GlobalKey _interestFormKey = GlobalKey();
 
   int _heroIndex = 0;
+
+  /// Hero slides the Admin Panel controls (`GET /api/config` ->
+  /// heroSliderImages). Empty means this dashboard keeps its own catalog/asset
+  /// slides, which is also what an offline start gets.
+  List<HeroSlide> get _adminHeroSlides =>
+      ref.read(heroSliderProvider).asData?.value ?? const <HeroSlide>[];
+
+  /// How many slides the hero cycles. The admin set decides it when there is
+  /// one; otherwise it stays the three the carousel was built around.
+  int get _heroSlideCount {
+    final slides = ref.read(heroSliderProvider).asData?.value;
+    return (slides != null && slides.isNotEmpty) ? slides.length : 3;
+  }
+
+  /// The admin slide for the current index, or null to fall back.
+  String? get _adminHeroImage {
+    final slides = ref.read(heroSliderProvider).asData?.value;
+    if (slides == null || slides.isEmpty) return null;
+    return slides[_heroIndex % slides.length].url;
+  }
+
   List<dynamic> _projects = [];
   List<dynamic> _communities = [];
   List<dynamic> _media = [];
@@ -80,11 +102,16 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     }
     _fetchData();
     _heroTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (mounted && _projects.isNotEmpty) {
-        setState(
-          () => _heroIndex =
-              (_heroIndex + 1) % (_projects.length > 5 ? 5 : _projects.length),
-        );
+      // Also cycles when only the admin slider has loaded — that carousel does
+      // not need the project catalog.
+      if (mounted && (_projects.isNotEmpty || _adminHeroSlides.isNotEmpty)) {
+        setState(() {
+          // The admin slides when there are any, else up to five projects.
+          final count = _adminHeroSlides.isNotEmpty
+              ? _adminHeroSlides.length
+              : (_projects.length > 5 ? 5 : _projects.length);
+          _heroIndex = (_heroIndex + 1) % count;
+        });
       }
     });
   }
@@ -461,6 +488,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
   @override
   Widget build(BuildContext context) {
     // Sidebar "Enquiry" quick action: scroll the Register Interest form in.
+    // The hero reads the admin slider through [_adminHeroImage], which uses
+    // ref.read so the cycling timer can call it too. Watch it here so the page
+    // still rebuilds when the config lands.
+    ref.watch(heroSliderProvider);
     ref.listen<int>(investorInquiryScrollTriggerProvider, (prev, next) {
       if (next > 0 && (prev == null || next > prev)) {
         // Delay so the drawer close + tab switch settle before scrolling.
@@ -592,22 +623,25 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         final heroProject = _projects.isNotEmpty
                             ? _projects[_heroIndex % _projects.length]
                             : null;
-                        final mainImage = heroProject != null
-                            ? _pickImage([
-                                heroProject['heroImage'],
-                                heroProject['image'],
-                                heroProject['coverImage'],
-                              ], 'assets/hero_artistic.jpg')
-                            : [
-                                'assets/hero_artistic.jpg',
-                                'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-                                'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
-                              ][_heroIndex % 3];
+                        // Admin Panel slider first, the project hero second.
+                        final mainImage =
+                            _adminHeroImage ??
+                            (heroProject != null
+                                ? _pickImage([
+                                    heroProject['heroImage'],
+                                    heroProject['image'],
+                                    heroProject['coverImage'],
+                                  ], 'assets/hero_artistic.jpg')
+                                : [
+                                    'assets/hero_artistic.jpg',
+                                    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+                                    'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
+                                  ][_heroIndex % 3]);
 
                         return Stack(
                           children: [
                             AspectRatio(
-                              aspectRatio: 4 / 3,
+                              aspectRatio: 16 / 9,
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
@@ -682,8 +716,11 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                               right: 0,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: List.generate(3, (index) {
-                                  final isSelected = (_heroIndex % 3) == index;
+                                children: List.generate(_heroSlideCount, (
+                                  index,
+                                ) {
+                                  final isSelected =
+                                      (_heroIndex % _heroSlideCount) == index;
                                   return AnimatedContainer(
                                     duration: const Duration(milliseconds: 300),
                                     margin: const EdgeInsets.symmetric(
@@ -898,7 +935,9 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               // follows the active tab. 230 leaves the tile 220 tall after its
               // 10 bottom margin — the overlay needs ~160 from the bottom
               // (title, location, the 44 circle), so anything shorter clips it.
-              height: _activeTab.toLowerCase() == 'media' ? 230 : 360,
+              // Every tab draws the same full-bleed 16:9 tile (320 wide -> 180
+              // tall) plus the card's 10dp bottom margin.
+              height: 190,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
@@ -987,11 +1026,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     );
   }
 
-  // Web parity: Properties tab card is a white "info card" — image on top with
-  // COMPLETED + ARTISTIC IMPRESSION badges, then a white section with the title,
-  // location and a READ MORE button (same as the guest home / web).
+  /// Web-parity property card: a full-bleed 16:9 photo with the status pill
+  /// top-right and the project name, locality and a round arrow over the bottom
+  /// of the image — the same shape the Communities and Media tiles use. It used
+  /// to be a photo above a light info panel with a full-width READ MORE button,
+  /// which the web does not have.
   Widget _buildInvestorPropertyCard(dynamic item, String imageUrl) {
-    final scheme = Theme.of(context).colorScheme;
     final title = (item['title'] ?? item['name'] ?? '').toString();
     final location =
         (item['location'] is Map
@@ -1004,157 +1044,134 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       onTap: () =>
           context.push('/investor/projects/${item['_id']}', extra: item),
       child: Container(
-        width: 300,
+        // Same landscape tile width as every other portal and every other tab.
+        width: 320,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          // Property card colour, shared by every portal: the page's own
-          // background, so the panel under the photo sits flush with the page.
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            children: [
+              // 16:9 thumbnail frame — the ratio every card image uses.
+              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
+              Positioned.fill(
+                child: _buildProjectImage(imageUrl, errorIconSize: 40),
               ),
-              child: Stack(
-                children: [
-                  _buildProjectImage(
-                    imageUrl,
-                    height: 200,
-                    width: double.infinity,
-                    errorIconSize: 40,
-                  ),
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.75),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        status.toUpperCase(),
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFFF4EFE3),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 10,
-                    right: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.55),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        'ARTISTIC IMPRESSION',
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFFF4EFE3),
-                          fontSize: 6.5,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.gelasio(
-                      color: scheme.onSurface,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Icon(
-                        LucideIcons.mapPin,
-                        size: 12,
-                        color: scheme.onSurface.withValues(alpha: 0.55),
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          location.toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
-                            color: scheme.onSurface.withValues(alpha: 0.55),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  Container(
-                    width: double.infinity,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: scheme.onSurface,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'READ MORE',
-                          style: GoogleFonts.inter(
-                            color: scheme.surface,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Icon(
-                          LucideIcons.chevronRight,
-                          size: 14,
-                          color: scheme.surface,
-                        ),
+              // Text scrim so the name stays readable on bright images.
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.5, 1.0],
+                      colors: [
+                        Colors.transparent,
+                        const Color(0xFF0C312B).withValues(alpha: 0.82),
                       ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
+              // Status pill
+              Positioned(
+                top: 16,
+                right: 16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.75),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    status.toUpperCase(),
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ),
+              // Name + locality, held clear of the arrow on the right.
+              Positioned(
+                bottom: 18,
+                left: 20,
+                right: 72,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.gelasio(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          LucideIcons.mapPin,
+                          size: 11,
+                          color: Colors.white.withValues(alpha: 0.75),
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            location.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              color: Colors.white.withValues(alpha: 0.75),
+                              fontSize: 9,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              // Round arrow — the card's affordance now the panel button is gone.
+              Positioned(
+                bottom: 16,
+                right: 16,
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    LucideIcons.chevronRight,
+                    color: Color(0xFF0C312B),
+                    size: 18,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1207,8 +1224,9 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         }
       },
       child: Container(
-        // Media is the landscape tile: wider against the shorter row height.
-        width: isMedia ? 320 : 300,
+        // Landscape tile: at 320 the 16:9 thumbnail is 180 tall, which is the
+        // room this card's overlay needs. Same width in every portal.
+        width: 320,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(isMedia ? 24 : 40),
@@ -1223,27 +1241,33 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(isMedia ? 24 : 40),
           child: Stack(
-            fit: StackFit.expand,
             children: [
+              // 16:9 thumbnail frame — the ratio every card image uses.
+              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
+
               // High Resolution Image (Media biases the crop toward the tower)
-              _buildProjectImage(
-                imageUrl,
-                errorIconSize: 40,
-                alignment: Alignment.center,
+              Positioned.fill(
+                child: _buildProjectImage(
+                  imageUrl,
+                  errorIconSize: 40,
+                  alignment: Alignment.center,
+                ),
               ),
 
               // Gradient Overlay — subtle for Media (title only), stronger for
               // Communities (description + action row need more contrast).
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: isMedia ? const [0.55, 1.0] : const [0.3, 1.0],
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: isMedia ? 0.6 : 0.85),
-                    ],
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: isMedia ? const [0.55, 1.0] : const [0.3, 1.0],
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: isMedia ? 0.6 : 0.85),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -1263,6 +1287,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           .toUpperCase(),
                       // Web parity: Media titles are small + letterspaced
                       // (CLEDOR / SKAI); Communities use the large serif.
+                      // One line: a 16:9 tile fits one title line, two
+                      // description lines and the action row.
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: isMedia
                           ? GoogleFonts.gelasio(
                               color: const Color(0xFFF4EFE3),
@@ -1392,20 +1420,25 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               borderRadius: BorderRadius.circular(50),
               child: Stack(
                 children: [
-                  _buildProjectImage(
-                    _pickImage([
-                      project['heroImage'],
-                      project['image'],
-                      project['coverImage'],
-                    ], 'assets/hero_artistic.jpg'),
-                    height: 520,
-                    width: double.infinity,
-                    errorIconSize: 64,
-                    // Bias the crop toward the tower (right side) so the featured
-                    // card frames the building like the web, not just the ocean.
-                    alignment: const Alignment(0.55, 0),
+                  // 16:9 thumbnail — the ratio every card image uses. The web
+                  // keeps the text on the photo and sizes it to fit the frame.
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: _buildProjectImage(
+                      _pickImage([
+                        project['heroImage'],
+                        project['image'],
+                        project['coverImage'],
+                      ], 'assets/hero_artistic.jpg'),
+                      height: double.infinity,
+                      width: double.infinity,
+                      errorIconSize: 64,
+                      // Bias the crop toward the tower (right side) so the featured
+                      // card frames the building like the web, not just the ocean.
+                      alignment: const Alignment(0.55, 0),
+                    ),
                   ),
-                  // Gradient Overlay
+                  // Text scrim so the type stays readable on the photo.
                   Positioned.fill(
                     child: Container(
                       decoration: BoxDecoration(
@@ -1448,11 +1481,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       ),
                     ),
                   ),
-                  // Content Overlay
                   Positioned(
-                    bottom: 40,
-                    left: 32,
-                    right: 32,
+                    bottom: 24,
+                    left: 24,
+                    right: 24,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -1465,12 +1497,14 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                             letterSpacing: 2.5,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         Text(
                           (project['title'] ?? '').toString(),
                           // Lighter serif: DM Serif Display ships only weight
                           // 400, so fontWeight can't thin it. Playfair Display
                           // at w400 reads noticeably less bold.
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.gelasio(
                             // White on the photo: the title sat in black over a dark night render
                             // and was unreadable. A soft shadow keeps it legible on light images too.
@@ -1484,13 +1518,13 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                 offset: const Offset(0, 2),
                               ),
                             ],
-                            fontSize: 44,
+                            fontSize: 34,
                             fontWeight: FontWeight.w600,
                             height: 1,
                             letterSpacing: -1,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 6),
                         Text(
                           ((project['description'] ?? '')
                                       .toString()
@@ -1499,7 +1533,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                   ? project['description'].toString()
                                   : 'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.')
                               .toUpperCase(),
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
                             color: Colors.white.withValues(alpha: 0.8),

@@ -357,9 +357,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image header with ID + status badges
-            SizedBox(
-              height: 180,
-              width: double.infinity,
+            // 16:9 cover — the ratio every card image uses.
+            AspectRatio(
+              aspectRatio: 16 / 9,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -588,9 +588,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: 180,
-                    width: double.infinity,
+                  // 16:9 cover — the ratio every card image uses.
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
                     child: Stack(
                       fit: StackFit.expand,
                       children: [

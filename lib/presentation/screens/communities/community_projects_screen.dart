@@ -354,7 +354,6 @@ class _ProjectCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 28),
-        height: 250,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(28),
           boxShadow: [
@@ -367,49 +366,57 @@ class _ProjectCard extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(
-          fit: StackFit.expand,
           children: [
+            // 16:9 thumbnail frame — the ratio every card image uses. It was a
+            // flat 250, which is only 16:9 at one particular screen width.
+            const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
             // Hero image
-            CachedNetworkImage(
-              memCacheWidth: 1080,
-              imageUrl: imageUrl,
-              fit: BoxFit.cover,
-              fadeInDuration: const Duration(milliseconds: 400),
-              placeholder: (context, url) => Container(color: Colors.black12),
-              errorWidget: (context, url, error) => Container(
-                color: Colors.black26,
-                child: const Icon(
-                  LucideIcons.alertCircle,
-                  color: Colors.white38,
+            Positioned.fill(
+              child: CachedNetworkImage(
+                memCacheWidth: 1080,
+                imageUrl: imageUrl,
+                fit: BoxFit.cover,
+                fadeInDuration: const Duration(milliseconds: 400),
+                placeholder: (context, url) => Container(color: Colors.black12),
+                errorWidget: (context, url, error) => Container(
+                  color: Colors.black26,
+                  child: const Icon(
+                    LucideIcons.alertCircle,
+                    color: Colors.white38,
+                  ),
                 ),
               ),
             ),
 
             // Top dark gradient (black/0.6 → transparent)
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.center,
-                  colors: [
-                    Colors.black.withValues(alpha: 0.6),
-                    Colors.transparent,
-                  ],
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.center,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.6),
+                      Colors.transparent,
+                    ],
+                  ),
                 ),
               ),
             ),
             // Bottom dark gradient (black/0.9 → transparent top)
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withValues(alpha: 0.9),
-                    Colors.black.withValues(alpha: 0.2),
-                    Colors.transparent,
-                  ],
-                  stops: const [0.0, 0.55, 1.0],
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.9),
+                      Colors.black.withValues(alpha: 0.2),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.55, 1.0],
+                  ),
                 ),
               ),
             ),
@@ -443,11 +450,11 @@ class _ProjectCard extends StatelessWidget {
                 ),
               ),
 
-            // Top-left content block
-            Positioned(
-              top: 28,
-              left: 28,
-              right: 28,
+            // Top-left content block — non-positioned so the card grows past
+            // 16:9 when the text needs more room than the ratio gives. The
+            // bottom inset keeps it clear of the arrow pinned at bottom: 28.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(28, 28, 28, 88),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

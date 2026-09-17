@@ -2087,7 +2087,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               ? Colors.black.withValues(alpha: 0.06)
               : Colors.white.withValues(alpha: 0.08),
         ),
-        color: isLight ? Colors.white : Colors.white.withValues(alpha: 0.03),
+        // The card takes the theme's own surface — M4Theme.lightCard, the
+        // warm cream the rest of the app's cards use. It was a hardcoded
+        // Colors.white, which the theme explicitly rules out ("warm cream
+        // card (never white)") and which read as a stark white block on the
+        // cream page.
+        color: isLight ? scheme.surface : Colors.white.withValues(alpha: 0.03),
         // Softer than before — this card is now nested inside the single
         // shadowed construction box, so a heavy shadow double-stacked.
         boxShadow: [
@@ -2102,9 +2107,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Same image size as the guest portal phase card (fixed 220).
-          SizedBox(
-            height: 220,
+          // 16:9 thumbnail — the ratio every card image uses, the guest portal
+          // phase card included.
+          AspectRatio(
+            aspectRatio: 16 / 9,
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -2398,8 +2404,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         ? Colors.black.withValues(alpha: 0.06)
                         : Colors.white.withValues(alpha: 0.08),
                   ),
+                  // Theme surface (warm cream), not a hardcoded white.
                   color: scheme.brightness == Brightness.light
-                      ? Colors.white
+                      ? scheme.surface
                       : Colors.white.withValues(alpha: 0.05),
                 ),
                 child: Column(

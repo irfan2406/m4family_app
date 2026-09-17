@@ -296,11 +296,11 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
           ),
 
           // 🏗️ Hero Section
-          // Web parity: `relative aspect-[4/3] w-full overflow-hidden` — the
-          // image runs edge to edge with no inset or rounding.
+          // The image runs edge to edge with no inset or rounding, at the 16:9
+          // ratio every other hero and thumbnail in the app uses.
           SliverToBoxAdapter(
             child: AspectRatio(
-              aspectRatio: 4 / 3,
+              aspectRatio: 16 / 9,
               child: SizedBox(
                 width: double.infinity,
                 child: Stack(

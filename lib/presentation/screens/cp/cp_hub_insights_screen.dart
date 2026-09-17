@@ -263,9 +263,9 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(14),
-            child: SizedBox(
-              height: 130,
-              width: double.infinity,
+            // 16:9 thumbnail — the ratio every card image uses.
+            child: AspectRatio(
+              aspectRatio: 16 / 9,
               child: Stack(
                 fit: StackFit.expand,
                 children: [

@@ -2883,7 +2883,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.03)
-                          : Colors.white,
+                          // Theme surface — M4Theme.lightCard, the warm cream
+                          // the rest of the app's cards use. It was a hardcoded
+                          // Colors.white, which the theme rules out ("warm
+                          // cream card (never white)") and which read as a
+                          // stark white block on the cream page.
+                          : Theme.of(context).colorScheme.surface,
                       // Match the CP phase card: 24 radius + soft shadow + a
                       // hairline border (subtle in dark so it doesn't show as a
                       // bright edge behind the image).
@@ -2926,56 +2931,58 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(24),
                                 ),
-                                child: CachedNetworkImage(
-                                  memCacheWidth: 1080,
-                                  imageUrl: imageUrl,
-                                  // Taller + full width now the card is wider.
-                                  height: 220,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  placeholder: (c, u) => Container(
-                                    height: 220,
-                                    color: isDark
-                                        ? const Color(0xFF141B3A)
-                                        : const Color(0xFFF4EFE3),
-                                    child: Icon(
-                                      LucideIcons.image,
+                                // 16:9 thumbnail — the ratio every card image
+                                // uses.
+                                child: AspectRatio(
+                                  aspectRatio: 16 / 9,
+                                  child: CachedNetworkImage(
+                                    memCacheWidth: 1080,
+                                    imageUrl: imageUrl,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    placeholder: (c, u) => Container(
                                       color: isDark
-                                          ? Colors.white24
-                                          : const Color(0x420C312B),
-                                      size: 24,
+                                          ? const Color(0xFF141B3A)
+                                          : const Color(0xFFF4EFE3),
+                                      child: Icon(
+                                        LucideIcons.image,
+                                        color: isDark
+                                            ? Colors.white24
+                                            : const Color(0x420C312B),
+                                        size: 24,
+                                      ),
                                     ),
-                                  ),
-                                  // /uploads is broken server-side: for the
-                                  // Demolition phase, fall back to the bundled
-                                  // snapshot of the web's phase photo.
-                                  errorWidget: (c, e, s) =>
-                                      (phase['phaseName'] ??
-                                              phase['name'] ??
-                                              '')
-                                          .toString()
-                                          .toLowerCase()
-                                          .contains('demolition')
-                                      ? Image.asset(
-                                          'assets/cledor_phase_demolition.jpg',
-                                          height: 220,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                          filterQuality: FilterQuality.high,
-                                        )
-                                      : Container(
-                                          height: 220,
-                                          color: isDark
-                                              ? const Color(0xFF141B3A)
-                                              : const Color(0xFFF4EFE3),
-                                          child: Icon(
-                                            LucideIcons.image,
+                                    // /uploads is broken server-side: for the
+                                    // Demolition phase, fall back to the bundled
+                                    // snapshot of the web's phase photo.
+                                    errorWidget: (c, e, s) =>
+                                        (phase['phaseName'] ??
+                                                phase['name'] ??
+                                                '')
+                                            .toString()
+                                            .toLowerCase()
+                                            .contains('demolition')
+                                        ? Image.asset(
+                                            'assets/cledor_phase_demolition.jpg',
+                                            height: 220,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                            filterQuality: FilterQuality.high,
+                                          )
+                                        : Container(
+                                            height: 220,
                                             color: isDark
-                                                ? Colors.white24
-                                                : const Color(0x420C312B),
-                                            size: 24,
+                                                ? const Color(0xFF141B3A)
+                                                : const Color(0xFFF4EFE3),
+                                            child: Icon(
+                                              LucideIcons.image,
+                                              color: isDark
+                                                  ? Colors.white24
+                                                  : const Color(0x420C312B),
+                                              size: 24,
+                                            ),
                                           ),
-                                        ),
+                                  ),
                                 ),
                               ),
                               Positioned(
@@ -3158,9 +3165,10 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         style: GoogleFonts.inter(
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
-                          color: isDark
-                              ? Colors.white38
-                              : const Color(0xFFC5A35B),
+                          // M4 body green on the cream surface, the same colour
+                          // the Investor screen gives this line. It was a
+                          // one-off gold that no other portal used here.
+                          color: isDark ? Colors.white38 : M4Theme.figmaBody,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -3216,7 +3224,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.05)
-                          : Colors.white,
+                          // Theme surface (warm cream), not a hardcoded white.
+                          : Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isDark
@@ -3285,11 +3294,21 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                         width: 6,
                                         height: 6,
                                         decoration: BoxDecoration(
+                                          // M4 palette, the same mapping the
+                                          // Customer screen uses. In-progress
+                                          // was M4Theme.premiumBlue — a legacy
+                                          // alias that actually resolves to the
+                                          // gold accent — and the other two
+                                          // were Material's generic green and
+                                          // grey, none of them from the app's
+                                          // own colours.
                                           color: progress >= 100
-                                              ? Colors.green
+                                              ? M4Theme.forestGreen
                                               : (progress > 0
-                                                    ? M4Theme.premiumBlue
-                                                    : Colors.grey),
+                                                    ? M4Theme.deepGreen
+                                                    : (isDark
+                                                          ? Colors.white38
+                                                          : Colors.black26)),
                                           shape: BoxShape.circle,
                                         ),
                                       ),

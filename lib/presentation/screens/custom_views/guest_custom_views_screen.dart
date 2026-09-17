@@ -167,13 +167,12 @@ class _GuestCustomViewsScreenState
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             sliver: SliverGrid(
-              // Web parity: aspect-[1/1.1] rounded-[3rem] cards (rounded
-              // rectangles, not tall ovals).
+              // 16:9 cards — the ratio every card image uses.
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 25,
                 crossAxisSpacing: 25,
-                childAspectRatio: 0.9,
+                childAspectRatio: 16 / 9,
               ),
               delegate: SliverChildBuilderDelegate((context, index) {
                 final cat = _categories[index];

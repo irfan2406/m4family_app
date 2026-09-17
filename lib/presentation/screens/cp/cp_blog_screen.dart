@@ -279,8 +279,9 @@ class _BlogCard extends ConsumerWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: SizedBox(
-                    width: 92,
-                    height: 92,
+                    // 16:9, the ratio every card image uses.
+                    width: 120,
+                    height: 67.5,
                     child: CachedNetworkImage(
                       memCacheWidth: 1080,
                       imageUrl: imageUrl,

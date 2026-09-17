@@ -16,6 +16,7 @@ import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/hero_slider_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/screens/pages/pages_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
@@ -40,6 +41,27 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   int _currentHeroIndex = 0;
   int _heroSlide =
       0; // top hero cycles the featured project's heroImages (web parity)
+
+  /// Hero slides the Admin Panel controls (`GET /api/config` ->
+  /// heroSliderImages). Empty means this dashboard keeps its own catalog/asset
+  /// slides, which is also what an offline start gets.
+  List<HeroSlide> get _adminHeroSlides =>
+      ref.read(heroSliderProvider).asData?.value ?? const <HeroSlide>[];
+
+  /// How many slides the hero cycles. The admin set decides it when there is
+  /// one; otherwise it stays the three the carousel was built around.
+  int get _heroSlideCount {
+    final slides = ref.read(heroSliderProvider).asData?.value;
+    return (slides != null && slides.isNotEmpty) ? slides.length : 3;
+  }
+
+  /// The admin slide for the current index, or null to fall back.
+  String? get _adminHeroImage {
+    final slides = ref.read(heroSliderProvider).asData?.value;
+    if (slides == null || slides.isEmpty) return null;
+    return slides[_heroSlide % slides.length].url;
+  }
+
   String _searchQuery = '';
   String _selectedCategory = 'ALL';
   List<dynamic> _projects = [];
@@ -97,10 +119,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   void _startTimers() {
     _heroTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (_projects.isNotEmpty) {
+      // Also cycles when only the admin slider has loaded — that carousel does
+      // not need the project catalog.
+      if (_projects.isNotEmpty || _adminHeroSlides.isNotEmpty) {
         setState(() {
-          // Cycle the 3 hero slides (featured project's heroImages) — web parity.
-          _heroSlide = (_heroSlide + 1) % 3;
+          // Cycle the admin slides, else the featured project's heroImages.
+          _heroSlide = (_heroSlide + 1) % _heroSlideCount;
         });
       }
     });
@@ -382,6 +406,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final apiClient = ref.watch(apiClientProvider);
+    // The hero reads the admin slider through [_adminHeroImage], which uses
+    // ref.read so the cycling timer can call it too. Watch it here so the page
+    // still rebuilds when the config lands.
+    ref.watch(heroSliderProvider);
 
     // Listen for external scroll triggers (e.g., from Sidebar)
     // Listen for external scroll triggers (e.g., from Sidebar)
@@ -494,12 +522,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         final featured = _projects.isNotEmpty
                             ? _projects[0]
                             : null;
-                        final mainImage = _projImg(featured, _heroSlide % 3);
+                        // Admin Panel slider first, the featured project's
+                        // heroImages second.
+                        final mainImage =
+                            _adminHeroImage ??
+                            _projImg(featured, _heroSlide % 3);
 
                         return Stack(
                           children: [
                             AspectRatio(
-                              aspectRatio: 4 / 3,
+                              aspectRatio: 16 / 9,
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(24),
@@ -585,8 +617,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               right: 0,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: List.generate(3, (index) {
-                                  final isSelected = (_heroSlide % 3) == index;
+                                children: List.generate(_heroSlideCount, (
+                                  index,
+                                ) {
+                                  final isSelected =
+                                      (_heroSlide % _heroSlideCount) == index;
                                   return AnimatedContainer(
                                     duration: const Duration(milliseconds: 300),
                                     margin: const EdgeInsets.symmetric(
@@ -670,16 +705,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
           SliverToBoxAdapter(
             child: SizedBox(
-              // MEDIA renders landscape tiles (wider than tall); COMMUNITIES
-              // and PROPERTIES keep their portrait cards, so the row height
-              // follows the active tab. The media row adds 20 of vertical
-              // padding top and bottom, so 215 leaves the tile 175 tall
-              // against its 280 width.
-              // Sized so the CARD matches the other portals, not just the row:
-              // this list pads 20 top and bottom and the cards carry a 10
-              // bottom margin, so 400 renders a 350-tall card and 260 a
-              // 220-tall landscape tile — the same as CP, Investor and Guest.
-              height: _topTabCategory == 'MEDIA' ? 260 : 400,
+              // Every tab draws the same full-bleed 16:9 tile. Sized so the
+              // CARD matches the other portals, not just the row: this list
+              // pads 20 top and bottom and the cards carry a 10 bottom margin,
+              // so the card is the row height minus 50 — 230 renders the
+              // 180-tall tile at 320 wide, the same as CP, Investor and Guest.
+              height: 230,
               child:
                   (_topTabCategory == 'COMMUNITIES'
                       ? _communitiesLoading
@@ -747,16 +778,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     item['description'] ??
                                     'Explore this master-planned community',
                                 imageUrl: (() {
-                                  final title = (item['title'] ?? '')
-                                      .toString()
-                                      .toUpperCase();
-                                  if (title.contains('HEEYYA HOOO')) {
-                                    return 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80';
-                                  }
-                                  if (title.contains('MAZGAON')) {
-                                    return 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80';
-                                  }
-
+                                  // The community's own image, exactly like the
+                                  // web. Two titles used to be pinned to stock
+                                  // photos here, which is why Mazgaon showed a
+                                  // villa instead of the artwork the Admin
+                                  // Panel had published for it.
                                   final rawImg = item['image']?.toString();
                                   if (rawImg != null &&
                                       rawImg.isNotEmpty &&
@@ -874,7 +900,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: SizedBox(
-                height: 480, // Increased height for overlay content
+                // The card is a 16:9 photo, at the row width less the page and
+                // item padding (25 + 10 each side).
+                height: (MediaQuery.sizeOf(context).width - 70) * 9 / 16,
                 child: _projectsLoading
                     ? const Center(
                         child: CircularProgressIndicator(color: Colors.white24),
@@ -921,138 +949,147 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   );
                                 }
                               },
-                              child: Stack(
-                                children: <Widget>[
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(40),
-                                    child: imageUrl.isNotEmpty
-                                        ? M4Image(
-                                            imageUrl: imageUrl,
-                                            fit: BoxFit.cover,
-                                            height: 480,
-                                            width: double.infinity,
-                                            placeholder: Container(
-                                              height: 480,
-                                              color: Colors.black12,
-                                            ),
-                                            errorWidget: Container(
-                                              height: 480,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(40),
+                                child: Stack(
+                                  children: <Widget>[
+                                    // 16:9 thumbnail — the ratio every card
+                                    // image uses. The web keeps the text on
+                                    // the photo, sized to fit the frame.
+                                    AspectRatio(
+                                      aspectRatio: 16 / 9,
+                                      child: imageUrl.isNotEmpty
+                                          ? M4Image(
+                                              imageUrl: imageUrl,
+                                              fit: BoxFit.cover,
                                               width: double.infinity,
-                                              color: Colors.white.withOpacity(
-                                                0.05,
+                                              placeholder: Container(
+                                                color: Colors.black12,
                                               ),
+                                              errorWidget: Container(
+                                                width: double.infinity,
+                                                color: Colors.white.withOpacity(
+                                                  0.05,
+                                                ),
+                                                child: const Center(
+                                                  child: Icon(
+                                                    LucideIcons.image,
+                                                    color: Colors.white10,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          : Container(
+                                              color: Colors.white10,
                                               child: const Center(
                                                 child: Icon(
                                                   LucideIcons.image,
-                                                  color: Colors.white10,
+                                                  color: Colors.white24,
                                                 ),
                                               ),
                                             ),
-                                          )
-                                        : Container(
-                                            color: Colors.white10,
-                                            child: const Center(
-                                              child: Icon(
-                                                LucideIcons.image,
-                                                color: Colors.white24,
-                                              ),
-                                            ),
-                                          ),
-                                  ),
-                                  // Gradient Overlay
-                                  Container(
-                                    height: 480,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(40),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          Colors.transparent,
-                                          Colors.black.withOpacity(0.1),
-                                          Colors.black.withOpacity(0.8),
-                                        ],
-                                        stops: const [0.4, 0.6, 1.0],
-                                      ),
                                     ),
-                                  ),
-                                  // Content Overlay
-                                  Positioned(
-                                    bottom: 40,
-                                    left: 30,
-                                    right: 30,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'FEATURED PROPERTY',
-                                          // Was 9px — too small to read.
-                                          style: GoogleFonts.gelasio(
-                                            color: const Color(0xFFF4EFE3),
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 2,
+                                    // Text scrim so the type stays readable
+                                    // on the photo.
+                                    Positioned.fill(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Colors.transparent,
+                                              Colors.black.withOpacity(0.1),
+                                              Colors.black.withOpacity(0.8),
+                                            ],
+                                            stops: const [0.4, 0.6, 1.0],
                                           ),
                                         ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          title,
+                                      ),
+                                    ),
+                                    // Artistic Impression Badge
+                                    Positioned(
+                                      top: 25,
+                                      right: 25,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 14,
+                                          vertical: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.4),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.white.withOpacity(
+                                              0.1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'ARTISTIC IMPRESSION',
                                           style: GoogleFonts.gelasio(
                                             color: Colors.white,
-                                            fontSize: 34,
-                                            height: 1,
-                                            letterSpacing: -1,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 12),
-                                        Text(
-                                          tagline.toUpperCase(),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          // Was 10px / 80% — faint on the photo.
-                                          // Bigger, bolder, near-solid white.
-                                          style: GoogleFonts.inter(
-                                            color: Colors.white.withOpacity(
-                                              0.95,
-                                            ),
-                                            fontSize: 11.5,
+                                            fontSize: 8,
                                             fontWeight: FontWeight.w700,
-                                            height: 1.5,
-                                            letterSpacing: 0.8,
+                                            letterSpacing: 1.5,
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                  // Artistic Impression Badge
-                                  Positioned(
-                                    top: 25,
-                                    right: 25,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 14,
-                                        vertical: 8,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.4),
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                          color: Colors.white.withOpacity(0.1),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        'ARTISTIC IMPRESSION',
-                                        style: GoogleFonts.gelasio(
-                                          color: Colors.white,
-                                          fontSize: 8,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: 1.5,
-                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    Positioned(
+                                      bottom: 24,
+                                      left: 24,
+                                      right: 24,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'FEATURED PROPERTY',
+                                            // Was 9px — too small to read.
+                                            style: GoogleFonts.gelasio(
+                                              color: const Color(0xFFF4EFE3),
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w700,
+                                              letterSpacing: 2,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            title,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.gelasio(
+                                              color: Colors.white,
+                                              fontSize: 30,
+                                              height: 1,
+                                              letterSpacing: -1,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            tagline.toUpperCase(),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            // Was 10px / 80% — faint on the photo.
+                                            // Bigger, bolder, near-solid white.
+                                            style: GoogleFonts.inter(
+                                              color: Colors.white.withOpacity(
+                                                0.95,
+                                              ),
+                                              fontSize: 11.5,
+                                              fontWeight: FontWeight.w700,
+                                              height: 1.5,
+                                              letterSpacing: 0.8,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           );
@@ -1486,20 +1523,18 @@ class _ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    // Web parity: light "info card" — image on top (with ONGOING + ARTISTIC
-    // IMPRESSION badges), then title / location / a full-width READ MORE
-    // button below. (Was a full-bleed image-overlay card with VIEW PROPERTY.)
+    // Web parity: a full-bleed 16:9 photo with the status pill top-right and
+    // the project name, locality and a round arrow over the bottom of the
+    // image — the same shape the Communities and Media tiles use. It used to be
+    // a photo above a light info panel with a full-width READ MORE button,
+    // which the web does not have.
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        // Same card width as every other portal.
-        width: 300,
+        // Same landscape tile width as every other portal and every other tab.
+        width: 320,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          // Property card colour, shared by every portal: the page's own
-          // background, so the panel under the photo sits flush with the page.
-          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -1509,161 +1544,128 @@ class _ProjectCard extends StatelessWidget {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image on top with badges — fills the space above the footer.
-            Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(24),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            children: [
+              // 16:9 thumbnail frame — the ratio every card image uses.
+              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
+              Positioned.fill(
+                child: M4Image(
+                  imageUrl: imageUrl,
+                  height: double.infinity,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: Container(color: Colors.black12),
+                  errorWidget: Container(color: Colors.white10),
                 ),
-                child: Stack(
-                  fit: StackFit.expand,
+              ),
+              // Text scrim so the name stays readable on bright images.
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.5, 1.0],
+                      colors: [
+                        Colors.transparent,
+                        const Color(0xFF0C312B).withOpacity(0.82),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // Status pill
+              Positioned(
+                top: 16,
+                right: 16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.75),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    status.toUpperCase(),
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ),
+              // Name + locality, held clear of the arrow on the right.
+              Positioned(
+                bottom: 18,
+                left: 20,
+                right: 72,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    imageUrl.isNotEmpty
-                        ? M4Image(
-                            imageUrl: imageUrl,
-                            height: double.infinity,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            placeholder: Container(color: Colors.black12),
-                            errorWidget: Container(color: Colors.white10),
-                          )
-                        : Container(
-                            color: scheme.onSurface.withOpacity(0.05),
-                            child: Center(
-                              child: Icon(
-                                LucideIcons.building,
-                                color: scheme.onSurface.withOpacity(0.2),
-                                size: 40,
-                              ),
-                            ),
-                          ),
-                    if (status.isNotEmpty)
-                      Positioned(
-                        top: 12,
-                        right: 12,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.75),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.gelasio(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          LucideIcons.mapPin,
+                          size: 11,
+                          color: Colors.white.withOpacity(0.75),
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
                           child: Text(
-                            status.toUpperCase(),
+                            location.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 8,
+                              color: Colors.white.withOpacity(0.75),
+                              fontSize: 9,
                               fontWeight: FontWeight.w500,
-                              letterSpacing: 1,
+                              letterSpacing: 1.5,
                             ),
                           ),
                         ),
-                      ),
-                    Positioned(
-                      bottom: 10,
-                      right: 10,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.55),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          'ARTISTIC IMPRESSION',
-                          style: GoogleFonts.inter(
-                            color: Colors.white,
-                            fontSize: 6.5,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
               ),
-            ),
-            // Info section: title, location, full-width READ MORE button.
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.gelasio(
-                      color: scheme.onSurface,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
+              // Round arrow — the card's affordance now the panel button is gone.
+              Positioned(
+                bottom: 16,
+                right: 16,
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Icon(
-                        LucideIcons.mapPin,
-                        size: 12,
-                        color: scheme.onSurface.withOpacity(0.55),
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          location.toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
-                            color: scheme.onSurface.withOpacity(0.55),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: const Icon(
+                    LucideIcons.chevronRight,
+                    color: Color(0xFF0C312B),
+                    size: 18,
                   ),
-                  const SizedBox(height: 14),
-                  Container(
-                    width: double.infinity,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: scheme.onSurface,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'READ MORE',
-                          style: GoogleFonts.inter(
-                            color: scheme.surface,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Icon(
-                          LucideIcons.chevronRight,
-                          size: 14,
-                          color: scheme.surface,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -2514,24 +2516,30 @@ class _MediaCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           child: Stack(
             children: [
-              M4Image(
-                imageUrl: imageUrl,
-                height: double.infinity,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                placeholder: Container(color: Colors.black12),
-                errorWidget: Container(color: Colors.white10),
+              // 16:9 thumbnail frame — the ratio every card image uses.
+              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
+              Positioned.fill(
+                child: M4Image(
+                  imageUrl: imageUrl,
+                  height: double.infinity,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: Container(color: Colors.black12),
+                  errorWidget: Container(color: Colors.white10),
+                ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.75),
-                    ],
-                    stops: const [0.5, 1.0],
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.75),
+                      ],
+                      stops: const [0.5, 1.0],
+                    ),
                   ),
                 ),
               ),
@@ -2601,7 +2609,9 @@ class _CommunityCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 300,
+        // Landscape tile: at 320 the 16:9 thumbnail is 180 tall, which is the
+        // room this card's overlay needs. Same width in every portal.
+        width: 320,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(40),
@@ -2616,26 +2626,31 @@ class _CommunityCard extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(40),
           child: Stack(
-            fit: StackFit.expand,
             children: [
-              M4Image(
-                imageUrl: imageUrl,
-                height: double.infinity,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                placeholder: Container(color: Colors.black12),
-                errorWidget: Container(color: Colors.white10),
+              // 16:9 thumbnail frame — the ratio every card image uses.
+              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
+              Positioned.fill(
+                child: M4Image(
+                  imageUrl: imageUrl,
+                  height: double.infinity,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: Container(color: Colors.black12),
+                  errorWidget: Container(color: Colors.white10),
+                ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: const [0.3, 1.0],
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.85),
-                    ],
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.3, 1.0],
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.85),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -2649,6 +2664,10 @@ class _CommunityCard extends StatelessWidget {
                   children: [
                     Text(
                       title.toUpperCase(),
+                      // One line: a 16:9 tile fits one title line, two
+                      // description lines and the action row.
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.gelasio(
                         color: Colors.white,
                         fontSize: 22,
@@ -2682,9 +2701,9 @@ class _CommunityCard extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.inter(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
                               letterSpacing: 1.2,
                             ),
                           ),

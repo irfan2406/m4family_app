@@ -384,10 +384,10 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
         ),
         child: Row(
           children: [
-            // 🖼️ Cover image — web parity: w/h-32 (~128) with margin.
+            // 🖼️ Cover image — 16:9, the ratio every card image uses.
             Container(
-              width: 120,
-              height: 120,
+              width: 144,
+              height: 81,
               margin: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: scheme.onSurface.withOpacity(0.05),

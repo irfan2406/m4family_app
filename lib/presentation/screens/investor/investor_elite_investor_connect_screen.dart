@@ -663,8 +663,9 @@ class _InvestorEliteInvestorConnectScreenState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(
-                height: 180,
+              // 16:9 thumbnail — the ratio every card image uses.
+              AspectRatio(
+                aspectRatio: 16 / 9,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [

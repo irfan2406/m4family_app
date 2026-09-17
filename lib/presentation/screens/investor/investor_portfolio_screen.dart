@@ -715,9 +715,9 @@ class _InvestorPortfolioScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 180,
-              width: double.infinity,
+            // 16:9 cover — the ratio every card image uses.
+            AspectRatio(
+              aspectRatio: 16 / 9,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -962,9 +962,9 @@ class _InvestorPortfolioScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: 180,
-                    width: double.infinity,
+                  // 16:9 cover — the ratio every card image uses.
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
                     child: Stack(
                       fit: StackFit.expand,
                       children: [

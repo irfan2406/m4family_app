@@ -375,10 +375,10 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
         ),
         child: Row(
           children: [
-            // 🖼️ COMPACT IMAGE
+            // 🖼️ COMPACT IMAGE — 16:9, the ratio every card image uses.
             Container(
-              width: 100,
-              height: 100,
+              width: 128,
+              height: 72,
               margin: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: scheme.onSurface.withOpacity(0.05),

@@ -349,9 +349,10 @@ class _CpEliteInvestorConnectScreenState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Image section with gradient overlay + ROI badge.
-              SizedBox(
-                height: 240,
+              // Image section with gradient overlay + ROI badge, on the 16:9
+              // thumbnail frame every card image uses.
+              AspectRatio(
+                aspectRatio: 16 / 9,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [

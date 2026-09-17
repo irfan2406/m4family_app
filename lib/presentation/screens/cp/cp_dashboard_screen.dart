@@ -246,7 +246,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                           return Stack(
                             children: [
                               AspectRatio(
-                                aspectRatio: 4 / 3,
+                                aspectRatio: 16 / 9,
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
@@ -510,7 +510,8 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
 
   Widget _opportunitiesCarousel(AsyncValue projectsAsync) {
     return SizedBox(
-      height: 260,
+      // The tile is 180 wide, so a 16:9 thumbnail is 101 tall.
+      height: 102,
       child: projectsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, __) => const Text('Load failed'),
@@ -555,6 +556,8 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
           child: Stack(
             fit: StackFit.expand,
             children: [
+              // 16:9 thumbnail frame — the ratio every card image uses.
+              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
               img.isNotEmpty
                   ? CachedNetworkImage(imageUrl: img, fit: BoxFit.cover)
                   : Container(color: Colors.grey.shade200),

@@ -1931,9 +1931,10 @@ class _InvestorProjectDetailScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Same image size as the guest portal phase card (fixed 220).
-            SizedBox(
-              height: 220,
+            // 16:9 thumbnail — the ratio every card image uses, the guest
+            // portal phase card included.
+            AspectRatio(
+              aspectRatio: 16 / 9,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
