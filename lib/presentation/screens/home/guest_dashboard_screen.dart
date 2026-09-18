@@ -623,7 +623,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                               aspectRatio: 16 / 9,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(24),
+                                  borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withOpacity(0.12),
@@ -633,7 +633,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                   ],
                                 ),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(24),
+                                  borderRadius: BorderRadius.circular(16),
                                   child: AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 800),
                                     transitionBuilder:
@@ -1708,7 +1708,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 24),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
@@ -1718,7 +1718,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
+              borderRadius: BorderRadius.circular(16),
               child: Stack(
                 children: [
                   // 16:9 thumbnail — the ratio every card image uses. The web
@@ -2027,7 +2027,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             color: isDark
                 ? Colors.white.withOpacity(0.03)
                 : Colors.black.withOpacity(0.02),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: (isDark ? Colors.white : const Color(0xFF0C312B))
                   .withOpacity(0.08),
@@ -2041,7 +2041,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
             child: LayoutBuilder(
               builder: (context, constraints) {
                 // A cell has to hold the 48px icon, a two-line title and a

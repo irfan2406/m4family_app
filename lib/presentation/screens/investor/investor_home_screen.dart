@@ -644,7 +644,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                               aspectRatio: 16 / 9,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withValues(
@@ -656,7 +656,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                   ],
                                 ),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(16),
                                   child: AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 800),
                                     transitionBuilder:
@@ -1407,7 +1407,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 24),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.2),
@@ -1417,7 +1417,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
+              borderRadius: BorderRadius.circular(16),
               child: Stack(
                 children: [
                   // 16:9 thumbnail — the ratio every card image uses. The web

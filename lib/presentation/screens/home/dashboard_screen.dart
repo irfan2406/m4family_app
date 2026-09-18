@@ -534,7 +534,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               aspectRatio: 16 / 9,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(24),
+                                  borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withOpacity(0.12),
@@ -544,7 +544,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   ],
                                 ),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(24),
+                                  borderRadius: BorderRadius.circular(16),
                                   child: AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 800),
                                     transitionBuilder:
@@ -949,19 +949,44 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   );
                                 }
                               },
+<<<<<<< HEAD
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(40),
+                                borderRadius: BorderRadius.circular(20),
                                 child: Stack(
                                   children: <Widget>[
-                                    // 16:9 thumbnail — the ratio every card
-                                    // image uses. The web keeps the text on
-                                    // the photo, sized to fit the frame.
                                     AspectRatio(
                                       aspectRatio: 16 / 9,
                                       child: imageUrl.isNotEmpty
                                           ? M4Image(
                                               imageUrl: imageUrl,
                                               fit: BoxFit.cover,
+                                              width: double.infinity,
+                                              placeholder: Container(
+                                                color: Colors.black12,
+                                              ),
+                                              errorWidget: Container(
+                                                width: double.infinity,
+                                                color: Colors.white.withOpacity(
+                                                  0.05,
+                                                ),
+                                                child: const Center(
+                                                  child: Icon(
+                                                    LucideIcons.image,
+                                                    color: Colors.white10,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          : Container(
+                                              color: Colors.white10,
+                                              child: const Center(
+                                                child: Icon(
+                                                  LucideIcons.image,
+                                                  color: Colors.white24,
+                                                ),
+                                              ),
+                                            ),
+                                    ),
                                               width: double.infinity,
                                               placeholder: Container(
                                                 color: Colors.black12,
@@ -1535,7 +1560,7 @@ class _ProjectCard extends StatelessWidget {
         width: 320,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -1545,7 +1570,7 @@ class _ProjectCard extends StatelessWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(20),
           child: Stack(
             children: [
               // 16:9 thumbnail frame — the ratio every card image uses.
@@ -1558,6 +1583,8 @@ class _ProjectCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   placeholder: Container(color: Colors.black12),
                   errorWidget: Container(color: Colors.white10),
+                ),
+              ),
                 ),
               ),
               // Text scrim so the name stays readable on bright images.
@@ -2513,7 +2540,7 @@ class _MediaCard extends StatelessWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           child: Stack(
             children: [
               // 16:9 thumbnail frame — the ratio every card image uses.

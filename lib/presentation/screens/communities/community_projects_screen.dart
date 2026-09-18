@@ -186,7 +186,7 @@ class _CommunityProjectsListScreenState
                     )
                   else
                     SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(28, 0, 28, 60),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 60),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
                           final project = _projects[index];
@@ -246,56 +246,65 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          decoration: BoxDecoration(
-            color: bg.withValues(alpha: 0.8),
-            border: Border(
-              bottom: BorderSide(
-                color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                    .withValues(alpha: 0.08),
-              ),
-            ),
-          ),
+          color: (isDark ? const Color(0xFF0D1D19) : const Color(0xFFFAF8F5))
+              .withValues(alpha: 0.88),
+          padding: const EdgeInsets.fromLTRB(20, 36, 20, 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Back button
               _ScaleButton(
                 onTap: onBack,
-                child: Row(
-                  children: [
-                    Icon(LucideIcons.arrowLeft, color: muted, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      'BACK',
-                      style: GoogleFonts.gelasio(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: muted,
-                        letterSpacing: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        LucideIcons.arrowLeft,
+                        size: 16,
+                        color: textPrimary,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      Text(
+                        'BACK',
+                        style: GoogleFonts.gelasio(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                          color: textPrimary.withValues(alpha: 0.7),
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              // Title + subtitle
+
               Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
                     'M4 FAMILY',
                     style: GoogleFonts.gelasio(
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: textPrimary,
-                      letterSpacing: -1,
+                      letterSpacing: -0.5,
                       height: 1.0,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'COMMUNITY PORTFOLIO',
+                    style: GoogleFonts.gelasio(
+                      fontSize: 7,
+                      fontWeight: FontWeight.w700,
+                      color: muted,
+                      letterSpacing: 1.5,
                     ),
                   ),
                 ],
@@ -308,15 +317,14 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  bool shouldRebuild(covariant _GlassHeaderDelegate oldDelegate) {
-    return oldDelegate.isDark != isDark ||
-        oldDelegate.textPrimary != textPrimary ||
-        oldDelegate.muted != muted;
-  }
+  bool shouldRebuild(covariant _GlassHeaderDelegate oldDelegate) =>
+      oldDelegate.isDark != isDark ||
+      oldDelegate.textPrimary != textPrimary ||
+      oldDelegate.muted != muted;
 }
 
 // ==========================================
-// HERO-IMAGE PROJECT CARD (single column feed)
+// PROJECT CARD
 // ==========================================
 class _ProjectCard extends StatelessWidget {
   final dynamic project;
@@ -332,10 +340,10 @@ class _ProjectCard extends StatelessWidget {
   });
 
   bool _hasStartingPrice(String? price) {
-    if (price == null || price.isEmpty) return false;
-    final lower = price.toLowerCase();
-    if (lower.contains('request')) return false;
-    if (price.contains('%')) return false;
+    if (price == null) return false;
+    final lower = price.trim().toLowerCase();
+    if (lower.isEmpty) return false;
+    if (lower == 'price on request' || lower == 'upon request') return false;
     return true;
   }
 
@@ -352,27 +360,26 @@ class _ProjectCard extends StatelessWidget {
 
     return _ScaleButton(
       onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 28),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.25),
-              blurRadius: 24,
-              offset: const Offset(0, 12),
-            ),
-          ],
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Stack(
-          children: [
-            // 16:9 thumbnail frame — the ratio every card image uses. It was a
-            // flat 250, which is only 16:9 at one particular screen width.
-            const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
-            // Hero image
-            Positioned.fill(
-              child: CachedNetworkImage(
+      child: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 16,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Hero image
+              CachedNetworkImage(
                 memCacheWidth: 1080,
                 imageUrl: imageUrl,
                 fit: BoxFit.cover,
@@ -386,189 +393,164 @@ class _ProjectCard extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
 
-            // Top dark gradient (black/0.6 → transparent)
-            Positioned.fill(
-              child: Container(
+              // Gradient overlays
+              Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
-                    end: Alignment.center,
+                    end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withValues(alpha: 0.6),
+                      Colors.black.withValues(alpha: 0.5),
                       Colors.transparent,
+                      Colors.black.withValues(alpha: 0.8),
                     ],
-                  ),
-                ),
-              ),
-            ),
-            // Bottom dark gradient (black/0.9 → transparent top)
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.9),
-                      Colors.black.withValues(alpha: 0.2),
-                      Colors.transparent,
-                    ],
-                    stops: const [0.0, 0.55, 1.0],
-                  ),
-                ),
-              ),
-            ),
-
-            // Status badge (top-right)
-            if (status.isNotEmpty)
-              Positioned(
-                top: 24,
-                right: 24,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.1),
-                    ),
-                  ),
-                  child: Text(
-                    status.toUpperCase(),
-                    style: GoogleFonts.gelasio(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      letterSpacing: 2,
-                    ),
+                    stops: const [0.0, 0.45, 1.0],
                   ),
                 ),
               ),
 
-            // Top-left content block — non-positioned so the card grows past
-            // 16:9 when the text needs more room than the ratio gives. The
-            // bottom inset keeps it clear of the arrow pinned at bottom: 28.
-            Padding(
-              padding: const EdgeInsets.fromLTRB(28, 28, 28, 88),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    (project['title'] ?? '').toString().toUpperCase(),
-                    style: GoogleFonts.gelasio(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      letterSpacing: -1,
-                      height: 1.0,
+              // Status badge (top-right)
+              if (status.isNotEmpty)
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(
-                        LucideIcons.mapPin,
-                        size: 12,
-                        color: Colors.white.withValues(alpha: 0.6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.2),
                       ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          location.toUpperCase(),
-                          style: GoogleFonts.gelasio(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white.withValues(alpha: 0.6),
-                            letterSpacing: 2,
+                    ),
+                    child: Text(
+                      status.toUpperCase(),
+                      style: GoogleFonts.gelasio(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                  ),
+                ),
+
+              // Top-left content block: Title & Location
+              Positioned(
+                top: 18,
+                left: 18,
+                right: 75,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      (project['title'] ?? '').toString().toUpperCase(),
+                      style: GoogleFonts.gelasio(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: -0.5,
+                        height: 1.0,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 3),
+                    Row(
+                      children: [
+                        Icon(
+                          LucideIcons.mapPin,
+                          size: 10,
+                          color: Colors.white.withValues(alpha: 0.7),
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            location.toUpperCase(),
+                            style: GoogleFonts.gelasio(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white.withValues(alpha: 0.7),
+                              letterSpacing: 1.5,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                    if (_hasStartingPrice(startingPrice)) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        'STARTING FROM',
+                        style: GoogleFonts.gelasio(
+                          fontSize: 7,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white.withValues(alpha: 0.65),
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                      Text(
+                        startingPrice!,
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFFF4EFE3),
+                          letterSpacing: -0.2,
                         ),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 14),
-                  // Divider
-                  Container(
-                    height: 1,
-                    width: 40,
-                    color: Colors.white.withValues(alpha: 0.2),
-                  ),
-                  if (_hasStartingPrice(startingPrice)) ...[
-                    const SizedBox(height: 14),
-                    Text(
-                      'STARTING FROM',
-                      style: GoogleFonts.gelasio(
-                        fontSize: 7,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white.withValues(alpha: 0.68),
-                        letterSpacing: 2,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      startingPrice!,
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFFF4EFE3),
-                        letterSpacing: -0.2,
-                      ),
-                    ),
                   ],
-                ],
+                ),
               ),
-            ),
 
-            // Artistic impression label (bottom-left)
-            if (!isCompleted)
+              // Artistic impression label (bottom-left)
+              if (!isCompleted)
+                Positioned(
+                  bottom: 16,
+                  left: 18,
+                  child: Text(
+                    '* ARTISTIC IMPRESSION',
+                    style: GoogleFonts.gelasio(
+                      fontSize: 6,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white.withValues(alpha: 0.75),
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ),
+
+              // Action arrow (bottom-right)
               Positioned(
-                bottom: 24,
-                left: 28,
-                child: Text(
-                  '* ARTISTIC IMPRESSION',
-                  style: GoogleFonts.gelasio(
-                    fontSize: 6,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white.withValues(alpha: 0.72),
-                    letterSpacing: 2,
+                bottom: 16,
+                right: 16,
+                child: Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF4EFE3),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    LucideIcons.arrowRight,
+                    color: Color(0xFF0C312B),
+                    size: 16,
                   ),
                 ),
               ),
-
-            // Action arrow (bottom-right)
-            Positioned(
-              bottom: 28,
-              right: 28,
-              child: Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  LucideIcons.arrowRight,
-                  color: const Color(0xFF0C312B),
-                  size: 20,
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     ).animate().fadeIn(delay: (index * 80).ms).slideY(begin: 0.06, end: 0);

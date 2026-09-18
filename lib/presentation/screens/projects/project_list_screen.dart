@@ -1055,10 +1055,8 @@ class _ProjectGridItem extends StatelessWidget {
       // pill-round.
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        // Same card colour as the home property cards: the page's own
-        // background, so the card sits flush with the page.
         color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         // Figma depth: the card sits ON the green, lifted by a soft shadow that
         // falls straight down and stays tucked under the card. The negative
         // spread is what keeps it from haloing past the corners.
@@ -1217,10 +1215,8 @@ class _ProjectListRowItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        // Same card colour as the home property cards: the page's own
-        // background, so the card sits flush with the page.
         color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: (isDark ? Colors.transparent : const Color(0xFF163A2C))

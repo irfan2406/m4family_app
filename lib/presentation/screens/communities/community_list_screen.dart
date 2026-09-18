@@ -358,21 +358,23 @@ class _CommunityCard extends ConsumerWidget {
           builder: (context) => CommunityDetailScreen(community: community),
         ),
       ),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 30),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
             ),
-          ],
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Stack(
-          alignment: Alignment.bottomCenter,
+            clipBehavior: Clip.antiAlias,
+            child: Stack(
           children: [
             // 16:9 thumbnail frame — the ratio every card image uses. It was a
             // flat 350, which is only 16:9 at one particular screen width.
@@ -458,6 +460,8 @@ class _CommunityCard extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }

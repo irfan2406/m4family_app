@@ -489,7 +489,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                       final cell = (MediaQuery.of(context).size.width - 74) / 3;
                       return SizedBox(
                         width: cell,
-                        height: cell + 30,
+                        height: cell - 10,
                         child: Container(
                           decoration: BoxDecoration(
                             color:
@@ -497,7 +497,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                         ? Colors.white
                                         : const Color(0xFF0C312B))
                                     .withOpacity(0.04),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color:
                                   (isDark
@@ -606,7 +606,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                     ),
                     const SizedBox(height: 30),
                     SizedBox(
-                      height: 200,
+                      height: 140,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: _projects.length,
@@ -623,8 +623,8 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                               ),
                             ),
                             child: Container(
-                              width: 280,
-                              margin: const EdgeInsets.only(right: 20),
+                              width: 248,
+                              margin: const EdgeInsets.only(right: 14),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -1372,10 +1372,17 @@ class CommunityProjectsScreen extends ConsumerWidget {
 
           // 🏗️ Projects List
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final project = projects[index];
+                final status = project['status']?.toString() ?? '';
+                final startingPrice = project['startingPrice']?.toString();
+                final location = (project['location']?['name'] ??
+                        project['location'] ??
+                        '')
+                    .toString();
+
                 return GestureDetector(
                   onTap: () => Navigator.push(
                     context,
@@ -1386,189 +1393,207 @@ class CommunityProjectsScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  child: Container(
-                    height: 250,
-                    margin: const EdgeInsets.only(bottom: 25),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(40),
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          CachedNetworkImage(
-                            memCacheWidth: 1080,
-                            imageUrl: apiClient.resolveUrl(
-                              project['heroImage'] ?? project['image'],
-                            ),
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                Container(color: Colors.black12),
-                            errorWidget: (context, url, error) => Container(
-                              color: const Color(0xFF141B3A),
-                              child: const Center(
-                                child: Icon(
-                                  LucideIcons.building2,
-                                  color: Colors.white24,
-                                  size: 40,
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 16,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            CachedNetworkImage(
+                              memCacheWidth: 1080,
+                              imageUrl: apiClient.resolveUrl(
+                                project['heroImage'] ?? project['image'],
+                              ),
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  Container(color: Colors.black12),
+                              errorWidget: (context, url, error) => Container(
+                                color: const Color(0xFF141B3A),
+                                child: const Center(
+                                  child: Icon(
+                                    LucideIcons.building2,
+                                    color: Colors.white24,
+                                    size: 36,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(40),
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.8),
-                                ],
+                            // Gradient Overlays
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.black.withValues(alpha: 0.5),
+                                    Colors.transparent,
+                                    Colors.black.withValues(alpha: 0.8),
+                                  ],
+                                  stops: const [0.0, 0.45, 1.0],
+                                ),
                               ),
                             ),
-                          ),
-                          // Status Label (Top Right)
-                          if (project['status'] != null)
+
+                            // Status Label (Top Right)
+                            if (status.isNotEmpty)
+                              Positioned(
+                                top: 16,
+                                right: 16,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: Colors.white.withValues(alpha: 0.2),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    status.toUpperCase(),
+                                    style: GoogleFonts.gelasio(
+                                      color: Colors.white,
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                            // Top Left Block: Title & Location
                             Positioned(
-                              top: 25,
-                              right: 25,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(
-                                    0xFFF4EFE3,
-                                  ).withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.2),
+                              top: 18,
+                              left: 18,
+                              right: 75,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    (project['title'] ?? '')
+                                        .toString()
+                                        .toUpperCase(),
+                                    style: GoogleFonts.gelasio(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: -0.5,
+                                      height: 1.0,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                                child: Text(
-                                  project['status'].toString().toUpperCase(),
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white,
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 1,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          // Bottom Content
-                          Positioned(
-                            bottom: 30,
-                            left: 30,
-                            right: 30,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  const SizedBox(height: 3),
+                                  Row(
                                     children: [
-                                      Text(
-                                        project['title']
-                                                ?.toString()
-                                                .toUpperCase() ??
-                                            '',
-                                        style: GoogleFonts.gelasio(
-                                          color: Colors.white,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: -1,
-                                        ),
+                                      Icon(
+                                        LucideIcons.mapPin,
+                                        color: Colors.white.withValues(alpha: 0.7),
+                                        size: 10,
                                       ),
-                                      const SizedBox(height: 5),
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            LucideIcons.mapPin,
-                                            color: Colors.white54,
-                                            size: 10,
-                                          ),
-                                          const SizedBox(width: 5),
-                                          Text(
-                                            (project['location']?['name'] ??
-                                                    project['location'] ??
-                                                    '')
-                                                .toString()
-                                                .toUpperCase(),
-                                            style: GoogleFonts.inter(
-                                              color: Colors.white70,
-                                              fontSize: 9,
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: 1,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      if (project['startingPrice'] != null &&
-                                          project['startingPrice']
-                                                  .toString()
-                                                  .toLowerCase() !=
-                                              'price on request' &&
-                                          project['startingPrice']
-                                                  .toString()
-                                                  .toLowerCase() !=
-                                              'upon request') ...[
-                                        Text(
-                                          'STARTING FROM',
-                                          style: GoogleFonts.inter(
-                                            color: Colors.white.withOpacity(
-                                              0.68,
-                                            ),
-                                            fontSize: 7,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 1,
-                                          ),
-                                        ),
-                                        Text(
-                                          project['startingPrice']
-                                              .toString()
-                                              .toUpperCase(),
+                                      const SizedBox(width: 4),
+                                      Expanded(
+                                        child: Text(
+                                          location.toUpperCase(),
                                           style: GoogleFonts.gelasio(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white.withValues(alpha: 0.7),
+                                            fontSize: 8,
+                                            fontWeight: FontWeight.w700,
+                                            letterSpacing: 1.5,
                                           ),
-                                        ),
-                                      ],
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '* ARTISTIC IMPRESSION',
-                                        style: GoogleFonts.inter(
-                                          color: Colors.white.withOpacity(0.72),
-                                          fontSize: 6,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 1,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                     ],
                                   ),
-                                ),
-                                Container(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: const BoxDecoration(
-                                    color: const Color(0xFFF4EFE3),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    LucideIcons.arrowRight,
-                                    color: const Color(0xFF0C312B),
-                                    size: 20,
-                                  ),
-                                ),
-                              ],
+                                  if (startingPrice != null &&
+                                      startingPrice.isNotEmpty &&
+                                      startingPrice.toLowerCase() !=
+                                          'price on request' &&
+                                      startingPrice.toLowerCase() !=
+                                          'upon request') ...[
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'STARTING FROM',
+                                      style: GoogleFonts.gelasio(
+                                        color: Colors.white.withValues(alpha: 0.65),
+                                        fontSize: 7,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 1.5,
+                                      ),
+                                    ),
+                                    Text(
+                                      startingPrice.toUpperCase(),
+                                      style: GoogleFonts.inter(
+                                        color: const Color(0xFFF4EFE3),
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+
+                            // Bottom Left: Artistic Impression
+                            Positioned(
+                              bottom: 16,
+                              left: 18,
+                              child: Text(
+                                '* ARTISTIC IMPRESSION',
+                                style: GoogleFonts.gelasio(
+                                  color: Colors.white.withValues(alpha: 0.75),
+                                  fontSize: 6,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ),
+
+                            // Bottom Right: Arrow Action Button
+                            Positioned(
+                              bottom: 16,
+                              right: 16,
+                              child: Container(
+                                width: 38,
+                                height: 38,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF4EFE3),
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.2),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  LucideIcons.arrowRight,
+                                  color: Color(0xFF0C312B),
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

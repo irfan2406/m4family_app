@@ -249,7 +249,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                                 aspectRatio: 16 / 9,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(16),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withOpacity(0.15),
@@ -259,7 +259,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                                     ],
                                   ),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(16),
                                     child: CachedNetworkImage(
                                       memCacheWidth: 1080,
                                       imageUrl:
