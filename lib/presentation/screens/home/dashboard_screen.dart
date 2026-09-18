@@ -949,7 +949,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   );
                                 }
                               },
-<<<<<<< HEAD
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
                                 child: Stack(
@@ -960,33 +959,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           ? M4Image(
                                               imageUrl: imageUrl,
                                               fit: BoxFit.cover,
-                                              width: double.infinity,
-                                              placeholder: Container(
-                                                color: Colors.black12,
-                                              ),
-                                              errorWidget: Container(
-                                                width: double.infinity,
-                                                color: Colors.white.withOpacity(
-                                                  0.05,
-                                                ),
-                                                child: const Center(
-                                                  child: Icon(
-                                                    LucideIcons.image,
-                                                    color: Colors.white10,
-                                                  ),
-                                                ),
-                                              ),
-                                            )
-                                          : Container(
-                                              color: Colors.white10,
-                                              child: const Center(
-                                                child: Icon(
-                                                  LucideIcons.image,
-                                                  color: Colors.white24,
-                                                ),
-                                              ),
-                                            ),
-                                    ),
                                               width: double.infinity,
                                               placeholder: Container(
                                                 color: Colors.black12,
@@ -1583,8 +1555,6 @@ class _ProjectCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   placeholder: Container(color: Colors.black12),
                   errorWidget: Container(color: Colors.white10),
-                ),
-              ),
                 ),
               ),
               // Text scrim so the name stays readable on bright images.
@@ -2523,24 +2493,27 @@ class _MediaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    // Guest parity: the full-bleed 16:9 image with just the title in small
+    // white caps at the bottom-left — the same card the Guest home draws. The
+    // bottom margin is what keeps the tile at 16:9: without it the row's 190dp
+    // stretched the card to 320 x 190.
+    return _ScaleButton(
       onTap: onTap,
       child: Container(
-        // Same landscape tile width as every other portal.
         width: 320,
-        margin: const EdgeInsets.only(right: 20),
+        margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(24),
           child: Stack(
             children: [
               // 16:9 thumbnail frame — the ratio every card image uses.
@@ -2555,58 +2528,32 @@ class _MediaCard extends StatelessWidget {
                   errorWidget: Container(color: Colors.white10),
                 ),
               ),
+              // Soft scrim so the title stays readable on bright images.
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
+                      stops: const [0.6, 1.0],
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.75),
+                        Colors.black.withValues(alpha: 0.55),
                       ],
-                      stops: const [0.5, 1.0],
                     ),
                   ),
                 ),
               ),
               Positioned(
-                top: 16,
-                left: 16,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.white.withOpacity(0.15)),
-                  ),
-                  child: Text(
-                    'ARTISTIC IMPRESSION',
-                    style: GoogleFonts.gelasio(
-                      color: Colors.white,
-                      fontSize: 7,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 22,
-                left: 22,
-                right: 22,
+                left: 18,
+                bottom: 16,
                 child: Text(
                   title.toUpperCase(),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.gelasio(
+                  style: GoogleFonts.inter(
                     color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: -0.5,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.5,
                   ),
                 ),
               ),
@@ -2614,6 +2561,53 @@ class _MediaCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Press feedback for the Communities and Media tiles: a quick 0.95 scale on
+/// tap down, the same as the Guest, CP and Investor homes' cards.
+class _ScaleButton extends StatefulWidget {
+  final Widget child;
+  final VoidCallback onTap;
+  const _ScaleButton({required this.child, required this.onTap});
+
+  @override
+  State<_ScaleButton> createState() => _ScaleButtonState();
+}
+
+class _ScaleButtonState extends State<_ScaleButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scale = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _controller.forward(),
+      onTapUp: (_) => _controller.reverse(),
+      onTapCancel: () => _controller.reverse(),
+      onTap: widget.onTap,
+      child: ScaleTransition(scale: _scale, child: widget.child),
     );
   }
 }
@@ -2633,25 +2627,25 @@ class _CommunityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return _ScaleButton(
       onTap: onTap,
       child: Container(
-        // Landscape tile: at 320 the 16:9 thumbnail is 180 tall, which is the
-        // room this card's overlay needs. Same width in every portal.
+        // Guest parity: the same 320 x 180 tile, margin, 24 corners and shadow
+        // as the Guest home's Communities card.
         width: 320,
-        margin: const EdgeInsets.only(right: 20, bottom: 10),
+        margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(24),
           child: Stack(
             children: [
               // 16:9 thumbnail frame — the ratio every card image uses.
@@ -2669,13 +2663,15 @@ class _CommunityCard extends StatelessWidget {
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
+                    // Guest parity: the card stays bright and only the bottom
+                    // label area gets a soft dark fade.
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      stops: const [0.3, 1.0],
+                      stops: const [0.55, 1.0],
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.85),
+                        const Color(0xFF0C312B).withValues(alpha: 0.82),
                       ],
                     ),
                   ),
@@ -2698,22 +2694,22 @@ class _CommunityCard extends StatelessWidget {
                       style: GoogleFonts.gelasio(
                         color: Colors.white,
                         fontSize: 22,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w400,
                         letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      description,
+                      description.toUpperCase(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.inter(
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 10,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
                         height: 1.4,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 24),
                     Row(
@@ -2744,7 +2740,7 @@ class _CommunityCard extends StatelessWidget {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withValues(alpha: 0.2),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -2752,7 +2748,7 @@ class _CommunityCard extends StatelessWidget {
                           ),
                           child: const Icon(
                             LucideIcons.arrowRight,
-                            color: const Color(0xFF0C312B),
+                            color: Color(0xFF0C312B),
                             size: 18,
                           ),
                         ),

@@ -16,6 +16,7 @@ import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/gallery_prefetcher.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 
@@ -785,6 +786,12 @@ class _InvestorProjectDetailScreenState
     }
     final apiClient = ref.read(apiClientProvider);
     final pageController = PageController(initialPage: initialIndex);
+    // Every swipe used to start the next picture's download and decode — the
+    // pause between pictures. Fetch the ones around the open page in advance.
+    final prefetch = GalleryPrefetcher(
+      urls: [for (final u in urls) apiClient.resolveUrl(u)],
+      memCacheWidth: 1080,
+    )..open(context, initialIndex);
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -799,6 +806,7 @@ class _InvestorProjectDetailScreenState
             PageView.builder(
               controller: pageController,
               itemCount: urls.length,
+              onPageChanged: (i) => prefetch.warm(context, i),
               itemBuilder: (context, index) => Center(
                 child: InteractiveViewer(
                   child: CachedNetworkImage(
@@ -839,7 +847,7 @@ class _InvestorProjectDetailScreenState
           ],
         ),
       ),
-    );
+    ).then((_) => prefetch.close());
   }
 
   // ─── Build ───────────────────────────────────────────────────────────────

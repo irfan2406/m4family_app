@@ -1207,6 +1207,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         ? picked
         : apiClient.resolveUrl(picked);
 
+    // Guest parity: Media is the plain gallery tile (image + title), the same
+    // card the Guest home draws.
+    if (isMedia) return _buildMediaCard(item, imageUrl);
+
     // Web parity: Properties uses the white info card; Communities/Media keep
     // the full-bleed image-overlay card.
     if (!isCommunity && !isMedia) {
@@ -1224,28 +1228,28 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         }
       },
       child: Container(
-        // Landscape tile: at 320 the 16:9 thumbnail is 180 tall, which is the
-        // room this card's overlay needs. Same width in every portal.
+        // Guest parity: the same 320 x 180 tile, margin, 24 corners and shadow
+        // as the Guest home's Communities card.
         width: 320,
-        margin: const EdgeInsets.only(right: 20, bottom: 10),
+        margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(isMedia ? 24 : 40),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(isMedia ? 24 : 40),
+          borderRadius: BorderRadius.circular(24),
           child: Stack(
             children: [
               // 16:9 thumbnail frame — the ratio every card image uses.
               const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
 
-              // High Resolution Image (Media biases the crop toward the tower)
+              // High Resolution Image
               Positioned.fill(
                 child: _buildProjectImage(
                   imageUrl,
@@ -1254,18 +1258,18 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                 ),
               ),
 
-              // Gradient Overlay — subtle for Media (title only), stronger for
-              // Communities (description + action row need more contrast).
+              // Text scrim — Guest parity: the card stays bright and only the
+              // bottom label area gets a soft dark fade.
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      stops: isMedia ? const [0.55, 1.0] : const [0.3, 1.0],
+                      stops: const [0.55, 1.0],
                       colors: [
                         Colors.transparent,
-                        Colors.black.withValues(alpha: isMedia ? 0.6 : 0.85),
+                        const Color(0xFF0C312B).withValues(alpha: 0.82),
                       ],
                     ),
                   ),
@@ -1285,83 +1289,141 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       (item['title'] ?? item['name'] ?? '')
                           .toString()
                           .toUpperCase(),
-                      // Web parity: Media titles are small + letterspaced
-                      // (CLEDOR / SKAI); Communities use the large serif.
                       // One line: a 16:9 tile fits one title line, two
                       // description lines and the action row.
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: isMedia
-                          ? GoogleFonts.gelasio(
-                              color: const Color(0xFFF4EFE3),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 2,
-                            )
-                          : GoogleFonts.gelasio(
-                              color: const Color(0xFFF4EFE3),
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.5,
-                            ),
-                    ),
-                    // Media (web parity): the card shows only the title over
-                    // the image + play button. Communities keep the fuller
-                    // layout (description + EXPLORE COMMUNITY action row).
-                    if (isCommunity) ...[
-                      const SizedBox(height: 10),
-                      Text(
-                        (item['overview'] ?? item['description'] ?? '')
-                            .toString()
-                            .toUpperCase(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
-                          // Brighter on the dark card = clearly readable.
-                          color: Colors.white.withValues(alpha: 0.92),
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.5,
-                          height: 1.4,
-                        ),
+                      style: GoogleFonts.gelasio(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: -0.5,
                       ),
-                      const SizedBox(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      (item['overview'] ?? item['description'] ?? '')
+                          .toString()
+                          .toUpperCase(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        color: Colors.white.withValues(alpha: 0.7),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // The label takes the room left over and the
+                        // arrow keeps its circle; without a flex the pair was
+                        // wider than the card on a 361dp screen.
+                        Expanded(
+                          child: Text(
                             'EXPLORE COMMUNITY',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.inter(
-                              color: const Color(0xFFF4EFE3),
+                              color: Colors.white,
                               fontSize: 10,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w400,
                               letterSpacing: 1.2,
                             ),
                           ),
-                          Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF4EFE3),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.2),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              LucideIcons.arrowRight,
-                              color: const Color(0xFF0C312B),
-                              size: 18,
-                            ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.2),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ],
+                          child: const Icon(
+                            LucideIcons.arrowRight,
+                            color: Color(0xFF0C312B),
+                            size: 18,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Guest-parity media card: the full-bleed 16:9 image with just the title in
+  /// small white caps at the bottom-left — the same card the Guest home draws.
+  Widget _buildMediaCard(dynamic item, String imageUrl) {
+    return _ScaleButton(
+      onTap: () => context.push('/investor/media'),
+      child: Container(
+        width: 320,
+        margin: const EdgeInsets.only(right: 16, bottom: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            children: [
+              // 16:9 thumbnail frame — the ratio every card image uses.
+              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
+              Positioned.fill(
+                child: _buildProjectImage(imageUrl, errorIconSize: 40),
+              ),
+              // Soft scrim so the title stays readable on bright images.
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.6, 1.0],
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.55),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 18,
+                bottom: 16,
+                child: Text(
+                  (item['title'] ?? item['name'] ?? '')
+                      .toString()
+                      .toUpperCase(),
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.5,
+                  ),
                 ),
               ),
             ],

@@ -894,6 +894,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
           );
 
+    // Guest parity: Media is the plain gallery tile (image + title), the same
+    // card the Guest home draws.
+    if (isMedia) return _buildMediaCard(item, rawImage);
+
     return _ScaleButton(
       onTap: () {
         if (isCommunity) {
@@ -905,22 +909,22 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         }
       },
       child: Container(
-        // Landscape tile: at 320 the 16:9 thumbnail is 180 tall, which is the
-        // room this card's overlay needs. Same width in every portal.
+        // Guest parity: the same 320 x 180 tile, margin, 24 corners and shadow
+        // as the Guest home's Communities card.
         width: 320,
-        margin: const EdgeInsets.only(right: 20, bottom: 10),
+        margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(24),
           child: Stack(
             children: [
               // 16:9 thumbnail frame — the ratio every card image uses.
@@ -931,17 +935,18 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 child: _buildProjectImage(rawImage, errorIconSize: 40),
               ),
 
-              // High-End Gradient Overlay
+              // Text scrim — Guest parity: the card stays bright and only the
+              // bottom label area gets a soft dark fade.
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      stops: const [0.3, 1.0],
+                      stops: const [0.55, 1.0],
                       colors: [
                         Colors.transparent,
-                        Colors.black.withValues(alpha: 0.85),
+                        const Color(0xFF0C312B).withValues(alpha: 0.82),
                       ],
                     ),
                   ),
@@ -1049,7 +1054,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       style: GoogleFonts.inter(
                         color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 10,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
                         height: 1.4,
                       ),
@@ -1100,6 +1105,71 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       ],
                     ),
                   ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Guest-parity media card: the full-bleed 16:9 image with just the title in
+  /// small white caps at the bottom-left — the same card the Guest home draws.
+  Widget _buildMediaCard(dynamic item, String rawImage) {
+    return _ScaleButton(
+      onTap: () => context.push('/cp/media'),
+      child: Container(
+        width: 320,
+        margin: const EdgeInsets.only(right: 16, bottom: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            children: [
+              // 16:9 thumbnail frame — the ratio every card image uses.
+              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
+              Positioned.fill(
+                child: _buildProjectImage(rawImage, errorIconSize: 40),
+              ),
+              // Soft scrim so the title stays readable on bright images.
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.6, 1.0],
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.55),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 18,
+                bottom: 16,
+                child: Text(
+                  (item['title'] ?? item['name'] ?? '')
+                      .toString()
+                      .toUpperCase(),
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.5,
+                  ),
                 ),
               ),
             ],

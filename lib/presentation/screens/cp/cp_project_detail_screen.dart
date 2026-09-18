@@ -16,6 +16,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/gallery_prefetcher.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
@@ -106,6 +107,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   List<String> _gallery = const [];
   int _galleryIndex = 0;
   PageController? _galleryCtrl;
+  // Fetches the pictures around the open one ahead of the swipe.
+  GalleryPrefetcher? _galleryPrefetch;
 
   @override
   void initState() {
@@ -146,6 +149,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     _regClientEmail.dispose();
     _regLocation.dispose();
     _galleryCtrl?.dispose();
+    _galleryPrefetch?.close();
     super.dispose();
   }
 
@@ -416,6 +420,20 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     _galleryCtrl?.dispose();
     _galleryCtrl = PageController(initialPage: _galleryIndex);
 
+    // Every swipe used to start the next picture's download and decode — the
+    // pause between pictures. Fetch the ones around the open page in advance.
+    final api = ref.read(apiClientProvider);
+    _galleryPrefetch?.close();
+    _galleryPrefetch = GalleryPrefetcher(
+      // Resolved exactly as _projectImage resolves a page's URL.
+      urls: [
+        for (final u in urls)
+          u.trim().startsWith('http') ? u.trim() : api.resolveUrl(u.trim()),
+      ],
+      // The pages draw through _projectImage's default cacheWidth.
+      memCacheWidth: 1080,
+    )..open(context, _galleryIndex);
+
     final scheme = Theme.of(context).colorScheme;
     // A route rather than an overlay in this page's Stack: the detail used to
     // show through the scrim and the shell's nav pill sat on top of the photo.
@@ -435,7 +453,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             ),
           ),
         )
-        .then((_) => _gallerySetState = null);
+        .then((_) {
+          _gallerySetState = null;
+          _galleryPrefetch?.close();
+        });
   }
 
   Future<void> _openVideoCallSheet() async {
@@ -3274,6 +3295,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 itemCount: _gallery.length,
                 onPageChanged: (i) {
                   _galleryIndex = i;
+                  _galleryPrefetch?.warm(context, i);
                   // Refresh the route's builder — the counter, the dots and
                   // the arrows' enabled state all read _galleryIndex.
                   _gallerySetState?.call(() {});

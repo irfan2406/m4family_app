@@ -20,6 +20,7 @@ import 'dart:ui';
 import 'dart:math' as math;
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/gallery_prefetcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -1268,35 +1269,13 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
     // /uploads serves the original files, several MB each, so fetching one
     // only when the swipe lands on it left a long stall between pictures.
-    // Keep a window either side of the current page downloaded in advance —
-    // starting the moment the viewer opens, not on the first page change.
-    // Fetch the gallery in order, one file at a time, starting from wherever
-    // it opens and wrapping around. Sequential on purpose: parallel fetches of
-    // 6-16MB originals starve the picture the user is looking at. A new call
-    // supersedes the previous walk, so jumping ahead re-aims the queue.
-    var warmToken = 0;
-    Future<void> warmFrom(int start) async {
-      final token = ++warmToken;
-      for (var step = 0; step < urls.length; step++) {
-        if (token != warmToken || !mounted) return;
-        final j = (start + step) % urls.length;
-        try {
-          await precacheImage(CachedNetworkImageProvider(urls[j]), context);
-        } catch (_) {
-          // One unreachable file must not stop the rest of the gallery.
-        }
-      }
-    }
-
-    // Room to keep the gallery resident while it is open, handed back on the
-    // way out so the rest of the app keeps its normal budget.
-    final imageCache = PaintingBinding.instance.imageCache;
-    final previousCacheBytes = imageCache.maximumSizeBytes;
-    final previousCacheCount = imageCache.maximumSize;
-    imageCache.maximumSizeBytes = 256 << 20;
-    imageCache.maximumSize = 200;
-
-    warmFrom(initialIndex);
+    // Fetch the pictures around the open page in advance. This used to
+    // precache the bare network provider, which decoded every 6000px original
+    // at full size (~90MB each) into a cache entry the 1600-wide pages never
+    // read, so each swipe still paid its own decode; the prefetcher precaches
+    // the exact provider the pages draw.
+    final prefetch = GalleryPrefetcher(urls: urls, memCacheWidth: 1600)
+      ..open(context, initialIndex);
 
     // A route of its own rather than a dialog laid over the detail page:
     // the gallery gets the back gesture and its own entry in the stack, which
@@ -1313,7 +1292,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     PageView.builder(
                       controller: pageController,
                       itemCount: urls.length,
-                      onPageChanged: warmFrom,
+                      onPageChanged: (i) => prefetch.warm(context, i),
                       itemBuilder: (context, index) {
                         return Center(
                           child: InteractiveViewer(
@@ -1456,13 +1435,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             },
           ),
         )
-        .then((_) {
-          // Leaving the gallery: stop the background walk and hand the image
-          // cache budget back to the rest of the app.
-          warmToken++;
-          imageCache.maximumSizeBytes = previousCacheBytes;
-          imageCache.maximumSize = previousCacheCount;
-        });
+        // Leaving the gallery: stop the background fetch and hand the image
+        // cache budget back to the rest of the app.
+        .then((_) => prefetch.close());
   }
 
   @override

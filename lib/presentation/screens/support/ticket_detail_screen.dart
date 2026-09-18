@@ -275,24 +275,27 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 4),
+                // Web parity: a green "active" dot and AGENT ONLINE in the
+                // header's bold sans. The dot was #163A2C, which reads as
+                // black rather than as "online".
                 Row(
                   children: [
                     Container(
                       width: 6,
                       height: 6,
                       decoration: const BoxDecoration(
-                        color: Color(0xFF163A2C),
+                        color: Color(0xFF22C55E),
                         shape: BoxShape.circle,
                       ),
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'SUPPORT AGENT ONLINE',
-                      style: GoogleFonts.gelasio(
+                      'AGENT ONLINE',
+                      style: GoogleFonts.inter(
                         fontSize: 8,
                         fontWeight: FontWeight.w700,
                         color: muted,
-                        letterSpacing: 2,
+                        letterSpacing: 1.5,
                       ),
                     ),
                   ],

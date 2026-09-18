@@ -16,6 +16,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/gallery_prefetcher.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -998,6 +999,16 @@ class _GuestProjectDetailScreenState
   void _showMediaLightbox(List<String> urls, String type) {
     final apiClient = ref.read(apiClientProvider);
     final PageController pageController = PageController();
+    // Every swipe used to start the next picture's download and decode — the
+    // pause between pictures. Fetch the ones around the open page in advance.
+    final prefetch = GalleryPrefetcher(
+      // The URLs the pages load; bundled `asset:` entries are skipped.
+      urls: [
+        for (final u in urls)
+          u.startsWith('asset:') ? u : apiClient.resolveUrl(u),
+      ],
+      memCacheWidth: 1080,
+    )..open(context, 0);
 
     showGeneralDialog(
       context: context,
@@ -1014,6 +1025,7 @@ class _GuestProjectDetailScreenState
               PageView.builder(
                 controller: pageController,
                 itemCount: urls.length,
+                onPageChanged: (i) => prefetch.warm(context, i),
                 itemBuilder: (context, index) {
                   final raw = urls[index];
                   return Center(
@@ -1132,7 +1144,7 @@ class _GuestProjectDetailScreenState
           ),
         );
       },
-    );
+    ).then((_) => prefetch.close());
   }
 
   @override
