@@ -74,6 +74,8 @@ class _GuestProjectDetailScreenState
   final TextEditingController _notesController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String? _modalErrorMessage;
+  final ScrollController _scrollController = ScrollController();
+  bool _showStickyHeader = false;
 
   @override
   void initState() {
@@ -83,6 +85,16 @@ class _GuestProjectDetailScreenState
     // the (multi-MB) detail payload.
     _seedGalleryImages(widget.projectData);
     _fetchProjectData();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    // Once the hero has mostly left the viewport, pin a title bar so the
+    // project name / back control do not disappear into empty page colour.
+    final next = _scrollController.hasClients && _scrollController.offset > 180;
+    if (next != _showStickyHeader && mounted) {
+      setState(() => _showStickyHeader = next);
+    }
   }
 
   /// Populates the EXTERIOR/INTERIOR thumb galleries from a project map —
@@ -296,6 +308,8 @@ class _GuestProjectDetailScreenState
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     _nameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
@@ -1162,18 +1176,31 @@ class _GuestProjectDetailScreenState
       );
     }
 
+    // One cream surface for the whole screen. Using lightBackground (mustard)
+    // as the scaffold colour made empty / not-yet-painted amenity cells flash
+    // that colour while scrolling — only the local lobby asset was visible.
+    final cream = isDark ? M4Theme.background : const Color(0xFFF4EFE3);
+
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: isDark ? M4Theme.background : const Color(0xFFF4EFE3),
+      backgroundColor: cream,
       drawer: const GuestSidebarMenu(),
       body: Stack(
         children: [
           SingleChildScrollView(
+            controller: _scrollController,
             physics: const BouncingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHero(project, isDark),
+                // Solid cream sheet under the hero so section titles / amenities
+                // never sit on bare page colour while scrolling.
+                ColoredBox(
+                  color: cream,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                 const SizedBox(height: 20),
                 // Quick-access row: Exterior, Interior (Web parity: no VR or Cinematic shown on guest portal)
                 Builder(
@@ -1382,10 +1409,63 @@ class _GuestProjectDetailScreenState
                 const SizedBox(height: 32),
                 _buildLocationSection(project),
                 const SizedBox(height: 100),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
+          if (_showStickyHeader) _buildStickyHeader(project, isDark),
+          _buildBottomActions(project),
         ],
+      ),
+    );
+  }
+
+  /// Pinned bar after the hero scrolls away — keeps back + title visible.
+  Widget _buildStickyHeader(dynamic project, bool isDark) {
+    final title = (project?['title']?.toString() ?? 'Project').toUpperCase();
+    final top = MediaQuery.of(context).padding.top;
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: Material(
+        color: isDark ? M4Theme.background : M4Theme.lightCard,
+        elevation: 2,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(8, top + 4, 16, 12),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    context.go('/home');
+                  }
+                },
+                icon: Icon(
+                  LucideIcons.chevronLeft,
+                  color: isDark ? Colors.white : const Color(0xFF0C312B),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.5,
+                    color: isDark ? Colors.white : const Color(0xFF0C312B),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -1699,82 +1779,76 @@ class _GuestProjectDetailScreenState
 
   Widget _buildAmenities(dynamic project) {
     final amenitiesRaw = project?['amenities'] as List? ?? [];
-    if (amenitiesRaw.isEmpty)
+    if (amenitiesRaw.isEmpty) {
       return const _EmptyTabContent(message: 'Coming soon');
+    }
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final apiClient = ref.read(apiClientProvider);
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.zero,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        // Tighter row/column gaps so amenity icons sit closer together.
-        mainAxisSpacing: 4,
-        crossAxisSpacing: 4,
-        childAspectRatio: 1.15,
-      ),
-      itemCount: amenitiesRaw.length,
-      itemBuilder: (context, index) {
-        final amenity = amenitiesRaw[index];
-        // The amenity is labelled exactly as the backend stores it ("lobby"),
-        // matching the web and the CP/Investor screens. It used to be forced
-        // to upper case here.
-        final name = amenity is Map
-            ? (amenity['name']?.toString() ?? 'Amenity')
-            : amenity.toString();
-        final rawIcon = amenity is Map ? amenity['icon']?.toString() : null;
-        final hasUploadedIcon =
-            rawIcon != null &&
-            rawIcon.isNotEmpty &&
-            (rawIcon.startsWith('/') ||
-                rawIcon.startsWith('http') ||
-                rawIcon.contains('.'));
-
-        // Web parity: full LuxuryAmenityIcon (uploaded icon -> name-mapped SVG -> Lucide).
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            LuxuryAmenityIcon(
-              name: name,
-              iconUrl: hasUploadedIcon ? apiClient.resolveUrl(rawIcon) : null,
-              size: 42,
-              // Temporary: the backend /uploads endpoint is broken (302 loop);
-              // bundled snapshot of the web's Lobby icon keeps parity.
-              // Case-insensitive: the label is no longer upper-cased, so a
-              // literal 'LOBBY' comparison would never match again.
-              fallbackAsset: name.toUpperCase() == 'LOBBY'
-                  ? 'assets/amenity_lobby.png'
-                  : null,
-            ),
-            const SizedBox(height: 10),
-            // The grid cell height follows its width, so on a narrower screen
-            // the icon plus two lines of label outgrew it. Flexible lets the
-            // label give way instead of running past the bottom.
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Text(
-                  name,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
-                    fontSize: 8.5,
-                    fontWeight: FontWeight.w600,
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.8)
-                        : const Color(0xFF0C312B).withValues(alpha: 0.8),
-                    letterSpacing: 0.5,
-                    height: 1.2,
-                  ),
+    // Wrap (not shrink-wrapped GridView): GridView.shrinkWrap inside a parent
+    // scroll view often leaves cells unpainted mid-fling on iOS, which flashed
+    // the mustard scaffold behind transparent network-icon placeholders.
+    // Name-mapped SVG/Lucide icons only — /uploads is broken, so network icons
+    // sat on an empty placeholder for the whole scroll gesture.
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: [
+        for (final amenity in amenitiesRaw)
+          SizedBox(
+            width: (MediaQuery.sizeOf(context).width - 48 - 20) / 3,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.06)
+                    : const Color(0xFFF4EFE3),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.10)
+                      : Colors.black.withValues(alpha: 0.08),
                 ),
               ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LuxuryAmenityIcon(
+                    name: amenity is Map
+                        ? (amenity['name']?.toString() ?? 'Amenity')
+                        : amenity.toString(),
+                    // Skip broken /uploads URLs — always draw the local glyph.
+                    size: 34,
+                    fallbackAsset: (amenity is Map
+                                    ? (amenity['name']?.toString() ?? '')
+                                    : amenity.toString())
+                                .toUpperCase() ==
+                            'LOBBY'
+                        ? 'assets/amenity_lobby.png'
+                        : null,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    amenity is Map
+                        ? (amenity['name']?.toString() ?? 'Amenity')
+                        : amenity.toString(),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.9)
+                          : const Color(0xFF0C312B),
+                      letterSpacing: 0.3,
+                      height: 1.15,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        );
-      },
+          ),
+      ],
     );
   }
 

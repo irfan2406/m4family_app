@@ -92,7 +92,7 @@ class LuxuryAmenityIcon extends StatelessWidget {
             height: size,
             fit: BoxFit.contain,
             colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-            placeholderBuilder: (c) => const SizedBox.shrink(),
+            placeholderBuilder: (c) => _fallbackGlyph(),
           ),
         );
       }
@@ -101,10 +101,10 @@ class LuxuryAmenityIcon extends StatelessWidget {
         width: size,
         height: size,
         child: CachedNetworkImage(
-          memCacheWidth: 1080,
+          memCacheWidth: 128,
           imageUrl: url,
           fit: BoxFit.contain,
-          placeholder: (c, u) => const SizedBox.shrink(),
+          placeholder: (c, u) => _fallbackGlyph(),
           imageBuilder: (c, provider) {
             final image = Image(image: provider, fit: BoxFit.contain);
             // PNG carries its own transparency, so the spec's srcIn is exact.
@@ -141,6 +141,18 @@ class LuxuryAmenityIcon extends StatelessWidget {
                   child: Image.asset(fallbackAsset!, fit: BoxFit.contain),
                 )
               : _fallbackGlyph(),
+        ),
+      );
+    }
+
+    // Bundled snapshot (e.g. lobby) when there is no upload URL.
+    if (fallbackAsset != null) {
+      return SizedBox(
+        width: size,
+        height: size,
+        child: ColorFiltered(
+          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+          child: Image.asset(fallbackAsset!, fit: BoxFit.contain),
         ),
       );
     }

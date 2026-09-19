@@ -2194,61 +2194,72 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   Widget _buildAmenities(dynamic project) {
     final amenitiesRaw = project?['amenities'] as List? ?? [];
-    if (amenitiesRaw.isEmpty)
+    if (amenitiesRaw.isEmpty) {
       return const _EmptyTabContent(message: 'Coming soon');
+    }
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.zero,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: 6,
-        crossAxisSpacing: 8,
-        childAspectRatio: 1.5,
-      ),
-      itemCount: amenitiesRaw.length,
-      itemBuilder: (context, index) {
-        final amenity = amenitiesRaw[index];
-        // The amenity is labelled exactly as the backend stores it ("lobby"),
-        // matching the web and the CP/Investor screens. It used to be forced
-        // to upper case here.
-        final name = amenity is Map
-            ? (amenity['name']?.toString() ?? 'Amenity')
-            : amenity.toString();
-        // Web parity: use the shared LuxuryAmenityIcon with the backend-uploaded
-        // (gold-tinted) icon — the "Lobby" concierge glyph is an uploaded asset,
-        // not a Lucide/SVG fallback.
-        final iconRaw = amenity is Map ? amenity['icon']?.toString() : null;
-        final iconUrl = (iconRaw != null && iconRaw.isNotEmpty)
-            ? ref.read(apiClientProvider).resolveUrl(iconRaw)
-            : null;
-
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            LuxuryAmenityIcon(name: name, iconUrl: iconUrl, size: 30),
-            const SizedBox(height: 10),
-            Text(
-              name,
-              textAlign: TextAlign.center,
-              // Was 8px — too small. Bigger + a touch darker.
-              style: GoogleFonts.inter(
-                fontSize: 9.5,
-                fontWeight: FontWeight.w700,
+    // Same as guest: Wrap + local glyphs so mid-scroll never flashes empty
+    // mustard behind unpainted GridView / network-icon cells.
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: [
+        for (final amenity in amenitiesRaw)
+          SizedBox(
+            width: (MediaQuery.sizeOf(context).width - 48 - 20) / 3,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+              decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.white.withOpacity(0.9)
-                    : const Color(0xFF141B3A),
-                letterSpacing: 0.3,
-                height: 1.15,
+                    ? Colors.white.withValues(alpha: 0.06)
+                    : const Color(0xFFF4EFE3),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.10)
+                      : Colors.black.withValues(alpha: 0.08),
+                ),
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LuxuryAmenityIcon(
+                    name: amenity is Map
+                        ? (amenity['name']?.toString() ?? 'Amenity')
+                        : amenity.toString(),
+                    size: 30,
+                    fallbackAsset: (amenity is Map
+                                    ? (amenity['name']?.toString() ?? '')
+                                    : amenity.toString())
+                                .toUpperCase() ==
+                            'LOBBY'
+                        ? 'assets/amenity_lobby.png'
+                        : null,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    amenity is Map
+                        ? (amenity['name']?.toString() ?? 'Amenity')
+                        : amenity.toString(),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      fontSize: 9.5,
+                      fontWeight: FontWeight.w700,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.9)
+                          : const Color(0xFF141B3A),
+                      letterSpacing: 0.3,
+                      height: 1.15,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        );
-      },
+          ),
+      ],
     );
   }
 
