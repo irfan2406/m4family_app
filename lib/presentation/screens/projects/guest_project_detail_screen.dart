@@ -76,6 +76,7 @@ class _GuestProjectDetailScreenState
   String? _modalErrorMessage;
   final ScrollController _scrollController = ScrollController();
   bool _showStickyHeader = false;
+  bool _showBottomBar = false;
 
   @override
   void initState() {
@@ -89,11 +90,17 @@ class _GuestProjectDetailScreenState
   }
 
   void _onScroll() {
-    // Once the hero has mostly left the viewport, pin a title bar so the
-    // project name / back control do not disappear into empty page colour.
-    final next = _scrollController.hasClients && _scrollController.offset > 180;
-    if (next != _showStickyHeader && mounted) {
-      setState(() => _showStickyHeader = next);
+    if (!_scrollController.hasClients || !mounted) return;
+    final offset = _scrollController.offset;
+    // Sticky title once the hero has mostly left the viewport.
+    final nextHeader = offset > 180;
+    // BOOK NOW / call bar appears as soon as the user starts scrolling.
+    final nextBar = offset > 24;
+    if (nextHeader != _showStickyHeader || nextBar != _showBottomBar) {
+      setState(() {
+        _showStickyHeader = nextHeader;
+        _showBottomBar = nextBar;
+      });
     }
   }
 
@@ -1416,7 +1423,7 @@ class _GuestProjectDetailScreenState
             ),
           ),
           if (_showStickyHeader) _buildStickyHeader(project, isDark),
-          _buildBottomActions(project),
+          if (_showBottomBar) _buildBottomActions(project),
         ],
       ),
     );
@@ -1857,54 +1864,68 @@ class _GuestProjectDetailScreenState
       bottom: 40,
       left: 20,
       right: 20,
-      child: Container(
-        height: 80,
-        decoration: BoxDecoration(
-          color: const Color(0xFFF4EFE3),
-          borderRadius: BorderRadius.circular(40),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: 1),
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+        builder: (context, t, child) {
+          return Opacity(
+            opacity: t,
+            child: Transform.translate(
+              offset: Offset(0, (1 - t) * 24),
+              child: child,
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            const SizedBox(width: 20),
-            _BottomIconAction(
-              icon: LucideIcons.phone,
-              onTap: () => SupportHandlers.launchCall(
-                project?['phone'] ?? project?['contactPhone'],
+          );
+        },
+        child: Container(
+          height: 80,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF4EFE3),
+            borderRadius: BorderRadius.circular(40),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _ScaleButton(
-                onTap: () => _showRequestDetailsDialog(project, null),
-                child: Container(
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'BOOK NOW',
-                      style: GoogleFonts.gelasio(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
-                        letterSpacing: 2,
+            ],
+          ),
+          child: Row(
+            children: [
+              const SizedBox(width: 20),
+              _BottomIconAction(
+                icon: LucideIcons.phone,
+                onTap: () => SupportHandlers.launchCall(
+                  project?['phone'] ?? project?['contactPhone'],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _ScaleButton(
+                  onTap: () => _showRequestDetailsDialog(project, null),
+                  child: Container(
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'BOOK NOW',
+                        style: GoogleFonts.gelasio(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                          letterSpacing: 2,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: 20),
-          ],
+              const SizedBox(width: 20),
+            ],
+          ),
         ),
       ),
     );
