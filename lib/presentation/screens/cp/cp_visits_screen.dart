@@ -377,9 +377,11 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 ? SizedBox(
                     width: 16,
                     height: 16,
-                    child: CircularProgressIndicator(
+                    child: CircularProgressIndicator.adaptive(
                       strokeWidth: 2,
-                      color: scheme.onSurfaceVariant,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        scheme.onSurfaceVariant,
+                      ),
                     ),
                   )
                 : Icon(
@@ -463,8 +465,8 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             child: Center(
               child: Column(
                 children: [
-                  CircularProgressIndicator(
-                    color: scheme.primary,
+                  CircularProgressIndicator.adaptive(
+                    valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
                     strokeWidth: 2,
                   ),
                   const SizedBox(height: 16),
@@ -1217,8 +1219,8 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             child: Center(
               child: Column(
                 children: [
-                  CircularProgressIndicator(
-                    color: scheme.primary,
+                  CircularProgressIndicator.adaptive(
+                    valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
                     strokeWidth: 2,
                   ),
                   const SizedBox(height: 16),

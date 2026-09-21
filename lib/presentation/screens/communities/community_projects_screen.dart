@@ -106,7 +106,9 @@ class _CommunityProjectsListScreenState
       backgroundColor: bg,
       body: _loading
           ? const Center(
-              child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+              child: CircularProgressIndicator.adaptive(
+                valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+              ),
             )
           : _error != null
           ? _ErrorState(message: _error!, isDark: isDark, onBack: _goBack)

@@ -190,7 +190,9 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             if (_loadingCatalog)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 40),
-                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                child: Center(
+                  child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                ),
               )
             else if (_rewards.isNotEmpty)
               ..._rewards.map((r) => _buildRewardCard(r, isDark))
@@ -702,9 +704,11 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
               ? SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(
+                  child: CircularProgressIndicator.adaptive(
                     strokeWidth: 2,
-                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    ),
                   ),
                 )
               : Row(

@@ -120,7 +120,11 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
         ),
       ),
       body: _loading
-          ? Center(child: CircularProgressIndicator(color: accent))
+          ? Center(
+              child: CircularProgressIndicator.adaptive(
+                valueColor: AlwaysStoppedAnimation<Color>(accent),
+              ),
+            )
           : ListView(
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
               children: [

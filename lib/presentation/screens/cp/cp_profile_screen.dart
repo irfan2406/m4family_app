@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 /// CP profile — parity with web `app/(cp)/cp/profile/page.tsx`. The web page
 /// only links out to `/cp/profile/employees` for team management (handled by
@@ -101,9 +102,9 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
           child: SizedBox(
             width: 32,
             height: 32,
-            child: CircularProgressIndicator(
+            child: CircularProgressIndicator.adaptive(
               strokeWidth: 3,
-              color: scheme.primary,
+              valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
             ),
           ),
         ),
@@ -285,8 +286,24 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     color: Colors.transparent,
                     child: InkWell(
                       onTap: () async {
-                        final go = await showDialog<bool>(
+                        final go = await showM4Dialog<bool>(
                           context: context,
+                          iosAlert: (ctx) => M4IosAlert(
+                            title: 'Log out',
+                            message: 'Sign out of your partner account?',
+                            actions: [
+                              M4IosAlertAction(
+                                'Cancel',
+                                isDefault: true,
+                                onPressed: () => Navigator.pop(ctx, false),
+                              ),
+                              M4IosAlertAction(
+                                'Log out',
+                                isDestructive: true,
+                                onPressed: () => Navigator.pop(ctx, true),
+                              ),
+                            ],
+                          ),
                           builder: (ctx) => AlertDialog(
                             title: Text(
                               'Log out',

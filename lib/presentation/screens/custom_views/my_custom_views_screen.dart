@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/custom_views_provider.dart';
 import 'package:m4_mobile/presentation/providers/my_custom_views_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 // Web parity: the Portfolio Suite uses an orange accent (title highlight,
 // active tab, section icons) instead of the neutral foreground colour.
@@ -304,7 +305,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
   Widget _buildUnitsList(MyCustomViewsState state, bool isDark) {
     if (state.isLoadingUnits) {
       return const SliverFillRemaining(
-        child: Center(child: CircularProgressIndicator()),
+        child: Center(child: CircularProgressIndicator.adaptive()),
       );
     }
     if (state.units.isEmpty) {
@@ -436,7 +437,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
   Widget _buildHistoryList(MyCustomViewsState state, bool isDark) {
     if (state.isLoadingHistory) {
       return const SliverFillRemaining(
-        child: Center(child: CircularProgressIndicator()),
+        child: Center(child: CircularProgressIndicator.adaptive()),
       );
     }
 
@@ -1012,7 +1013,7 @@ class _DetailDialog {
     dynamic req,
     List<dynamic> units,
   ) {
-    showDialog(
+    showM4Dialog(
       context: context,
       builder: (context) {
         String? errorMessage;

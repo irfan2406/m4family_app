@@ -15,6 +15,7 @@ import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/portal_bottom_nav.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 /// A toast that sits ABOVE an open dialog.
 ///
@@ -312,8 +313,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               Expanded(
                 child: _isLoading
                     ? Center(
-                        child: CircularProgressIndicator(
-                          color: isDark ? Colors.white24 : Colors.black12,
+                        child: CircularProgressIndicator.adaptive(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            isDark ? Colors.white24 : Colors.black12,
+                          ),
                         ),
                       )
                     : SingleChildScrollView(
@@ -1357,7 +1360,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
 
   void _showCustomEnquiryForm(BuildContext context) {
     String? submitError;
-    showDialog(
+    showM4Dialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.6),
       builder: (context) => StatefulBuilder(
@@ -1588,11 +1591,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               ? SizedBox(
                                   width: 20,
                                   height: 20,
-                                  child: CircularProgressIndicator(
+                                  child: CircularProgressIndicator.adaptive(
                                     strokeWidth: 2,
-                                    color: Theme.of(
-                                      context,
-                                    ).scaffoldBackgroundColor,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                    ),
                                   ),
                                 )
                               : Text(

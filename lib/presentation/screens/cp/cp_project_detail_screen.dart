@@ -22,6 +22,7 @@ import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -638,7 +639,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       temp = now.add(const Duration(days: 1));
     }
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final result = await showModalBottomSheet<DateTime>(
+    final result = await showM4Sheet<DateTime>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -869,7 +870,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     if (_loading) {
       return Scaffold(
         backgroundColor: scheme.surface,
-        body: Center(child: CircularProgressIndicator(color: scheme.primary)),
+        body: Center(
+          child: CircularProgressIndicator.adaptive(
+            valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
+          ),
+        ),
       );
     }
     if (p == null) {
@@ -2686,7 +2691,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 ? const SizedBox(
                     width: 18,
                     height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: CircularProgressIndicator.adaptive(strokeWidth: 2),
                   )
                 : Text(
                     'PROCEED',
@@ -3111,7 +3116,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           ? const SizedBox(
                               width: 18,
                               height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
+                              child: CircularProgressIndicator.adaptive(
+                                strokeWidth: 2,
+                              ),
                             )
                           : Text(
                               'SUBMIT',

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 /// Web `/investor/cp` — Channel Partner portal surface from the investor app.
 ///
@@ -59,7 +60,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
 
   void _openLeadForm() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    showModalBottomSheet<void>(
+    showM4Sheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,

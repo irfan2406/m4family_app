@@ -119,7 +119,11 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const CircularProgressIndicator(color: Colors.white24),
+                      const CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.white24,
+                        ),
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         'SYNCING SECURE CONTENT...',

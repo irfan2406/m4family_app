@@ -511,8 +511,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               const SizedBox(
                 width: 34,
                 height: 34,
-                child: CircularProgressIndicator(
-                  color: M4Theme.premiumBlue,
+                child: CircularProgressIndicator.adaptive(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    M4Theme.premiumBlue,
+                  ),
                   strokeWidth: 2.5,
                 ),
               ),
@@ -1972,7 +1974,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         const SizedBox(height: 24),
         Row(
           children: [
-            Checkbox(
+            Checkbox.adaptive(
               value: _agreedToTerms,
               onChanged: (val) => setState(() => _agreedToTerms = val ?? false),
               activeColor: isDark ? Colors.white : const Color(0xFF0C312B),
@@ -2020,8 +2022,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               ),
               child: Center(
                 child: _submitting
-                    ? CircularProgressIndicator(
-                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    ? CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        ),
                       )
                     : Text(
                         'SUBMIT INTEREST',

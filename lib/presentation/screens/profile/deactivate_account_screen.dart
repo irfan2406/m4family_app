@@ -335,7 +335,7 @@ class _DeactivateAccountScreenState
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Checkbox(
+                          Checkbox.adaptive(
                             value: _agreedToTerms,
                             onChanged: (val) =>
                                 setState(() => _agreedToTerms = val ?? false),
@@ -414,9 +414,11 @@ class _DeactivateAccountScreenState
                           ? const SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(
+                              child: CircularProgressIndicator.adaptive(
                                 strokeWidth: 2,
-                                color: const Color(0xFFF4EFE3),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  const Color(0xFFF4EFE3),
+                                ),
                               ),
                             )
                           : Text(

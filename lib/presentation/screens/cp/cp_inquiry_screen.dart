@@ -214,7 +214,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Checkbox(
+                  Checkbox.adaptive(
                     value: _agreedToTerms,
                     onChanged: (val) =>
                         setState(() => _agreedToTerms = val ?? false),
@@ -283,11 +283,11 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                       ? SizedBox(
                           width: 22,
                           height: 22,
-                          child: CircularProgressIndicator(
+                          child: CircularProgressIndicator.adaptive(
                             strokeWidth: 2,
-                            color: isDark
-                                ? Colors.black
-                                : const Color(0xFFF4EFE3),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            ),
                           ),
                         )
                       : Text(

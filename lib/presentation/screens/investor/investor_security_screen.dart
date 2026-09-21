@@ -187,7 +187,7 @@ class _InvestorSecurityScreenState
           ],
         ),
       ),
-      body: RefreshIndicator(
+      body: RefreshIndicator.adaptive(
         color: M4Theme.premiumBlue,
         onRefresh: _fetchHistory,
         child: ListView(
@@ -428,7 +428,9 @@ class _InvestorSecurityScreenState
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 48),
         child: Center(
-          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+          child: CircularProgressIndicator.adaptive(
+            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+          ),
         ),
       );
     }

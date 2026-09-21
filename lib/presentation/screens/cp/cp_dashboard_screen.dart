@@ -8,6 +8,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Web `/cp` (Partner Dashboard): high-fidelity wallet + referrals + projects + trace matrix.
@@ -113,8 +114,22 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       'CLEARED',
       'LOST',
     ];
-    showModalBottomSheet<void>(
+    showM4Sheet<void>(
       context: context,
+      iosActionSheet: (ctx) => M4IosActionSheet(
+        title: 'Update status',
+        actions: [
+          for (final s in options)
+            M4IosSheetAction(
+              s.replaceAll('_', ' '),
+              selected: s == current,
+              onPressed: () {
+                Navigator.pop(ctx);
+                _patchStatus(id, s);
+              },
+            ),
+        ],
+      ),
       builder: (ctx) => SafeArea(
         // Edge-to-edge: content runs under the gesture bar so scrolling fills
         // the screen. Trailing padding keeps the last item reachable.
@@ -331,7 +346,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                     const Center(
                       child: Padding(
                         padding: EdgeInsets.all(32),
-                        child: CircularProgressIndicator(),
+                        child: CircularProgressIndicator.adaptive(),
                       ),
                     )
                   else ...[
@@ -513,7 +528,8 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       // The tile is 180 wide, so a 16:9 thumbnail is 101 tall.
       height: 102,
       child: projectsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () =>
+            const Center(child: CircularProgressIndicator.adaptive()),
         error: (_, __) => const Text('Load failed'),
         data: (list) {
           final projects = list as List;

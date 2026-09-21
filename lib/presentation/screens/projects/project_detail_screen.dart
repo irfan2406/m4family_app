@@ -26,6 +26,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:m4_mobile/presentation/screens/booking/booking_start_screen.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 class ProjectDetailScreen extends ConsumerStatefulWidget {
   final dynamic projectData;
@@ -471,7 +473,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
   void _showBookingOptionsDialog(dynamic project) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    showModalBottomSheet(
+    showM4Sheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -703,7 +705,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
     // Web parity: shown as a CENTERED dialog (same style as the date picker),
     // not a bottom sheet.
-    showDialog(
+    showM4Dialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.55),
       builder: (context) => StatefulBuilder(
@@ -1311,9 +1313,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                               placeholder: (context, url) => const SizedBox(
                                 width: 34,
                                 height: 34,
-                                child: CircularProgressIndicator(
+                                child: CircularProgressIndicator.adaptive(
                                   strokeWidth: 2,
-                                  color: Colors.white24,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white24,
+                                  ),
                                 ),
                               ),
                               errorWidget: (context, url, error) => const Icon(
@@ -1449,7 +1453,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       return const Scaffold(
         backgroundColor: Color(0xFF0C312B),
         body: Center(
-          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+          child: CircularProgressIndicator.adaptive(
+            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+          ),
         ),
       );
     }
@@ -2268,7 +2274,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       return const _EmptyTabContent(message: 'Coming soon');
     if (_isLoading)
       return const Center(
-        child: CircularProgressIndicator(color: Colors.white24),
+        child: CircularProgressIndicator.adaptive(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.white24),
+        ),
       );
 
     return Column(
@@ -2286,7 +2294,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
   Widget _buildUpdates(dynamic project) {
     if (_isLoading)
       return const Center(
-        child: CircularProgressIndicator(color: Colors.white24),
+        child: CircularProgressIndicator.adaptive(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.white24),
+        ),
       );
 
     final overallProgress = (project?['completion'] ?? 0);

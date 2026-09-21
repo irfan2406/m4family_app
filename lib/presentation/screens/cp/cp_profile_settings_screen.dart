@@ -14,6 +14,8 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 /// CP Configuration — parity with web `app/(cp)/cp/settings/page.tsx`.
 class CpProfileSettingsScreen extends ConsumerStatefulWidget {
@@ -324,7 +326,7 @@ class _CpProfileSettingsScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     DateTime temp = initial;
 
-    final result = await showModalBottomSheet<DateTime>(
+    final result = await showM4Sheet<DateTime>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -436,8 +438,24 @@ class _CpProfileSettingsScreenState
   }
 
   Future<void> _deactivateSessions() async {
-    final go = await showDialog<bool>(
+    final go = await showM4Dialog<bool>(
       context: context,
+      iosAlert: (ctx) => M4IosAlert(
+        title: 'Deactivate sessions?',
+        message: 'You will be logged out everywhere, including this device.',
+        actions: [
+          M4IosAlertAction(
+            'Cancel',
+            isDefault: true,
+            onPressed: () => Navigator.pop(ctx, false),
+          ),
+          M4IosAlertAction(
+            'Continue',
+            isDestructive: true,
+            onPressed: () => Navigator.pop(ctx, true),
+          ),
+        ],
+      ),
       builder: (ctx) => AlertDialog(
         title: Text(
           'Deactivate sessions?',
@@ -498,8 +516,25 @@ class _CpProfileSettingsScreenState
   }
 
   Future<void> _deleteAccount() async {
-    final go = await showDialog<bool>(
+    final go = await showM4Dialog<bool>(
       context: context,
+      iosAlert: (ctx) => M4IosAlert(
+        title: 'Permanent deactivation',
+        message:
+            'CRITICAL: This will remove your data from M4 Family. Continue?',
+        actions: [
+          M4IosAlertAction(
+            'Cancel',
+            isDefault: true,
+            onPressed: () => Navigator.pop(ctx, false),
+          ),
+          M4IosAlertAction(
+            'Deactivate',
+            isDestructive: true,
+            onPressed: () => Navigator.pop(ctx, true),
+          ),
+        ],
+      ),
       builder: (ctx) => AlertDialog(
         title: Text(
           'Permanent deactivation',
@@ -563,7 +598,7 @@ class _CpProfileSettingsScreenState
     _curPass.clear();
     _newPass.clear();
     _confPass.clear();
-    showDialog<void>(
+    showM4Dialog<void>(
       context: context,
       builder: (ctx) {
         var submitting = false;
@@ -699,9 +734,11 @@ class _CpProfileSettingsScreenState
                       ? const SizedBox(
                           width: 18,
                           height: 18,
-                          child: CircularProgressIndicator(
+                          child: CircularProgressIndicator.adaptive(
                             strokeWidth: 2,
-                            color: Colors.white,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : Text(
@@ -771,9 +808,9 @@ class _CpProfileSettingsScreenState
                   SizedBox(
                     width: 48,
                     height: 48,
-                    child: CircularProgressIndicator(
+                    child: CircularProgressIndicator.adaptive(
                       strokeWidth: 2,
-                      color: scheme.primary,
+                      valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -919,9 +956,11 @@ class _CpProfileSettingsScreenState
                       ? const SizedBox(
                           width: 16,
                           height: 16,
-                          child: CircularProgressIndicator(
+                          child: CircularProgressIndicator.adaptive(
                             strokeWidth: 2,
-                            color: Colors.white,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : Text(
@@ -1065,9 +1104,11 @@ class _CpProfileSettingsScreenState
                             child: SizedBox(
                               width: 28,
                               height: 28,
-                              child: CircularProgressIndicator(
+                              child: CircularProgressIndicator.adaptive(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                               ),
                             ),
                           ),
@@ -1478,9 +1519,9 @@ class _CpProfileSettingsScreenState
               ? SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(
+                  child: CircularProgressIndicator.adaptive(
                     strokeWidth: 2,
-                    color: scheme.error,
+                    valueColor: AlwaysStoppedAnimation<Color>(scheme.error),
                   ),
                 )
               : Text(
@@ -1504,9 +1545,11 @@ class _CpProfileSettingsScreenState
           ? SizedBox(
               width: 18,
               height: 18,
-              child: CircularProgressIndicator(
+              child: CircularProgressIndicator.adaptive(
                 strokeWidth: 2,
-                color: scheme.onSurface.withValues(alpha: 0.3),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  scheme.onSurface.withValues(alpha: 0.3),
+                ),
               ),
             )
           : Text(

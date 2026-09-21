@@ -12,6 +12,7 @@ import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 import 'package:m4_mobile/presentation/widgets/portal_bottom_nav.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 class ScheduleVisitScreen extends ConsumerStatefulWidget {
   const ScheduleVisitScreen({super.key});
@@ -106,7 +107,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     if (temp.isBefore(minSchedule)) temp = now.add(const Duration(days: 1));
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final result = await showModalBottomSheet<DateTime>(
+    final result = await showM4Sheet<DateTime>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -464,7 +465,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             projectsAsync.when(
               data: (projects) => _buildDropdown(projects),
               loading: () => const Center(
-                child: CircularProgressIndicator(strokeWidth: 2),
+                child: CircularProgressIndicator.adaptive(strokeWidth: 2),
               ),
               error: (e, s) => Text(
                 'Error loading projects',
@@ -994,9 +995,11 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             ? SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(
+                child: CircularProgressIndicator.adaptive(
                   strokeWidth: 2,
-                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    isDark ? Colors.black : const Color(0xFFF4EFE3),
+                  ),
                 ),
               )
             : Row(

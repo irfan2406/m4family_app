@@ -251,8 +251,10 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
               Expanded(
                 child: _isLoading
                     ? Center(
-                        child: CircularProgressIndicator(
-                          color: scheme.onSurface,
+                        child: CircularProgressIndicator.adaptive(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            scheme.onSurface,
+                          ),
                         ),
                       )
                     : _items.isEmpty

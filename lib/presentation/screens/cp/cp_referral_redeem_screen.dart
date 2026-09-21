@@ -197,12 +197,14 @@ class _CpReferralRedeemScreenState
             Expanded(
               child: _loading
                   ? Center(
-                      child: CircularProgressIndicator(
-                        color: scheme.onSurface,
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          scheme.onSurface,
+                        ),
                         strokeWidth: 2,
                       ),
                     )
-                  : RefreshIndicator(
+                  : RefreshIndicator.adaptive(
                       onRefresh: _load,
                       color: scheme.onSurface,
                       child: SingleChildScrollView(
@@ -562,9 +564,9 @@ class _CpReferralRedeemScreenState
               ? SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(
+                  child: CircularProgressIndicator.adaptive(
                     strokeWidth: 2,
-                    color: scheme.surface,
+                    valueColor: AlwaysStoppedAnimation<Color>(scheme.surface),
                   ),
                 )
               : Row(

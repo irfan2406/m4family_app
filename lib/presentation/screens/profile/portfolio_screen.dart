@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 /// PORTFOLIO — "MY INVESTMENTS" summary of the user's property holdings.
 ///
@@ -169,14 +170,16 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   Widget _buildBody(bool isDark) {
     if (_isLoading) {
       return const Center(
-        child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+        child: CircularProgressIndicator.adaptive(
+          valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+        ),
       );
     }
     if (_hasError) {
       return _buildErrorState(isDark);
     }
 
-    return RefreshIndicator(
+    return RefreshIndicator.adaptive(
       color: M4Theme.premiumBlue,
       onRefresh: _fetchPortfolio,
       child: SingleChildScrollView(
@@ -568,7 +571,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
 
-    showModalBottomSheet(
+    showM4Sheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,

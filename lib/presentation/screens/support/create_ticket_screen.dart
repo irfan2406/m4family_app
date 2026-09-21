@@ -699,8 +699,10 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
             ? SizedBox(
                 height: 20,
                 width: 20,
-                child: CircularProgressIndicator(
-                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                child: CircularProgressIndicator.adaptive(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    isDark ? Colors.black : const Color(0xFFF4EFE3),
+                  ),
                   strokeWidth: 2,
                 ),
               )

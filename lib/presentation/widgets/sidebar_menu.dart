@@ -12,6 +12,7 @@ import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
 import 'package:m4_mobile/presentation/screens/careers/careers_screen.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 class SidebarMenu extends ConsumerStatefulWidget {
   const SidebarMenu({super.key});
@@ -382,8 +383,28 @@ class _SidebarExitButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () {
-        showDialog(
+        showM4Dialog(
           context: context,
+          iosAlert: (context) => M4IosAlert(
+            title: 'Logout',
+            message: 'Are you sure you want to logout?',
+            actions: [
+              M4IosAlertAction(
+                'CANCEL',
+                isDefault: true,
+                onPressed: () => Navigator.pop(context),
+              ),
+              M4IosAlertAction(
+                'LOGOUT',
+                isDestructive: true,
+                onPressed: () {
+                  ref.read(authProvider.notifier).logout();
+                  Navigator.pop(context);
+                  context.go('/home');
+                },
+              ),
+            ],
+          ),
           builder: (context) => AlertDialog(
             backgroundColor: Theme.of(context).brightness == Brightness.dark
                 ? const Color(0xFF141B3A)

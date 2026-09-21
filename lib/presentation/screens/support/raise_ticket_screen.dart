@@ -501,11 +501,13 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                             ? SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(
+                                child: CircularProgressIndicator.adaptive(
                                   strokeWidth: 2,
-                                  color: isDark
-                                      ? Colors.black
-                                      : const Color(0xFFF4EFE3),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    isDark
+                                        ? Colors.black
+                                        : const Color(0xFFF4EFE3),
+                                  ),
                                 ),
                               )
                             : Row(

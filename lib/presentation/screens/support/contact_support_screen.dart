@@ -101,7 +101,9 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
           bottom: false,
           child: _isLoading
               ? const Center(
-                  child: CircularProgressIndicator(color: Colors.black26),
+                  child: CircularProgressIndicator.adaptive(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.black26),
+                  ),
                 )
               : SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(

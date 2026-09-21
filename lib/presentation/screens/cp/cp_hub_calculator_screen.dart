@@ -124,7 +124,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
           _sliderBlock(
             label: 'Investment Amount',
             valueText: fmt.format(_investment),
-            child: Slider(
+            child: Slider.adaptive(
               value: _investment,
               min: 1e6,
               max: 5e7,
@@ -138,7 +138,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
           _sliderBlock(
             label: 'Duration (Years)',
             valueText: '${_years.toInt()} Years',
-            child: Slider(
+            child: Slider.adaptive(
               value: _years,
               min: 1,
               max: 10,
@@ -152,7 +152,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
           _sliderBlock(
             label: 'Expected ROI',
             valueText: '${_rate.toStringAsFixed(1)}%',
-            child: Slider(
+            child: Slider.adaptive(
               value: _rate,
               min: 5,
               max: 25,

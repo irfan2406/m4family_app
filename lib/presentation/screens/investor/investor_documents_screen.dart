@@ -9,6 +9,8 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 /// Investor legal vault — parity with web `app/investor/documents/page.tsx`.
 /// Secure document repository: filters (All/Agreement/Receipt/NOC/Plan/Booking),
@@ -182,8 +184,10 @@ class _InvestorDocumentsScreenState
             Expanded(
               child: _loading
                   ? const Center(
-                      child: CircularProgressIndicator(
-                        color: M4Theme.premiumBlue,
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          M4Theme.premiumBlue,
+                        ),
                       ),
                     )
                   : Column(
@@ -324,7 +328,7 @@ class _InvestorDocumentsScreenState
       return _buildErrorState(isDark, textPrimary);
     }
     final docs = _filteredDocs;
-    return RefreshIndicator(
+    return RefreshIndicator.adaptive(
       color: M4Theme.premiumBlue,
       onRefresh: _fetchDocuments,
       child: docs.isEmpty
@@ -472,7 +476,7 @@ class _InvestorDocumentsScreenState
     Color textPrimary,
   ) {
     if (kIsWeb) {
-      showDialog(
+      showM4Dialog(
         context: context,
         barrierColor: Colors.black.withValues(alpha: 0.6),
         builder: (ctx) => Dialog(
@@ -491,7 +495,7 @@ class _InvestorDocumentsScreenState
         ),
       );
     } else {
-      showModalBottomSheet(
+      showM4Sheet(
         context: context,
         backgroundColor: Colors.transparent,
         isScrollControlled: true,

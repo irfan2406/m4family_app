@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 class SiteVisitScreen extends ConsumerStatefulWidget {
   final dynamic project;
@@ -97,7 +98,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Web parity: absolute Day/Month/Year + time wheel picker (CANCEL/CONFIRM).
-    final result = await showModalBottomSheet<DateTime>(
+    final result = await showM4Sheet<DateTime>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -629,10 +630,10 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                       ? SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(
-                            color: isDark
-                                ? Colors.black
-                                : const Color(0xFFF4EFE3),
+                          child: CircularProgressIndicator.adaptive(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              isDark ? Colors.black : const Color(0xFFF4EFE3),
+                            ),
                             strokeWidth: 2,
                           ),
                         )

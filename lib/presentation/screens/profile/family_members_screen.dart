@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 import 'package:go_router/go_router.dart';
 
 class FamilyMembersScreen extends ConsumerStatefulWidget {
@@ -108,8 +109,24 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
 
   Future<void> _handleDelete(int index) async {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showM4Dialog<bool>(
       context: context,
+      iosAlert: (ctx) => M4IosAlert(
+        title: 'REMOVE MEMBER',
+        message: 'Are you sure you want to remove this family member?',
+        actions: [
+          M4IosAlertAction(
+            'CANCEL',
+            isDefault: true,
+            onPressed: () => Navigator.pop(ctx, false),
+          ),
+          M4IosAlertAction(
+            'REMOVE',
+            isDestructive: true,
+            onPressed: () => Navigator.pop(ctx, true),
+          ),
+        ],
+      ),
       builder: (ctx) => Dialog(
         backgroundColor: Colors.transparent,
         insetPadding: const EdgeInsets.symmetric(horizontal: 24),
@@ -220,7 +237,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
     String relation = existing?['relation']?.toString() ?? '';
     String dob = existing?['dob']?.toString() ?? '';
 
-    await showDialog<void>(
+    await showM4Dialog<void>(
       context: context,
       builder: (ctx) {
         return StatefulBuilder(

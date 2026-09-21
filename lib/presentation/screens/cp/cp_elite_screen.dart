@@ -153,12 +153,14 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
             Expanded(
               child: _loading
                   ? const Center(
-                      child: CircularProgressIndicator(
-                        color: M4Theme.premiumBlue,
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          M4Theme.premiumBlue,
+                        ),
                         strokeWidth: 2,
                       ),
                     )
-                  : RefreshIndicator(
+                  : RefreshIndicator.adaptive(
                       onRefresh: _load,
                       color: textPrimary,
                       child: SingleChildScrollView(

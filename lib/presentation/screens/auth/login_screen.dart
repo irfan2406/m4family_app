@@ -295,8 +295,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ? const SizedBox(
                     width: 24,
                     height: 24,
-                    child: CircularProgressIndicator(
-                      color: Color(0xFF0C312B),
+                    child: CircularProgressIndicator.adaptive(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFF0C312B),
+                      ),
                       strokeWidth: 2,
                     ),
                   )
@@ -514,7 +516,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
             child: authState.status == AuthStatus.loading
-                ? const CircularProgressIndicator(color: Colors.black)
+                ? const CircularProgressIndicator.adaptive(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                  )
                 : Text(
                     'AUTHENTICATE TOKEN',
                     style: GoogleFonts.gelasio(

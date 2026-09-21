@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 /// Investor account deactivation — parity with the web
 /// `/investor/profile/delete-account` purge protocol.
@@ -96,8 +97,26 @@ class _InvestorDeleteAccountScreenState
   Future<void> _handleDelete() async {
     if (!_canSubmit) return;
 
-    final go = await showDialog<bool>(
+    final go = await showM4Dialog<bool>(
       context: context,
+      iosAlert: (ctx) => M4IosAlert(
+        title: 'FINAL CONFIRMATION',
+        message:
+            'This permanently purges your investor account and your entire '
+            'digital legacy within M4. This action cannot be undone.',
+        actions: [
+          M4IosAlertAction(
+            'CANCEL',
+            isDefault: true,
+            onPressed: () => Navigator.pop(ctx, false),
+          ),
+          M4IosAlertAction(
+            'EXECUTE PURGE',
+            isDestructive: true,
+            onPressed: () => Navigator.pop(ctx, true),
+          ),
+        ],
+      ),
       builder: (ctx) {
         final isDark = Theme.of(ctx).brightness == Brightness.dark;
         return AlertDialog(
@@ -680,9 +699,11 @@ class _InvestorDeleteAccountScreenState
               ? const SizedBox(
                   width: 22,
                   height: 22,
-                  child: CircularProgressIndicator(
+                  child: CircularProgressIndicator.adaptive(
                     strokeWidth: 2,
-                    color: const Color(0xFFF4EFE3),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      const Color(0xFFF4EFE3),
+                    ),
                   ),
                 )
               : Row(

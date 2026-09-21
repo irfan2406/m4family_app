@@ -13,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 import 'package:go_router/go_router.dart';
 
 class CustomViewsScreen extends ConsumerStatefulWidget {
@@ -853,7 +854,8 @@ class _ProjectSelectionStep extends ConsumerWidget {
               );
             }).toList(),
           ),
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () =>
+              const Center(child: CircularProgressIndicator.adaptive()),
           error: (e, s) => Text('Error: $e'),
         ),
 
@@ -1356,7 +1358,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
         ),
         const SizedBox(height: 32),
         if (!isConfigMode && optionsAsync.isLoading)
-          const Center(child: CircularProgressIndicator())
+          const Center(child: CircularProgressIndicator.adaptive())
         else
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2161,7 +2163,7 @@ class _ConsultationSection extends ConsumerWidget {
     final emailController = TextEditingController();
     bool isLoading = false;
 
-    showDialog(
+    showM4Dialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => Dialog(
@@ -2331,8 +2333,10 @@ class _ConsultationSection extends ConsumerWidget {
                         ? SizedBox(
                             height: 20,
                             width: 20,
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).colorScheme.surface,
+                            child: CircularProgressIndicator.adaptive(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).colorScheme.surface,
+                              ),
                               strokeWidth: 2,
                             ),
                           )

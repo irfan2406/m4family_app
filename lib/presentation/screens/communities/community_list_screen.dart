@@ -221,8 +221,10 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(100.0),
-                  child: CircularProgressIndicator(
-                    color: isDark ? Colors.white : const Color(0xFF0C312B),
+                  child: CircularProgressIndicator.adaptive(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      isDark ? Colors.white : const Color(0xFF0C312B),
+                    ),
                   ),
                 ),
               ),

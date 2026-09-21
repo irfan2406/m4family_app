@@ -290,7 +290,10 @@ class _CpProfileDetailsScreenState
           child: SizedBox(
             width: 32,
             height: 32,
-            child: CircularProgressIndicator(strokeWidth: 2.5, color: _purple),
+            child: CircularProgressIndicator.adaptive(
+              strokeWidth: 2.5,
+              valueColor: AlwaysStoppedAnimation<Color>(_purple),
+            ),
           ),
         ),
       );
@@ -525,9 +528,11 @@ class _CpProfileDetailsScreenState
                       child: SizedBox(
                         width: 26,
                         height: 26,
-                        child: CircularProgressIndicator(
+                        child: CircularProgressIndicator.adaptive(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -710,9 +715,11 @@ class _CpProfileDetailsScreenState
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(
+                        child: CircularProgressIndicator.adaptive(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : Text(

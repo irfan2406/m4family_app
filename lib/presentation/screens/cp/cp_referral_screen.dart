@@ -8,6 +8,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/screens/profile/referral_redeem_screen.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 /// Web `/cp/referral` parity: wallet card + action grid + referral history.
 class CpReferralScreen extends ConsumerStatefulWidget {
@@ -119,12 +120,14 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
             Expanded(
               child: _loading
                   ? Center(
-                      child: CircularProgressIndicator(
-                        color: scheme.onSurface,
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          scheme.onSurface,
+                        ),
                         strokeWidth: 2,
                       ),
                     )
-                  : RefreshIndicator(
+                  : RefreshIndicator.adaptive(
                       onRefresh: _load,
                       color: scheme.onSurface,
                       child: SingleChildScrollView(
@@ -540,7 +543,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
 
     bool submitting = false;
 
-    showModalBottomSheet(
+    showM4Sheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -612,9 +615,11 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                           height: 56,
                           decoration: _inputDecoration(scheme, isDark),
                           child: Center(
-                            child: CircularProgressIndicator(
+                            child: CircularProgressIndicator.adaptive(
                               strokeWidth: 2,
-                              color: scheme.onSurface,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                scheme.onSurface,
+                              ),
                             ),
                           ),
                         ),
@@ -779,9 +784,11 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                           ? SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(
+                              child: CircularProgressIndicator.adaptive(
                                 strokeWidth: 2,
-                                color: scheme.surface,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  scheme.surface,
+                                ),
                               ),
                             )
                           : Text(

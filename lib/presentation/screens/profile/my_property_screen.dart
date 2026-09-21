@@ -53,8 +53,8 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             _buildHeader(isDark),
             Expanded(
               child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : RefreshIndicator(
+                  ? const Center(child: CircularProgressIndicator.adaptive())
+                  : RefreshIndicator.adaptive(
                       onRefresh: _fetchBookings,
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),

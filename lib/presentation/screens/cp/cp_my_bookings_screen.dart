@@ -909,13 +909,15 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                           child: SizedBox(
                             width: 40,
                             height: 40,
-                            child: CircularProgressIndicator(
-                              color: scheme.primary,
+                            child: CircularProgressIndicator.adaptive(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                scheme.primary,
+                              ),
                               strokeWidth: 3.5,
                             ),
                           ),
                         )
-                      : RefreshIndicator(
+                      : RefreshIndicator.adaptive(
                           onRefresh: _load,
                           child: filtered.isEmpty
                               ? ListView(

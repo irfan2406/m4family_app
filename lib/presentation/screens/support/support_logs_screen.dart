@@ -8,6 +8,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui';
 import 'package:m4_mobile/presentation/screens/support/create_ticket_screen.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 class SupportLogsScreen extends ConsumerStatefulWidget {
   const SupportLogsScreen({super.key});
@@ -76,10 +77,10 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                 Expanded(
                   child: state.isLoading && state.tickets.isEmpty
                       ? Center(
-                          child: CircularProgressIndicator(
-                            color: isDark
-                                ? Colors.white
-                                : const Color(0xFF0C312B),
+                          child: CircularProgressIndicator.adaptive(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              isDark ? Colors.white : const Color(0xFF0C312B),
+                            ),
                             strokeWidth: 2,
                           ),
                         )
@@ -281,8 +282,27 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
   }
 
   void _showCategoryFilter(bool isDark) {
-    showModalBottomSheet(
+    showM4Sheet(
       context: context,
+      iosActionSheet: (ctx) => M4IosActionSheet(
+        title: 'FILTER BY CATEGORY',
+        actions: [
+          for (final (String? value, String label) in const [
+            (null, 'ALL'),
+            ('System', 'SYSTEM'),
+            ('Ticket', 'TICKETS'),
+            ('Update', 'UPDATES'),
+          ])
+            M4IosSheetAction(
+              label,
+              selected: _selectedCategory == value,
+              onPressed: () {
+                setState(() => _selectedCategory = value);
+                Navigator.pop(ctx);
+              },
+            ),
+        ],
+      ),
       backgroundColor: isDark
           ? const Color(0xFF141B3A)
           : const Color(0xFFF4EFE3),
@@ -354,7 +374,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
   }
 
   void _showTicketDetails(TicketModel ticket, bool isDark) {
-    showModalBottomSheet(
+    showM4Sheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,

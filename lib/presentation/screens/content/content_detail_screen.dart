@@ -115,8 +115,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     ),
                   ),
                 const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
+                  child: CircularProgressIndicator.adaptive(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     strokeWidth: 2,
                   ),
                 ),
@@ -298,10 +298,14 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                                 ),
                                               ),
                                             const Center(
-                                              child: CircularProgressIndicator(
-                                                color: Colors.white,
-                                                strokeWidth: 2,
-                                              ),
+                                              child:
+                                                  CircularProgressIndicator.adaptive(
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                          Color
+                                                        >(Colors.white),
+                                                    strokeWidth: 2,
+                                                  ),
                                             ),
                                           ],
                                         ),

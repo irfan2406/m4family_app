@@ -8,6 +8,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 /// Investor profile — parity with web `app/investor/profile/page.tsx`
 /// (profile card, points, property services, referral, logout). Follows M4 conventions.
@@ -88,7 +89,9 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
       return Scaffold(
         backgroundColor: bg,
         body: const Center(
-          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+          child: CircularProgressIndicator.adaptive(
+            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+          ),
         ),
       );
     }
@@ -571,8 +574,24 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
       color: Colors.transparent,
       child: InkWell(
         onTap: () async {
-          final go = await showDialog<bool>(
+          final go = await showM4Dialog<bool>(
             context: context,
+            iosAlert: (ctx) => M4IosAlert(
+              title: 'Log out',
+              message: 'Sign out of your investor account?',
+              actions: [
+                M4IosAlertAction(
+                  'Cancel',
+                  isDefault: true,
+                  onPressed: () => Navigator.pop(ctx, false),
+                ),
+                M4IosAlertAction(
+                  'Log out',
+                  isDestructive: true,
+                  onPressed: () => Navigator.pop(ctx, true),
+                ),
+              ],
+            ),
             builder: (ctx) => AlertDialog(
               title: Text(
                 'Log out',

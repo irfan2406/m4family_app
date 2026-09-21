@@ -435,8 +435,10 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                     elevation: 0,
                   ),
                   child: _isSubmitting
-                      ? CircularProgressIndicator(
-                          color: Theme.of(context).scaffoldBackgroundColor,
+                      ? CircularProgressIndicator.adaptive(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).scaffoldBackgroundColor,
+                          ),
                         )
                       : Text(
                           'SUBMIT APPLICATION',

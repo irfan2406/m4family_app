@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 /// Investor `/investor/referral` parity (web `app/investor/referral/page.tsx`):
 /// referral code card, stats (points / active / closed), quick redeem, refer &
@@ -120,13 +121,15 @@ class _InvestorReferralScreenState
             Expanded(
               child: _loading
                   ? Center(
-                      child: CircularProgressIndicator(
-                        color: isDark ? Colors.white : const Color(0xFF0C312B),
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isDark ? Colors.white : const Color(0xFF0C312B),
+                        ),
                       ),
                     )
                   : _error && _wallet == null && _referrals.isEmpty
                   ? _buildErrorState(isDark, textPrimary)
-                  : RefreshIndicator(
+                  : RefreshIndicator.adaptive(
                       onRefresh: _load,
                       color: isDark ? Colors.white : const Color(0xFF0C312B),
                       backgroundColor: isDark
@@ -834,7 +837,7 @@ class _InvestorReferralScreenState
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
 
-    showModalBottomSheet(
+    showM4Sheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -908,11 +911,13 @@ class _InvestorReferralScreenState
                               child: SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(
+                                child: CircularProgressIndicator.adaptive(
                                   strokeWidth: 2,
-                                  color: isDark
-                                      ? Colors.white
-                                      : const Color(0xFF0C312B),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B),
+                                  ),
                                 ),
                               ),
                             ),
@@ -1108,11 +1113,13 @@ class _InvestorReferralScreenState
                             ? SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(
+                                child: CircularProgressIndicator.adaptive(
                                   strokeWidth: 2,
-                                  color: isDark
-                                      ? Colors.black
-                                      : const Color(0xFFF4EFE3),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    isDark
+                                        ? Colors.black
+                                        : const Color(0xFFF4EFE3),
+                                  ),
                                 ),
                               )
                             : Text(

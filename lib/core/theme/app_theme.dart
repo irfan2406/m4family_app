@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m4_mobile/core/platform/m4_platform.dart';
+import 'package:m4_mobile/core/theme/ios_theme.dart';
 
 /// M4 Family design system — aligned 1:1 with the Figma "M4 Web Screen".
 ///
@@ -205,7 +207,15 @@ class M4Theme {
   // ===================================================================
   // THEMES
   // ===================================================================
-  static final ThemeData lightTheme = ThemeData(
+  /// The M4 light theme. On iOS it also carries the platform presentation
+  /// tweaks in [M4IosTheme]; on every other platform it is [_lightBase]
+  /// itself, the same object as always.
+  static ThemeData get lightTheme => M4Platform.isIOS
+      ? (_lightIos ??= M4IosTheme.adapt(_lightBase))
+      : _lightBase;
+  static ThemeData? _lightIos;
+
+  static final ThemeData _lightBase = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
     scaffoldBackgroundColor: lightBackground,
@@ -458,7 +468,15 @@ class M4Theme {
     ),
   );
 
-  static final ThemeData darkTheme = ThemeData(
+  /// The deep-green showcase theme. On iOS it also carries the platform
+  /// presentation tweaks in [M4IosTheme]; on every other platform it is
+  /// [_darkBase] itself, the same object as always.
+  static ThemeData get darkTheme => M4Platform.isIOS
+      ? (_darkIos ??= M4IosTheme.adapt(_darkBase))
+      : _darkBase;
+  static ThemeData? _darkIos;
+
+  static final ThemeData _darkBase = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
     scaffoldBackgroundColor: darkBackground,

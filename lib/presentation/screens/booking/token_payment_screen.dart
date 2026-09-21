@@ -640,8 +640,10 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     const SizedBox(
                       height: 56,
                       child: Center(
-                        child: CircularProgressIndicator(
-                          color: M4Theme.premiumBlue,
+                        child: CircularProgressIndicator.adaptive(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            M4Theme.premiumBlue,
+                          ),
                         ),
                       ),
                     )
@@ -951,8 +953,10 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                                   const SizedBox(
                                     width: 32,
                                     height: 32,
-                                    child: CircularProgressIndicator(
-                                      color: M4Theme.premiumBlue,
+                                    child: CircularProgressIndicator.adaptive(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        M4Theme.premiumBlue,
+                                      ),
                                       strokeWidth: 3,
                                     ),
                                   )

@@ -211,8 +211,10 @@ class _InvestorRelationsScreenState
           bottom: false,
           child: _isLoading
               ? Center(
-                  child: CircularProgressIndicator(
-                    color: isDark ? Colors.white24 : Colors.black12,
+                  child: CircularProgressIndicator.adaptive(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      isDark ? Colors.white24 : Colors.black12,
+                    ),
                   ),
                 )
               : SingleChildScrollView(
@@ -430,9 +432,11 @@ class _InvestorRelationsScreenState
                 ? SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(
+                    child: CircularProgressIndicator.adaptive(
                       strokeWidth: 2,
-                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        isDark ? Colors.black : const Color(0xFFF4EFE3),
+                      ),
                     ),
                   )
                 : Text(

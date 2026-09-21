@@ -179,7 +179,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
           // Blog List
           if (_loading)
             const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator()),
+              child: Center(child: CircularProgressIndicator.adaptive()),
             )
           else if (_items.isEmpty)
             SliverFillRemaining(

@@ -22,6 +22,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -532,7 +533,7 @@ class _GuestProjectDetailScreenState
     _modalErrorMessage = null;
     _notesController.clear();
 
-    showDialog(
+    showM4Dialog(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.6),
       builder: (context) => StatefulBuilder(
@@ -1064,8 +1065,10 @@ class _GuestProjectDetailScreenState
                               imageUrl: apiClient.resolveUrl(raw),
                               fit: BoxFit.contain,
                               placeholder: (context, url) => const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white24,
+                                child: CircularProgressIndicator.adaptive(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white24,
+                                  ),
                                 ),
                               ),
                               errorWidget: (context, url, error) => const Icon(
@@ -1178,7 +1181,9 @@ class _GuestProjectDetailScreenState
       return Scaffold(
         backgroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
         body: const Center(
-          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+          child: CircularProgressIndicator.adaptive(
+            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+          ),
         ),
       );
     }

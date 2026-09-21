@@ -300,7 +300,9 @@ class _InvestorProfileDetailsScreenState
       return Scaffold(
         backgroundColor: bg,
         body: const Center(
-          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+          child: CircularProgressIndicator.adaptive(
+            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+          ),
         ),
       );
     }
@@ -536,9 +538,11 @@ class _InvestorProfileDetailsScreenState
                       child: SizedBox(
                         width: 26,
                         height: 26,
-                        child: CircularProgressIndicator(
+                        child: CircularProgressIndicator.adaptive(
                           strokeWidth: 2,
-                          color: const Color(0xFFF4EFE3),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            const Color(0xFFF4EFE3),
+                          ),
                         ),
                       ),
                     ),
@@ -805,9 +809,11 @@ class _InvestorProfileDetailsScreenState
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(
+                        child: CircularProgressIndicator.adaptive(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : Text(

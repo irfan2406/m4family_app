@@ -123,8 +123,10 @@ class _CpTaxReportDetailScreenState
             Expanded(
               child: _loading && _report == null
                   ? const Center(
-                      child: CircularProgressIndicator(
-                        color: M4Theme.premiumBlue,
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          M4Theme.premiumBlue,
+                        ),
                       ),
                     )
                   : (_error && _report == null)
@@ -217,7 +219,7 @@ class _CpTaxReportDetailScreenState
     const red = Color(0xFFC65B46);
     const green = Color(0xFF163A2C);
 
-    return RefreshIndicator(
+    return RefreshIndicator.adaptive(
       color: M4Theme.premiumBlue,
       onRefresh: _load,
       child: ListView(

@@ -266,13 +266,15 @@ class _InvestorInstallmentsScreenState
             Expanded(
               child: _loading
                   ? const Center(
-                      child: CircularProgressIndicator(
-                        color: M4Theme.premiumBlue,
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          M4Theme.premiumBlue,
+                        ),
                       ),
                     )
                   : _error
                   ? _buildError(isDark, textPrimary, muted)
-                  : RefreshIndicator(
+                  : RefreshIndicator.adaptive(
                       onRefresh: _fetchInstallments,
                       color: M4Theme.premiumBlue,
                       child: CustomScrollView(

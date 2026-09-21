@@ -65,15 +65,17 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
               _buildSearchBar(context, isDark, foreground),
               _buildSectionInfo(context, filteredLogs.length, foreground),
               Expanded(
-                child: RefreshIndicator(
+                child: RefreshIndicator.adaptive(
                   onRefresh: () =>
                       ref.read(selectionLogsProvider.notifier).fetchLogs(),
                   color: foreground,
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   child: state.isLoading && state.logs.isEmpty
                       ? Center(
-                          child: CircularProgressIndicator(
-                            color: foreground.withOpacity(0.2),
+                          child: CircularProgressIndicator.adaptive(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              foreground.withOpacity(0.2),
+                            ),
                           ),
                         )
                       : filteredLogs.isEmpty

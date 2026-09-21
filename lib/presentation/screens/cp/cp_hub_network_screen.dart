@@ -98,8 +98,8 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
+          ? const Center(child: CircularProgressIndicator.adaptive())
+          : RefreshIndicator.adaptive(
               onRefresh: _load,
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),

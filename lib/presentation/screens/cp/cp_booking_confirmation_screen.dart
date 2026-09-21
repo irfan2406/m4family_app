@@ -148,7 +148,9 @@ class _CpBookingConfirmationScreenState
             ? const Color(0xFF141B3A)
             : const Color(0xFFF4EFE3),
         body: const Center(
-          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+          child: CircularProgressIndicator.adaptive(
+            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+          ),
         ),
       );
     }

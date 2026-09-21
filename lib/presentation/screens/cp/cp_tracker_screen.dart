@@ -117,12 +117,12 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             Expanded(
               child: _loading
                   ? const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.black,
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
                         strokeWidth: 2,
                       ),
                     )
-                  : RefreshIndicator(
+                  : RefreshIndicator.adaptive(
                       onRefresh: _load,
                       color: Colors.black,
                       child: ListView(

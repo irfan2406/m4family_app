@@ -132,8 +132,10 @@ class _InvestorReferralClosedScreenState
             Expanded(
               child: _loading
                   ? const Center(
-                      child: CircularProgressIndicator(
-                        color: M4Theme.premiumBlue,
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          M4Theme.premiumBlue,
+                        ),
                         strokeWidth: 2,
                       ),
                     )
@@ -200,7 +202,7 @@ class _InvestorReferralClosedScreenState
         ? Colors.white.withValues(alpha: 0.03)
         : const Color(0xFFF4EFE3);
 
-    return RefreshIndicator(
+    return RefreshIndicator.adaptive(
       onRefresh: _load,
       color: M4Theme.premiumBlue,
       child: ListView(
@@ -410,7 +412,7 @@ class _InvestorReferralClosedScreenState
 
   // ─── Empty ───────────────────────────────────────────────────────────────
   Widget _buildEmpty(Color muted) {
-    return RefreshIndicator(
+    return RefreshIndicator.adaptive(
       onRefresh: _load,
       color: M4Theme.premiumBlue,
       child: ListView(

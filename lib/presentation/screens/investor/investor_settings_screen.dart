@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 /// Investor settings — parity with web `app/investor/settings/page.tsx`
 /// (profile fields name/email/phone + save, biometric / notifications /
@@ -156,8 +157,24 @@ class _InvestorSettingsScreenState
   }
 
   Future<void> _signOutAllDevices() async {
-    final go = await showDialog<bool>(
+    final go = await showM4Dialog<bool>(
       context: context,
+      iosAlert: (ctx) => M4IosAlert(
+        title: 'Sign out everywhere',
+        message: 'Sign out of your investor account on all devices?',
+        actions: [
+          M4IosAlertAction(
+            'Cancel',
+            isDefault: true,
+            onPressed: () => Navigator.pop(ctx, false),
+          ),
+          M4IosAlertAction(
+            'Sign out',
+            isDestructive: true,
+            onPressed: () => Navigator.pop(ctx, true),
+          ),
+        ],
+      ),
       builder: (ctx) => AlertDialog(
         title: Text(
           'Sign out everywhere',
@@ -203,7 +220,9 @@ class _InvestorSettingsScreenState
       return Scaffold(
         backgroundColor: bg,
         body: const Center(
-          child: CircularProgressIndicator(color: Color(0xFF0C312B)),
+          child: CircularProgressIndicator.adaptive(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0C312B)),
+          ),
         ),
       );
     }
@@ -406,9 +425,11 @@ class _InvestorSettingsScreenState
               ? const SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(
+                  child: CircularProgressIndicator.adaptive(
                     strokeWidth: 2,
-                    color: Color(0xFF0C312B),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Color(0xFF0C312B),
+                    ),
                   ),
                 )
               : Material(
@@ -625,7 +646,7 @@ class _InvestorSettingsScreenState
               ],
             ),
           ),
-          Switch(
+          Switch.adaptive(
             value: value,
             onChanged: onChanged,
             activeColor: _gold,

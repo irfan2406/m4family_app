@@ -113,7 +113,11 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
         ),
       ),
       body: _loading
-          ? Center(child: CircularProgressIndicator(color: accent))
+          ? Center(
+              child: CircularProgressIndicator.adaptive(
+                valueColor: AlwaysStoppedAnimation<Color>(accent),
+              ),
+            )
           : _error != null
           ? Center(
               child: Text(
@@ -121,7 +125,7 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
                 style: GoogleFonts.inter(color: scheme.onSurfaceVariant),
               ),
             )
-          : RefreshIndicator(
+          : RefreshIndicator.adaptive(
               onRefresh: _load,
               child: ListView.separated(
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),

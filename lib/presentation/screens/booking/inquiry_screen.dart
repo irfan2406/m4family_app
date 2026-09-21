@@ -397,10 +397,12 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                           ? SizedBox(
                               width: 24,
                               height: 24,
-                              child: CircularProgressIndicator(
-                                color: isDark
-                                    ? Colors.black
-                                    : const Color(0xFFF4EFE3),
+                              child: CircularProgressIndicator.adaptive(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  isDark
+                                      ? Colors.black
+                                      : const Color(0xFFF4EFE3),
+                                ),
                                 strokeWidth: 3,
                               ),
                             )

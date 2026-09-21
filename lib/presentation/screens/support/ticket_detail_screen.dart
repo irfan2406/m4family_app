@@ -202,8 +202,10 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             Expanded(
               child: _loading
                   ? const Center(
-                      child: CircularProgressIndicator(
-                        color: M4Theme.premiumBlue,
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          M4Theme.premiumBlue,
+                        ),
                       ),
                     )
                   : _error != null
@@ -697,9 +699,11 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               child: _sending
                   ? Padding(
                       padding: const EdgeInsets.all(14),
-                      child: CircularProgressIndicator(
+                      child: CircularProgressIndicator.adaptive(
                         strokeWidth: 2,
-                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        ),
                       ),
                     )
                   : Icon(

@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 class CpSidebarMenu extends ConsumerStatefulWidget {
   const CpSidebarMenu({super.key});
@@ -35,9 +36,27 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
     // screen, whose theme reports Brightness.dark, and that would flip the
     // menu to tones it never used in light mode.
     const bool isDark = false;
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showM4Dialog<bool>(
       context: context,
       barrierDismissible: true,
+      // The Android dialog is always cream (see isDark above), so is this.
+      iosAlert: (dialogCtx) => M4IosAlert(
+        title: 'Logout',
+        message: 'Are you sure you want to logout?',
+        brightness: Brightness.light,
+        actions: [
+          M4IosAlertAction(
+            'NO',
+            isDefault: true,
+            onPressed: () => Navigator.of(dialogCtx).pop(false),
+          ),
+          M4IosAlertAction(
+            'YES',
+            isDestructive: true,
+            onPressed: () => Navigator.of(dialogCtx).pop(true),
+          ),
+        ],
+      ),
       builder: (dialogCtx) => Dialog(
         backgroundColor: Colors.transparent,
         insetPadding: const EdgeInsets.symmetric(horizontal: 40),

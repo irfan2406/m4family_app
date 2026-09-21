@@ -721,11 +721,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       child: SizedBox(
                         width: 24,
                         height: 24,
-                        child: CircularProgressIndicator(
+                        child: CircularProgressIndicator.adaptive(
                           strokeWidth: 2,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.4),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.4),
+                          ),
                         ),
                       ),
                     )
@@ -905,7 +907,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 height: (MediaQuery.sizeOf(context).width - 70) * 9 / 16,
                 child: _projectsLoading
                     ? const Center(
-                        child: CircularProgressIndicator(color: Colors.white24),
+                        child: CircularProgressIndicator.adaptive(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white24,
+                          ),
+                        ),
                       )
                     : _projects.isEmpty
                     ? const Center(
@@ -1436,9 +1442,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           ? SizedBox(
                               height: 15,
                               width: 15,
-                              child: CircularProgressIndicator(
+                              child: CircularProgressIndicator.adaptive(
                                 strokeWidth: 2,
-                                color: Theme.of(context).colorScheme.surface,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Theme.of(context).colorScheme.surface,
+                                ),
                               ),
                             )
                           : Text(

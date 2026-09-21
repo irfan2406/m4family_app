@@ -295,7 +295,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
       return Material(
         color: Theme.of(context).scaffoldBackgroundColor,
         child: const Center(
-          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+          child: CircularProgressIndicator.adaptive(
+            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+          ),
         ),
       );
     }
@@ -1859,7 +1861,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         const SizedBox(height: 24),
         Row(
           children: [
-            Checkbox(
+            Checkbox.adaptive(
               value: _agreedToTerms,
               // Un-ticked on submit turns this red in place — no popup.
               onChanged: (val) => setState(() {
@@ -1902,8 +1904,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               ),
               child: Center(
                 child: _submitting
-                    ? CircularProgressIndicator(
-                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    ? CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        ),
                       )
                     : Text(
                         'SUBMIT INTEREST',

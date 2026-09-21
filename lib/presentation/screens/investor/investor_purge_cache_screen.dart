@@ -543,9 +543,11 @@ class _InvestorPurgeCacheScreenState
                       : (_purging
                             ? Padding(
                                 padding: const EdgeInsets.all(4),
-                                child: CircularProgressIndicator(
+                                child: CircularProgressIndicator.adaptive(
                                   strokeWidth: 1.5,
-                                  color: muted,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    muted,
+                                  ),
                                 ),
                               )
                             : null),
@@ -592,9 +594,11 @@ class _InvestorPurgeCacheScreenState
             ? const SizedBox(
                 width: 22,
                 height: 22,
-                child: CircularProgressIndicator(
+                child: CircularProgressIndicator.adaptive(
                   strokeWidth: 2,
-                  color: const Color(0xFFF4EFE3),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    const Color(0xFFF4EFE3),
+                  ),
                 ),
               )
             : Row(

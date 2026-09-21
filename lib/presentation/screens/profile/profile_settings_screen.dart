@@ -433,7 +433,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                               ? Colors.white10
                               : const Color(0xFF163A2C).withOpacity(0.05),
                           child: const Center(
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            child: CircularProgressIndicator.adaptive(
+                              strokeWidth: 2,
+                            ),
                           ),
                         )
                       : _avatarUrl != null
@@ -446,7 +448,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                                 ? Colors.white10
                                 : const Color(0xFF163A2C).withOpacity(0.05),
                             child: const Center(
-                              child: CircularProgressIndicator(strokeWidth: 2),
+                              child: CircularProgressIndicator.adaptive(
+                                strokeWidth: 2,
+                              ),
                             ),
                           ),
                           errorWidget: (_, __, ___) =>
@@ -843,7 +847,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               ],
             ),
           ),
-          Switch(
+          Switch.adaptive(
             value: value,
             onChanged: _isEditing ? onChanged : null,
             activeColor: isDark ? Colors.white : const Color(0xFF0C312B),

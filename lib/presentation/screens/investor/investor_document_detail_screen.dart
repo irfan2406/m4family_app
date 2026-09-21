@@ -159,7 +159,9 @@ class _InvestorDocumentDetailScreenState
       return const SizedBox(
         height: 320,
         child: Center(
-          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+          child: CircularProgressIndicator.adaptive(
+            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+          ),
         ),
       );
     }

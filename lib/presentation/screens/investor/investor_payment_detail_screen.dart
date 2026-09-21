@@ -208,8 +208,10 @@ class _InvestorPaymentDetailScreenState
             Expanded(
               child: _loading && _payment == null
                   ? const Center(
-                      child: CircularProgressIndicator(
-                        color: M4Theme.premiumBlue,
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          M4Theme.premiumBlue,
+                        ),
                       ),
                     )
                   : (_error && _payment == null)

@@ -181,8 +181,10 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
           bottom: false,
           child: _isLoading
               ? Center(
-                  child: CircularProgressIndicator(
-                    color: isDark ? Colors.white24 : Colors.black12,
+                  child: CircularProgressIndicator.adaptive(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      isDark ? Colors.white24 : Colors.black12,
+                    ),
                   ),
                 )
               : SingleChildScrollView(

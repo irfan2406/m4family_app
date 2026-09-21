@@ -62,7 +62,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               _buildHeader(context),
 
               Expanded(
-                child: RefreshIndicator(
+                child: RefreshIndicator.adaptive(
                   onRefresh: () =>
                       ref.read(supportProvider.notifier).fetchTickets(),
                   color: Theme.of(context).colorScheme.onSurface,
@@ -80,8 +80,10 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                           const Center(
                             child: Padding(
                               padding: EdgeInsets.all(40.0),
-                              child: CircularProgressIndicator(
-                                color: Colors.white24,
+                              child: CircularProgressIndicator.adaptive(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white24,
+                                ),
                               ),
                             ),
                           )

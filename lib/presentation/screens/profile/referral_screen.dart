@@ -8,6 +8,7 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/presentation/screens/profile/referral_redeem_screen.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 import 'package:intl/intl.dart';
 
 class ReferralScreen extends ConsumerStatefulWidget {
@@ -129,12 +130,14 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             Expanded(
               child: _isLoading
                   ? Center(
-                      child: CircularProgressIndicator(
-                        color: colorScheme.primary,
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          colorScheme.primary,
+                        ),
                         strokeWidth: 2,
                       ),
                     )
-                  : RefreshIndicator(
+                  : RefreshIndicator.adaptive(
                       onRefresh: _fetchReferralData,
                       color: colorScheme.primary,
                       backgroundColor: theme.cardColor,
@@ -809,7 +812,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     bool isProjectDropdownOpen = false;
     bool isLoading = false;
 
-    showModalBottomSheet(
+    showM4Sheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -998,9 +1001,12 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                   loading: () => Center(
                                     child: Padding(
                                       padding: const EdgeInsets.all(20),
-                                      child: CircularProgressIndicator(
+                                      child: CircularProgressIndicator.adaptive(
                                         strokeWidth: 2,
-                                        color: foreground,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              foreground,
+                                            ),
                                       ),
                                     ),
                                   ),
@@ -1157,8 +1163,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                         ),
                         alignment: Alignment.center,
                         child: isLoading
-                            ? CircularProgressIndicator(
-                                color: theme.colorScheme.surface,
+                            ? CircularProgressIndicator.adaptive(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  theme.colorScheme.surface,
+                                ),
                                 strokeWidth: 2,
                               )
                             : Padding(

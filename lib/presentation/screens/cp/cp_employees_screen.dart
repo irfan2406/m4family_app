@@ -9,6 +9,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 /// Web `/cp/profile/employees` — CP team management.
 /// Lists employees (`GET /api/cp/employees`) with add / edit / delete dialogs
@@ -217,14 +218,14 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             Expanded(
               child: _loading
                   ? Center(
-                      child: CircularProgressIndicator(
-                        color: textPrimary,
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(textPrimary),
                         strokeWidth: 2,
                       ),
                     )
                   : _error != null
                   ? _buildError(textPrimary, muted)
-                  : RefreshIndicator(
+                  : RefreshIndicator.adaptive(
                       onRefresh: _load,
                       color: textPrimary,
                       child: ListView(
@@ -634,8 +635,28 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     if (id.isEmpty) return;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dialogBg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
-    showDialog<void>(
+    showM4Dialog<void>(
       context: context,
+      iosAlert: (ctx) => M4IosAlert(
+        title: 'DELETE EMPLOYEE',
+        message:
+            'Are you sure you want to delete ${name.isEmpty ? 'this employee' : name}?',
+        actions: [
+          M4IosAlertAction(
+            'CANCEL',
+            isDefault: true,
+            onPressed: () => Navigator.of(ctx).pop(),
+          ),
+          M4IosAlertAction(
+            'DELETE',
+            isDestructive: true,
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              _deleteEmployee(id);
+            },
+          ),
+        ],
+      ),
       builder: (ctx) => AlertDialog(
         backgroundColor: dialogBg,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
@@ -714,7 +735,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     );
     final id = isEdit ? (existing['_id']?.toString() ?? '') : '';
 
-    showDialog<void>(
+    showM4Dialog<void>(
       context: context,
       builder: (ctx) {
         bool saving = false;

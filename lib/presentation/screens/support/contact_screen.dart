@@ -176,8 +176,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       bottomNavigationBar: widget.embedded ? null : const PortalBottomNav(),
       body: _isLoading
           ? Center(
-              child: CircularProgressIndicator(
-                color: isDark ? Colors.white24 : Colors.black12,
+              child: CircularProgressIndicator.adaptive(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  isDark ? Colors.white24 : Colors.black12,
+                ),
               ),
             )
           : SafeArea(
@@ -355,9 +357,11 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                 ? SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(
+                    child: CircularProgressIndicator.adaptive(
                       strokeWidth: 2,
-                      color: Theme.of(context).scaffoldBackgroundColor,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).scaffoldBackgroundColor,
+                      ),
                     ),
                   )
                 : Row(

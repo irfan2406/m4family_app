@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 /// The one M4 date/time chooser: a bottom sheet with a drag handle, a
 /// left-aligned title, [WheelDateTimePicker] and CANCEL / CONFIRM — the exact
@@ -23,7 +24,7 @@ Future<DateTime?> showM4DateTimeSheet(
   var temp = initial;
   if (minDate != null && temp.isBefore(minDate)) temp = minDate;
   if (maxDate != null && temp.isAfter(maxDate)) temp = maxDate;
-  return showModalBottomSheet<DateTime>(
+  return showM4Sheet<DateTime>(
     context: context,
     backgroundColor: Colors.transparent,
     isScrollControlled: true,

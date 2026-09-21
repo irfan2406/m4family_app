@@ -19,6 +19,7 @@ import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 /// Renders a project image, decoding base64 `data:` URIs via [Image.memory]
 /// (CachedNetworkImage can only fetch network URLs). Used by the project cards.
@@ -98,7 +99,7 @@ class ProjectListScreen extends ConsumerWidget {
     ];
     final areaOptions = ["< 1000", "1000 - 2000", "2000 - 4000", "4000 +"];
 
-    showModalBottomSheet(
+    showM4Sheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -939,8 +940,10 @@ class ProjectListScreen extends ConsumerWidget {
                                 },
                               ),
                         loading: () => const Center(
-                          child: CircularProgressIndicator(
-                            color: M4Theme.premiumBlue,
+                          child: CircularProgressIndicator.adaptive(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              M4Theme.premiumBlue,
+                            ),
                           ),
                         ),
                         error: (e, s) {

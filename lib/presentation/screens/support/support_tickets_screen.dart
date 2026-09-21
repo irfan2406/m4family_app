@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 /// Web `/support/logs` (`app/(user)/support/logs/page.tsx`) — "Operational Logs
@@ -227,8 +228,25 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
     // Web parity: the filter sheet is a light surface, not the navy panel.
     const sheetBg = Color(0xFFF4EFE3);
     const ink = Color(0xFF0C312B);
-    showModalBottomSheet(
+    showM4Sheet(
       context: context,
+      // The Android sheet is always the light surface, so is this.
+      iosActionSheet: (ctx) => M4IosActionSheet(
+        title: 'FILTER LOGS',
+        message: 'LOG CATEGORY',
+        brightness: Brightness.light,
+        actions: [
+          for (final t in _logTypes)
+            M4IosSheetAction(
+              t.toUpperCase(),
+              selected: _selectedType == t,
+              onPressed: () {
+                setState(() => _selectedType = t);
+                Navigator.pop(ctx);
+              },
+            ),
+        ],
+      ),
       backgroundColor: Colors.transparent,
       builder: (ctx) => Container(
         padding: const EdgeInsets.fromLTRB(28, 14, 28, 8),

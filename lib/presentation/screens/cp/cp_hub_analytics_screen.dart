@@ -92,7 +92,11 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
         ),
       ),
       body: _loading
-          ? Center(child: CircularProgressIndicator(color: accent))
+          ? Center(
+              child: CircularProgressIndicator.adaptive(
+                valueColor: AlwaysStoppedAnimation<Color>(accent),
+              ),
+            )
           : ListView(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
               children: [

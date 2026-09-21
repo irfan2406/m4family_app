@@ -432,10 +432,14 @@ class _CpForgotPasswordScreenState
                                       ? const SizedBox(
                                           width: 22,
                                           height: 22,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Color(0xFF0C312B),
-                                          ),
+                                          child:
+                                              CircularProgressIndicator.adaptive(
+                                                strokeWidth: 2,
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                      Color
+                                                    >(Color(0xFF0C312B)),
+                                              ),
                                         )
                                       : Row(
                                           mainAxisAlignment:
@@ -673,10 +677,14 @@ class _CpForgotPasswordScreenState
                                       ? const SizedBox(
                                           width: 22,
                                           height: 22,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Color(0xFF0C312B),
-                                          ),
+                                          child:
+                                              CircularProgressIndicator.adaptive(
+                                                strokeWidth: 2,
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                      Color
+                                                    >(Color(0xFF0C312B)),
+                                              ),
                                         )
                                       : const Text('UPDATE PASSWORD'),
                                 ),

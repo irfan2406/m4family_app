@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LegalVaultScreen extends ConsumerStatefulWidget {
@@ -69,13 +70,13 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             _buildHeader(isDark),
             Expanded(
               child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator.adaptive())
                   : Column(
                       children: [
                         _buildSecurityHeader(isDark),
                         _buildFilterTabs(isDark),
                         Expanded(
-                          child: RefreshIndicator(
+                          child: RefreshIndicator.adaptive(
                             onRefresh: _fetchDocuments,
                             child: ListView.builder(
                               physics: const BouncingScrollPhysics(),
@@ -362,7 +363,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
   }
 
   void _showDocumentDetails(dynamic doc, bool isDark) {
-    showModalBottomSheet(
+    showM4Sheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,

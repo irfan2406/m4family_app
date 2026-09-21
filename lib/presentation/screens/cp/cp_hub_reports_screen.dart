@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -210,7 +211,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
           Expanded(
             child: _loading
                 ? _buildLoading(card, border, accent)
-                : RefreshIndicator(
+                : RefreshIndicator.adaptive(
                     onRefresh: _load,
                     color: accent,
                     child: _reports.isEmpty
@@ -550,8 +551,26 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
     final muted = (isDark ? Colors.white : const Color(0xFF0C312B)).withValues(
       alpha: 0.5,
     );
-    showModalBottomSheet(
+    showM4Sheet(
       context: context,
+      iosActionSheet: (ctx) => M4IosActionSheet(
+        actions: [
+          M4IosSheetAction(
+            'Open / Print PDF',
+            onPressed: () {
+              Navigator.pop(ctx);
+              _openUrl(url);
+            },
+          ),
+          M4IosSheetAction(
+            'Share document',
+            onPressed: () {
+              Navigator.pop(ctx);
+              _shareUrl(url, title);
+            },
+          ),
+        ],
+      ),
       backgroundColor: isDark
           ? const Color(0xFF141B3A)
           : const Color(0xFFF4EFE3),
@@ -661,7 +680,10 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
         Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: CircularProgressIndicator(color: accent, strokeWidth: 2.4),
+            child: CircularProgressIndicator.adaptive(
+              valueColor: AlwaysStoppedAnimation<Color>(accent),
+              strokeWidth: 2.4,
+            ),
           ),
         ),
         const SizedBox(height: 16),

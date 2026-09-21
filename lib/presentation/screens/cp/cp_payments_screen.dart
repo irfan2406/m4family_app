@@ -93,8 +93,8 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
+          ? const Center(child: CircularProgressIndicator.adaptive())
+          : RefreshIndicator.adaptive(
               onRefresh: _load,
               child: ListView(
                 padding: const EdgeInsets.all(16),

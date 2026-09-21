@@ -494,8 +494,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               const SizedBox(
                 width: 34,
                 height: 34,
-                child: CircularProgressIndicator(
-                  color: M4Theme.premiumBlue,
+                child: CircularProgressIndicator.adaptive(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    M4Theme.premiumBlue,
+                  ),
                   strokeWidth: 2.5,
                 ),
               ),
@@ -950,7 +952,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     child: SizedBox(
                       width: 22,
                       height: 22,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: CircularProgressIndicator.adaptive(strokeWidth: 2),
                     ),
                   );
                 }
@@ -2227,7 +2229,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         const SizedBox(height: 24),
         Row(
           children: [
-            Checkbox(
+            Checkbox.adaptive(
               value: _agreedToTerms,
               onChanged: (val) => setState(() => _agreedToTerms = val ?? false),
               activeColor: isDark ? Colors.white : const Color(0xFF0C312B),
@@ -2259,8 +2261,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               ),
               child: Center(
                 child: _submitting
-                    ? CircularProgressIndicator(
-                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                    ? CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isDark ? Colors.black : const Color(0xFFF4EFE3),
+                        ),
                       )
                     : Text(
                         'SUBMIT INTEREST',

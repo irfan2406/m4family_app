@@ -182,11 +182,13 @@ class _InvestorPaymentsScreenState
       ),
       body: _loading
           ? const Center(
-              child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+              child: CircularProgressIndicator.adaptive(
+                valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+              ),
             )
           : _error
           ? _buildError(textPrimary, muted)
-          : RefreshIndicator(
+          : RefreshIndicator.adaptive(
               color: M4Theme.premiumBlue,
               onRefresh: _load,
               child: ListView(

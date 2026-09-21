@@ -361,9 +361,9 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                       const SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(
+                        child: CircularProgressIndicator.adaptive(
                           strokeWidth: 2,
-                          color: _deepGreen,
+                          valueColor: AlwaysStoppedAnimation<Color>(_deepGreen),
                         ),
                       ),
                       const SizedBox(width: 12),

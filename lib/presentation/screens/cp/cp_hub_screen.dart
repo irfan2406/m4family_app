@@ -153,7 +153,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             // Edge-to-edge: content runs under the gesture bar so scrolling fills
             // the screen. Trailing padding keeps the last item reachable.
             bottom: false,
-            child: RefreshIndicator(
+            child: RefreshIndicator.adaptive(
               onRefresh: _load,
               color: scheme.onSurface,
               child: ListView(
@@ -165,7 +165,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   if (_loading)
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 30),
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
                     )
                   else ...[
                     _welcomeCard(name: name, scheme: scheme, accent: accent),

@@ -9,6 +9,7 @@ import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 /// Shared notifications screen — web parity with `(cp)/cp/notifications`,
 /// `(user)/notifications`, `investor/notifications`. Card design is identical
@@ -197,13 +198,15 @@ class NotificationListScreen extends ConsumerWidget {
             Expanded(
               child: state.isLoading && state.notifications.isEmpty
                   ? Center(
-                      child: CircularProgressIndicator(
-                        color: isCp ? purple : scheme.primary,
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isCp ? purple : scheme.primary,
+                        ),
                       ),
                     )
                   : state.notifications.isEmpty
                   ? _buildEmptyState(context)
-                  : RefreshIndicator(
+                  : RefreshIndicator.adaptive(
                       onRefresh: () => ref
                           .read(notificationProvider.notifier)
                           .fetchNotifications(),
@@ -417,7 +420,7 @@ class _NotificationItem extends StatelessWidget {
     const purple = Color(0xFFC5A35B);
     final accent = isCp ? purple : scheme.primary;
 
-    showDialog(
+    showM4Dialog(
       context: context,
       barrierDismissible: true,
       builder: (context) => Material(

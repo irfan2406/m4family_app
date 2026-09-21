@@ -330,7 +330,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
               ],
             ),
           ),
-          Switch(
+          Switch.adaptive(
             value: value,
             onChanged: onChanged,
             activeColor: isDark ? Colors.white : const Color(0xFF0C312B),

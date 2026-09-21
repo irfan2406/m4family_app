@@ -11,6 +11,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 /// Web `/cp/booking/site-visit` & `/cp/booking/schedule-visit`
 /// (`app/(cp)/cp/booking/schedule-visit/page.tsx`) — "Site Visit / Protocol
@@ -86,7 +88,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
     if (temp.isBefore(minSchedule)) temp = now.add(const Duration(days: 1));
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final result = await showModalBottomSheet<DateTime>(
+    final result = await showM4Sheet<DateTime>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -441,7 +443,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 projectsAsync.when(
                   data: (projects) => _buildDropdown(projects),
                   loading: () => const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: CircularProgressIndicator.adaptive(strokeWidth: 2),
                   ),
                   error: (e, s) => Text(
                     'Error loading projects',
@@ -530,7 +532,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
   /// as `employeeName`; `employeeId` stays null for that case.
   Future<void> _promptOtherEmployee() async {
     final controller = TextEditingController(text: _otherEmployeeName ?? "");
-    final name = await showDialog<String>(
+    final name = await showM4Dialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFFF4EFE3),
@@ -1097,11 +1099,13 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             ? SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(
+                child: CircularProgressIndicator.adaptive(
                   strokeWidth: 2,
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.black
-                      : const Color(0xFFF4EFE3),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black
+                        : const Color(0xFFF4EFE3),
+                  ),
                 ),
               )
             : Row(

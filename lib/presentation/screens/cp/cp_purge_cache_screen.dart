@@ -363,9 +363,11 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                       : (_purging
                             ? Padding(
                                 padding: const EdgeInsets.all(4),
-                                child: CircularProgressIndicator(
+                                child: CircularProgressIndicator.adaptive(
                                   strokeWidth: 1.5,
-                                  color: muted,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    muted,
+                                  ),
                                 ),
                               )
                             : null),
@@ -412,9 +414,9 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
             ? const SizedBox(
                 width: 22,
                 height: 22,
-                child: CircularProgressIndicator(
+                child: CircularProgressIndicator.adaptive(
                   strokeWidth: 2,
-                  color: Colors.white,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               )
             : Row(

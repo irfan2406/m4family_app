@@ -19,6 +19,7 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/gallery_prefetcher.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
+import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
 /// Decoded base64 image bytes, keyed by the raw `data:` URI, so a large hero
 /// image (the backend stores heroes as multi-MB base64) is decoded once instead
@@ -329,7 +330,7 @@ class _InvestorProjectDetailScreenState
     String localType = type;
     DateTime? scheduledAt;
 
-    showModalBottomSheet(
+    showM4Sheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -814,7 +815,11 @@ class _InvestorProjectDetailScreenState
                     imageUrl: apiClient.resolveUrl(urls[index]),
                     fit: BoxFit.contain,
                     placeholder: (c, u) => const Center(
-                      child: CircularProgressIndicator(color: Colors.white24),
+                      child: CircularProgressIndicator.adaptive(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.white24,
+                        ),
+                      ),
                     ),
                     errorWidget: (c, u, e) => const Icon(
                       LucideIcons.image,
@@ -860,7 +865,9 @@ class _InvestorProjectDetailScreenState
       return Scaffold(
         backgroundColor: bg,
         body: const Center(
-          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+          child: CircularProgressIndicator.adaptive(
+            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+          ),
         ),
       );
     }
