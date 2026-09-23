@@ -77,7 +77,6 @@ class _GuestProjectDetailScreenState
   String? _modalErrorMessage;
   final ScrollController _scrollController = ScrollController();
   bool _showStickyHeader = false;
-  bool _showBottomBar = false;
 
   @override
   void initState() {
@@ -95,13 +94,8 @@ class _GuestProjectDetailScreenState
     final offset = _scrollController.offset;
     // Sticky title once the hero has mostly left the viewport.
     final nextHeader = offset > 180;
-    // BOOK NOW / call bar appears as soon as the user starts scrolling.
-    final nextBar = offset > 24;
-    if (nextHeader != _showStickyHeader || nextBar != _showBottomBar) {
-      setState(() {
-        _showStickyHeader = nextHeader;
-        _showBottomBar = nextBar;
-      });
+    if (nextHeader != _showStickyHeader) {
+      setState(() => _showStickyHeader = nextHeader);
     }
   }
 
@@ -1428,7 +1422,6 @@ class _GuestProjectDetailScreenState
             ),
           ),
           if (_showStickyHeader) _buildStickyHeader(project, isDark),
-          if (_showBottomBar) _buildBottomActions(project),
         ],
       ),
     );
@@ -1789,6 +1782,15 @@ class _GuestProjectDetailScreenState
     );
   }
 
+  /// The backend's own icon for an amenity, made absolute when it is stored
+  /// as a path. Null when the amenity carries none.
+  String? _amenityIconUrl(dynamic amenity) {
+    final raw = amenityIconUrl(amenity);
+    if (raw == null) return null;
+    final url = ref.read(apiClientProvider).resolveUrl(raw);
+    return url.isEmpty ? null : url;
+  }
+
   Widget _buildAmenities(dynamic project) {
     final amenitiesRaw = project?['amenities'] as List? ?? [];
     if (amenitiesRaw.isEmpty) {
@@ -1815,11 +1817,6 @@ class _GuestProjectDetailScreenState
                     ? Colors.white.withValues(alpha: 0.06)
                     : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.10)
-                      : Colors.black.withValues(alpha: 0.08),
-                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1828,7 +1825,10 @@ class _GuestProjectDetailScreenState
                     name: amenity is Map
                         ? (amenity['name']?.toString() ?? 'Amenity')
                         : amenity.toString(),
-                    // Skip broken /uploads URLs — always draw the local glyph.
+                    // The backend serves the real amenity icons again, so the
+                    // uploaded one is drawn — as CP and investor already did.
+                    // The local glyph stays as the fallback.
+                    iconUrl: _amenityIconUrl(amenity),
                     size: 34,
                     fallbackAsset: (amenity is Map
                                     ? (amenity['name']?.toString() ?? '')
@@ -1861,78 +1861,6 @@ class _GuestProjectDetailScreenState
             ),
           ),
       ],
-    );
-  }
-
-  Widget _buildBottomActions(dynamic project) {
-    return Positioned(
-      bottom: 40,
-      left: 20,
-      right: 20,
-      child: TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0, end: 1),
-        duration: const Duration(milliseconds: 280),
-        curve: Curves.easeOutCubic,
-        builder: (context, t, child) {
-          return Opacity(
-            opacity: t,
-            child: Transform.translate(
-              offset: Offset(0, (1 - t) * 24),
-              child: child,
-            ),
-          );
-        },
-        child: Container(
-          height: 80,
-          decoration: BoxDecoration(
-            color: const Color(0xFFF4EFE3),
-            borderRadius: BorderRadius.circular(40),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              const SizedBox(width: 20),
-              _BottomIconAction(
-                icon: LucideIcons.phone,
-                onTap: () => SupportHandlers.launchCall(
-                  project?['phone'] ?? project?['contactPhone'],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _ScaleButton(
-                  onTap: () => _showRequestDetailsDialog(project, null),
-                  child: Container(
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'BOOK NOW',
-                        style: GoogleFonts.gelasio(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 20),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -2376,42 +2304,6 @@ class _CircleAction extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(icon, size: 18, color: color ?? Colors.white),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BottomIconAction extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-  const _BottomIconAction({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return _ScaleButton(
-      onTap: onTap,
-      child: Container(
-        width: 56,
-        height: 56,
-        decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.05)
-              : const Color(0xFFF4EFE3),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.1)
-                : Colors.black.withValues(alpha: 0.05),
-          ),
-        ),
-        child: Center(
-          child: Icon(
-            icon,
-            color: isDark ? Colors.white : const Color(0xFF0C312B),
-            size: 20,
           ),
         ),
       ),

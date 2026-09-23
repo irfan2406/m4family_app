@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -113,6 +115,63 @@ const _ticket = {
   ],
 };
 
+/// Compares goldens exactly, except for a band a scene declares
+/// time-dependent — the ticket screen stamps today's date across the top, so
+/// that strip alone would fail every time the day changes.
+class M4GoldenComparator extends LocalFileComparator {
+  M4GoldenComparator(super.testFile);
+
+  /// Region, in image pixels, blanked in both images before comparing.
+  static Rect? ignoreRegion;
+
+  @override
+  Future<bool> compare(Uint8List imageBytes, Uri golden) async {
+    final Rect? ignore = ignoreRegion;
+    if (ignore == null) return super.compare(imageBytes, golden);
+
+    final File file = File.fromUri(basedir.resolveUri(golden));
+    if (!file.existsSync()) {
+      throw TestFailure('Golden file ${golden.path} does not exist');
+    }
+    final (Uint8List actual, Size actualSize) = await _mask(imageBytes, ignore);
+    final (Uint8List expected, Size expectedSize) = await _mask(
+      file.readAsBytesSync(),
+      ignore,
+    );
+    if (actualSize != expectedSize) {
+      throw TestFailure(
+        'Golden ${golden.path}: size $actualSize, expected $expectedSize',
+      );
+    }
+    for (var i = 0; i < actual.length; i++) {
+      if (actual[i] != expected[i]) return false;
+    }
+    return true;
+  }
+
+  /// Decodes [png] and paints [ignore] a flat colour, so what it holds cannot
+  /// affect the comparison.
+  static Future<(Uint8List, Size)> _mask(Uint8List png, Rect ignore) async {
+    final ui.Codec codec = await ui.instantiateImageCodec(png);
+    final ui.Image image = (await codec.getNextFrame()).image;
+    final ui.PictureRecorder recorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(recorder);
+    canvas.drawImage(image, Offset.zero, Paint());
+    canvas.drawRect(ignore, Paint()..color = const Color(0xFF000000));
+    final ui.Image masked = await recorder.endRecording().toImage(
+      image.width,
+      image.height,
+    );
+    final ByteData? data = await masked.toByteData(
+      format: ui.ImageByteFormat.rawRgba,
+    );
+    final Size size = Size(image.width.toDouble(), image.height.toDouble());
+    image.dispose();
+    masked.dispose();
+    return (data!.buffer.asUint8List(), size);
+  }
+}
+
 /// One screen or component to capture.
 class GoldenScene {
   const GoldenScene(
@@ -120,11 +179,15 @@ class GoldenScene {
     this.build, {
     this.size = const Size(390, 1600),
     this.act,
+    this.timeDependentRegion,
   });
 
   final String name;
   final Widget Function() build;
   final Size size;
+
+  /// A band that carries the current date, left out of the comparison.
+  final Rect? timeDependentRegion;
 
   /// An optional interaction once the scene has settled — opening a dialog.
   final Future<void> Function(WidgetTester tester)? act;
@@ -227,6 +290,9 @@ final List<GoldenScene> goldenScenes = [
       initialTicket: _ticket,
     ),
     size: const Size(390, 844),
+    // The chip under the header reads "WEDNESDAY, SEP 23" — today's date, in
+    // a width that changes with the weekday. Everything else is compared.
+    timeDependentRegion: const Rect.fromLTWH(0, 80, 390, 52),
   ),
   GoldenScene(
     'sidebar_guest',
@@ -308,6 +374,13 @@ final List<GoldenScene> goldenScenes = [
 /// Registers the platform plumbing the scenes need. Call from setUpAll.
 void setUpGoldenHarness() {
   final binding = TestWidgetsFlutterBinding.ensureInitialized();
+  // LocalFileComparator takes the test FILE and keeps its directory, so the
+  // existing basedir is handed back with a file name on it.
+  goldenFileComparator = M4GoldenComparator(
+    (goldenFileComparator as LocalFileComparator).basedir.resolve(
+      'golden_harness.dart',
+    ),
+  );
   GoogleFonts.config.allowRuntimeFetching = false;
   installFakeWebViewPlatform();
   binding.defaultBinaryMessenger.setMockMethodCallHandler(
@@ -400,6 +473,8 @@ Future<void> renderGolden(
       }
     }
 
+    M4GoldenComparator.ignoreRegion = scene.timeDependentRegion;
+    addTearDown(() => M4GoldenComparator.ignoreRegion = null);
     await expectLater(find.byType(MaterialApp), matchesGoldenFile(goldenPath));
   }, reason: 'errors while rendering ${scene.name}');
 }

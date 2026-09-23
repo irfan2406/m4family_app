@@ -16,6 +16,13 @@ void installFakeWebViewPlatform() {
   WebViewPlatform.instance = FakeWebViewPlatform();
 }
 
+/// One page handed to the fake controller, so a test can check what a map
+/// asked the platform to load.
+typedef LoadedHtml = ({String html, String? baseUrl});
+
+/// Every `loadHtmlString` the fake received, oldest first. Clear it in setUp.
+final List<LoadedHtml> loadedHtml = <LoadedHtml>[];
+
 class FakeWebViewPlatform extends WebViewPlatform {
   @override
   PlatformWebViewController createPlatformWebViewController(
@@ -40,7 +47,9 @@ class _FakeWebViewController extends PlatformWebViewController {
   Future<void> setBackgroundColor(Color color) async {}
 
   @override
-  Future<void> loadHtmlString(String html, {String? baseUrl}) async {}
+  Future<void> loadHtmlString(String html, {String? baseUrl}) async {
+    loadedHtml.add((html: html, baseUrl: baseUrl));
+  }
 
   @override
   Future<void> loadRequest(LoadRequestParams params) async {}

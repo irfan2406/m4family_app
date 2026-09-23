@@ -15,7 +15,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
-import 'package:m4_mobile/presentation/screens/support/raise_ticket_screen.dart';
 import 'dart:ui';
 import 'dart:math' as math;
 import 'package:m4_mobile/core/utils/support_handlers.dart';
@@ -1533,8 +1532,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       _buildConstructionSection(project),
                       const SizedBox(height: 40),
                       // Web parity: no standalone Documents section here.
-                      _buildContactSection(project),
-                      const SizedBox(height: 40),
                       _buildLocationSection(project),
                     ],
                   ),
@@ -2198,6 +2195,15 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     );
   }
 
+  /// The backend's own icon for an amenity, made absolute when it is stored
+  /// as a path. Null when the amenity carries none.
+  String? _amenityIconUrl(dynamic amenity) {
+    final raw = amenityIconUrl(amenity);
+    if (raw == null) return null;
+    final url = ref.read(apiClientProvider).resolveUrl(raw);
+    return url.isEmpty ? null : url;
+  }
+
   Widget _buildAmenities(dynamic project) {
     final amenitiesRaw = project?['amenities'] as List? ?? [];
     if (amenitiesRaw.isEmpty) {
@@ -2221,11 +2227,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     ? Colors.white.withValues(alpha: 0.06)
                     : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.10)
-                      : Colors.black.withValues(alpha: 0.08),
-                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -2234,6 +2235,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     name: amenity is Map
                         ? (amenity['name']?.toString() ?? 'Amenity')
                         : amenity.toString(),
+                    // The backend serves the real amenity icons again, so the
+                    // uploaded one is drawn — as CP and investor already did.
+                    // The local glyph stays as the fallback.
+                    iconUrl: _amenityIconUrl(amenity),
                     size: 30,
                     fallbackAsset: (amenity is Map
                                     ? (amenity['name']?.toString() ?? '')
@@ -2430,154 +2435,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
       child: child,
-    );
-  }
-
-  Widget _buildContactSection(dynamic project) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader('CONTACT'),
-        const SizedBox(height: 24),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: isDark
-                ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
-                : Colors.white,
-            borderRadius: BorderRadius.circular(40),
-            border: Border.all(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 40,
-                offset: const Offset(0, 20),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'INTERESTED IN THIS PROJECT?',
-                          style: GoogleFonts.inter(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: colorScheme.onSurface,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'CONNECT WITH OUR TEAM TODAY',
-                          style: GoogleFonts.inter(
-                            fontSize: 7,
-                            fontWeight: FontWeight.w500,
-                            color: colorScheme.onSurfaceVariant,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      _ContactIconBtn(
-                        icon: LucideIcons.phone,
-                        onTap: () => SupportHandlers.launchCall(
-                          project?['phone'] ?? project?['contactPhone'],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      _ContactIconBtn(
-                        // Web parity: chat opens the Raise Ticket screen with the
-                        // subject prefilled (INQUIRY: <project>).
-                        icon: LucideIcons.messageCircle,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RaiseTicketScreen(
-                              initialSubject:
-                                  'INQUIRY: ${(project?['title'] ?? 'PROJECT').toString().toUpperCase()}',
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              _ScaleButton(
-                // Web parity: BOOK YOUR UNIT NOW opens the REQUEST DETAILS
-                // sheet straight away — the web has no intermediate
-                // "how can we help?" chooser.
-                onTap: () =>
-                    _showRequestDetailsDialog(project, null, 'General'),
-                child: Container(
-                  width: double.infinity,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.white : const Color(0xFF0C312B),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'BOOK YOUR UNIT NOW',
-                      style: GoogleFonts.gelasio(
-                        color: isDark
-                            ? const Color(0xFF0C312B)
-                            : const Color(0xFFF4EFE3),
-                        fontWeight: FontWeight.w700,
-                        fontSize: 10,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _ContactIconBtn({
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Material(
-      color: colorScheme.surface,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-            ),
-          ),
-          child: Icon(icon, size: 18, color: colorScheme.onSurface),
-        ),
-      ),
     );
   }
 

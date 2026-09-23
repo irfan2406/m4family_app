@@ -12,6 +12,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 /// Luxury gold accent, per the spec.
 const Color kAmenityGold = Color(0xFFDFBA6B);
 
+/// The icon the backend attached to an amenity, or null when it has none.
+///
+/// An amenity arrives either as a map (`{name, icon, category, …}`) or as a
+/// bare name. The icons are served from the file host as absolute URLs.
+String? amenityIconUrl(dynamic amenity) {
+  if (amenity is! Map) return null;
+  final url = amenity['icon']?.toString().trim() ?? '';
+  return url.isEmpty ? null : url;
+}
+
 /// True for formats that carry their own transparency, where the spec's
 /// `BlendMode.srcIn` gold tint does the right thing: it repaints the opaque
 /// (drawn) pixels gold and leaves the transparent ones alone.

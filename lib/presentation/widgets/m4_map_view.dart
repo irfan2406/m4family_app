@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/platform/m4_platform.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 /// The single M4 map: one look everywhere it appears (contact, project detail,
@@ -27,6 +28,14 @@ class M4MapView extends StatefulWidget {
   /// Card height. Defaults to the contact screen's 300.
   final double height;
 
+  /// iOS only. WKWebView refuses to load a remote frame inside a page that
+  /// has no base URL of its own, so the Google embed never arrived and the
+  /// card stayed empty. A real base URL gives the page an origin — and the
+  /// referrer Google's embed expects — and the same iframe then renders.
+  /// Android's WebView needs none of this and keeps passing null.
+  @visibleForTesting
+  static const String iosBaseUrl = 'https://www.google.com/';
+
   @override
   State<M4MapView> createState() => _M4MapViewState();
 }
@@ -40,7 +49,11 @@ class _M4MapViewState extends State<M4MapView> {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
-      ..loadHtmlString(_html(widget.query));
+      ..loadHtmlString(
+        _html(widget.query),
+        // See [M4MapView.iosBaseUrl]: iOS needs the page to have an origin.
+        baseUrl: M4Platform.isIOS ? M4MapView.iosBaseUrl : null,
+      );
   }
 
   static String _html(String query) {
