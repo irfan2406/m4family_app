@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -54,25 +55,39 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator.adaptive())
-                  : RefreshIndicator.adaptive(
-                      onRefresh: _fetchBookings,
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          children: [
-                            // Web parity: a small "MY PROPERTIES" eyebrow above
-                            // the list — the web has no portfolio summary card.
-                            _buildSectionLabel(isDark),
-                            const SizedBox(height: 20),
-                            if (_bookings.isEmpty)
-                              _buildEmptyState(isDark)
-                            else
-                              ..._bookings.map(
-                                (booking) => _buildBookingCard(booking, isDark),
-                              ),
-                            const SizedBox(height: 100),
-                          ],
+                  : CupertinoTheme(
+                      // iOS fix: RefreshIndicator.adaptive creates an internal
+                      // Cupertino scroll view that paints its background with
+                      // CupertinoTheme.scaffoldBackgroundColor. The global
+                      // CupertinoTheme uses #D4CFBC (golden), which bleeds
+                      // through during bounce/overscroll. Overriding it here
+                      // to the screen's own background colour prevents the
+                      // golden flash. CupertinoTheme is a no-op on Android.
+                      data: CupertinoTheme.of(context).copyWith(
+                        scaffoldBackgroundColor: isDark
+                            ? const Color(0xFF141B3A)
+                            : const Color(0xFFF4EFE3),
+                      ),
+                      child: RefreshIndicator.adaptive(
+                        onRefresh: _fetchBookings,
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.all(24),
+                          child: Column(
+                            children: [
+                              // Web parity: a small "MY PROPERTIES" eyebrow above
+                              // the list — the web has no portfolio summary card.
+                              _buildSectionLabel(isDark),
+                              const SizedBox(height: 20),
+                              if (_bookings.isEmpty)
+                                _buildEmptyState(isDark)
+                              else
+                                ..._bookings.map(
+                                  (booking) => _buildBookingCard(booking, isDark),
+                                ),
+                              const SizedBox(height: 100),
+                            ],
+                          ),
                         ),
                       ),
                     ),
