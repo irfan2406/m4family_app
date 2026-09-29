@@ -2210,23 +2210,27 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       return const _EmptyTabContent(message: 'Coming soon');
     }
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cellW = (MediaQuery.sizeOf(context).width - 48 - 20) / 3;
 
-    // Same as guest: Wrap + local glyphs so mid-scroll never flashes empty
-    // mustard behind unpainted GridView / network-icon cells.
     return Wrap(
       spacing: 10,
       runSpacing: 10,
       children: [
         for (final amenity in amenitiesRaw)
           SizedBox(
-            width: (MediaQuery.sizeOf(context).width - 48 - 20) / 3,
+            width: cellW,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.06)
-                    : const Color(0xFFF4EFE3),
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.10)
+                      : Colors.black.withValues(alpha: 0.08),
+                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -2235,10 +2239,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     name: amenity is Map
                         ? (amenity['name']?.toString() ?? 'Amenity')
                         : amenity.toString(),
-                    // The backend serves the real amenity icons again, so the
-                    // uploaded one is drawn — as CP and investor already did.
-                    // The local glyph stays as the fallback.
-                    iconUrl: _amenityIconUrl(amenity),
                     size: 30,
                     fallbackAsset: (amenity is Map
                                     ? (amenity['name']?.toString() ?? '')
@@ -2273,6 +2273,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       ],
     );
   }
+
 
   Widget _buildInventory(dynamic project) {
     if (_inventory.isEmpty && !_isLoading)

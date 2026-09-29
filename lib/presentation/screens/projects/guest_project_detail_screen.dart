@@ -77,6 +77,7 @@ class _GuestProjectDetailScreenState
   String? _modalErrorMessage;
   final ScrollController _scrollController = ScrollController();
   bool _showStickyHeader = false;
+  bool _showBottomBar = false;
 
   @override
   void initState() {
@@ -92,10 +93,13 @@ class _GuestProjectDetailScreenState
   void _onScroll() {
     if (!_scrollController.hasClients || !mounted) return;
     final offset = _scrollController.offset;
-    // Sticky title once the hero has mostly left the viewport.
     final nextHeader = offset > 180;
-    if (nextHeader != _showStickyHeader) {
-      setState(() => _showStickyHeader = nextHeader);
+    final nextBar = offset > 24;
+    if (nextHeader != _showStickyHeader || nextBar != _showBottomBar) {
+      setState(() {
+        _showStickyHeader = nextHeader;
+        _showBottomBar = nextBar;
+      });
     }
   }
 
@@ -1422,6 +1426,7 @@ class _GuestProjectDetailScreenState
             ),
           ),
           if (_showStickyHeader) _buildStickyHeader(project, isDark),
+          if (_showBottomBar) _buildBottomActions(project),
         ],
       ),
     );
@@ -1797,26 +1802,32 @@ class _GuestProjectDetailScreenState
       return const _EmptyTabContent(message: 'Coming soon');
     }
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Content width inside the section's 24px horizontal padding.
+    final cellW = (MediaQuery.sizeOf(context).width - 48 - 20) / 3;
 
-    // Wrap (not shrink-wrapped GridView): GridView.shrinkWrap inside a parent
-    // scroll view often leaves cells unpainted mid-fling on iOS, which flashed
-    // the mustard scaffold behind transparent network-icon placeholders.
-    // Name-mapped SVG/Lucide icons only — /uploads is broken, so network icons
-    // sat on an empty placeholder for the whole scroll gesture.
+    // Local glyphs only. Uploaded amenity JPEGs are huge; without ClipRect
+    // ColorFiltered painted a full-screen gold wash while scrolling, which
+    // hid every amenity except the bundled lobby asset. ClipRect is fixed in
+    // LuxuryAmenityIcon, but skipping network here keeps this list instant.
     return Wrap(
       spacing: 10,
       runSpacing: 10,
       children: [
         for (final amenity in amenitiesRaw)
           SizedBox(
-            width: (MediaQuery.sizeOf(context).width - 48 - 20) / 3,
+            width: cellW,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.06)
-                    : const Color(0xFFF4EFE3),
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.10)
+                      : Colors.black.withValues(alpha: 0.08),
+                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1825,10 +1836,6 @@ class _GuestProjectDetailScreenState
                     name: amenity is Map
                         ? (amenity['name']?.toString() ?? 'Amenity')
                         : amenity.toString(),
-                    // The backend serves the real amenity icons again, so the
-                    // uploaded one is drawn — as CP and investor already did.
-                    // The local glyph stays as the fallback.
-                    iconUrl: _amenityIconUrl(amenity),
                     size: 34,
                     fallbackAsset: (amenity is Map
                                     ? (amenity['name']?.toString() ?? '')
@@ -1861,6 +1868,78 @@ class _GuestProjectDetailScreenState
             ),
           ),
       ],
+    );
+  }
+
+  Widget _buildBottomActions(dynamic project) {
+    return Positioned(
+      bottom: 40,
+      left: 20,
+      right: 20,
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: 1),
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+        builder: (context, t, child) {
+          return Opacity(
+            opacity: t,
+            child: Transform.translate(
+              offset: Offset(0, (1 - t) * 24),
+              child: child,
+            ),
+          );
+        },
+        child: Container(
+          height: 80,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF4EFE3),
+            borderRadius: BorderRadius.circular(40),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const SizedBox(width: 20),
+              _BottomIconAction(
+                icon: LucideIcons.phone,
+                onTap: () => SupportHandlers.launchCall(
+                  project?['phone'] ?? project?['contactPhone'],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _ScaleButton(
+                  onTap: () => _showRequestDetailsDialog(project, null),
+                  child: Container(
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'BOOK NOW',
+                        style: GoogleFonts.gelasio(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 20),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -2423,6 +2502,32 @@ class _HeroMediaThumb extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class _BottomIconAction extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  const _BottomIconAction({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return _ScaleButton(
+      onTap: onTap,
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
+        ),
+        child: Center(
+          child: Icon(icon, color: const Color(0xFF0C312B), size: 20),
         ),
       ),
     );

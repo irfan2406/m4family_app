@@ -83,6 +83,14 @@ class LuxuryAmenityIcon extends StatelessWidget {
     this.fallbackAsset,
   });
 
+  /// Clip hard: a large JPEG inside ColorFiltered otherwise paints a full-
+  /// screen gold wash while scrolling (amenities disappear behind mustard).
+  Widget _box(Widget child) => SizedBox(
+        width: size,
+        height: size,
+        child: ClipRect(child: child),
+      );
+
   @override
   Widget build(BuildContext context) {
     // TIER 1 — a backend-uploaded icon.
@@ -90,13 +98,9 @@ class LuxuryAmenityIcon extends StatelessWidget {
     if (url != null && url.isNotEmpty) {
       final hasAlpha = _hasOwnAlpha(url);
 
-      // An uploaded SVG is line art by definition, so it is drawn through the
-      // gold tint like the spec asks.
       if (_isSvgIcon(url)) {
-        return SizedBox(
-          width: size,
-          height: size,
-          child: SvgPicture.network(
+        return _box(
+          SvgPicture.network(
             url,
             width: size,
             height: size,
@@ -107,67 +111,63 @@ class LuxuryAmenityIcon extends StatelessWidget {
         );
       }
 
-      return SizedBox(
-        width: size,
-        height: size,
-        child: CachedNetworkImage(
+      return _box(
+        CachedNetworkImage(
           memCacheWidth: 128,
           imageUrl: url,
+          width: size,
+          height: size,
           fit: BoxFit.contain,
           placeholder: (c, u) => _fallbackGlyph(),
           imageBuilder: (c, provider) {
-            final image = Image(image: provider, fit: BoxFit.contain);
-            // PNG carries its own transparency, so the spec's srcIn is exact.
+            final image = Image(
+              image: provider,
+              fit: BoxFit.contain,
+              width: size,
+              height: size,
+              alignment: Alignment.center,
+            );
             if (hasAlpha) {
               return ColorFiltered(
                 colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                 child: image,
               );
             }
-            // JPEG is opaque, so its white background is dissolved by luminance
-            // instead — see _goldFromLuminance.
-            //
-            // The white backdrop matters: that matrix reads alpha out of RGB
-            // and ignores the incoming alpha, and a transparent pixel is
-            // RGB(0,0,0) — "black" — which it turns into SOLID GOLD. Drawing a
-            // 1254px square into a 42dp box leaves a sub-pixel transparent
-            // sliver down the edge, and that sliver was being painted as a gold
-            // hairline beside the icon. Backing the image with white gives
-            // every pixel in the layer a defined colour, and white maps to
-            // fully transparent, so the backdrop itself never shows.
+            // JPEG luminance tint — ColoredBox keeps white backdrop bounded.
             return ColorFiltered(
               colorFilter: const ColorFilter.matrix(_goldFromLuminance),
-              child: Container(color: Colors.white, child: image),
+              child: ColoredBox(color: Colors.white, child: image),
             );
           },
-          // On failure (e.g. the /uploads endpoint is down) prefer the
-          // name-mapped luxury SVG — matches web — over a generic glyph.
           errorWidget: (c, u, e) => fallbackAsset != null
               ? ColorFiltered(
-                  // The bundled snapshot is transparent line art, so it takes
-                  // the same gold as everything else rather than staying the
-                  // odd one out when the network icon fails.
                   colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-                  child: Image.asset(fallbackAsset!, fit: BoxFit.contain),
+                  child: Image.asset(
+                    fallbackAsset!,
+                    width: size,
+                    height: size,
+                    fit: BoxFit.contain,
+                  ),
                 )
               : _fallbackGlyph(),
         ),
       );
     }
 
-    // Bundled snapshot (e.g. lobby) when there is no upload URL.
     if (fallbackAsset != null) {
-      return SizedBox(
-        width: size,
-        height: size,
-        child: ColorFiltered(
+      return _box(
+        ColorFiltered(
           colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-          child: Image.asset(fallbackAsset!, fit: BoxFit.contain),
+          child: Image.asset(
+            fallbackAsset!,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+          ),
         ),
       );
     }
 
-    // TIER 2 and 3.
     return _fallbackGlyph();
   }
 
@@ -176,16 +176,19 @@ class LuxuryAmenityIcon extends StatelessWidget {
     final key = _luxuryKey(name);
     final svg = key != null ? _svgIcons[key] : null;
     if (svg != null) {
-      return SvgPicture.string(
-        svg,
-        width: size,
-        height: size,
-        theme: SvgTheme(currentColor: color),
+      return _box(
+        SvgPicture.string(
+          svg,
+          width: size,
+          height: size,
+          theme: SvgTheme(currentColor: color),
+        ),
       );
     }
-    return Icon(_lucideFallback(name), color: color, size: size);
+    return _box(Icon(_lucideFallback(name), color: color, size: size));
   }
 }
+
 
 String _wrap(String inner) =>
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">$inner</svg>';
