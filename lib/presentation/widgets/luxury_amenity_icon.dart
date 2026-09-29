@@ -91,6 +91,21 @@ class LuxuryAmenityIcon extends StatelessWidget {
         child: ClipRect(child: child),
       );
 
+  Widget _renderAssetIcon(String asset) {
+    final image = Image.asset(
+      asset,
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+    return _box(
+      ColorFiltered(
+        colorFilter: const ColorFilter.matrix(_goldFromLuminance),
+        child: ColoredBox(color: Colors.white, child: image),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // TIER 1 — a backend-uploaded icon.
@@ -140,32 +155,14 @@ class LuxuryAmenityIcon extends StatelessWidget {
             );
           },
           errorWidget: (c, u, e) => fallbackAsset != null
-              ? ColorFiltered(
-                  colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-                  child: Image.asset(
-                    fallbackAsset!,
-                    width: size,
-                    height: size,
-                    fit: BoxFit.contain,
-                  ),
-                )
+              ? _renderAssetIcon(fallbackAsset!)
               : _fallbackGlyph(),
         ),
       );
     }
 
     if (fallbackAsset != null) {
-      return _box(
-        ColorFiltered(
-          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-          child: Image.asset(
-            fallbackAsset!,
-            width: size,
-            height: size,
-            fit: BoxFit.contain,
-          ),
-        ),
-      );
+      return _renderAssetIcon(fallbackAsset!);
     }
 
     return _fallbackGlyph();
@@ -289,7 +286,7 @@ String? _luxuryKey(String name) {
     return 'sun_lounger';
   if (n.contains('wet deck')) return 'wet_deck';
   if (n.contains('deck') || n.contains('lounge')) return 'sun_lounger';
-  if (n.contains('clubhouse') || n.contains('pavilion')) return 'clubhouse';
+  if (n.contains('clubhouse') || n.contains('pavilion') || n.contains('lobby') || n.contains('reception') || n.contains('foyer')) return 'clubhouse';
   if (n.contains('playground') || n.contains('kids')) return 'playground';
   if (n.contains('reading') || n.contains('book')) return 'reading';
   if (n.contains('game')) return 'game_area';
@@ -328,6 +325,8 @@ String? _luxuryKey(String name) {
 // Lucide fallback (ported from getLucideFallback).
 IconData _lucideFallback(String name) {
   final n = name.toLowerCase();
+  if (n.contains('lobby') || n.contains('reception') || n.contains('foyer') || n.contains('concierge'))
+    return LucideIcons.building2;
   if (n.contains('lounge') || n.contains('sun lounge')) return LucideIcons.sofa;
   if (n.contains('reading') || n.contains('corner'))
     return LucideIcons.bookOpen;

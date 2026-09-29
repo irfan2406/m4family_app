@@ -1880,7 +1880,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  LuxuryAmenityIcon(name: name, iconUrl: iconUrl, size: 44),
+                  LuxuryAmenityIcon(
+                    name: name,
+                    iconUrl: iconUrl,
+                    size: 44,
+                    fallbackAsset: name.toUpperCase() == 'LOBBY'
+                        ? 'assets/amenity_lobby.png'
+                        : null,
+                  ),
                   const SizedBox(height: 10),
                   Text(
                     name,

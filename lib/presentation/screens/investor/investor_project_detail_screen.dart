@@ -1615,7 +1615,14 @@ class _InvestorProjectDetailScreenState
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      LuxuryAmenityIcon(name: name, iconUrl: iconUrl, size: 30),
+                      LuxuryAmenityIcon(
+                        name: name,
+                        iconUrl: iconUrl,
+                        size: 30,
+                        fallbackAsset: name.toUpperCase() == 'LOBBY'
+                            ? 'assets/amenity_lobby.png'
+                            : null,
+                      ),
                       const SizedBox(height: 16),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),

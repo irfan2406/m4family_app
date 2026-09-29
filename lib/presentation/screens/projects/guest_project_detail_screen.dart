@@ -1823,11 +1823,9 @@ class _GuestProjectDetailScreenState
                     ? Colors.white.withValues(alpha: 0.06)
                     : Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.10)
-                      : Colors.black.withValues(alpha: 0.08),
-                ),
+                border: isDark
+                    ? Border.all(color: Colors.white.withValues(alpha: 0.10))
+                    : null,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1836,6 +1834,7 @@ class _GuestProjectDetailScreenState
                     name: amenity is Map
                         ? (amenity['name']?.toString() ?? 'Amenity')
                         : amenity.toString(),
+                    iconUrl: _amenityIconUrl(amenity),
                     size: 34,
                     fallbackAsset: (amenity is Map
                                     ? (amenity['name']?.toString() ?? '')
