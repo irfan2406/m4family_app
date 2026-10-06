@@ -1905,18 +1905,25 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 ),
               );
             })),
-        // Same rule: Clédor has no walkthrough, so the card is not drawn.
-        if (project?['walkthrough']?.toString().trim().isNotEmpty ?? false) ...[
-          const SizedBox(height: 12),
-          _MultimediaAssetCard(
-            title: 'WALKTHROUGH',
-            subtitle: 'CINEMATIC TOUR • 4K',
-            icon: LucideIcons.video,
-            isPrimary: true,
-            onView: () =>
-                _launchAction('Watching Story...', project?['walkthrough']),
+        // Web parity: the WALKTHROUGH card is always shown (was hidden when the
+        // project carried no walkthrough), using the best-available backend
+        // video link; the CTA toasts gracefully when none is set.
+        const SizedBox(height: 12),
+        _MultimediaAssetCard(
+          title: 'WALKTHROUGH',
+          subtitle: 'CINEMATIC TOUR • 4K',
+          icon: LucideIcons.video,
+          isPrimary: true,
+          onView: () => _launchAction(
+            'Walkthrough coming soon',
+            (project?['walkthroughUrl'] ??
+                    project?['videoUrl'] ??
+                    project?['virtualTour'] ??
+                    project?['walkthrough'] ??
+                    project?['videoTour'])
+                ?.toString(),
           ),
-        ],
+        ),
       ],
     );
   }
@@ -2239,6 +2246,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                         : amenity.toString(),
                     iconUrl: _amenityIconUrl(amenity),
                     size: 30,
+                    // Gold washes out on the cream light surface, so draw the
+                    // icon dark in light mode; keep gold on the dark surface.
+                    color: isDark
+                        ? kAmenityGold
+                        : const Color(0xFF0C312B),
                     fallbackAsset: (amenity is Map
                                     ? (amenity['name']?.toString() ?? '')
                                     : amenity.toString())

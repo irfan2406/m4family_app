@@ -1641,6 +1641,15 @@ class _GuestProjectDetailScreenState
 
   Widget _buildOverviewSection(dynamic project) {
     final flyerUrl = project?['flyer'] ?? project?['brochure'];
+    // Web parity: the overview always shows a WALKTHROUGH VIDEO card. Pull the
+    // best-available video/tour link from the backend record.
+    final walkthrough =
+        (project?['walkthroughUrl'] ??
+                project?['videoUrl'] ??
+                project?['virtualTour'] ??
+                project?['walkthrough'] ??
+                project?['videoTour'])
+            ?.toString();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -1675,6 +1684,14 @@ class _GuestProjectDetailScreenState
               onView: () => _launchAction('Opening...', flyerUrl),
             ),
           ],
+          // Web parity: WALKTHROUGH VIDEO card with a WATCH VIDEO CTA — always
+          // shown, in the app's own colours (not the web's blue).
+          const SizedBox(height: 16),
+          _WalkthroughVideoCard(
+            isDark: isDark,
+            onWatch: () =>
+                _launchAction('Walkthrough coming soon', walkthrough),
+          ),
         ],
       ),
     );
@@ -1836,6 +1853,12 @@ class _GuestProjectDetailScreenState
                         : amenity.toString(),
                     iconUrl: _amenityIconUrl(amenity),
                     size: 34,
+                    // Gold washes out on the cream light surface, so draw the
+                    // icon in the section's dark green in light mode; keep gold
+                    // on the dark (navy) surface where it reads well.
+                    color: isDark
+                        ? kAmenityGold
+                        : const Color(0xFF0C312B),
                     fallbackAsset: (amenity is Map
                                     ? (amenity['name']?.toString() ?? '')
                                     : amenity.toString())
@@ -2740,6 +2763,106 @@ class _AssetButton extends StatelessWidget {
             letterSpacing: 1.0,
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Web parity: the "WALKTHROUGH VIDEO" row in the overview — a video icon, the
+/// title/subtitle, and a single WATCH VIDEO CTA. Drawn in the app's own colours
+/// (dark green on cream / white on navy), not the web's blue.
+class _WalkthroughVideoCard extends StatelessWidget {
+  final bool isDark;
+  final VoidCallback onWatch;
+  const _WalkthroughVideoCard({required this.isDark, required this.onWatch});
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = isDark ? Colors.white : const Color(0xFF0C312B);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06),
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(LucideIcons.video, color: accent, size: 18),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'WALKTHROUGH VIDEO',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'VIDEO SHOWCASE',
+                  style: GoogleFonts.inter(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white60 : const Color(0xFF155A4F),
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          _ScaleButton(
+            onTap: onWatch,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                'WATCH VIDEO',
+                style: GoogleFonts.inter(
+                  fontSize: 7.5,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? const Color(0xFF0C312B)
+                      : const Color(0xFFF4EFE3),
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -55,10 +55,13 @@ bool _isSvgIcon(String url) =>
 ///
 /// The result is gold line art with no white block and no edge line behind it,
 /// on the cream and the green surfaces alike.
-const List<double> _goldFromLuminance = <double>[
-  0, 0, 0, 0, 223, // R -> gold 0xDF
-  0, 0, 0, 0, 186, // G -> gold 0xBA
-  0, 0, 0, 0, 107, // B -> gold 0x6B
+/// Same luminance→alpha curve, but the fill RGB is taken from [c] so the tint
+/// follows the caller's colour — gold by default, or a darker accent where the
+/// surface is light (cream) and gold would wash out.
+List<double> _tintFromLuminance(Color c) => <double>[
+  0, 0, 0, 0, c.r * 255.0, // R -> c.red
+  0, 0, 0, 0, c.g * 255.0, // G -> c.green
+  0, 0, 0, 0, c.b * 255.0, // B -> c.blue
   -0.4252, -1.4304, -0.1444, 0, 450, // A -> 2*(255 - luminance) - 60
 ];
 
@@ -100,7 +103,7 @@ class LuxuryAmenityIcon extends StatelessWidget {
     );
     return _box(
       ColorFiltered(
-        colorFilter: const ColorFilter.matrix(_goldFromLuminance),
+        colorFilter: ColorFilter.matrix(_tintFromLuminance(color)),
         child: ColoredBox(color: Colors.white, child: image),
       ),
     );
@@ -148,9 +151,12 @@ class LuxuryAmenityIcon extends StatelessWidget {
                 child: image,
               );
             }
-            // JPEG luminance tint — ColoredBox keeps white backdrop bounded.
+            // JPEG is opaque, so its white background is dissolved by luminance
+            // instead — see _tintFromLuminance. The white ColoredBox backdrop
+            // keeps every pixel defined so no tinted hairline leaks down the
+            // sub-pixel transparent edge of the scaled image.
             return ColorFiltered(
-              colorFilter: const ColorFilter.matrix(_goldFromLuminance),
+              colorFilter: ColorFilter.matrix(_tintFromLuminance(color)),
               child: ColoredBox(color: Colors.white, child: image),
             );
           },

@@ -1622,6 +1622,11 @@ class _InvestorProjectDetailScreenState
                         fallbackAsset: name.toUpperCase() == 'LOBBY'
                             ? 'assets/amenity_lobby.png'
                             : null,
+                        // Gold washes out on the cream light surface, so draw
+                        // the icon dark in light mode; keep gold on dark.
+                        color: isDark
+                            ? kAmenityGold
+                            : const Color(0xFF0C312B),
                       ),
                       const SizedBox(height: 16),
                       Padding(

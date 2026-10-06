@@ -1887,6 +1887,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     fallbackAsset: name.toUpperCase() == 'LOBBY'
                         ? 'assets/amenity_lobby.png'
                         : null,
+                    // Gold washes out on the cream light surface, so draw the
+                    // icon dark in light mode; keep gold on the dark surface.
+                    color: scheme.brightness == Brightness.dark
+                        ? kAmenityGold
+                        : const Color(0xFF0C312B),
                   ),
                   const SizedBox(height: 10),
                   Text(
