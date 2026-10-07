@@ -15,6 +15,7 @@ import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:m4_mobile/core/utils/project_highlights.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
+import 'package:m4_mobile/core/utils/image_prewarm.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/hero_slider_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
@@ -142,6 +143,24 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     return fallback;
   }
 
+  /// Warms the shared image cache with the first cards' hero photos as soon as
+  /// projects arrive, so the multi-MB originals are already on disk when the
+  /// user scrolls to them instead of downloading on first paint.
+  void _prewarmHomeImages() {
+    final api = ref.read(apiClientProvider);
+    final urls = <String>[];
+    for (final p in _projects.take(4)) {
+      if (p is! Map) continue;
+      final hero = (p['heroImage'] ?? '').toString().trim();
+      if (hero.isNotEmpty) urls.add(api.resolveUrl(hero));
+      final heroImages = p['heroImages'];
+      if (heroImages is List && heroImages.isNotEmpty) {
+        urls.add(api.resolveUrl(heroImages.first.toString()));
+      }
+    }
+    prewarmImages(urls);
+  }
+
   Widget _buildProjectImage(
     String raw, {
     Key? key,
@@ -208,6 +227,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         : ref.read(apiClientProvider).resolveUrl(src);
     return CachedNetworkImage(
       memCacheWidth: 1080,
+      // Backend serves multi-MB originals; cache a downscaled copy on disk to
+      // bound memory and make repeat views instant.
+      maxWidthDiskCache: 1600,
+      maxHeightDiskCache: 1600,
       key: key,
       imageUrl: url,
       width: width,
@@ -233,60 +256,6 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       return null;
     }
   }
-
-  // Shown in the Properties tab when the real projects can't load (the bloated
-  // base64 hero image makes GET /projects 504 on a cold cache) so the tab is
-  // never blank. Replaced by real data the moment it arrives.
-  static final List<Map<String, dynamic>> _placeholderProjects = [
-    {
-      '_id': 'cledor',
-      'title': 'Cledor',
-      'location': 'Mumbai',
-      'status': 'Ongoing',
-      'heroImage': 'assets/cledor_featured.jpg',
-      'description':
-          'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.',
-    },
-    {
-      '_id': 'skai',
-      'title': 'Skai',
-      'location': 'Mumbai',
-      'status': 'Ongoing',
-      'heroImage': 'assets/cledor_interior.jpg',
-      'description':
-          'Elevated living with panoramic city views and world-class amenities.',
-    },
-    {
-      '_id': 'ocean-view',
-      'title': 'Ocean View Residences',
-      'location': 'Mumbai',
-      'status': 'Completed',
-      'heroImage':
-          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-      'description': 'Where horizon meets home. Coastal elegance redefined.',
-    },
-  ];
-
-  // Web parity: the MEDIA tab shows real-estate cards over interior/property
-  // photos (matching the web), not the project towers only.
-  static final List<Map<String, dynamic>> _placeholderMedia = [
-    {
-      '_id': 'media1',
-      'title': 'Ocean View',
-      'image': 'assets/hero_artistic.jpg',
-    },
-    {
-      '_id': 'media2',
-      'title': 'Ocean View',
-      'image': 'assets/custom_view_1.png',
-    },
-    {
-      '_id': 'media3',
-      'title': 'Aura Residences',
-      'image': 'assets/community_luxury.png',
-    },
-    {'_id': 'media4', 'title': 'Cledor', 'image': 'assets/cledor_featured.jpg'},
-  ];
 
   Future<void> _fetchData() async {
     final apiClient = ref.read(apiClientProvider);
@@ -318,38 +287,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         setState(() {
           _communities = results[0].data['data'] ?? _communities;
           _media = results[1].data['data'] ?? _media;
-
-          // Fill blank space with placeholder media when none returned.
-          if (_media.isEmpty) {
-            _media = [
-              {
-                '_id': 'dummy1',
-                'title': 'CLÉDOR LUXURY LIVING',
-                'thumbnail':
-                    'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
-                'description':
-                    'Discover the epitome of refinement in our latest architectural masterpiece.',
-                'slug': 'cledor-luxury-living',
-              },
-              {
-                '_id': 'dummy2',
-                'title': 'OCEAN VIEW RESIDENCES',
-                'thumbnail':
-                    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-                'description':
-                    'Where horizon meets home. Experience coastal elegance like never before.',
-                'slug': 'ocean-view-residences',
-              },
-              {
-                '_id': 'dummy3',
-                'title': 'URBAN SANCTUARY',
-                'thumbnail':
-                    'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
-                'description': 'A peaceful retreat in the heart of the city.',
-                'slug': 'urban-sanctuary',
-              },
-            ];
-          }
+          // Media gallery is backend-driven: no stock placeholders when empty.
           _loading = false;
         });
       }
@@ -366,7 +304,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         ref.invalidate(projectsProvider);
       }
       final list = await ref.read(projectsProvider.future);
-      if (mounted && list.isNotEmpty) setState(() => _projects = list);
+      if (mounted && list.isNotEmpty) {
+        setState(() => _projects = list);
+        _prewarmHomeImages();
+      }
     } catch (_) {}
 
     // Cache whatever we managed to load for an instant next mount.
@@ -634,11 +575,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                     heroProject['image'],
                                     heroProject['coverImage'],
                                   ], 'assets/hero_artistic.jpg')
-                                : [
-                                    'assets/hero_artistic.jpg',
-                                    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-                                    'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
-                                  ][_heroIndex % 3]);
+                                // No live project: bundled brand render only.
+                                : 'assets/hero_artistic.jpg');
 
                         return Stack(
                           children: [
@@ -916,16 +854,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         const SizedBox(height: 32),
         Builder(
           builder: (context) {
-            // Web parity: Properties shows the projects (white info cards);
-            // Media shows "Ocean View" living-room boxes; Communities its own
-            // list. Projects fall back to placeholders when the projects call
-            // 504s / cache is cold, so no tab is ever blank.
-            final projectItems = _projects.isNotEmpty
-                ? _projects
-                : _placeholderProjects;
+            // Backend-driven: every tab renders only what the backend returns
+            // (Properties -> projects, Media -> media, Communities -> its list).
+            // An empty tab shows the empty state rather than stock placeholders.
             final tabItems = _activeTab == 'Communities'
                 ? _communities
-                : (_activeTab == 'Media' ? _placeholderMedia : projectItems);
+                : (_activeTab == 'Media' ? _media : _projects);
             // Nothing published for this tab: say so rather than leaving a
             // 360px blank band under the tab row.
             if (tabItems.isEmpty) {
@@ -1185,29 +1119,26 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     final apiClient = ref.read(apiClientProvider);
 
     final picked = isCommunity
-        ? _pickImage(
-            [item['image'], item['heroImage']],
-            'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
-          )
+        ? _pickImage([item['image'], item['heroImage']], '')
         : (isMedia
-              ? _pickImage(
-                  [
-                    item['thumbnail'],
-                    item['image'],
-                    item['heroImage'],
-                    item['coverImage'],
-                  ],
-                  'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
-                )
-              : _pickImage(
-                  [item['heroImage'], item['image'], item['coverImage']],
-                  'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80',
-                ));
+              ? _pickImage([
+                  item['thumbnail'],
+                  item['image'],
+                  item['heroImage'],
+                  item['coverImage'],
+                ], '')
+              : _pickImage([
+                  item['heroImage'],
+                  item['image'],
+                  item['coverImage'],
+                ], ''));
     // Asset paths must bypass resolveUrl (it would prepend the backend host and
     // 404); http/relative paths still resolve normally.
-    final imageUrl = picked.startsWith('assets/')
-        ? picked
-        : apiClient.resolveUrl(picked);
+    final imageUrl = picked.isEmpty
+        ? ''
+        : (picked.startsWith('assets/')
+              ? picked
+              : apiClient.resolveUrl(picked));
 
     // Guest parity: Media is the plain gallery tile (image + title), the same
     // card the Guest home draws.

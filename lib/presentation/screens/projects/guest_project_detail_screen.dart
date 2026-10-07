@@ -1769,17 +1769,19 @@ class _GuestProjectDetailScreenState
             onToggleReadMore: () =>
                 setState(() => _showFullProgress = !_showFullProgress),
             onPhaseTap: (url) {
-              // Backend image only — open the full-page viewer only when the
-              // phase actually carries one; no hardcoded fallback.
-              if (url.trim().isEmpty) {
+              // Open the full-page viewer only for a real uploaded photo; the
+              // bundled construction fallback is not zoomable.
+              if (url.trim().isEmpty || url.startsWith('assets/')) {
                 _launchAction('Image coming soon');
               } else {
                 _showMediaLightbox([url], 'IMAGE');
               }
             },
             projectName: project?['title'] ?? 'PROJECT',
-            // No fallbackImage: the phase shows only its own backend image and
-            // stays blank when the backend has none (was the project hero).
+            // Web parity: a real phase with no uploaded photo still shows a
+            // construction image rather than a blank tile. (The "NO PHASES
+            // RECORDED" state, for when there are no phases at all, is kept.)
+            fallbackImage: 'assets/cledor_phase_demolition.jpg',
           ),
         ],
       ),
@@ -3209,11 +3211,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   var imageUrl = apiClient.resolveUrl(
                     phase['image'] ?? firstPhaseImg,
                   );
-                  // No phase photo uploaded: show the project's own image
-                  // rather than an empty grey placeholder.
+                  // No phase photo uploaded: show the construction fallback
+                  // image rather than an empty grey placeholder.
                   if (imageUrl.trim().isEmpty && fallbackImage.isNotEmpty) {
                     imageUrl = fallbackImage;
                   }
+                  final isAssetImg = imageUrl.startsWith('assets/');
                   final status =
                       phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
 
@@ -3294,6 +3297,14 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                                       .withValues(alpha: 0.35),
                                             ),
                                           ),
+                                        )
+                                      : isAssetImg
+                                      // Bundled construction fallback for a real
+                                      // phase with no uploaded photo.
+                                      ? Image.asset(
+                                          imageUrl,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
                                         )
                                       : CachedNetworkImage(
                                     memCacheWidth: 1080,
@@ -3953,12 +3964,9 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
     if (project['interiorImages'] is List) {
       imgs.addAll((project['interiorImages'] as List).map((e) => e.toString()));
     }
+    // Backend-driven: only real uploaded images; no stock placeholder is added
+    // when the backend has none (the hero then shows the branded fallback).
     _uniqueImages = imgs.toSet().where((img) => img.isNotEmpty).toList();
-    if (_uniqueImages.isEmpty) {
-      _uniqueImages.add(
-        'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
-      );
-    }
   }
 
   @override
@@ -3968,7 +3976,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
     final description =
         widget.project['description']?.toString() ??
         'A curated luxury development by M4 Properties.';
-    final primaryImg = _uniqueImages.first;
+    final primaryImg = _uniqueImages.isNotEmpty ? _uniqueImages.first : '';
 
     return Scaffold(
       backgroundColor: const Color(0xFF0C312B),
@@ -4397,6 +4405,10 @@ class ImageBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final client = ProviderScope.containerOf(context).read(apiClientProvider);
+    // Backend-driven: with no image URL show the branded panel, never stock.
+    if (imageUrl.trim().isEmpty) {
+      return Container(color: const Color(0xFF0C312B));
+    }
     final resolvedUrl = client.resolveUrl(imageUrl);
     Widget childImage;
     if (resolvedUrl.startsWith('data:')) {
@@ -4426,10 +4438,8 @@ class ImageBackground extends StatelessWidget {
         memCacheWidth: 900,
         fadeInDuration: Duration.zero,
         placeholder: (context, url) => Container(color: Colors.black26),
-        errorWidget: (context, url, error) => Image.network(
-          'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
-          fit: BoxFit.cover,
-        ),
+        errorWidget: (context, url, error) =>
+            Container(color: const Color(0xFF0C312B)),
       );
     }
 

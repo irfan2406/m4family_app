@@ -31,11 +31,9 @@ Future<List<dynamic>?> _loadCachedProjects() async {
 ///
 /// Without this the live payload was thrown away whenever the grace window
 /// below won the race (which it always does — the endpoint takes ~90s), so the
-/// app stayed on [_placeholderProjects] forever. Those placeholders use slugs
-/// as `_id` ('cledor', 'skai'), and submitting one to the API fails with
-/// `Cast to ObjectId failed for value "cledor"` — every booking/visit against a
-/// placeholder project was rejected. Saving the live payload lets the app heal
-/// itself: the next read gets real projects with real ObjectIds.
+/// app kept falling back to an empty catalog forever. Saving the live payload
+/// lets the app heal itself: the next read gets real projects with real
+/// ObjectIds (needed for bookings/visits, which require a real `_id`).
 Future<void> _saveCachedProjects(List<dynamic> projects) async {
   try {
     final f = _homeCacheFile;
@@ -51,55 +49,6 @@ Future<void> _saveCachedProjects(List<dynamic> projects) async {
     // Best-effort cache; never surface to the UI.
   }
 }
-
-// Shown when there is no cache AND the live projects call fails (the bloated
-// base64 payload 504s). Prevents the Properties screen from dead-ending on the
-// "COULDN'T LOAD" error state. Statuses span all three tabs so none is empty.
-// Uses network image URLs (the list card can't render bundled assets).
-List<dynamic> _placeholderProjects() => [
-  {
-    '_id': 'cledor',
-    'title': 'Cledor',
-    'status': 'Ongoing',
-    'location': {'name': 'Mumbai'},
-    'heroImages': [
-      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
-    ],
-    'description':
-        'A thoughtfully designed residential tower that blends modern architecture with timeless elegance.',
-  },
-  {
-    '_id': 'skai',
-    'title': 'Skai',
-    'status': 'Ongoing',
-    'location': {'name': 'Mumbai'},
-    'heroImages': [
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80',
-    ],
-    'description':
-        'Elevated living with panoramic city views and world-class amenities.',
-  },
-  {
-    '_id': 'urban-sanctuary',
-    'title': 'Urban Sanctuary',
-    'status': 'Upcoming',
-    'location': {'name': 'Mumbai'},
-    'heroImages': [
-      'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
-    ],
-    'description': 'A peaceful retreat in the heart of the city.',
-  },
-  {
-    '_id': 'ocean-view',
-    'title': 'Ocean View Residences',
-    'status': 'Completed',
-    'location': {'name': 'Mumbai'},
-    'heroImages': [
-      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-    ],
-    'description': 'Where horizon meets home. Coastal elegance redefined.',
-  },
-];
 
 /// The one live catalog fetch of this app session, shared by every run of
 /// [projectsProvider].
@@ -204,10 +153,10 @@ final projectsProvider = FutureProvider<List<dynamic>>((ref) async {
   }
 
   // Fallback shown while / instead of the live data: the last cached payload,
-  // else placeholder projects (so the screen never dead-ends on an error and
-  // never spins for a minute while the bloated endpoint times out).
+  // else an empty catalog. Backend-driven — we never fabricate stock projects;
+  // the screens show their own empty/error state instead.
   final cached = await _loadCachedProjects();
-  final fallback = cached ?? _placeholderProjects();
+  final fallback = cached ?? <dynamic>[];
 
   var disposed = false;
   ref.onDispose(() => disposed = true);

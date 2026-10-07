@@ -287,6 +287,17 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     _showMessage(message);
   }
 
+  /// Opens an external link (360° tour / walkthrough video) in the browser.
+  Future<void> _launchExternal(String url) async {
+    if (url.trim().isEmpty) return;
+    final uri = Uri.parse(url.trim());
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else if (mounted) {
+      _showMessage('Could not open the link');
+    }
+  }
+
   /// Toast feedback — green on success, red on failure.
   ///
   /// Rendered in the ROOT overlay so it floats ABOVE the booking sheet, and
@@ -1526,8 +1537,13 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     children: [
                       _buildOverviewSection(project),
                       const SizedBox(height: 40),
-                      // Web parity: Amenities come BEFORE Construction Progress.
+                      // Web parity: Amenities, then FLOOR PLANS, then
+                      // Construction Progress, then Location.
                       _buildAmenitiesSection(project),
+                      if (((project?['plans'] as List?) ?? []).isNotEmpty) ...[
+                        const SizedBox(height: 40),
+                        _buildFloorPlansSection(project),
+                      ],
                       const SizedBox(height: 40),
                       _buildConstructionSection(project),
                       const SizedBox(height: 40),
@@ -1808,6 +1824,23 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   Widget _buildOverviewSection(dynamic project) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Backend-driven media links (web parity): the promo cards below show only
+    // when the project actually carries that link.
+    final tour =
+        (project?['threeSixtyUrl'] ??
+                project?['virtualTourUrl'] ??
+                project?['virtualTour'])
+            ?.toString()
+            .trim() ??
+        '';
+    final walkthrough =
+        (project?['walkthroughUrl'] ??
+                project?['videoUrl'] ??
+                project?['walkthrough'] ??
+                project?['videoTour'])
+            ?.toString()
+            .trim() ??
+        '';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1860,70 +1893,31 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 _downloadAsset(project?['brochure']?.toString(), 'E-BROCHURE'),
           ),
         ],
-        const SizedBox(height: 12),
-        // Web parity: floor plans appear here as resource cards
-        // (e.g. "2BHK, MASTER BEDROOM" — CONFIGURATION N/A • AREA N/A).
-        ...(((project?['plans'] as List?) ?? [])
-            .where((plan) {
-              // A plan with neither a file nor a name is an empty admin row.
-              final img = plan is Map ? plan['image']?.toString().trim() : null;
-              final t = plan is Map ? plan['title']?.toString().trim() : null;
-              return (img != null && img.isNotEmpty) ||
-                  (t != null && t.isNotEmpty);
-            })
-            .map((plan) {
-              final cfg = plan is Map
-                  ? plan['config']?.toString().trim()
-                  : null;
-              final area = plan is Map ? plan['area']?.toString().trim() : null;
-              final planImg = plan is Map ? plan['image']?.toString() : null;
-              final planTitle = (plan is Map
-                  ? plan['title']?.toString().trim()
-                  : null);
-              // Say only what the record holds. Clédor's plans have no config and
-              // no area, and the card used to fill both gaps with "N/A"; now it
-              // falls back to the file's own type.
-              final parts = <String>[
-                if (cfg != null && cfg.isNotEmpty) cfg,
-                if (area != null && area.isNotEmpty) area,
-              ];
-              final ext = (planImg ?? '').split('.').last.toUpperCase();
-              final subtitle = parts.isNotEmpty
-                  ? parts.join(' • ')
-                  : (ext.isNotEmpty && ext.length <= 4 ? ext : 'FLOOR PLAN');
-              final cardTitle = (planTitle == null || planTitle.isEmpty)
-                  ? 'FLOOR PLAN'
-                  : planTitle;
-              return Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: _MultimediaAssetCard(
-                  title: cardTitle,
-                  subtitle: subtitle,
-                  icon: LucideIcons.layoutGrid,
-                  onView: () => _launchAction('Opening plan...', planImg),
-                  onDownload: () => _downloadAsset(planImg, cardTitle),
-                ),
-              );
-            })),
-        // Web parity: the WALKTHROUGH card is always shown (was hidden when the
-        // project carried no walkthrough), using the best-available backend
-        // video link; the CTA toasts gracefully when none is set.
-        const SizedBox(height: 12),
-        _MultimediaAssetCard(
-          title: 'WALKTHROUGH',
-          subtitle: 'CINEMATIC TOUR • 4K',
-          icon: LucideIcons.video,
-          isPrimary: true,
-          onView: () => _launchAction(
-            'Walkthrough coming soon',
-            (project?['walkthroughUrl'] ??
-                    project?['videoUrl'] ??
-                    project?['virtualTour'] ??
-                    project?['walkthrough'] ??
-                    project?['videoTour'])
-                ?.toString(),
+        // Web parity: the 360° VIRTUAL TOUR (web pink) and WALKTHROUGH VIDEO
+        // (web blue) promo cards — here in the app's own colours, and each
+        // shown only when the backend carries that link (Clédor carries both).
+        if (walkthrough.isNotEmpty) ...[
+          const SizedBox(height: 32),
+          _VirtualTourCard(
+            isDark: isDark,
+            title: 'WALKTHROUGH VIDEO',
+            subtitle: 'VIDEO SHOWCASE',
+            cta: 'WATCH VIDEO',
+            icon: LucideIcons.video,
+            onTap: () => _launchExternal(walkthrough),
           ),
-        ),
+        ],
+        if (tour.isNotEmpty) ...[
+          SizedBox(height: walkthrough.isNotEmpty ? 16 : 32),
+          _VirtualTourCard(
+            isDark: isDark,
+            title: '360° VIRTUAL TOUR',
+            subtitle: 'INTERACTIVE VR EXPERIENCE',
+            cta: 'EXPLORE 360°',
+            icon: LucideIcons.rotate3d,
+            onTap: () => _launchExternal(tour),
+          ),
+        ],
       ],
     );
   }
@@ -1955,6 +1949,43 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         _buildSectionHeader('Amenities'),
         const SizedBox(height: 24),
         _buildAmenities(project),
+      ],
+    );
+  }
+
+  /// Web parity (SS "FLOOR PLANS"): a dedicated section listing each backend
+  /// plan (TYPICAL, INDIVIDUAL, JODI, LOBBY, AMENITY FLOOR, ROOF TOP) with a
+  /// VIEW button that opens the plan's PDF. Hidden when the project has none.
+  Widget _buildFloorPlansSection(dynamic project) {
+    final plans = ((project?['plans'] as List?) ?? []).where((plan) {
+      final img = plan is Map ? plan['image']?.toString().trim() : null;
+      final t = plan is Map ? plan['title']?.toString().trim() : null;
+      return (img != null && img.isNotEmpty) || (t != null && t.isNotEmpty);
+    }).toList();
+    if (plans.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader('Floor Plans'),
+        const SizedBox(height: 24),
+        ...plans.map((plan) {
+          final planImg = plan is Map ? plan['image']?.toString() : null;
+          final planTitle = plan is Map
+              ? plan['title']?.toString().trim()
+              : null;
+          final title = (planTitle == null || planTitle.isEmpty)
+              ? 'FLOOR PLAN'
+              : planTitle.toUpperCase();
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _FloorPlanCard(
+              title: title,
+              hasFile: (planImg ?? '').trim().isNotEmpty,
+              onView: () => _launchAction('Opening plan...', planImg),
+              onDownload: () => _downloadAsset(planImg, title),
+            ),
+          );
+        }),
       ],
     );
   }
@@ -2229,13 +2260,17 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
               decoration: BoxDecoration(
+                // No white tile — match the cream page, with a hairline border
+                // so the amenity still reads as its own cell.
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.06)
-                    : Colors.white,
+                    : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(16),
-                border: isDark
-                    ? Border.all(color: Colors.white.withValues(alpha: 0.10))
-                    : null,
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.10)
+                      : Colors.black.withValues(alpha: 0.06),
+                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -3518,6 +3553,253 @@ class _TopIconButton extends StatelessWidget {
   }
 }
 
+/// Web parity: the "360° VIRTUAL TOUR" (web pink) and "WALKTHROUGH VIDEO" (web
+/// blue) promo rows — an icon, title/subtitle and a single CTA. Drawn in the
+/// app's own colours (dark green on cream / white on navy), not the web's
+/// pink/blue, and reused for both cards via its params.
+class _VirtualTourCard extends StatelessWidget {
+  final bool isDark;
+  final String title;
+  final String subtitle;
+  final String cta;
+  final IconData icon;
+  final VoidCallback onTap;
+  const _VirtualTourCard({
+    required this.isDark,
+    required this.title,
+    required this.subtitle,
+    required this.cta,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = isDark ? Colors.white : const Color(0xFF0C312B);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withOpacity(0.03)
+            : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withOpacity(0.08)
+              : Colors.black.withOpacity(0.06),
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: accent.withOpacity(0.06),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: accent, size: 18),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.inter(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white60 : const Color(0xFF155A4F),
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          _ScaleButton(
+            onTap: onTap,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                cta,
+                style: GoogleFonts.inter(
+                  fontSize: 7.5,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? const Color(0xFF0C312B)
+                      : const Color(0xFFF4EFE3),
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Web parity (FLOOR PLANS): a row with a grid icon, the plan name and a VIEW
+/// button that opens the plan file. App colours (dark green / navy).
+class _FloorPlanCard extends StatelessWidget {
+  final String title;
+  final bool hasFile;
+  final VoidCallback onView;
+  final VoidCallback onDownload;
+  const _FloorPlanCard({
+    required this.title,
+    required this.hasFile,
+    required this.onView,
+    required this.onDownload,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? Colors.white : const Color(0xFF0C312B);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withOpacity(0.03)
+            : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withOpacity(0.08)
+              : Colors.black.withOpacity(0.06),
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: accent.withOpacity(0.06),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(LucideIcons.layoutGrid, color: accent, size: 18),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.inter(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: accent,
+                letterSpacing: 0.6,
+                height: 1.2,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          // Web parity: VIEW (light/outline) + DOWNLOAD (dark filled).
+          _planButton(
+            label: 'VIEW',
+            filled: false,
+            isDark: isDark,
+            enabled: hasFile,
+            onTap: onView,
+          ),
+          const SizedBox(width: 8),
+          _planButton(
+            label: 'DOWNLOAD',
+            filled: true,
+            isDark: isDark,
+            enabled: hasFile,
+            onTap: onDownload,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _planButton({
+    required String label,
+    required bool filled,
+    required bool isDark,
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
+    final darkInk = const Color(0xFF0C312B);
+    final cream = const Color(0xFFF4EFE3);
+    final Color bg = filled
+        ? (isDark ? Colors.white : darkInk)
+        : (isDark ? Colors.white.withOpacity(0.06) : Colors.white);
+    final Color fg = filled
+        ? (isDark ? darkInk : cream)
+        : (isDark ? Colors.white : darkInk);
+    final Border? border = filled
+        ? null
+        : Border.all(
+            color: isDark
+                ? Colors.white.withOpacity(0.15)
+                : Colors.black.withOpacity(0.08),
+          );
+    return _ScaleButton(
+      onTap: enabled ? onTap : null,
+      child: Opacity(
+        opacity: enabled ? 1 : 0.4,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(10),
+            border: border,
+          ),
+          child: Text(
+            label,
+            style: GoogleFonts.inter(
+              fontSize: 8.5,
+              fontWeight: FontWeight.w700,
+              color: fg,
+              letterSpacing: 0.8,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _ScaleButton extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
@@ -4186,9 +4468,17 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     (phaseImages != null && phaseImages.isNotEmpty)
                     ? phaseImages[0]
                     : '';
-                final imageUrl = apiClient.resolveUrl(
+                final resolved = apiClient.resolveUrl(
                   phase['image'] ?? firstPhaseImg,
                 );
+                // Web parity: a phase with no uploaded photo still shows a
+                // construction image rather than a blank grey tile.
+                const constructionFallback =
+                    'assets/cledor_phase_demolition.jpg';
+                final imageUrl = resolved.trim().isEmpty
+                    ? constructionFallback
+                    : resolved;
+                final isAssetImg = imageUrl.startsWith('assets/');
                 return Container(
                   // Match the guest portal phase card: full width + shadow
                   // (was a fixed 260-wide horizontal card).
@@ -4221,7 +4511,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _ScaleButton(
-                        onTap: () => onPhaseTap(imageUrl),
+                        // Only open the lightbox for a real uploaded photo; the
+                        // bundled construction fallback is not zoomable.
+                        onTap: () => isAssetImg ? null : onPhaseTap(imageUrl),
                         child: Stack(
                           children: [
                             ClipRRect(
@@ -4232,22 +4524,28 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                               // uses, the guest portal phase card included.
                               child: AspectRatio(
                                 aspectRatio: 16 / 9,
-                                child: CachedNetworkImage(
-                                  imageUrl: imageUrl,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  memCacheWidth: 600,
-                                  fadeInDuration: Duration.zero,
-                                  placeholder: (context, url) => Container(
-                                    width: double.infinity,
-                                    color: Colors.white10,
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      Container(
+                                child: isAssetImg
+                                    ? Image.asset(
+                                        imageUrl,
                                         width: double.infinity,
-                                        color: Colors.white10,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : CachedNetworkImage(
+                                        imageUrl: imageUrl,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                        memCacheWidth: 600,
+                                        fadeInDuration: Duration.zero,
+                                        placeholder: (context, url) => Container(
+                                          width: double.infinity,
+                                          color: Colors.white10,
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            Container(
+                                              width: double.infinity,
+                                              color: Colors.white10,
+                                            ),
                                       ),
-                                ),
                               ),
                             ),
                             // Status badge (web parity): completed=green,

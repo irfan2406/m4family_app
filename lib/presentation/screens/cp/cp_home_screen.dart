@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/project_highlights.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
+import 'package:m4_mobile/core/utils/image_prewarm.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/hero_slider_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
@@ -167,10 +168,30 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           }
           _loading = false;
         });
+        _prewarmHomeImages();
       }
     } catch (e) {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  /// Warms the shared image cache with the first cards' hero photos as soon as
+  /// projects arrive. The backend's originals are several MB each, so starting
+  /// the download here means the cards paint from disk instead of waiting on
+  /// the network when scrolled into view.
+  void _prewarmHomeImages() {
+    final api = ref.read(apiClientProvider);
+    final urls = <String>[];
+    for (final p in _projects.take(4)) {
+      if (p is! Map) continue;
+      final hero = (p['heroImage'] ?? '').toString().trim();
+      if (hero.isNotEmpty) urls.add(api.resolveUrl(hero));
+      final heroImages = p['heroImages'];
+      if (heroImages is List && heroImages.isNotEmpty) {
+        urls.add(api.resolveUrl(heroImages.first.toString()));
+      }
+    }
+    prewarmImages(urls);
   }
 
   void _scrollToInterestForm() {
@@ -571,8 +592,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
   }
 
   /// Mirrors web `getImg(p, idx)`: prefer `heroImages[idx]`, then (for the first
-  /// slide only) `heroImage`, else the same stock interior the web falls back to —
-  /// identical precedence + fallback URL so the app shows the same images.
+  /// slide only) `heroImage`. Backend-driven: with no image the caller gets an
+  /// empty string and renders the branded placeholder (no stock photo).
   String _getImg(dynamic p, [int idx = 0]) {
     if (p is Map) {
       final heroImages = p['heroImages'];
@@ -587,7 +608,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         if (h != null && h.toString().trim().isNotEmpty) return h.toString();
       }
     }
-    return 'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80';
+    return '';
   }
 
   /// Web `value || fallback` semantics: null, empty, or whitespace -> fallback.
@@ -618,9 +639,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
       ),
     );
 
-    final src = raw.trim().isEmpty
-        ? 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80'
-        : raw.trim();
+    // Backend-driven: no image URL -> branded placeholder, never a stock photo.
+    final src = raw.trim();
+    if (src.isEmpty) return errorBox();
 
     if (src.startsWith('data:')) {
       try {
@@ -647,6 +668,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         : ref.read(apiClientProvider).resolveUrl(src);
     return CachedNetworkImage(
       memCacheWidth: 1080,
+      // Backend serves multi-MB originals; cache a downscaled copy on disk to
+      // bound memory and make repeat views instant.
+      maxWidthDiskCache: 1600,
+      maxHeightDiskCache: 1600,
       key: key,
       imageUrl: url,
       width: width,
@@ -884,17 +909,11 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
       return _buildPropertyCard(item);
     }
 
-    // Community/media only (properties return early above). Web `||` semantics
-    // so empty-string image fields fall back to the same stock the web uses.
+    // Community/media only (properties return early above). Backend-driven:
+    // empty image fields render the branded placeholder, not stock.
     final rawImage = isCommunity
-        ? _imgOr(
-            item['image'],
-            'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
-          )
-        : _imgOr(
-            item['thumbnail'] ?? item['image'],
-            'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
-          );
+        ? _imgOr(item['image'], '')
+        : _imgOr(item['thumbnail'] ?? item['image'], '');
 
     // Guest parity: Media is the plain gallery tile (image + title), the same
     // card the Guest home draws.

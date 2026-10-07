@@ -302,6 +302,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         Container(color: Theme.of(context).colorScheme.surfaceContainerHighest);
     final s = raw?.trim() ?? '';
     if (s.isEmpty) return fallback;
+    if (s.startsWith('assets/')) {
+      return Image.asset(
+        s,
+        fit: fit,
+        errorBuilder: (_, __, ___) => fallback,
+      );
+    }
     if (s.startsWith('data:')) {
       try {
         // Cache the provider per data URI so rebuilds reuse it (no re-decode /
@@ -1190,6 +1197,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             height: 1.5,
                           ),
                         ),
+                        ..._promoCards(p, scheme),
                         ..._assetRows(p, scheme),
                         const SizedBox(height: 26),
                         _sectionTitle('Amenities', scheme, accent),
@@ -1679,15 +1687,58 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           ? clean(_stringUrl(plans.first))
           : null,
     );
-    add(
-      icon: LucideIcons.video,
-      title: 'Walkthrough',
-      subtitle: 'Cinematic Tour • 4K',
-      url: clean(p['walkthrough']),
-      watchOnly: true,
-    );
+    // Walkthrough is now shown as its own promo card (see _promoCards), so it
+    // is no longer added here as a plain resource row.
 
     return rows.isEmpty ? const [] : [const SizedBox(height: 18), ...rows];
+  }
+
+  /// Web parity: the 360° VIRTUAL TOUR (web pink) and WALKTHROUGH VIDEO (web
+  /// blue) promo cards, here in the app's own colours, each shown only when the
+  /// backend carries that link.
+  List<Widget> _promoCards(Map<String, dynamic> p, ColorScheme scheme) {
+    final isDark = scheme.brightness == Brightness.dark;
+    final tour =
+        (p['threeSixtyUrl'] ?? p['virtualTourUrl'] ?? p['virtualTour'])
+            ?.toString()
+            .trim() ??
+        '';
+    final walkthrough =
+        (p['walkthroughUrl'] ??
+                p['videoUrl'] ??
+                p['walkthrough'] ??
+                p['videoTour'])
+            ?.toString()
+            .trim() ??
+        '';
+    final cards = <Widget>[];
+    if (walkthrough.isNotEmpty) {
+      cards.add(
+        _VirtualTourCard(
+          isDark: isDark,
+          title: 'WALKTHROUGH VIDEO',
+          subtitle: 'VIDEO SHOWCASE',
+          cta: 'WATCH VIDEO',
+          icon: LucideIcons.video,
+          onTap: () => _openUrl(walkthrough),
+        ),
+      );
+    }
+    if (tour.isNotEmpty) {
+      if (cards.isNotEmpty) cards.add(const SizedBox(height: 12));
+      cards.add(
+        _VirtualTourCard(
+          isDark: isDark,
+          title: '360° VIRTUAL TOUR',
+          subtitle: 'INTERACTIVE VR EXPERIENCE',
+          cta: 'EXPLORE 360°',
+          icon: LucideIcons.rotate3d,
+          onTap: () => _openUrl(tour),
+        ),
+      );
+    }
+    if (cards.isEmpty) return const [];
+    return [const SizedBox(height: 18), ...cards];
   }
 
   Widget _assetRow(
@@ -2093,9 +2144,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     bool isLight,
     Color accent,
   ) {
-    final img = (ph['images'] is List && (ph['images'] as List).isNotEmpty)
+    final rawImg = (ph['images'] is List && (ph['images'] as List).isNotEmpty)
         ? _stringUrl((ph['images'] as List).first)
         : _stringUrl(ph['image']);
+    // Web parity: a phase with no uploaded photo still shows a construction
+    // image rather than a blank tile.
+    final img = (rawImg == null || rawImg.trim().isEmpty)
+        ? 'assets/cledor_phase_demolition.jpg'
+        : rawImg;
     final status = (ph['status'] ?? 'In Progress').toString();
     final name = (ph['name'] ?? ph['phaseName'] ?? 'Phase').toString();
     final pct = (ph['progressPercent'] is num)
@@ -2158,9 +2214,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     child: InkWell(
                       onTap: () {
                         final urls = _stringList(ph['images']);
+                        // The bundled construction fallback is not zoomable —
+                        // only open the gallery for real uploaded photos.
                         if (urls.isNotEmpty) {
                           _openGallery(urls);
-                        } else if (img != null && img.isNotEmpty) {
+                        } else if (!img.startsWith('assets/') && img.isNotEmpty) {
                           _openGallery([img]);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -3575,4 +3633,115 @@ class _DottedProgressRingPainter extends CustomPainter {
       old.dotRadius != dotRadius ||
       old.margin != margin ||
       old.dashLength != dashLength;
+}
+
+/// Web parity: the 360° VIRTUAL TOUR (web pink) and WALKTHROUGH VIDEO (web
+/// blue) promo rows — an icon, title/subtitle and a single CTA. Drawn in the
+/// app's own colours (dark green on cream / white on navy), not pink/blue.
+class _VirtualTourCard extends StatelessWidget {
+  final bool isDark;
+  final String title;
+  final String subtitle;
+  final String cta;
+  final IconData icon;
+  final VoidCallback onTap;
+  const _VirtualTourCard({
+    required this.isDark,
+    required this.title,
+    required this.subtitle,
+    required this.cta,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = isDark ? Colors.white : const Color(0xFF0C312B);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06),
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: accent, size: 18),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.inter(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white60 : const Color(0xFF155A4F),
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: onTap,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                cta,
+                style: GoogleFonts.inter(
+                  fontSize: 7.5,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? const Color(0xFF0C312B)
+                      : const Color(0xFFF4EFE3),
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -922,35 +922,41 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   }
 
   Widget _buildHeroCard() {
+    // Web parity: the "ABOUT M4" hero is a branded dark-green card (no stock
+    // photo). The web intentionally shows no backend image here, so the app
+    // mirrors that — an institutional branded panel with a faint M4 watermark.
     return Container(
       height: 200,
       width: double.infinity,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(40)),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(40),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF0C312B), Color(0xFF07201C), Color(0xFF040E0C)],
+          stops: [0.0, 0.55, 1.0],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.25),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(40),
         child: Stack(
           children: [
-            CachedNetworkImage(
-              memCacheWidth: 1080,
-              imageUrl: ref
-                  .read(apiClientProvider)
-                  .resolveUrl(
-                    '/uploads/media/south_mumbai_skyline_luxury_residence_1774856627856.png',
-                  ),
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
-              placeholder: (context, url) => Container(color: Colors.black12),
-              errorWidget: (context, url, error) =>
-                  Container(color: Colors.black12),
-            ),
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black26, Colors.black87],
-                  stops: [0.0, 0.5, 1.0],
+            // Faint M4 brand watermark, centred.
+            Center(
+              child: Text(
+                'M4',
+                style: GoogleFonts.gelasio(
+                  color: Colors.white.withOpacity(0.06),
+                  fontSize: 120,
+                  fontWeight: FontWeight.w700,
+                  height: 1,
                 ),
               ),
             ),
@@ -961,20 +967,20 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'THE COLLECTIVE',
-                    style: GoogleFonts.gelasio(
-                      color: Colors.white70,
+                    'INSTITUTIONAL GRADE DEVELOPMENT',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white.withOpacity(0.55),
                       fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 3,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2.5,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
-                    'M4 LEGACY',
+                    'ABOUT M4',
                     style: GoogleFonts.gelasio(
                       color: Colors.white,
-                      fontSize: 32,
+                      fontSize: 34,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -1,
                       height: 1.1,

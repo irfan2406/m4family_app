@@ -14,6 +14,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/core/utils/image_prewarm.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/hero_slider_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
@@ -191,18 +192,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       slides[0] = {...slides[0], 'image': 'assets/hero_artistic.jpg'};
       return slides;
     }
+    // No live projects: show only the bundled brand render, never stock photos.
     return const [
       {'image': 'assets/hero_artistic.jpg', 'project': null},
-      {
-        'image':
-            'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-        'project': null,
-      },
-      {
-        'image':
-            'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
-        'project': null,
-      },
     ];
   }
 
@@ -284,38 +276,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           setState(() {
             _communities = results[0].data['data'] ?? [];
             _media = results[1].data['data'] ?? [];
-
-            // 💡 Add dummy content if media is empty to fill blank space
-            if (_media.isEmpty) {
-              _media = [
-                {
-                  '_id': 'dummy1',
-                  'title': 'CLÉDOR LUXURY LIVING',
-                  'thumbnail':
-                      'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
-                  'description':
-                      'Discover the epitome of refinement in our latest architectural masterpiece.',
-                  'slug': 'cledor-luxury-living',
-                },
-                {
-                  '_id': 'dummy2',
-                  'title': 'OCEAN VIEW RESIDENCES',
-                  'thumbnail':
-                      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-                  'description':
-                      'Where horizon meets home. Experience coastal elegance like never before.',
-                  'slug': 'ocean-view-residences',
-                },
-                {
-                  '_id': 'dummy3',
-                  'title': 'URBAN SANCTUARY',
-                  'thumbnail':
-                      'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
-                  'description': 'A peaceful retreat in the heart of the city.',
-                  'slug': 'urban-sanctuary',
-                },
-              ];
-            }
+            // Media gallery is backend-driven: when the backend returns no
+            // media we leave it empty (the section hides itself) rather than
+            // injecting stock placeholders.
             _hasFreshFast = true;
             _loading = false;
           });
@@ -361,6 +324,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             _hasFreshProjects = true;
             _loading = false;
           });
+          _prewarmHomeImages();
           return true;
         })
         .catchError((_) {
@@ -1011,6 +975,25 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     return fallback;
   }
 
+  /// Starts downloading the first cards' hero photos into the shared image
+  /// cache the moment projects arrive, so they are already on disk when the
+  /// user scrolls to them. The backend's originals are several MB each, so the
+  /// download — not the decode — is what made them appear late.
+  void _prewarmHomeImages() {
+    final api = ref.read(apiClientProvider);
+    final urls = <String>[];
+    for (final p in _projects.take(4)) {
+      if (p is! Map) continue;
+      final hero = (p['heroImage'] ?? '').toString().trim();
+      if (hero.isNotEmpty) urls.add(api.resolveUrl(hero));
+      final heroImages = p['heroImages'];
+      if (heroImages is List && heroImages.isNotEmpty) {
+        urls.add(api.resolveUrl(heroImages.first.toString()));
+      }
+    }
+    prewarmImages(urls);
+  }
+
   /// Drawn in place of the card strip when the active tab has no rows. An
   /// empty list from the backend is a normal state, not a failure, so it says
   /// so in the page's own palette. Matches the CP home's version.
@@ -1095,19 +1078,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     if (isMedia) return _buildMediaCard(item);
 
     final rawImage = isCommunity
-        ? _pickImage(
-            [item['image']],
-            'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
-          )
+        ? _pickImage([item['image']], '')
         : (isMedia
-              ? _pickImage(
-                  [item['thumbnail'], item['image']],
-                  'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
-                )
-              : _pickImage(
-                  [item['heroImage']],
-                  'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80',
-                ));
+              ? _pickImage([item['thumbnail'], item['image']], '')
+              : _pickImage([item['heroImage']], ''));
 
     // Web parity: the Properties tab uses a light "info card" layout (image
     // on top, title/location below, READ MORE button) — unlike the
@@ -1350,10 +1324,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   }
 
   Widget _buildMediaCard(dynamic item) {
-    final rawImage = _pickImage(
-      [item['heroImage'], item['image']],
-      'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
-    );
+    final rawImage = _pickImage([
+      item['thumbnail'],
+      item['heroImage'],
+      item['image'],
+    ], '');
     return _ScaleButton(
       // Media tiles open the Media Gallery (content hub) — the same target as
       // the menu's Media entry. They used to open the project detail page,
@@ -1598,9 +1573,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       ),
     );
 
-    final src = raw.trim().isEmpty
-        ? 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80'
-        : raw.trim();
+    // Backend-driven: with no image URL we show the branded placeholder, never
+    // a stock photo.
+    final src = raw.trim();
+    if (src.isEmpty) return errorBox();
 
     if (src.startsWith('assets/')) {
       return Image.asset(
@@ -1644,6 +1620,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         : ref.read(apiClientProvider).resolveUrl(src);
     return CachedNetworkImage(
       memCacheWidth: 1080,
+      // Backend serves multi-MB originals (up to ~16MB). Storing a downscaled
+      // copy on disk keeps memory bounded and makes repeat views instant.
+      maxWidthDiskCache: 1600,
+      maxHeightDiskCache: 1600,
       key: key,
       imageUrl: url,
       width: width,

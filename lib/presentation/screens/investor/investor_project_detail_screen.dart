@@ -1285,6 +1285,15 @@ class _InvestorProjectDetailScreenState
                 project['walkthrough'] ??
                 project['videoTour'])
             ?.toString();
+    // Web parity: 360° VIRTUAL TOUR promo card, shown only when the backend
+    // carries a tour link.
+    final tour =
+        (project['threeSixtyUrl'] ??
+                project['virtualTourUrl'] ??
+                project['virtualTour'])
+            ?.toString()
+            .trim() ??
+        '';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -1372,6 +1381,12 @@ class _InvestorProjectDetailScreenState
             isDark: isDark,
             onWatch: () => _openUrl(walkthrough),
           ),
+          // Web parity: 360° VIRTUAL TOUR card (web pink) — app colours, only
+          // when the backend carries a tour link.
+          if (tour.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _VirtualTourCard(isDark: isDark, onExplore: () => _openUrl(tour)),
+          ],
           ..._buildDocuments(project, isDark),
         ],
       ),
@@ -1916,7 +1931,14 @@ class _InvestorProjectDetailScreenState
     final firstImg = (phaseImages != null && phaseImages.isNotEmpty)
         ? phaseImages[0]
         : '';
-    final imageUrl = apiClient.resolveUrl(phase['image'] ?? firstImg);
+    final resolvedPhase = apiClient.resolveUrl(phase['image'] ?? firstImg);
+    // Web parity: a phase with no uploaded photo still shows a construction
+    // image rather than a blank tile.
+    const constructionFallback = 'assets/cledor_phase_demolition.jpg';
+    final imageUrl = resolvedPhase.trim().isEmpty
+        ? constructionFallback
+        : resolvedPhase;
+    final isAssetImg = imageUrl.startsWith('assets/');
     final status = phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
     final pctRaw = phase['progressPercent'] ?? phase['progress'] ?? 0;
     final pct = (pctRaw is num)
@@ -1928,7 +1950,9 @@ class _InvestorProjectDetailScreenState
 
     return GestureDetector(
       onTap: () {
-        if (imageUrl.isNotEmpty) {
+        // Only open the gallery for a real uploaded photo; the bundled
+        // construction fallback is not zoomable.
+        if (!isAssetImg && imageUrl.isNotEmpty) {
           _openGallery([phase['image']?.toString() ?? firstImg.toString()]);
         }
       },
@@ -1965,13 +1989,17 @@ class _InvestorProjectDetailScreenState
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  CachedNetworkImage(
-                    memCacheWidth: 1080,
-                    imageUrl: imageUrl,
-                    fit: BoxFit.cover,
-                    placeholder: (c, u) => Container(color: Colors.black12),
-                    errorWidget: (c, u, e) => Container(color: Colors.black12),
-                  ),
+                  isAssetImg
+                      ? Image.asset(imageUrl, fit: BoxFit.cover)
+                      : CachedNetworkImage(
+                          memCacheWidth: 1080,
+                          imageUrl: imageUrl,
+                          fit: BoxFit.cover,
+                          placeholder: (c, u) =>
+                              Container(color: Colors.black12),
+                          errorWidget: (c, u, e) =>
+                              Container(color: Colors.black12),
+                        ),
                   Positioned.fill(
                     child: IgnorePointer(
                       child: Container(
@@ -2673,20 +2701,26 @@ class _InvestorProjectDetailScreenState
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    CachedNetworkImage(
-                      memCacheWidth: 1080,
-                      imageUrl:
-                          'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80',
-                      fit: BoxFit.cover,
-                      color: isDark
-                          ? Colors.black.withValues(alpha: 0.6)
-                          : Colors.white.withValues(alpha: 0.6),
-                      colorBlendMode: BlendMode.dstATop,
-                      placeholder: (c, u) => Container(
-                        color: isDark ? Colors.black26 : Colors.black12,
+                    // Branded map placeholder (no stock photo): a subtle
+                    // gradient panel with a faint pin motif behind the pill.
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: isDark
+                              ? const [Color(0xFF141B3A), Color(0xFF0B1024)]
+                              : const [Color(0xFFEDE7D8), Color(0xFFDCD3BE)],
+                        ),
                       ),
-                      errorWidget: (c, u, e) =>
-                          Container(color: Colors.black12),
+                      child: Center(
+                        child: Icon(
+                          LucideIcons.map,
+                          size: 56,
+                          color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                              .withValues(alpha: 0.12),
+                        ),
+                      ),
                     ),
                     Positioned(
                       bottom: 20,
@@ -3284,6 +3318,109 @@ class _WalkthroughCard extends StatelessWidget {
               ),
               child: Text(
                 'WATCH STORY',
+                style: GoogleFonts.inter(
+                  fontSize: 7.5,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? const Color(0xFF0C312B)
+                      : const Color(0xFFF4EFE3),
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Web parity: the "360° VIRTUAL TOUR" promo card (web pink) — same chrome as
+/// [_WalkthroughCard], in the app's own colours, with a single EXPLORE 360° CTA.
+class _VirtualTourCard extends StatelessWidget {
+  final bool isDark;
+  final VoidCallback onExplore;
+  const _VirtualTourCard({required this.isDark, required this.onExplore});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06),
+        ),
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                  .withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(
+              LucideIcons.rotate3d,
+              color: isDark ? Colors.white : const Color(0xFF0C312B),
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '360° VIRTUAL TOUR',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'INTERACTIVE VR EXPERIENCE',
+                  style: GoogleFonts.inter(
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white60 : const Color(0xFF155A4F),
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: onExplore,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                'EXPLORE 360°',
                 style: GoogleFonts.inter(
                   fontSize: 7.5,
                   fontWeight: FontWeight.w600,

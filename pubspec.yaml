@@ -49,6 +49,9 @@ dependencies:
   # Animations & UI
   flutter_animate: ^4.5.0
   cached_network_image: ^3.3.1
+  # Shared image disk cache (used directly for background image prewarming);
+  # also a transitive dep of cached_network_image.
+  flutter_cache_manager: ^3.4.1
 
   # Local Storage & Security
   flutter_secure_storage: ^9.0.0

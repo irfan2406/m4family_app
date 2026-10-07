@@ -79,6 +79,10 @@ class M4Image extends ConsumerWidget {
       width: width,
       height: height,
       memCacheWidth: memWidth,
+      // Backend serves multi-MB originals; store a downscaled copy on disk so
+      // memory stays bounded and repeat views are instant.
+      maxWidthDiskCache: 1600,
+      maxHeightDiskCache: 1600,
       fadeInDuration: Duration.zero,
       placeholder: (context, url) =>
           placeholder ?? Container(color: Colors.black12),

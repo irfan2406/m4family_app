@@ -30,6 +30,8 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
       child: Icon(LucideIcons.building2, color: Colors.white24, size: 40),
     ),
   );
+  // Backend-driven: empty URL -> branded placeholder (no stock, no bad request).
+  if (url.trim().isEmpty) return errorBox();
   if (url.startsWith('data:')) {
     try {
       final bytes = base64Decode(
@@ -47,6 +49,10 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
   }
   return CachedNetworkImage(
     memCacheWidth: 1080,
+    // Backend serves multi-MB originals; cache a downscaled copy on disk to
+    // bound memory and make repeat views instant.
+    maxWidthDiskCache: 1600,
+    maxHeightDiskCache: 1600,
     imageUrl: url,
     fit: fit,
     placeholder: (context, u) => Container(color: Colors.black12),
@@ -881,9 +887,11 @@ class ProjectListScreen extends ConsumerWidget {
                                       firstOf('exteriorImages') ??
                                       firstOf('interiorImages') ??
                                       firstOf('media');
+                                  // Backend-driven: no hero -> empty (branded
+                                  // placeholder renders), never stock.
                                   final imageUrl =
                                       (rawHero == null || rawHero.isEmpty)
-                                      ? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'
+                                      ? ''
                                       : apiClient.resolveUrl(rawHero);
                                   return GestureDetector(
                                     onTap: () {

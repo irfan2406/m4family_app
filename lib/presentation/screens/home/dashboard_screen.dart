@@ -15,6 +15,7 @@ import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/core/utils/image_prewarm.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/hero_slider_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
@@ -186,7 +187,27 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         }
       }
     }
-    return 'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80';
+    // Backend-driven: no image -> empty so the renderer shows its placeholder.
+    return '';
+  }
+
+  /// Warms the shared image cache with the first cards' hero photos as soon as
+  /// projects arrive. The backend's originals are several MB each, so starting
+  /// the download here means the cards paint from disk when scrolled into view
+  /// instead of fetching on first paint.
+  void _prewarmHomeImages() {
+    final api = ref.read(apiClientProvider);
+    final urls = <String>[];
+    for (final p in _projects.take(4)) {
+      if (p is! Map) continue;
+      final hero = (p['heroImage'] ?? '').toString().trim();
+      if (hero.isNotEmpty) urls.add(api.resolveUrl(hero));
+      final heroImages = p['heroImages'];
+      if (heroImages is List && heroImages.isNotEmpty) {
+        urls.add(api.resolveUrl(heroImages.first.toString()));
+      }
+    }
+    prewarmImages(urls);
   }
 
   /// Web parity: MEDIA tab = a gallery built from every project's heroImages.
@@ -275,6 +296,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         _projects = projects;
         _projectsLoading = false;
       });
+      _prewarmHomeImages();
     } catch (e) {
       if (mounted) {
         setState(() => _projectsLoading = false);
@@ -808,7 +830,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   if (heroImgs is List && heroImgs.isNotEmpty) {
                                     return heroImgs[0].toString();
                                   }
-                                  return 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80';
+                                  // Backend-driven: blank placeholder, no stock.
+                                  return '';
                                 })(),
                                 onTap: () {
                                   Navigator.push(
