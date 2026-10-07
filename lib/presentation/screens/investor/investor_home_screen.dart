@@ -1436,10 +1436,17 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
   }
 
   Widget _buildFeaturedSection() {
-    // Always render — fall back to placeholder projects when the real list is
-    // empty (cold cache / 504) so the Featured section matches the web instead
-    // of vanishing.
-    final featured = _projects.isNotEmpty ? _projects : _placeholderProjects;
+    // Backend-driven: only projects explicitly flagged `featured` appear here;
+    // nothing shows when none are flagged (no placeholder/default project).
+    final featured = _projects
+        .where(
+          (p) =>
+              p is Map &&
+              (p['featured'] == true ||
+                  p['featured']?.toString().toLowerCase() == 'true'),
+        )
+        .toList();
+    if (featured.isEmpty) return const SizedBox.shrink();
     final project = featured[_featuredIndex % featured.length];
     final isDark = Theme.of(context).brightness == Brightness.dark;
 

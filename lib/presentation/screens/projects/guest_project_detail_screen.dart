@@ -193,19 +193,15 @@ class _GuestProjectDetailScreenState
   List<dynamic> _guestFallbackPhases() {
     final dyn = _fullProject ?? widget.projectData;
     final project = dyn is Map ? dyn : const <String, dynamic>{};
-    final heroList = project['heroImages'];
-    final hero =
-        (heroList is List && heroList.isNotEmpty
-            ? heroList.first?.toString()
-            : (project['heroImage'] ?? project['coverImage'])?.toString()) ??
-        '';
-    final imgs = hero.isNotEmpty ? <String>[hero] : const <String>[];
     final rawPct = project['completion'];
     final pct = rawPct is num
         ? rawPct.toInt().clamp(0, 100)
         : (int.tryParse('${rawPct ?? ''}') ?? 0).clamp(0, 100);
     final done = pct >= 100;
     final started = pct > 0;
+    // No backend phases: placeholder phases carry NO image and are flagged
+    // `_fallback`, so the card reads "NO PHASES RECORDED" (web parity) instead
+    // of a dummy project photo.
     return [
       {
         'phaseName': 'Foundation',
@@ -213,7 +209,8 @@ class _GuestProjectDetailScreenState
         'status': done ? 'Completed' : (started ? 'In Progress' : 'Upcoming'),
         'progressPercent': pct,
         'phaseOrder': 1,
-        'images': imgs,
+        'images': const <String>[],
+        '_fallback': true,
       },
       {
         'phaseName': 'Structure & Handover',
@@ -221,7 +218,8 @@ class _GuestProjectDetailScreenState
         'status': done ? 'Completed' : 'Upcoming',
         'progressPercent': done ? 100 : 0,
         'phaseOrder': 2,
-        'images': imgs,
+        'images': const <String>[],
+        '_fallback': true,
       },
     ];
   }
@@ -1034,11 +1032,13 @@ class _GuestProjectDetailScreenState
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Lightbox',
-      barrierColor: Colors.black.withValues(alpha: 0.9),
+      // Fully opaque so the viewer reads as a dedicated full page, not a
+      // popup floating over the dimmed project page.
+      barrierColor: Colors.black,
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (context, anim1, anim2) {
         return Scaffold(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.black,
           body: Stack(
             fit: StackFit.expand,
             children: [
@@ -1217,8 +1217,16 @@ class _GuestProjectDetailScreenState
                   builder: (context) {
                     final hasExterior = _exteriorImages.isNotEmpty;
                     final hasInterior = _interiorImages.isNotEmpty;
+                    final tour =
+                        (project?['threeSixtyUrl'] ??
+                                project?['virtualTourUrl'] ??
+                                project?['virtualTour'])
+                            ?.toString() ??
+                        '';
 
-                    if (!hasExterior && !hasInterior) {
+                    // Nothing to show (no media image, no 360° tour): hide the
+                    // whole row.
+                    if (!hasExterior && !hasInterior && tour.isEmpty) {
                       return const SizedBox.shrink();
                     }
 
@@ -1237,27 +1245,16 @@ class _GuestProjectDetailScreenState
                               // chain per thumb: live URL → bundled Cledor
                               // photo (temporary, until the backend is fixed)
                               // → project hero image.
+                              // Backend images only — no bundled fallback; the
+                              // thumb stays blank if the backend image fails.
                               if (hasExterior)
                                 _HeroMediaThumb(
                                   label: 'EXTERIOR',
                                   imageUrl: apiClient.resolveUrl(
                                     _exteriorImages.first,
                                   ),
-                                  fallback: _thumbFallback(
-                                    project,
-                                    'assets/cledor_exterior.jpg',
-                                  ),
-                                  // Bundled photo first so the gallery always
-                                  // opens with a working full image while
-                                  // /uploads is broken server-side.
-                                  onTap: () => _openHeroGallery([
-                                    if ((project?['title'] ?? '')
-                                        .toString()
-                                        .toLowerCase()
-                                        .contains('cledor'))
-                                      'asset:assets/cledor_exterior.jpg',
-                                    ..._exteriorImages,
-                                  ]),
+                                  onTap: () =>
+                                      _openHeroGallery(_exteriorImages),
                                 ),
                               if (hasInterior)
                                 _HeroMediaThumb(
@@ -1265,18 +1262,16 @@ class _GuestProjectDetailScreenState
                                   imageUrl: apiClient.resolveUrl(
                                     _interiorImages.first,
                                   ),
-                                  fallback: _thumbFallback(
-                                    project,
-                                    'assets/cledor_interior.jpg',
-                                  ),
-                                  onTap: () => _openHeroGallery([
-                                    if ((project?['title'] ?? '')
-                                        .toString()
-                                        .toLowerCase()
-                                        .contains('cledor'))
-                                      'asset:assets/cledor_interior.jpg',
-                                    ..._interiorImages,
-                                  ]),
+                                  onTap: () =>
+                                      _openHeroGallery(_interiorImages),
+                                ),
+                              // Web parity: 360° VIEW icon thumbnail — only when
+                              // the backend carries a tour link.
+                              if (tour.isNotEmpty)
+                                _HeroMediaThumb(
+                                  label: '360° VIEW',
+                                  isVR: true,
+                                  onTap: () => _launchThreeSixty(tour),
                                 ),
                             ],
                           ),
@@ -1426,7 +1421,6 @@ class _GuestProjectDetailScreenState
             ),
           ),
           if (_showStickyHeader) _buildStickyHeader(project, isDark),
-          if (_showBottomBar) _buildBottomActions(project),
         ],
       ),
     );
@@ -1640,17 +1634,23 @@ class _GuestProjectDetailScreenState
   }
 
   Widget _buildOverviewSection(dynamic project) {
-    final flyerUrl = project?['flyer'] ?? project?['brochure'];
-    // Web parity: the overview always shows a WALKTHROUGH VIDEO card. Pull the
-    // best-available video/tour link from the backend record.
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // 360° tour link from the backend; the card shows only when it exists.
+    final tour =
+        (project?['threeSixtyUrl'] ??
+                project?['virtualTourUrl'] ??
+                project?['virtualTour'])
+            ?.toString() ??
+        '';
+    // Walkthrough/video link from the backend; the card shows only when it
+    // exists (e.g. Clédor carries a YouTube walkthrough).
     final walkthrough =
         (project?['walkthroughUrl'] ??
                 project?['videoUrl'] ??
-                project?['virtualTour'] ??
                 project?['walkthrough'] ??
                 project?['videoTour'])
-            ?.toString();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+            ?.toString() ??
+        '';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -1675,23 +1675,24 @@ class _GuestProjectDetailScreenState
               letterSpacing: 0.5,
             ),
           ),
-          if (flyerUrl != null) ...[
+          // Web parity: WALKTHROUGH VIDEO card — only when the backend carries a
+          // walkthrough/video link (e.g. Clédor); app colours (not web blue).
+          if (walkthrough.isNotEmpty) ...[
             const SizedBox(height: 32),
-            _MultimediaAssetCard(
-              title: 'PROJECT FLYER',
-              subtitle: 'HIGH RES • PDF',
-              icon: LucideIcons.fileText,
-              onView: () => _launchAction('Opening...', flyerUrl),
+            _WalkthroughVideoCard(
+              isDark: isDark,
+              onWatch: () => _launchThreeSixty(walkthrough),
             ),
           ],
-          // Web parity: WALKTHROUGH VIDEO card with a WATCH VIDEO CTA — always
-          // shown, in the app's own colours (not the web's blue).
-          const SizedBox(height: 16),
-          _WalkthroughVideoCard(
-            isDark: isDark,
-            onWatch: () =>
-                _launchAction('Walkthrough coming soon', walkthrough),
-          ),
+          // Web parity: 360° VIRTUAL TOUR card — only when the backend carries a
+          // tour link (hidden otherwise, e.g. completed projects); app colours.
+          if (tour.isNotEmpty) ...[
+            SizedBox(height: walkthrough.isNotEmpty ? 16 : 32),
+            _VirtualTourCard(
+              isDark: isDark,
+              onExplore: () => _launchThreeSixty(tour),
+            ),
+          ],
         ],
       ),
     );
@@ -1767,9 +1768,18 @@ class _GuestProjectDetailScreenState
             showFullProgress: _showFullProgress,
             onToggleReadMore: () =>
                 setState(() => _showFullProgress = !_showFullProgress),
-            onPhaseTap: (url) => _showMediaLightbox([url], 'IMAGE'),
+            onPhaseTap: (url) {
+              // Backend image only — open the full-page viewer only when the
+              // phase actually carries one; no hardcoded fallback.
+              if (url.trim().isEmpty) {
+                _launchAction('Image coming soon');
+              } else {
+                _showMediaLightbox([url], 'IMAGE');
+              }
+            },
             projectName: project?['title'] ?? 'PROJECT',
-            fallbackImage: _resolveHeroUrl(project),
+            // No fallbackImage: the phase shows only its own backend image and
+            // stays blank when the backend has none (was the project hero).
           ),
         ],
       ),
@@ -1838,7 +1848,7 @@ class _GuestProjectDetailScreenState
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.06)
-                    : Colors.white,
+                    : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(16),
                 border: isDark
                     ? Border.all(color: Colors.white.withValues(alpha: 0.10))
@@ -2868,6 +2878,106 @@ class _WalkthroughVideoCard extends StatelessWidget {
   }
 }
 
+/// Web parity: the "360° VIRTUAL TOUR" row in the overview — a VR icon, the
+/// title/subtitle, and a single EXPLORE 360° CTA. Drawn in the app's own
+/// colours (dark green on cream / white on navy), not the web's pink.
+class _VirtualTourCard extends StatelessWidget {
+  final bool isDark;
+  final VoidCallback onExplore;
+  const _VirtualTourCard({required this.isDark, required this.onExplore});
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = isDark ? Colors.white : const Color(0xFF0C312B);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF4EFE3),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06),
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(LucideIcons.rotate3d, color: accent, size: 18),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '360° VIRTUAL TOUR',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : const Color(0xFF155A4F),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'INTERACTIVE VR EXPERIENCE',
+                  style: GoogleFonts.inter(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white60 : const Color(0xFF155A4F),
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          _ScaleButton(
+            onTap: onExplore,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white : const Color(0xFF0C312B),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                'EXPLORE 360°',
+                style: GoogleFonts.inter(
+                  fontSize: 7.5,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? const Color(0xFF0C312B)
+                      : const Color(0xFFF4EFE3),
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ConstructionDashboardCard extends ConsumerWidget {
   final num overallProgress;
   final String estimatedCompletion;
@@ -3146,16 +3256,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _ScaleButton(
-                          // Temporary while /uploads is broken: the demolition
-                          // phase opens its bundled photo in the lightbox.
-                          onTap: () => onPhaseTap(
-                            (phase['phaseName'] ?? phase['name'] ?? '')
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains('demolition')
-                                ? 'asset:assets/cledor_phase_demolition.jpg'
-                                : imageUrl,
-                          ),
+                          // Backend image only — open the phase's own image,
+                          // with no bundled fallback.
+                          onTap: () => onPhaseTap(imageUrl),
                           child: Stack(
                             children: [
                               ClipRRect(
@@ -3166,7 +3269,33 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                 // uses.
                                 child: AspectRatio(
                                   aspectRatio: 16 / 9,
-                                  child: CachedNetworkImage(
+                                  child: phase['_fallback'] == true
+                                      // Web parity: no backend phases → the card
+                                      // reads "NO PHASES RECORDED", not a dummy
+                                      // project photo.
+                                      ? Container(
+                                          width: double.infinity,
+                                          alignment: Alignment.center,
+                                          color: isDark
+                                              ? const Color(0xFF141B3A)
+                                              : const Color(0xFFF4EFE3),
+                                          child: Text(
+                                            'NO PHASES RECORDED',
+                                            style: GoogleFonts.inter(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w700,
+                                              letterSpacing: 1.5,
+                                              color:
+                                                  (isDark
+                                                          ? Colors.white
+                                                          : const Color(
+                                                              0xFF0C312B,
+                                                            ))
+                                                      .withValues(alpha: 0.35),
+                                            ),
+                                          ),
+                                        )
+                                      : CachedNetworkImage(
                                     memCacheWidth: 1080,
                                     imageUrl: imageUrl,
                                     width: double.infinity,
@@ -3183,36 +3312,22 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                         size: 24,
                                       ),
                                     ),
-                                    // /uploads is broken server-side: for the
-                                    // Demolition phase, fall back to the bundled
-                                    // snapshot of the web's phase photo.
-                                    errorWidget: (c, e, s) =>
-                                        (phase['phaseName'] ??
-                                                phase['name'] ??
-                                                '')
-                                            .toString()
-                                            .toLowerCase()
-                                            .contains('demolition')
-                                        ? Image.asset(
-                                            'assets/cledor_phase_demolition.jpg',
-                                            height: 220,
-                                            width: double.infinity,
-                                            fit: BoxFit.cover,
-                                            filterQuality: FilterQuality.high,
-                                          )
-                                        : Container(
-                                            height: 220,
-                                            color: isDark
-                                                ? const Color(0xFF141B3A)
-                                                : const Color(0xFFF4EFE3),
-                                            child: Icon(
-                                              LucideIcons.image,
-                                              color: isDark
-                                                  ? Colors.white24
-                                                  : const Color(0x420C312B),
-                                              size: 24,
-                                            ),
-                                          ),
+                                    // Backend image only — a blank tile when the
+                                    // backend image is absent or fails to load
+                                    // (no bundled fallback).
+                                    errorWidget: (c, e, s) => Container(
+                                      height: 220,
+                                      color: isDark
+                                          ? const Color(0xFF141B3A)
+                                          : const Color(0xFFF4EFE3),
+                                      child: Icon(
+                                        LucideIcons.image,
+                                        color: isDark
+                                            ? Colors.white24
+                                            : const Color(0x420C312B),
+                                        size: 24,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),

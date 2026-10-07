@@ -42,6 +42,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   int _heroSlide =
       0; // top hero cycles the featured project's heroImages (web parity)
 
+  /// Backend-driven featured list: only projects explicitly flagged `featured`.
+  /// When empty, the FEATURED PROPERTY section is hidden (no default project).
+  List<dynamic> get _featuredList => _projects
+      .where(
+        (p) =>
+            p is Map &&
+            (p['featured'] == true ||
+                p['featured']?.toString().toLowerCase() == 'true'),
+      )
+      .toList();
+
   /// Hero slides the Admin Panel controls (`GET /api/config` ->
   /// heroSliderImages). Empty means this dashboard keeps its own catalog/asset
   /// slides, which is also what an offline start gets.
@@ -867,23 +878,52 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Text(
-                    'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner.',
-                    textAlign: TextAlign.justify,
-                    style: GoogleFonts.inter(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withOpacity(0.6),
-                      fontSize: 14,
-                      height: 1.8,
+                  // Web parity: the philosophy ends with a "Who We Are" link to
+                  // the About page.
+                  Text.rich(
+                    TextSpan(
+                      style: GoogleFonts.inter(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.6),
+                        fontSize: 14,
+                        height: 1.8,
+                      ),
+                      children: [
+                        const TextSpan(
+                          text:
+                              'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner. ',
+                        ),
+                        WidgetSpan(
+                          child: GestureDetector(
+                            onTap: () => context.push('/about'),
+                            child: Text(
+                              'Who We Are',
+                              style: GoogleFonts.inter(
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : const Color(0xFF155A4F),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    textAlign: TextAlign.justify,
                   ),
                 ],
               ),
             ),
           ),
 
-          // 6. 🖼️ Stage 6: Featured Selection Hero (Slider + Info below)
+          // 6. 🖼️ Stage 6: Featured Selection Hero (Slider + Info below).
+          // Backend-driven: shows only when a project is flagged `featured`.
+          if (_featuredList.isNotEmpty) ...[
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
@@ -913,20 +953,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           ),
                         ),
                       )
-                    : _projects.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'No featured properties',
-                          style: TextStyle(color: Colors.white24),
-                        ),
-                      )
+                    : _featuredList.isEmpty
+                    ? const SizedBox.shrink()
                     : PageView.builder(
                         controller: _featuredController,
-                        itemCount: _projects.length > 5 ? 5 : _projects.length,
+                        itemCount: _featuredList.length > 5
+                            ? 5
+                            : _featuredList.length,
                         onPageChanged: (index) =>
                             setState(() => _currentHeroIndex = index),
                         itemBuilder: (context, index) {
-                          final project = _projects[index];
+                          final project = _featuredList[index];
                           final title =
                               project['title']?.toString() ?? 'UNTITLED';
                           // Web parity: SharedHomePage shows this fixed blurb
@@ -1116,7 +1153,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       // so its label wraps.
                       children: [
                         for (final h in projectHighlights(
-                          _projects.isNotEmpty ? _projects.first : null,
+                          _featuredList.isNotEmpty ? _featuredList.first : null,
                         ).take(3))
                           Expanded(
                             child: _buildWebUSP(
@@ -1136,9 +1173,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         icon: LucideIcons.arrowLeft,
                         onTap: () {
                           if (_featuredController.hasClients) {
-                            final maxItems = _projects.length > 5
+                            final maxItems = _featuredList.length > 5
                                 ? 5
-                                : _projects.length;
+                                : _featuredList.length;
                             if (_currentHeroIndex > 0) {
                               _featuredController.previousPage(
                                 duration: 500.ms,
@@ -1157,12 +1194,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       const SizedBox(width: 25),
                       GestureDetector(
                         onTap: () {
-                          if (_projects.isNotEmpty) {
-                            final maxItems = _projects.length > 5
+                          if (_featuredList.isNotEmpty) {
+                            final maxItems = _featuredList.length > 5
                                 ? 5
-                                : _projects.length;
+                                : _featuredList.length;
                             final currentIndex = _currentHeroIndex % maxItems;
-                            final currentProject = _projects[currentIndex];
+                            final currentProject = _featuredList[currentIndex];
                             final projectId =
                                 currentProject['_id']?.toString() ??
                                 currentProject['id']?.toString() ??
@@ -1212,9 +1249,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         icon: LucideIcons.arrowRight,
                         onTap: () {
                           if (_featuredController.hasClients) {
-                            final maxItems = _projects.length > 5
+                            final maxItems = _featuredList.length > 5
                                 ? 5
-                                : _projects.length;
+                                : _featuredList.length;
                             if (_currentHeroIndex < (maxItems - 1)) {
                               _featuredController.nextPage(
                                 duration: 500.ms,
@@ -1236,6 +1273,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
             ),
           ),
+          ],
 
           // 7. Explore, Connect and Engage With Us (web parity)
           SliverToBoxAdapter(

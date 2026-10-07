@@ -249,12 +249,37 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   String _heroImage() {
     final p = _project ?? widget.projectData ?? {};
     final api = ref.read(apiClientProvider);
-    final heroImages = p['heroImages'];
-    if (heroImages is List && heroImages.isNotEmpty) {
-      return api.resolveUrl(heroImages.first?.toString());
+    // Prefer a real uploaded image (/uploads or a data URI) over any stock /
+    // placeholder URL (e.g. unsplash) the record may carry in heroImages —
+    // web parity. heroImage is the dedicated upload field, so it comes first.
+    final candidates = <String>[
+      p['heroImage']?.toString() ?? '',
+      if (p['heroImages'] is List)
+        for (final h in (p['heroImages'] as List)) h?.toString() ?? '',
+    ];
+    bool isReal(String u) =>
+        u.isNotEmpty && (u.contains('/uploads/') || u.startsWith('data:'));
+    final real = candidates.firstWhere(
+      (u) => isReal(u.trim()),
+      orElse: () => '',
+    );
+    final chosen = real.isNotEmpty
+        ? real
+        : candidates.firstWhere((u) => u.trim().isNotEmpty, orElse: () => '');
+    return api.resolveUrl(chosen.trim());
+  }
+
+  /// First real uploaded image (/uploads or data URI) in [list], or '' — so a
+  /// thumbnail never falls back to a stock/placeholder (e.g. unsplash) URL.
+  String _firstUpload(dynamic list) {
+    if (list is! List) return '';
+    for (final x in list) {
+      final s = x?.toString().trim() ?? '';
+      if (s.isNotEmpty && (s.contains('/uploads/') || s.startsWith('data:'))) {
+        return s;
+      }
     }
-    final hero = p['heroImage']?.toString();
-    return api.resolveUrl(hero);
+    return '';
   }
 
   /// Renders a project image, handling base64 `data:` URIs (which
@@ -895,22 +920,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final status = (p['status'] ?? 'Ongoing').toString().toUpperCase();
     final hero = _heroImage();
 
-    final exteriorThumb =
-        (p['exteriorImages'] is List &&
-            (p['exteriorImages'] as List).isNotEmpty)
-        ? (p['exteriorImages'] as List).first?.toString()
-        : (p['heroImages'] is List && (p['heroImages'] as List).isNotEmpty)
-        ? (p['heroImages'] as List).first?.toString()
-        : p['heroImage']?.toString();
-    final interiorThumb =
-        (p['interiorImages'] is List &&
-            (p['interiorImages'] as List).isNotEmpty)
-        ? (p['interiorImages'] as List).first?.toString()
-        : (p['heroImages'] is List && (p['heroImages'] as List).length > 1)
-        ? (p['heroImages'] as List)[1]?.toString()
-        : (p['heroImages'] is List && (p['heroImages'] as List).isNotEmpty)
-        ? (p['heroImages'] as List).first?.toString()
-        : p['heroImage']?.toString();
+    // Backend uploads only — no stock/placeholder fallback. A thumbnail with no
+    // real uploaded image is hidden below.
+    final exteriorThumb = _firstUpload(p['exteriorImages']);
+    final interiorThumb = _firstUpload(p['interiorImages']);
 
     final cpIdx = ref.watch(cpNavigationIndexProvider);
 
@@ -1025,44 +1038,30 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         // Exterior / Interior / 360 thumbnails — below the hero (web parity)
                         Row(
                           children: [
-                            _thumbButton(
-                              label: 'Exterior',
-                              url: exteriorThumb,
-                              scheme: scheme,
-                              onTap: () {
-                                final urls = _stringList(p['exteriorImages']);
-                                if (urls.isNotEmpty) {
-                                  _openGallery(urls);
-                                } else {
-                                  final hero = _stringList(p['heroImages']);
-                                  final fallback = hero.isNotEmpty
-                                      ? hero
-                                      : [
-                                          p['heroImage']?.toString() ?? '',
-                                        ].where((x) => x.isNotEmpty).toList();
-                                  _openGallery(fallback);
-                                }
-                              },
-                            ),
-                            const SizedBox(width: 10),
-                            _thumbButton(
-                              label: 'Interior',
-                              url: interiorThumb,
-                              scheme: scheme,
-                              onTap: () {
-                                final urls = _stringList(p['interiorImages']);
-                                if (urls.isNotEmpty) {
-                                  _openGallery(urls);
-                                } else {
-                                  final hero = _stringList(p['heroImages']);
-                                  final fallback = hero.length > 1
-                                      ? [hero[1]]
-                                      : hero;
-                                  _openGallery(fallback);
-                                }
-                              },
-                            ),
-                            const SizedBox(width: 10),
+                            // Backend uploads only — a thumb shows only when the
+                            // project has a real uploaded image for it.
+                            if (exteriorThumb.isNotEmpty) ...[
+                              _thumbButton(
+                                label: 'Exterior',
+                                url: exteriorThumb,
+                                scheme: scheme,
+                                onTap: () => _openGallery(
+                                  _stringList(p['exteriorImages']),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                            ],
+                            if (interiorThumb.isNotEmpty) ...[
+                              _thumbButton(
+                                label: 'Interior',
+                                url: interiorThumb,
+                                scheme: scheme,
+                                onTap: () => _openGallery(
+                                  _stringList(p['interiorImages']),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                            ],
                             _vrButton(
                               scheme: scheme,
                               onTap: () {

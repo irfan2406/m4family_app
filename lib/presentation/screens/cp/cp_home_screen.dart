@@ -1334,8 +1334,18 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
   }
 
   Widget _buildFeaturedSection() {
-    if (_projects.isEmpty) return const SizedBox.shrink();
-    final project = _projects[_featuredIndex % _projects.length];
+    // Backend-driven: only projects explicitly flagged `featured` appear here;
+    // nothing shows when none are flagged (no default project).
+    final featuredList = _projects
+        .where(
+          (p) =>
+              p is Map &&
+              (p['featured'] == true ||
+                  p['featured']?.toString().toLowerCase() == 'true'),
+        )
+        .toList();
+    if (featuredList.isEmpty) return const SizedBox.shrink();
+    final project = featuredList[_featuredIndex % featuredList.length];
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(

@@ -397,7 +397,14 @@ class M4Theme {
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: lightForeground,
-      contentTextStyle: GoogleFonts.inter(color: lightPrimaryFg, fontSize: 14),
+      // White, semi-bold text so every toast (success/error/info — all of which
+      // use a dark or coloured background) reads clearly. Toasts that set their
+      // own text colour are unaffected.
+      contentTextStyle: GoogleFonts.inter(
+        color: Colors.white,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+      ),
       actionTextColor: goldSoft,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -645,7 +652,13 @@ class M4Theme {
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: darkCard,
-      contentTextStyle: GoogleFonts.inter(color: darkForeground, fontSize: 14),
+      // White, semi-bold text so every toast reads clearly on its dark/coloured
+      // background. Toasts that set their own text colour are unaffected.
+      contentTextStyle: GoogleFonts.inter(
+        color: Colors.white,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+      ),
       actionTextColor: gold,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),

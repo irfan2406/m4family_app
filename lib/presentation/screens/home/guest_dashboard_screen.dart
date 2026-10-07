@@ -787,8 +787,17 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildPhilosophy(),
                 ),
-                const SizedBox(height: 40),
-                _buildFeaturedSection(),
+                // FEATURED PROPERTY — only when the catalog flags a project as
+                // featured; otherwise nothing shows on home.
+                if (_projects.any(
+                  (p) =>
+                      p is Map &&
+                      (p['featured'] == true ||
+                          p['featured']?.toString().toLowerCase() == 'true'),
+                )) ...[
+                  const SizedBox(height: 40),
+                  _buildFeaturedSection(),
+                ],
                 const SizedBox(height: 40),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -1646,29 +1655,18 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   }
 
   Widget _buildFeaturedSection() {
-    // Web parity: the FEATURED PROPERTY block always renders. When the projects
-    // API is unavailable (e.g. a 504 timeout) and nothing is cached, fall back
-    // to a bundled brand feature so the section never disappears from home.
-    final List<dynamic> featuredList = _projects.isNotEmpty
-        ? _projects
-        : [
-            {
-              // Carries an id (and the fields the detail page reads) so READ
-              // MORE can actually open it. Without `_id` the button fell
-              // through to "switch to the Projects tab" and the card looked
-              // dead — the detail screen renders from the `extra` we pass, so
-              // this works even though the id isn't a real ObjectId.
-              '_id': 'cledor',
-              'title': 'Cledor',
-              'status': 'Ongoing',
-              'location': {'name': 'Mumbai'},
-              'description':
-                  'CLÉDOR is a thoughtfully designed residential tower that '
-                  'blends modern architecture with timeless elegance—crafted '
-                  'for those who value refined, future-ready living.',
-              'heroImage': 'assets/hero_artistic.jpg',
-            },
-          ];
+    // Backend-driven: only projects explicitly flagged `featured` in the catalog
+    // appear here. When none are flagged, the section shows nothing — no default
+    // project and no hardcoded placeholder.
+    final List<dynamic> featuredList = _projects
+        .where(
+          (p) =>
+              p is Map &&
+              (p['featured'] == true ||
+                  p['featured']?.toString().toLowerCase() == 'true'),
+        )
+        .toList();
+    if (featuredList.isEmpty) return const SizedBox.shrink();
     final project = featuredList[_featuredIndex % featuredList.length];
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -1727,23 +1725,31 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   // keeps the text on the photo and sizes it to fit the frame.
                   AspectRatio(
                     aspectRatio: 16 / 9,
-                    child: _buildProjectImage(
-                      () {
+                    child: Builder(
+                      builder: (context) {
                         final hero = project['heroImages'];
-                        if (hero is List &&
-                            hero.isNotEmpty &&
-                            hero.first != null &&
-                            hero.first.toString().trim().isNotEmpty) {
-                          return hero.first.toString();
+                        final raw =
+                            (hero is List &&
+                                hero.isNotEmpty &&
+                                hero.first != null &&
+                                hero.first.toString().trim().isNotEmpty)
+                            ? hero.first.toString()
+                            : (project['heroImage'] ??
+                                      project['image'] ??
+                                      project['coverImage'] ??
+                                      '')
+                                  .toString();
+                        // Backend image only — no hardcoded/stock fallback. A
+                        // blank tile shows when the backend has uploaded none.
+                        if (raw.trim().isEmpty) {
+                          return Container(color: const Color(0xFF0C312B));
                         }
-                        return (project['heroImage'] ??
-                                project['image'] ??
-                                project['coverImage'] ??
-                                '')
-                            .toString();
-                      }(),
-                      height: double.infinity,
-                      width: double.infinity,
+                        return _buildProjectImage(
+                          raw,
+                          height: double.infinity,
+                          width: double.infinity,
+                        );
+                      },
                     ),
                   ),
                   // Text scrim so the type stays readable on the photo.
