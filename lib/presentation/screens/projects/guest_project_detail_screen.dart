@@ -3315,18 +3315,18 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                               color: const Color(0xFF0C312B),
                                             ),
                                             isAssetImg
-                                                // Show the full uploaded image,
-                                                // not a cropped centre.
+                                                // PNG/SVG (logos) -> contain,
+                                                // JPEG (photos) -> cover.
                                                 ? Image.asset(
                                                     imageUrl,
                                                     width: double.infinity,
-                                                    fit: BoxFit.contain,
+                                                    fit: fitForMediaUrl(imageUrl),
                                                   )
                                                 : CachedNetworkImage(
                                                     memCacheWidth: 1080,
                                                     imageUrl: imageUrl,
                                                     width: double.infinity,
-                                                    fit: BoxFit.contain,
+                                                    fit: fitForMediaUrl(imageUrl),
                                                     placeholder: (c, u) =>
                                                         const SizedBox.shrink(),
                                                     errorWidget: (c, e, s) =>

@@ -9,6 +9,19 @@
 /// everywhere without each call site re-implementing the parsing.
 library;
 
+import 'package:flutter/widgets.dart' show BoxFit;
+
+/// Chooses how an uploaded image should fill a fixed frame, by file type:
+/// PNG/SVG are usually transparent logos/graphics, shown in full ([BoxFit.contain]
+/// so nothing is cropped); JPEG/other are photos that fill the frame
+/// ([BoxFit.cover]). Query strings and asset paths are handled.
+BoxFit fitForMediaUrl(String url) {
+  final path = (Uri.tryParse(url)?.path ?? url).toLowerCase();
+  return (path.endsWith('.png') || path.endsWith('.svg'))
+      ? BoxFit.contain
+      : BoxFit.cover;
+}
+
 /// Extracts a URL string from [v], which may be a plain string or an object
 /// carrying the URL under one of several common keys. Returns '' when none.
 String mediaUrlOf(dynamic v) {

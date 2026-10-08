@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:m4_mobile/core/utils/api_error.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -2197,8 +2198,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 // Dark backdrop so an uploaded image with a transparent/white
                 // background still shows.
                 Container(color: const Color(0xFF0C312B)),
-                // Show the full uploaded image, not a cropped centre.
-                _projectImage(img, fit: BoxFit.contain),
+                // PNG/SVG (logos) -> contain (full), JPEG (photos) -> cover.
+                _projectImage(img, fit: fitForMediaUrl(img)),
                 Positioned.fill(
                   child: Material(
                     color: Colors.transparent,

@@ -4558,14 +4558,14 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                         ? Image.asset(
                                             imageUrl,
                                             width: double.infinity,
-                                            // Show the full uploaded image, not a
-                                            // cropped centre.
-                                            fit: BoxFit.contain,
+                                            // PNG/SVG (logos) -> contain (full),
+                                            // JPEG (photos) -> cover (fill).
+                                            fit: fitForMediaUrl(imageUrl),
                                           )
                                         : CachedNetworkImage(
                                             imageUrl: imageUrl,
                                             width: double.infinity,
-                                            fit: BoxFit.contain,
+                                            fit: fitForMediaUrl(imageUrl),
                                             memCacheWidth: 600,
                                             fadeInDuration: Duration.zero,
                                             placeholder: (context, url) =>
