@@ -133,6 +133,14 @@ void main() async {
   debugRepaintRainbowEnabled = false;
 
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Image cache budget: the backend serves large photos, so the 100MB default
+  // evicts decoded images quickly and they re-decode on every scroll/revisit —
+  // which reads as slow image loading. A larger budget keeps recently seen
+  // images hot so they reappear instantly. (The gallery prefetcher still
+  // raises this further while a full-screen gallery is open.)
+  PaintingBinding.instance.imageCache.maximumSizeBytes = 200 << 20; // 200 MB
+
   // Edge-to-edge: the app paints behind the status bar and the gesture bar,
   // so every portal fills the whole screen instead of sitting inside two
   // system-coloured strips. SafeArea still keeps controls out of those areas.
