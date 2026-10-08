@@ -462,6 +462,14 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                           final activeStep = currentStepVal == -1
                               ? 0
                               : currentStepVal;
+                          // Web parity: when the unit is allotted by admin
+                          // (bookingId present), SELECT SPACE (step 1) is the
+                          // first usable step, so there is no BACK to the locked
+                          // ALLOTTED step.
+                          final bookingId = ref.watch(
+                            customViewsBookingIdProvider,
+                          );
+                          final minStep = bookingId != null ? 1 : 0;
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -487,36 +495,34 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                   verticalDirection: VerticalDirection.up,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    GestureDetector(
-                                      onTap: activeStep > 0
-                                          ? () =>
-                                                ref
-                                                        .read(
-                                                          customViewsStepProvider
-                                                              .notifier,
-                                                        )
-                                                        .state =
-                                                    activeStep - 1
-                                          : null,
-                                      child: Text(
-                                        'BACK',
-                                        style: GoogleFonts.gelasio(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700,
-                                          color: activeStep > 0
-                                              ? Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurface
-                                                    .withValues(alpha: 0.75)
-                                              : Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurface
-                                                    .withValues(alpha: 0.68),
-                                          letterSpacing: 2,
+                                    // Hidden entirely when the current step is
+                                    // the first usable one (web parity: no BACK
+                                    // on SELECT SPACE for an admin allotment).
+                                    if (activeStep > minStep) ...[
+                                      GestureDetector(
+                                        onTap: () =>
+                                            ref
+                                                    .read(
+                                                      customViewsStepProvider
+                                                          .notifier,
+                                                    )
+                                                    .state =
+                                                activeStep - 1,
+                                        child: Text(
+                                          'BACK',
+                                          style: GoogleFonts.gelasio(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w700,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withValues(alpha: 0.75),
+                                            letterSpacing: 2,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 18),
+                                      const SizedBox(height: 18),
+                                    ],
                                     GestureDetector(
                                       onTap: () {
                                         if (activeStep < 3) {

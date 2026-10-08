@@ -1177,37 +1177,39 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   ),
                 ),
 
-              // 🏷️ Badge (for Properties/Media)
-              if (!isCommunity)
-                Positioned(
-                  top: 24,
-                  right: 24,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
+              // 🏷️ Badge — web parity: COMMUNITY on community tiles, else the
+              // status (Properties) or MEDIA.
+              Positioned(
+                top: 24,
+                right: 24,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0C312B).withValues(alpha: 0.72),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.1),
                     ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0C312B).withValues(alpha: 0.72),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.1),
-                      ),
-                    ),
-                    child: Text(
-                      isMedia
-                          ? 'MEDIA'
-                          : (item['status']?.toString() ?? 'ONGOING')
-                                .toUpperCase(),
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 8,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: 1,
-                      ),
+                  ),
+                  child: Text(
+                    isCommunity
+                        ? 'COMMUNITY'
+                        : (isMedia
+                              ? 'MEDIA'
+                              : (item['status']?.toString() ?? 'ONGOING')
+                                    .toUpperCase()),
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 1,
                     ),
                   ),
                 ),
+              ),
 
               // 📄 Content Section
               Positioned(
@@ -1219,9 +1221,13 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      (item['title'] ?? item['name'] ?? '')
-                          .toString()
-                          .toUpperCase(),
+                      // Web parity: community titles are title-case ("Mazgaon"),
+                      // Properties/Media stay upper-case.
+                      isCommunity
+                          ? (item['title'] ?? item['name'] ?? '').toString()
+                          : (item['title'] ?? item['name'] ?? '')
+                                .toString()
+                                .toUpperCase(),
                       // One line: a 16:9 tile fits one title line, two
                       // description lines and the action row.
                       maxLines: 1,
@@ -1233,48 +1239,51 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      (isCommunity
-                              ? (item['overview'] ?? item['description'] ?? '')
-                              : (item['location'] is Map
-                                    ? item['location']['name']
-                                    : item['location'] ?? 'MAZGAON'))
-                          .toString()
-                          .toUpperCase(),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                        height: 1.4,
+                    // Web parity: community tiles show no subtitle under the
+                    // title (just the badge, title and arrow). Properties/Media
+                    // keep their location/subtitle line.
+                    if (!isCommunity) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        (item['location'] is Map
+                                ? item['location']['name']
+                                : item['location'] ?? 'MAZGAON')
+                            .toString()
+                            .toUpperCase(),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          color: Colors.white.withValues(alpha: 0.7),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
+                          height: 1.4,
+                        ),
                       ),
-                    ),
+                    ],
                     const SizedBox(height: 24),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: isCommunity
+                          ? MainAxisAlignment.end
+                          : MainAxisAlignment.spaceBetween,
                       children: [
-                        // The label takes the room left over and the
-                        // arrow keeps its circle; without a flex the pair was
-                        // wider than the card on a 361dp screen.
-                        Expanded(
-                          child: Text(
-                            isCommunity
-                                ? 'EXPLORE COMMUNITY'
-                                : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 1.2,
+                        // Web parity: community tiles show only the arrow (no
+                        // "EXPLORE COMMUNITY" label); Properties/Media keep it.
+                        if (!isCommunity)
+                          Expanded(
+                            child: Text(
+                              isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: 1.2,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
+                        if (!isCommunity) const SizedBox(width: 8),
                         Container(
                           width: 44,
                           height: 44,

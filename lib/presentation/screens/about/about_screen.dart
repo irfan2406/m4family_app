@@ -848,28 +848,17 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           ),
         ),
         const SizedBox(height: 40),
-        Row(
-          children: [
-            Expanded(
-              child: _buildPromoImage(
-                ref
-                    .read(apiClientProvider)
-                    .resolveUrl(
-                      '/public/premium_interior_modern_living_room_1774856579067.png',
-                    ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildPromoImage(
-                ref
-                    .read(apiClientProvider)
-                    .resolveUrl(
-                      '/public/premium_kitchen_modular_modern_1774856602851.png',
-                    ),
-              ),
-            ),
-          ],
+        // Backend-driven (web parity): the Custom Views promo image is the CMS
+        // media[1] slot (media[0] is the About hero banner). A change in the
+        // Admin Panel reflects here; the old hardcoded /public renders are gone.
+        Builder(
+          builder: (context) {
+            final customViewsImg = _cmsMediaAt(1);
+            if (customViewsImg.isEmpty) return const SizedBox.shrink();
+            return _buildPromoImage(
+              ref.read(apiClientProvider).resolveUrl(customViewsImg),
+            );
+          },
         ),
         const SizedBox(height: 40),
         _buildFinalCTA(),
@@ -921,10 +910,30 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     );
   }
 
+  /// Returns the CMS `media[i]` value as a usable image URL, or '' when the
+  /// slot is missing or a placeholder (the backend stores "removed" for a
+  /// cleared slot). media[0] = About hero banner, media[1] = Custom Views image.
+  String _cmsMediaAt(int i) {
+    final media = _cmsData?['media'];
+    if (media is List && i >= 0 && i < media.length) {
+      final s = media[i]?.toString().trim() ?? '';
+      if (s.startsWith('/uploads') ||
+          s.startsWith('http') ||
+          s.startsWith('data:')) {
+        return s;
+      }
+    }
+    return '';
+  }
+
   Widget _buildHeroCard() {
-    // Web parity: the "ABOUT M4" hero is a branded dark-green card (no stock
-    // photo). The web intentionally shows no backend image here, so the app
-    // mirrors that — an institutional branded panel with a faint M4 watermark.
+    // Backend-driven (web parity): the hero shows the CMS media[0] banner (the
+    // branded "M4 GROUP" image), so an Admin Panel change reflects here. Only
+    // the title ("ABOUT M4") is overlaid; the subtitle is part of the design.
+    final heroImg = _cmsMediaAt(0);
+    final title = (_cmsData?['title']?.toString().trim().isNotEmpty ?? false)
+        ? _cmsData!['title'].toString().trim()
+        : 'About M4';
     return Container(
       height: 200,
       width: double.infinity,
@@ -947,46 +956,62 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(40),
         child: Stack(
+          fit: StackFit.expand,
           children: [
-            // Faint M4 brand watermark, centred.
-            Center(
-              child: Text(
-                'M4',
-                style: GoogleFonts.gelasio(
-                  color: Colors.white.withOpacity(0.06),
-                  fontSize: 120,
-                  fontWeight: FontWeight.w700,
-                  height: 1,
+            // Backend banner image (media[0]); falls back to the gradient panel
+            // + faint M4 watermark when the CMS has no image.
+            if (heroImg.isNotEmpty)
+              CachedNetworkImage(
+                memCacheWidth: 1080,
+                imageUrl: ref.read(apiClientProvider).resolveUrl(heroImg),
+                fit: BoxFit.cover,
+                placeholder: (c, u) => const SizedBox.shrink(),
+                errorWidget: (c, u, e) => const SizedBox.shrink(),
+              )
+            else
+              Center(
+                child: Text(
+                  'M4',
+                  style: GoogleFonts.gelasio(
+                    color: Colors.white.withOpacity(0.06),
+                    fontSize: 120,
+                    fontWeight: FontWeight.w700,
+                    height: 1,
+                  ),
+                ),
+              ),
+            // Readability scrim so the title stays legible over the banner.
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.25),
+                      Colors.black.withOpacity(0.7),
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
                 ),
               ),
             ),
+            // Web parity, per request: only the title is overlaid ("ABOUT M4").
             Padding(
               padding: const EdgeInsets.all(32),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'INSTITUTIONAL GRADE DEVELOPMENT',
-                    style: GoogleFonts.montserrat(
-                      color: Colors.white.withOpacity(0.55),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2.5,
-                    ),
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  title.toUpperCase(),
+                  style: GoogleFonts.gelasio(
+                    color: Colors.white,
+                    fontSize: 34,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -1,
+                    height: 1.1,
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'ABOUT M4',
-                    style: GoogleFonts.gelasio(
-                      color: Colors.white,
-                      fontSize: 34,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -1,
-                      height: 1.1,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ],

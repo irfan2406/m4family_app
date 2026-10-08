@@ -7,6 +7,7 @@ import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -109,18 +110,16 @@ class _GuestProjectDetailScreenState
     if (src is! Map) return;
     final media = src['media'] as List? ?? [];
     final ext = <String>[
-      if (src['exteriorImages'] is List)
-        ...(src['exteriorImages'] as List).map((e) => e.toString()),
+      ...mediaUrlList(src['exteriorImages']),
       ...media
           .where((m) => m['category']?.toString().toUpperCase() == 'EXTERIOR')
-          .map((m) => m['url'].toString()),
+          .map((m) => mediaUrlOf(m)),
     ].where((s) => s.trim().isNotEmpty).toSet().toList();
     final inter = <String>[
-      if (src['interiorImages'] is List)
-        ...(src['interiorImages'] as List).map((e) => e.toString()),
+      ...mediaUrlList(src['interiorImages']),
       ...media
           .where((m) => m['category']?.toString().toUpperCase() == 'INTERIOR')
-          .map((m) => m['url'].toString()),
+          .map((m) => mediaUrlOf(m)),
     ].where((s) => s.trim().isNotEmpty).toSet().toList();
     if (ext.isNotEmpty) _exteriorImages = ext;
     if (inter.isNotEmpty) _interiorImages = inter;
@@ -1224,12 +1223,9 @@ class _GuestProjectDetailScreenState
                             ?.toString() ??
                         '';
 
-                    // Nothing to show (no media image, no 360° tour): hide the
-                    // whole row.
-                    if (!hasExterior && !hasInterior && tour.isEmpty) {
-                      return const SizedBox.shrink();
-                    }
-
+                    // Web parity: the 360° VIEW tile always shows (even for a
+                    // completed project with no tour link, e.g. Ocean View),
+                    // so the quick-access row is always rendered.
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -1265,14 +1261,18 @@ class _GuestProjectDetailScreenState
                                   onTap: () =>
                                       _openHeroGallery(_interiorImages),
                                 ),
-                              // Web parity: 360° VIEW icon thumbnail — only when
-                              // the backend carries a tour link.
-                              if (tour.isNotEmpty)
-                                _HeroMediaThumb(
-                                  label: '360° VIEW',
-                                  isVR: true,
-                                  onTap: () => _launchThreeSixty(tour),
-                                ),
+                              // Web parity: the 360° VIEW tile always shows;
+                              // taps open the tour when the backend has one,
+                              // else a "coming soon" toast.
+                              _HeroMediaThumb(
+                                label: '360° VIEW',
+                                isVR: true,
+                                onTap: () => tour.isNotEmpty
+                                    ? _launchThreeSixty(tour)
+                                    : _launchAction(
+                                        '360° Virtual Tour coming soon',
+                                      ),
+                              ),
                             ],
                           ),
                         ),
@@ -2458,14 +2458,18 @@ class _HeroMediaThumb extends StatelessWidget {
             width: 66,
             height: 66,
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.2),
+              // Web parity: the 360° VIEW tile is a WHITE card (green icon);
+              // photo/cinematic tiles keep the dark glass.
+              color: isVR
+                  ? Colors.white
+                  : Colors.black.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(18),
-              // No border, as on the CP tile. A ring at the same radius as the
-              // enclosing ClipRRect gets its outer half sliced off by that
-              // clip, which is what left the corner looking hard and jagged —
-              // and it insets the photo, leaving a pale strip down all four
-              // sides. Without it the image fills the 66x66 tile edge to edge
-              // and the corner is one clean curve.
+              border: isVR
+                  ? Border.all(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      width: 1.5,
+                    )
+                  : null,
             ),
             clipBehavior: Clip.antiAlias,
             child: Stack(
@@ -2473,24 +2477,30 @@ class _HeroMediaThumb extends StatelessWidget {
               children: [
                 if (isVR || isCinematic)
                   Container(
-                    color: Colors.black.withValues(alpha: 0.4),
+                    color: isVR
+                        ? Colors.white
+                        : Colors.black.withValues(alpha: 0.4),
                     child: Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             isVR
-                                ? LucideIcons.refreshCw
+                                ? LucideIcons.rotate3d
                                 : LucideIcons.playCircle,
-                            color: Colors.white,
-                            size: 16,
+                            color: isVR
+                                ? const Color(0xFF155A4F)
+                                : Colors.white,
+                            size: isVR ? 22 : 16,
                           ),
                           const SizedBox(height: 2),
                           Text(
                             label,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.inter(
-                              color: Colors.white,
+                              color: isVR
+                                  ? const Color(0xFF155A4F)
+                                  : Colors.white,
                               fontSize: 6,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.5,
@@ -3203,14 +3213,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 itemCount: phases.length,
                 itemBuilder: (context, index) {
                   final phase = phases[index];
-                  final phaseImages = phase['images'] as List?;
-                  final firstPhaseImg =
-                      (phaseImages != null && phaseImages.isNotEmpty)
-                      ? phaseImages[0]
-                      : '';
-                  var imageUrl = apiClient.resolveUrl(
-                    phase['image'] ?? firstPhaseImg,
-                  );
+                  // Phase images may be plain strings or {url, caption} objects
+                  // (the backend's current shape) — mediaUrlOf handles both.
+                  final rawPhaseImg = firstMediaUrl(phase['images']).isNotEmpty
+                      ? firstMediaUrl(phase['images'])
+                      : mediaUrlOf(phase['image']);
+                  var imageUrl = apiClient.resolveUrl(rawPhaseImg);
                   // No phase photo uploaded: show the construction fallback
                   // image rather than an empty grey placeholder.
                   if (imageUrl.trim().isEmpty && fallbackImage.isNotEmpty) {
@@ -3948,22 +3956,12 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
   void _compileImages() {
     final List<String> imgs = [];
     final project = widget.project;
-    if (project['heroImage'] != null &&
-        project['heroImage'].toString().isNotEmpty) {
-      imgs.add(project['heroImage'].toString());
-    }
-    if (project['heroImages'] is List) {
-      imgs.addAll((project['heroImages'] as List).map((e) => e.toString()));
-    }
-    if (project['images'] is List) {
-      imgs.addAll((project['images'] as List).map((e) => e.toString()));
-    }
-    if (project['exteriorImages'] is List) {
-      imgs.addAll((project['exteriorImages'] as List).map((e) => e.toString()));
-    }
-    if (project['interiorImages'] is List) {
-      imgs.addAll((project['interiorImages'] as List).map((e) => e.toString()));
-    }
+    final hero = mediaUrlOf(project['heroImage']);
+    if (hero.isNotEmpty) imgs.add(hero);
+    imgs.addAll(mediaUrlList(project['heroImages']));
+    imgs.addAll(mediaUrlList(project['images']));
+    imgs.addAll(mediaUrlList(project['exteriorImages']));
+    imgs.addAll(mediaUrlList(project['interiorImages']));
     // Backend-driven: only real uploaded images; no stock placeholder is added
     // when the backend has none (the hero then shows the branded fallback).
     _uniqueImages = imgs.toSet().where((img) => img.isNotEmpty).toList();

@@ -15,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
+import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
@@ -520,12 +521,37 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                           .withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
-                                child: Icon(
-                                  _getIcon(benefit['icon']),
-                                  color: isDark
-                                      ? Colors.white
-                                      : const Color(0xFF0C312B),
-                                  size: 24,
+                                // Backend-driven (web parity): each benefit
+                                // carries an uploaded icon image in R2
+                                // (benefit['image']). Render that, tinted to the
+                                // theme; only fall back to a Lucide glyph when
+                                // the backend has no image for it.
+                                child: Builder(
+                                  builder: (_) {
+                                    final benefitColor = isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0C312B);
+                                    final rawImg =
+                                        (benefit is Map
+                                                ? benefit['image']?.toString()
+                                                : null)
+                                            ?.trim() ??
+                                        '';
+                                    if (rawImg.isNotEmpty) {
+                                      return LuxuryAmenityIcon(
+                                        name:
+                                            benefit['label']?.toString() ?? '',
+                                        iconUrl: apiClient.resolveUrl(rawImg),
+                                        size: 24,
+                                        color: benefitColor,
+                                      );
+                                    }
+                                    return Icon(
+                                      _getIcon(benefit['icon']),
+                                      color: benefitColor,
+                                      size: 24,
+                                    );
+                                  },
                                 ),
                               ),
                               const SizedBox(height: 12),

@@ -2746,6 +2746,33 @@ class _CommunityCard extends StatelessWidget {
                   ),
                 ),
               ),
+              // Badge — web parity: COMMUNITY pill.
+              Positioned(
+                top: 24,
+                right: 24,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0C312B).withValues(alpha: 0.72),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.1),
+                    ),
+                  ),
+                  child: Text(
+                    'COMMUNITY',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ),
               Positioned(
                 bottom: 24,
                 left: 24,
@@ -2755,7 +2782,8 @@ class _CommunityCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title.toUpperCase(),
+                      // Web parity: community title is title-case ("Mazgaon").
+                      title,
                       // One line: a 16:9 tile fits one title line, two
                       // description lines and the action row.
                       maxLines: 1,
@@ -2767,40 +2795,12 @@ class _CommunityCard extends StatelessWidget {
                         letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      description.toUpperCase(),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                        height: 1.4,
-                      ),
-                    ),
+                    // Web parity: community tiles show no subtitle under title.
                     const SizedBox(height: 24),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // Web parity: community tiles show only the arrow.
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        // The label takes the room left over and the
-                        // arrow keeps its circle; without a flex the pair was
-                        // wider than the card on a 361dp screen.
-                        Expanded(
-                          child: Text(
-                            'EXPLORE COMMUNITY',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
                         Container(
                           width: 44,
                           height: 44,

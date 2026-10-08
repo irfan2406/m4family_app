@@ -8,6 +8,7 @@ import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 
@@ -23,32 +24,48 @@ class _GuestCustomViewsScreenState
     extends ConsumerState<GuestCustomViewsScreen> {
   final ScrollController _scrollController = ScrollController();
 
-  final List<Map<String, String>> _categories = [
-    {
-      'title': 'EXPANSIVE LIVING',
-      'image':
-          'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
-    },
-    {
-      'title': 'MASTER SUITES',
-      'image':
-          'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80',
-    },
-    {
-      'title': 'PRIVATE TERRACES',
-      'image':
-          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-    },
-    {
-      'title': 'ELITE SPA BATHROOMS',
-      'image':
-          'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&q=80',
-    },
-  ];
+  // Backend-driven: the "Interactive Living" tiles come from the admin's
+  // SHOWCASE content (Central Content Hub). Admin add / edit / remove reflects
+  // here on the next open — no hardcoded categories.
+  List<Map<String, String>> _categories = [];
 
-  // Ask the image host for a card-sized image instead of the full-res original
-  // (multi-MB) — massively cuts download time for these grid thumbnails.
-  String _sized(String url, int w) => url.contains('w=') ? url : '$url&w=$w';
+  @override
+  void initState() {
+    super.initState();
+    _fetchShowcase();
+  }
+
+  Future<void> _fetchShowcase() async {
+    try {
+      final api = ref.read(apiClientProvider);
+      final role = (ref.read(authProvider).user?['role'] ?? 'guest')
+          .toString()
+          .toLowerCase();
+      final res = await api.getContent(
+        'showcase',
+        role: role.isEmpty ? 'guest' : role,
+      );
+      final data = res.data['data'] as List? ?? const [];
+      final items = <Map<String, String>>[];
+      for (final it in data) {
+        if (it is! Map) continue;
+        final title = (it['title'] ?? '').toString().trim();
+        if (title.isEmpty) continue;
+        final raw = firstMediaUrl([
+          it['thumbnail'],
+          it['image'],
+          it['coverImage'],
+        ]);
+        items.add({
+          'title': title.toUpperCase(),
+          'image': raw.isEmpty ? '' : api.resolveUrl(raw),
+        });
+      }
+      if (mounted) setState(() => _categories = items);
+    } catch (_) {
+      // Leave the grid empty on failure rather than showing stale/stock tiles.
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -196,16 +213,25 @@ class _GuestCustomViewsScreenState
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
-                            CachedNetworkImage(
-                              imageUrl: _sized(cat['image']!, 800),
-                              fit: BoxFit.cover,
-                              memCacheWidth: 800,
-                              fadeInDuration: const Duration(milliseconds: 200),
-                              placeholder: (context, url) =>
-                                  Container(color: Colors.black12),
-                              errorWidget: (context, url, error) =>
-                                  Container(color: Colors.black12),
-                            ),
+                            // Dark backdrop so an uploaded image with a
+                            // transparent / white background (e.g. a logo PNG)
+                            // is still visible, the way the admin panel shows it.
+                            Container(color: const Color(0xFF0C312B)),
+                            (cat['image'] ?? '').isEmpty
+                                ? const SizedBox.shrink()
+                                : CachedNetworkImage(
+                                    imageUrl: cat['image']!,
+                                    fit: BoxFit.cover,
+                                    memCacheWidth: 800,
+                                    maxWidthDiskCache: 1200,
+                                    fadeInDuration: const Duration(
+                                      milliseconds: 200,
+                                    ),
+                                    placeholder: (context, url) =>
+                                        Container(color: Colors.black12),
+                                    errorWidget: (context, url, error) =>
+                                        Container(color: Colors.black12),
+                                  ),
                             Container(
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(

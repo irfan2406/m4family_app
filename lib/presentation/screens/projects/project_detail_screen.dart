@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -1241,19 +1242,19 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     final List<String> list = [];
 
     if (category == 'EXTERIOR') {
-      list.addAll((project?['exteriorImages'] as List?)?.cast<String>() ?? []);
+      list.addAll(mediaUrlList(project?['exteriorImages']));
       list.addAll(
         media
             .where((m) => m['category']?.toString().toUpperCase() == 'EXTERIOR')
-            .map((m) => m['url']?.toString() ?? '')
+            .map((m) => mediaUrlOf(m))
             .where((u) => u.isNotEmpty),
       );
     } else if (category == 'INTERIOR') {
-      list.addAll((project?['interiorImages'] as List?)?.cast<String>() ?? []);
+      list.addAll(mediaUrlList(project?['interiorImages']));
       list.addAll(
         media
             .where((m) => m['category']?.toString().toUpperCase() == 'INTERIOR')
-            .map((m) => m['url']?.toString() ?? '')
+            .map((m) => mediaUrlOf(m))
             .where((u) => u.isNotEmpty),
       );
     }
@@ -1487,44 +1488,68 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 const SizedBox(height: 24),
                 _buildTitleSection(project, isDark),
                 const SizedBox(height: 24),
-                // Web parity: one row of three — VIDEO CALL · COMPLETION ·
-                // SITE VISIT. The web page carries no CONFIG tile here; the
-                // configuration is listed in the Overview below.
+                // Web parity: a 2x2 grid — COMPLETION · CONFIG on top,
+                // VIDEO CALL · SITE VISIT below. All values are backend-driven;
+                // CONFIG falls back to the web's "3 & 4 BHK" until the backend
+                // carries a `config` field.
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: _OverviewActionCard(
-                          label: 'VIDEO CALL',
-                          value: 'Connect Now',
-                          icon: LucideIcons.video,
-                          isAction: true,
-                          onTap: () =>
-                              _showRequestDetailsDialog(project, null, 'VC'),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _OverviewActionCard(
-                          label: 'COMPLETION',
-                          value: '${project?['completion'] ?? 0}%',
-                          icon: LucideIcons.calendar,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _OverviewActionCard(
-                          label: 'SITE VISIT',
-                          value: 'Book Tour',
-                          icon: LucideIcons.eye,
-                          isAction: true,
-                          onTap: () => _showRequestDetailsDialog(
-                            project,
-                            null,
-                            'Site Visit',
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _OverviewActionCard(
+                              label: 'COMPLETION',
+                              value: '${project?['completion'] ?? 0}%',
+                              icon: LucideIcons.calendar,
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _OverviewActionCard(
+                              label: 'CONFIG',
+                              value:
+                                  (project?['config'] ??
+                                          project?['configuration'] ??
+                                          '3 & 4 BHK')
+                                      .toString(),
+                              icon: LucideIcons.building2,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _OverviewActionCard(
+                              label: 'VIDEO CALL',
+                              value: 'Connect Now',
+                              icon: LucideIcons.video,
+                              isAction: true,
+                              onTap: () => _showRequestDetailsDialog(
+                                project,
+                                null,
+                                'VC',
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _OverviewActionCard(
+                              label: 'SITE VISIT',
+                              value: 'Book Tour',
+                              icon: LucideIcons.eye,
+                              isAction: true,
+                              onTap: () => _showRequestDetailsDialog(
+                                project,
+                                null,
+                                'Site Visit',
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -1619,13 +1644,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   Widget _buildHero(dynamic project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
-    final heroImages = project?['heroImages'] as List?;
-    final firstHero = (heroImages != null && heroImages.isNotEmpty)
-        ? heroImages[0]
-        : '';
-    final heroUrl = apiClient.resolveUrl(
-      project?['heroImage'] ?? project?['coverImage'] ?? firstHero,
-    );
+    final heroRaw = [
+      mediaUrlOf(project?['heroImage']),
+      mediaUrlOf(project?['coverImage']),
+      firstMediaUrl(project?['heroImages']),
+    ].firstWhere((s) => s.isNotEmpty, orElse: () => '');
+    final heroUrl = apiClient.resolveUrl(heroRaw);
 
     return AspectRatio(
       aspectRatio: 1920 / 1080,
@@ -1740,10 +1764,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     // View) are untouched, and the tiles come back on their own once images
     // are uploaded. The 360 tile is an icon rather than a photo, so it always
     // stays.
-    final exteriorImages = project?['exteriorImages'] as List?;
-    final interiorImages = project?['interiorImages'] as List?;
-    final hasExterior = exteriorImages != null && exteriorImages.isNotEmpty;
-    final hasInterior = interiorImages != null && interiorImages.isNotEmpty;
+    // Robust to both string and {url, caption} object entries.
+    final extUrls = mediaUrlList(project?['exteriorImages']);
+    final intUrls = mediaUrlList(project?['interiorImages']);
+    final hasExterior = extUrls.isNotEmpty;
+    final hasInterior = intUrls.isNotEmpty;
 
     // Decode the first picture of each gallery while the user is still
     // reading the page, so opening one is instant rather than a spinner. The
@@ -1754,10 +1779,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         for (final first in [
-          if (hasExterior) exteriorImages[0],
-          if (hasInterior) interiorImages[0],
+          if (hasExterior) extUrls.first,
+          if (hasInterior) intUrls.first,
         ]) {
-          final url = apiClient.resolveUrl(first.toString());
+          final url = apiClient.resolveUrl(first);
           if (url.isEmpty) continue;
           precacheImage(CachedNetworkImageProvider(url), context);
         }
@@ -1771,7 +1796,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           if (hasExterior) ...[
             _HeroMediaThumb(
               label: 'EXTERIOR',
-              imageUrl: apiClient.resolveUrl(exteriorImages[0]),
+              imageUrl: apiClient.resolveUrl(extUrls.first),
               onTap: () => _openHeroGallery(project, 'EXTERIOR'),
             ),
             const SizedBox(width: 12),
@@ -1779,7 +1804,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           if (hasInterior) ...[
             _HeroMediaThumb(
               label: 'INTERIOR',
-              imageUrl: apiClient.resolveUrl(interiorImages[0]),
+              imageUrl: apiClient.resolveUrl(intUrls.first),
               onTap: () => _openHeroGallery(project, 'INTERIOR'),
             ),
             const SizedBox(width: 12),
@@ -3980,11 +4005,15 @@ class _HeroMediaThumb extends StatelessWidget {
         width: 66,
         height: 66,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFEDE5D6),
+          // Web parity: the 360° VIEW tile is a WHITE card; photo tiles keep
+          // the cream/navy surface.
+          color: isVR
+              ? Colors.white
+              : (isDark ? const Color(0xFF141B3A) : const Color(0xFFEDE5D6)),
           // Same tile as the CP project detail: 66 square at radius 18, and no
           // border on the photos — a 1.5px ring insets the child and leaves a
           // strip down all four sides instead of the picture filling the tile.
-          // The 360 tile keeps its outline: it is cream-on-cream and would
+          // The 360 tile keeps its outline: it is white-on-cream and would
           // vanish without one.
           borderRadius: BorderRadius.circular(18),
           border: isVR
@@ -4009,9 +4038,8 @@ class _HeroMediaThumb extends StatelessWidget {
           children: [
             if (isVR)
               Container(
-                color: isDark
-                    ? const Color(0xFF141B3A)
-                    : const Color(0xFFF4EFE3),
+                // Web parity: white card, green 360 icon (both themes).
+                color: Colors.white,
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -4019,10 +4047,10 @@ class _HeroMediaThumb extends StatelessWidget {
                       // A vector icon rather than the 360-vr.png bitmap: it
                       // tints with the theme and needs no multiply blend to
                       // hide the PNG's white plate.
-                      Icon(
+                      const Icon(
                         LucideIcons.rotate3d,
                         size: 26,
-                        color: isDark ? Colors.white : const Color(0xFF155A4F),
+                        color: Color(0xFF155A4F),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -4030,9 +4058,7 @@ class _HeroMediaThumb extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 7,
                           fontWeight: FontWeight.w600,
-                          color: isDark
-                              ? Colors.white
-                              : const Color(0xFF155A4F),
+                          color: const Color(0xFF155A4F),
                         ),
                       ),
                     ],
@@ -4463,14 +4489,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
               itemCount: phases.length,
               itemBuilder: (context, index) {
                 final phase = phases[index];
-                final phaseImages = phase['images'] as List?;
-                final firstPhaseImg =
-                    (phaseImages != null && phaseImages.isNotEmpty)
-                    ? phaseImages[0]
-                    : '';
-                final resolved = apiClient.resolveUrl(
-                  phase['image'] ?? firstPhaseImg,
-                );
+                // Phase images may be plain strings or {url, caption} objects
+                // (the backend's current shape) — mediaUrlOf handles both.
+                final rawPhaseImg = firstMediaUrl(phase['images']).isNotEmpty
+                    ? firstMediaUrl(phase['images'])
+                    : mediaUrlOf(phase['image']);
+                final resolved = apiClient.resolveUrl(rawPhaseImg);
                 // Web parity: a phase with no uploaded photo still shows a
                 // construction image rather than a blank grey tile.
                 const constructionFallback =
@@ -4524,28 +4548,31 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                               // uses, the guest portal phase card included.
                               child: AspectRatio(
                                 aspectRatio: 16 / 9,
-                                child: isAssetImg
-                                    ? Image.asset(
-                                        imageUrl,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : CachedNetworkImage(
-                                        imageUrl: imageUrl,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                        memCacheWidth: 600,
-                                        fadeInDuration: Duration.zero,
-                                        placeholder: (context, url) => Container(
-                                          width: double.infinity,
-                                          color: Colors.white10,
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                              width: double.infinity,
-                                              color: Colors.white10,
-                                            ),
-                                      ),
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    // Dark backdrop so an uploaded image with a
+                                    // transparent/white background still shows.
+                                    Container(color: const Color(0xFF0C312B)),
+                                    isAssetImg
+                                        ? Image.asset(
+                                            imageUrl,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : CachedNetworkImage(
+                                            imageUrl: imageUrl,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                            memCacheWidth: 600,
+                                            fadeInDuration: Duration.zero,
+                                            placeholder: (context, url) =>
+                                                const SizedBox.shrink(),
+                                            errorWidget: (context, url, error) =>
+                                                const SizedBox.shrink(),
+                                          ),
+                                  ],
+                                ),
                               ),
                             ),
                             // Status badge (web parity): completed=green,

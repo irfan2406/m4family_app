@@ -362,9 +362,11 @@ class _CommunityCard extends ConsumerWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
-        child: AspectRatio(
-          aspectRatio: 16 / 9,
-          child: Container(
+        // No outer AspectRatio: it forced the card to exactly 16:9, so on narrow
+        // or large-font devices the title + 2-line subtitle overflowed the box
+        // ("BOTTOM OVERFLOWED BY N PIXELS"). The inner 16:9 frame still sets the
+        // minimum height; the content can now grow the card past it.
+        child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
@@ -462,7 +464,6 @@ class _CommunityCard extends ConsumerWidget {
           ],
         ),
       ),
-    ),
   ),
 );
   }

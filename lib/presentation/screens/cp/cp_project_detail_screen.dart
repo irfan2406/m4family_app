@@ -1386,13 +1386,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           width: 66,
           height: 66,
           decoration: BoxDecoration(
-            color: const Color(0xFFEDE5D6),
+            // Web parity: white card, green 360 icon.
+            color: Colors.white,
             borderRadius: BorderRadius.circular(18),
             // Outline-bordered card — same footprint + frame as the Exterior /
-            // Interior thumbnails (matched on request). A visible hairline outline
-            // (white-on-white would be invisible) plus a soft shadow.
+            // Interior thumbnails. A hairline outline + soft shadow so the
+            // white tile reads against the cream page.
             border: Border.all(
-              color: const Color(0xFF0C312B).withValues(alpha: 0.18),
+              color: const Color(0xFF0C312B).withValues(alpha: 0.12),
               width: 1.5,
             ),
             boxShadow: [
@@ -1407,27 +1408,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // The /360-vr.png "360" glyph (matches the reference icon). It is
-              // scaled up + clipped so the glyph fills the card, instead of
-              // floating small inside the PNG's large built-in padding.
-              SizedBox(
-                width: 44,
-                height: 44,
-                child: ClipRect(
-                  child: Transform.scale(
-                    scale: 1.5,
-                    child: ColorFiltered(
-                      colorFilter: const ColorFilter.mode(
-                        Color(0xFFEDE5D6),
-                        BlendMode.multiply,
-                      ),
-                      child: Image.asset(
-                        'assets/360-vr.png',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                ),
+              // Vector 360 glyph in M4 green (web parity), replacing the
+              // 360-vr.png bitmap so it tints cleanly on the white card.
+              const Icon(
+                LucideIcons.rotate3d,
+                size: 22,
+                color: Color(0xFF155A4F),
               ),
               const SizedBox(height: 3),
               Text(
@@ -1435,6 +1421,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 8,
                   fontWeight: FontWeight.w600,
+                  color: const Color(0xFF155A4F),
                 ),
               ),
             ],

@@ -13,6 +13,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -113,34 +114,24 @@ class _InvestorProjectDetailScreenState
 
         final media = project['media'] as List? ?? [];
 
-        final List<String> ext = [];
-        if (project['exteriorImages'] != null) {
-          ext.addAll(
-            (project['exteriorImages'] as List).map((e) => e.toString()),
-          );
-        }
-        ext.addAll(
-          media
+        final List<String> ext = [
+          ...mediaUrlList(project['exteriorImages']),
+          ...media
               .where(
                 (m) => m['category']?.toString().toUpperCase() == 'EXTERIOR',
               )
-              .map((m) => m['url'].toString()),
-        );
+              .map((m) => mediaUrlOf(m)),
+        ].where((s) => s.trim().isNotEmpty).toList();
         _exteriorImages = ext.toSet().toList();
 
-        final List<String> intr = [];
-        if (project['interiorImages'] != null) {
-          intr.addAll(
-            (project['interiorImages'] as List).map((e) => e.toString()),
-          );
-        }
-        intr.addAll(
-          media
+        final List<String> intr = [
+          ...mediaUrlList(project['interiorImages']),
+          ...media
               .where(
                 (m) => m['category']?.toString().toUpperCase() == 'INTERIOR',
               )
-              .map((m) => m['url'].toString()),
-        );
+              .map((m) => mediaUrlOf(m)),
+        ].where((s) => s.trim().isNotEmpty).toList();
         _interiorImages = intr.toSet().toList();
 
         _paymentPlans = project['paymentPlans'] as List? ?? [];
@@ -1927,11 +1918,12 @@ class _InvestorProjectDetailScreenState
     bool isDark,
   ) {
     final apiClient = ref.read(apiClientProvider);
-    final phaseImages = phase['images'] as List?;
-    final firstImg = (phaseImages != null && phaseImages.isNotEmpty)
-        ? phaseImages[0]
-        : '';
-    final resolvedPhase = apiClient.resolveUrl(phase['image'] ?? firstImg);
+    // Phase images may be plain strings or {url, caption} objects (the
+    // backend's current shape) — mediaUrlOf/firstMediaUrl handle both.
+    final rawPhaseImg = firstMediaUrl(phase['images']).isNotEmpty
+        ? firstMediaUrl(phase['images'])
+        : mediaUrlOf(phase['image']);
+    final resolvedPhase = apiClient.resolveUrl(rawPhaseImg);
     // Web parity: a phase with no uploaded photo still shows a construction
     // image rather than a blank tile.
     const constructionFallback = 'assets/cledor_phase_demolition.jpg';
@@ -1953,7 +1945,7 @@ class _InvestorProjectDetailScreenState
         // Only open the gallery for a real uploaded photo; the bundled
         // construction fallback is not zoomable.
         if (!isAssetImg && imageUrl.isNotEmpty) {
-          _openGallery([phase['image']?.toString() ?? firstImg.toString()]);
+          _openGallery([rawPhaseImg]);
         }
       },
       child: Container(
@@ -2949,42 +2941,29 @@ class _IconThumb extends StatelessWidget {
         width: 64,
         height: 64,
         decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.03)
-              : const Color(0xFFEDE5D6),
+          // Web parity: white card, green 360 icon (both themes).
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.08)
-                : Colors.black.withValues(alpha: 0.08),
+            color: Colors.black.withValues(alpha: 0.08),
           ),
-          boxShadow: isDark
-              ? []
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Web parity: the same /360-vr.png glyph as the guest detail. Multiplied
-            // by the tile colour so the PNG's white plate blends into the tile
-            // instead of showing as a white box.
-            ColorFiltered(
-              colorFilter: ColorFilter.mode(
-                isDark ? const Color(0xFF141B3A) : const Color(0xFFEDE5D6),
-                BlendMode.multiply,
-              ),
-              child: Image.asset(
-                'assets/360-vr.png',
-                width: 26,
-                height: 26,
-                fit: BoxFit.contain,
-              ),
+            // Vector 360 glyph in M4 green (web parity), replacing the
+            // 360-vr.png bitmap so it tints cleanly on the white card.
+            const Icon(
+              LucideIcons.rotate3d,
+              size: 24,
+              color: Color(0xFF155A4F),
             ),
             const SizedBox(height: 5),
             Text(
@@ -2992,7 +2971,7 @@ class _IconThumb extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 7.5,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : const Color(0xFF155A4F),
+                color: const Color(0xFF155A4F),
                 letterSpacing: 0.5,
               ),
             ),
