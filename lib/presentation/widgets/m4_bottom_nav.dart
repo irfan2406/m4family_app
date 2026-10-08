@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show PlatformViewHitTestBehavior;
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/platform/m4_platform.dart';
 import 'package:m4_mobile/presentation/widgets/ios/liquid_glass.dart';
@@ -290,6 +291,13 @@ class _LiquidTabBarState extends State<_LiquidTabBar>
 
                     return Stack(
                       children: [
+                        // Real native iOS Liquid Glass surface, behind the
+                        // selection morph and the icons. It sits over the
+                        // Flutter LiquidGlass frost, which stays as a fallback
+                        // if the platform view is unavailable.
+                        const Positioned.fill(
+                          child: _NativeGlass(radius: M4Nav.radius),
+                        ),
                         if (hasSelection)
                           AnimatedBuilder(
                             animation: _morph,
@@ -350,6 +358,26 @@ class _LiquidTabBarState extends State<_LiquidTabBar>
           ),
         ),
       ),
+    );
+  }
+}
+
+/// The native iOS glass surface (real Liquid Glass on iOS 26+, a system
+/// material blur below) rendered behind the bottom nav's icons via a platform
+/// view. Only ever built on iOS — the Android bar never reaches this code.
+class _NativeGlass extends StatelessWidget {
+  const _NativeGlass({required this.radius});
+
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) {
+    return UiKitView(
+      viewType: 'm4/glass',
+      creationParams: <String, dynamic>{'radius': radius},
+      creationParamsCodec: const StandardMessageCodec(),
+      // The glass is decorative; taps belong to the Flutter icons above it.
+      hitTestBehavior: PlatformViewHitTestBehavior.transparent,
     );
   }
 }
