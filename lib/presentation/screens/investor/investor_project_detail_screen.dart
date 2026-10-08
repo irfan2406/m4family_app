@@ -1985,15 +1985,16 @@ class _InvestorProjectDetailScreenState
                   // background still shows.
                   Container(color: const Color(0xFF0C312B)),
                   isAssetImg
-                      ? Image.asset(imageUrl, fit: BoxFit.cover)
+                      // Show the full uploaded image, not a cropped centre.
+                      ? Image.asset(imageUrl, fit: BoxFit.contain)
                       : CachedNetworkImage(
                           memCacheWidth: 1080,
                           imageUrl: imageUrl,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           placeholder: (c, u) =>
-                              Container(color: Colors.black12),
+                              const SizedBox.shrink(),
                           errorWidget: (c, u, e) =>
-                              Container(color: Colors.black12),
+                              const SizedBox.shrink(),
                         ),
                   Positioned.fill(
                     child: IgnorePointer(

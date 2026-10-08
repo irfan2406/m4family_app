@@ -2197,7 +2197,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 // Dark backdrop so an uploaded image with a transparent/white
                 // background still shows.
                 Container(color: const Color(0xFF0C312B)),
-                _projectImage(img, fit: BoxFit.cover),
+                // Show the full uploaded image, not a cropped centre.
+                _projectImage(img, fit: BoxFit.contain),
                 Positioned.fill(
                   child: Material(
                     color: Colors.transparent,
