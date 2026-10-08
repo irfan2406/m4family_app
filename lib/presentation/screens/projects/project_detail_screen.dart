@@ -10,6 +10,7 @@ import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/core/utils/media_url.dart';
+import 'package:m4_mobile/core/utils/image_prewarm.dart';
 import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -115,6 +116,13 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           }
           _isLoading = false;
         });
+        // Warm the amenity icons into the disk cache so they appear instantly
+        // (no load-in) when the Amenities section renders.
+        final iconUrls = ((_fullProject?['amenities'] as List?) ?? const [])
+            .map((a) => _amenityIconUrl(a) ?? '')
+            .where((u) => u.isNotEmpty)
+            .toList();
+        prewarmImages(iconUrls);
       }
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);

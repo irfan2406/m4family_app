@@ -124,7 +124,9 @@ class LuxuryAmenityIcon extends StatelessWidget {
             height: size,
             fit: BoxFit.contain,
             colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-            placeholderBuilder: (c) => _fallbackGlyph(),
+            // Transparent placeholder (not the fallback glyph) so the icon never
+            // visibly morphs from a stand-in glyph into the real icon.
+            placeholderBuilder: (c) => SizedBox(width: size, height: size),
           ),
         );
       }
@@ -136,12 +138,12 @@ class LuxuryAmenityIcon extends StatelessWidget {
           width: size,
           height: size,
           fit: BoxFit.contain,
-          // No fade: on reopen the (disk-cached) icon should appear instantly
-          // instead of animating in from the fallback glyph each time.
+          // No fade + transparent placeholder: on open the (disk-cached) icon
+          // appears directly instead of animating in from a fallback glyph.
           fadeInDuration: Duration.zero,
           fadeOutDuration: Duration.zero,
           placeholderFadeInDuration: Duration.zero,
-          placeholder: (c, u) => _fallbackGlyph(),
+          placeholder: (c, u) => SizedBox(width: size, height: size),
           imageBuilder: (c, provider) {
             final image = Image(
               image: provider,
