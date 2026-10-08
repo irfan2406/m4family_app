@@ -206,7 +206,7 @@ class _M4NavTabState extends State<_M4NavTab>
 /// selection is a clear glass droplet that glides from tab to tab on a
 /// spring, a tab sinks under the finger, and changing tab gives the iOS
 /// selection haptic.
-class _LiquidTabBar extends StatelessWidget {
+class _LiquidTabBar extends StatefulWidget {
   const _LiquidTabBar({
     required this.icons,
     required this.currentIndex,
@@ -218,11 +218,54 @@ class _LiquidTabBar extends StatelessWidget {
   final ValueChanged<int> onTap;
 
   @override
+  State<_LiquidTabBar> createState() => _LiquidTabBarState();
+}
+
+class _LiquidTabBarState extends State<_LiquidTabBar>
+    with SingleTickerProviderStateMixin {
+  // Drives the iOS 26 liquid morph: the selection stretches toward the new tab
+  // like a bead of mercury, overshoots a touch, then settles round.
+  late final AnimationController _morph;
+  // The tab the bead travels FROM and TO across a single transition.
+  late int _from;
+  late int _to;
+
+  @override
+  void initState() {
+    super.initState();
+    _from = widget.currentIndex;
+    _to = widget.currentIndex;
+    _morph = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 520),
+      value: 1,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _LiquidTabBar old) {
+    super.didUpdateWidget(old);
+    if (widget.currentIndex != _to) {
+      // Start the next leg from wherever the last one ended.
+      _from = _to;
+      _to = widget.currentIndex;
+      _morph.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _morph.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Same surface rule as the Android bar: green showcase screens report a
     // dark brightness, cream info screens a light one.
     final bool onCream = Theme.of(context).brightness == Brightness.light;
-    final bool hasSelection = currentIndex >= 0 && currentIndex < icons.length;
+    final bool hasSelection =
+        widget.currentIndex >= 0 && widget.currentIndex < widget.icons.length;
 
     return SafeArea(
       top: false,
@@ -239,35 +282,60 @@ class _LiquidTabBar extends StatelessWidget {
                 height: M4Nav.height,
                 child: LayoutBuilder(
                   builder: (context, box) {
-                    final double tab = box.maxWidth / icons.length;
+                    final double tab = box.maxWidth / widget.icons.length;
                     // The Android disc size, shrunk only when a five-tab bar
                     // on a narrow phone has less room than that per tab.
                     final double disc = math.min(M4Nav.activeDisc, tab - 6);
+                    final double top = (M4Nav.height - disc) / 2;
+
                     return Stack(
                       children: [
                         if (hasSelection)
-                          AnimatedPositioned(
-                            duration: const Duration(milliseconds: 420),
-                            curve: Curves.easeOutBack,
-                            left: currentIndex * tab + (tab - disc) / 2,
-                            top: (M4Nav.height - disc) / 2,
-                            width: disc,
-                            height: disc,
-                            child: _Droplet(onCream: onCream),
+                          AnimatedBuilder(
+                            animation: _morph,
+                            builder: (context, _) {
+                              final double raw = _morph.value;
+                              // Position eases with a gentle overshoot; the
+                              // stretch bells out at mid-travel.
+                              final double tPos = Curves.easeInOutCubic
+                                  .transform(raw);
+                              final double fromC = _from * tab + tab / 2;
+                              final double toC = _to * tab + tab / 2;
+                              final double centre = fromC + (toC - fromC) * tPos;
+                              final double dist = (toC - fromC).abs();
+                              // Mercury stretch: widen toward the target mid-
+                              // flight (capped for long jumps), settle round.
+                              final double bell = math.sin(
+                                Curves.easeInOut.transform(raw) * math.pi,
+                              );
+                              final double stretch =
+                                  bell * math.min(dist, tab * 2.2) * 0.55;
+                              final double w = disc + stretch;
+                              // A hair of vertical squash as it stretches, the
+                              // way a liquid bead thins when it elongates.
+                              final double h = disc * (1 - 0.08 * bell);
+                              return Positioned(
+                                left: centre - w / 2,
+                                top: top + (disc - h) / 2,
+                                width: w,
+                                height: h,
+                                child: _Droplet(onCream: onCream),
+                              );
+                            },
                           ),
                         Row(
                           children: [
-                            for (var i = 0; i < icons.length; i++)
+                            for (var i = 0; i < widget.icons.length; i++)
                               Expanded(
                                 child: _LiquidTab(
-                                  icon: icons[i],
-                                  isActive: currentIndex == i,
+                                  icon: widget.icons[i],
+                                  isActive: widget.currentIndex == i,
                                   onCream: onCream,
                                   onTap: () {
-                                    if (i != currentIndex) {
+                                    if (i != widget.currentIndex) {
                                       HapticFeedback.selectionClick();
                                     }
-                                    onTap(i);
+                                    widget.onTap(i);
                                   },
                                 ),
                               ),
@@ -308,27 +376,37 @@ class _DropletPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Rect bounds = Offset.zero & size;
-    final Offset centre = bounds.center;
-    final double r = size.shortestSide / 2;
+    // Capsule: a circle when the bead is round, a horizontal pill while it is
+    // stretched mid-travel — the iOS 26 liquid morph.
+    final double rad = size.shortestSide / 2;
+    RRect pill(double inset) => RRect.fromRectAndRadius(
+      bounds.deflate(inset),
+      Radius.circular(math.max(0, rad - inset)),
+    );
     Color white(double alpha) => Colors.white.withValues(alpha: alpha);
 
     // A soft lift, in brand green rather than black.
-    canvas.drawCircle(
-      centre.translate(0, 4),
-      r - 2,
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        bounds.translate(0, 4).deflate(2),
+        Radius.circular(math.max(0, rad - 2)),
+      ),
       Paint()
         ..color = M4Nav.discGreen.withValues(alpha: onCream ? 0.16 : 0.30)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
     );
 
+    // Fills are clipped to the capsule so the stretched pill stays crisp.
+    canvas.save();
+    canvas.clipRRect(pill(0));
+
     // The glass body: clear, gathering light towards the top-left.
-    canvas.drawCircle(
-      centre,
-      r,
+    canvas.drawRect(
+      bounds,
       Paint()
         ..shader = RadialGradient(
           center: const Alignment(-0.35, -0.5),
-          radius: 1.05,
+          radius: 1.1,
           colors: onCream
               ? [white(0.72), white(0.30)]
               : [white(0.24), white(0.06)],
@@ -336,21 +414,19 @@ class _DropletPainter extends CustomPainter {
     );
 
     // Light pooling in the lower rim, as it does in a real bead of glass.
-    canvas.drawCircle(
-      centre,
-      r,
+    canvas.drawRect(
+      bounds,
       Paint()
         ..shader = RadialGradient(
           center: const Alignment(0.3, 0.85),
-          radius: 0.6,
+          radius: 0.7,
           colors: [white(onCream ? 0.40 : 0.16), white(0)],
         ).createShader(bounds),
     );
 
     // A soft sheen over the upper half.
-    canvas.drawCircle(
-      centre,
-      r,
+    canvas.drawRect(
+      bounds,
       Paint()
         ..shader = LinearGradient(
           begin: Alignment.topCenter,
@@ -358,28 +434,11 @@ class _DropletPainter extends CustomPainter {
           colors: [white(onCream ? 0.55 : 0.20), white(0)],
         ).createShader(bounds),
     );
-
-    // The light caught just inside the upper-left rim.
-    canvas.drawArc(
-      Rect.fromCircle(center: centre, radius: r - 2.4),
-      math.pi * 1.05,
-      math.pi * 0.5,
-      false,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.6
-        ..strokeCap = StrokeCap.round
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.topRight,
-          colors: [white(onCream ? 0.95 : 0.70), white(0)],
-        ).createShader(bounds),
-    );
+    canvas.restore();
 
     // The rim: bright where the light strikes, catching again low right.
-    canvas.drawCircle(
-      centre,
-      r - 0.6,
+    canvas.drawRRect(
+      pill(0.6),
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.2
@@ -397,9 +456,8 @@ class _DropletPainter extends CustomPainter {
 
     // On cream, a hairline of M4 ink keeps the clear bead's edge.
     if (onCream) {
-      canvas.drawCircle(
-        centre,
-        r,
+      canvas.drawRRect(
+        pill(0),
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 0.7
