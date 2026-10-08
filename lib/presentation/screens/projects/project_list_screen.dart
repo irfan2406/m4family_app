@@ -2,6 +2,8 @@ import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/core/platform/m4_platform.dart';
+import 'package:m4_mobile/presentation/widgets/ios/liquid_segmented_control.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -63,6 +65,9 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
     errorWidget: (context, u, e) => errorBox(),
   );
 }
+
+/// The three project states, in the order the filter control shows them.
+const List<String> _projectFilters = ['Ongoing', 'Upcoming', 'Completed'];
 
 /// Channel Partner catalog: set [cpCatalogMode] so back + detail routes match web `/cp/projects`.
 class ProjectListScreen extends ConsumerWidget {
@@ -708,129 +713,147 @@ class ProjectListScreen extends ConsumerWidget {
                 ),
 
                 // 🎛️ Pill Tabs
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 24),
-                  // Figma runs this control noticeably slimmer than a stock
-                  // 45pt tab bar — that lower height is what makes it read as
-                  // sleek rather than chunky.
-                  height: 38,
-                  padding: const EdgeInsets.all(3),
-                  // Figma: a soft tinted track behind the three tabs — a lift
-                  // off the green, not a drawn outline.
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withOpacity(0.05)
-                        : Colors.black.withOpacity(0.04),
-                    borderRadius: BorderRadius.circular(19),
-                    // Faint outline around the track, as in the reference.
-                    border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
-                        0.08,
-                      ),
-                    ),
-                  ),
-                  // The selected plate is ONE widget that slides between the
-                  // three slots, rather than three chips cross-fading in
-                  // place — that cross-fade is what made switching read as
-                  // abrupt. AnimatedPositioned glides the plate and the
-                  // labels ease their weight/colour over the same curve.
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      const filters = ['Ongoing', 'Upcoming', 'Completed'];
-                      const duration = Duration(milliseconds: 280);
-                      final index = filters
-                          .indexOf(currentFilter)
-                          .clamp(0, filters.length - 1);
-                      final tabWidth = constraints.maxWidth / filters.length;
-                      return Stack(
-                        // Tight constraints come down from the 38pt track, so
-                        // expand keeps the label row full-height and centred
-                        // exactly where the old per-tab chips put it.
-                        fit: StackFit.expand,
-                        children: [
-                          AnimatedPositioned(
-                            duration: duration,
-                            curve: Curves.easeOutCubic,
-                            left: tabWidth * index,
-                            top: 0,
-                            bottom: 0,
-                            width: tabWidth,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                // Figma: the selected tab is a polished light
-                                // chip — a top-to-bottom sheen from near-white
-                                // into warm grey, so the surface catches light
-                                // instead of reading as flat paint.
-                                gradient: const LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Color(0xFFFDFCF9),
-                                    Color(0xFFDCD9D0),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-                                // Lifted inside the track: soft shadow
-                                // beneath, bright hairline on the edge.
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(
-                                      isDark ? 0.30 : 0.16,
-                                    ),
-                                    blurRadius: 12,
-                                    spreadRadius: -2,
-                                    offset: const Offset(0, 3),
-                                  ),
-                                ],
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.6),
-                                  width: 0.8,
-                                ),
-                              ),
-                            ),
+                M4Platform.isIOS
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: LiquidSegmentedControl(
+                          labels: _projectFilters,
+                          currentIndex: _projectFilters
+                              .indexOf(currentFilter)
+                              .clamp(0, _projectFilters.length - 1),
+                          onSelected: (i) =>
+                              ref.read(projectFilterProvider.notifier).state =
+                                  _projectFilters[i],
+                        ),
+                      )
+                    : Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 24),
+                        // Figma runs this control noticeably slimmer than a stock
+                        // 45pt tab bar — that lower height is what makes it read as
+                        // sleek rather than chunky.
+                        height: 38,
+                        padding: const EdgeInsets.all(3),
+                        // Figma: a soft tinted track behind the three tabs — a lift
+                        // off the green, not a drawn outline.
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withOpacity(0.05)
+                              : Colors.black.withOpacity(0.04),
+                          borderRadius: BorderRadius.circular(19),
+                          // Faint outline around the track, as in the reference.
+                          border: Border.all(
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.08),
                           ),
-                          Row(
-                            children: filters.map((filter) {
-                              final isSelected = currentFilter == filter;
-                              return Expanded(
-                                child: GestureDetector(
-                                  behavior: HitTestBehavior.opaque,
-                                  onTap: () =>
-                                      ref
-                                              .read(
-                                                projectFilterProvider.notifier,
-                                              )
-                                              .state =
-                                          filter,
-                                  child: Center(
-                                    child: AnimatedDefaultTextStyle(
-                                      duration: duration,
-                                      curve: Curves.easeOutCubic,
-                                      style: GoogleFonts.inter(
-                                        fontSize: 10,
-                                        fontWeight: isSelected
-                                            ? FontWeight.w600
-                                            : FontWeight.bold,
-                                        color: isSelected
-                                            ? const Color(0xFF15271E)
-                                            : Theme.of(context)
-                                                  .colorScheme
-                                                  .onSurface
-                                                  .withOpacity(0.55),
-                                        letterSpacing: 1,
+                        ),
+                        // The selected plate is ONE widget that slides between the
+                        // three slots, rather than three chips cross-fading in
+                        // place — that cross-fade is what made switching read as
+                        // abrupt. AnimatedPositioned glides the plate and the
+                        // labels ease their weight/colour over the same curve.
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            const filters = [
+                              'Ongoing',
+                              'Upcoming',
+                              'Completed',
+                            ];
+                            const duration = Duration(milliseconds: 280);
+                            final index = filters
+                                .indexOf(currentFilter)
+                                .clamp(0, filters.length - 1);
+                            final tabWidth =
+                                constraints.maxWidth / filters.length;
+                            return Stack(
+                              // Tight constraints come down from the 38pt track, so
+                              // expand keeps the label row full-height and centred
+                              // exactly where the old per-tab chips put it.
+                              fit: StackFit.expand,
+                              children: [
+                                AnimatedPositioned(
+                                  duration: duration,
+                                  curve: Curves.easeOutCubic,
+                                  left: tabWidth * index,
+                                  top: 0,
+                                  bottom: 0,
+                                  width: tabWidth,
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      // Figma: the selected tab is a polished light
+                                      // chip — a top-to-bottom sheen from near-white
+                                      // into warm grey, so the surface catches light
+                                      // instead of reading as flat paint.
+                                      gradient: const LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Color(0xFFFDFCF9),
+                                          Color(0xFFDCD9D0),
+                                        ],
                                       ),
-                                      child: Text(filter.toUpperCase()),
+                                      borderRadius: BorderRadius.circular(16),
+                                      // Lifted inside the track: soft shadow
+                                      // beneath, bright hairline on the edge.
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(
+                                            isDark ? 0.30 : 0.16,
+                                          ),
+                                          blurRadius: 12,
+                                          spreadRadius: -2,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.6),
+                                        width: 0.8,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
+                                Row(
+                                  children: filters.map((filter) {
+                                    final isSelected = currentFilter == filter;
+                                    return Expanded(
+                                      child: GestureDetector(
+                                        behavior: HitTestBehavior.opaque,
+                                        onTap: () =>
+                                            ref
+                                                    .read(
+                                                      projectFilterProvider
+                                                          .notifier,
+                                                    )
+                                                    .state =
+                                                filter,
+                                        child: Center(
+                                          child: AnimatedDefaultTextStyle(
+                                            duration: duration,
+                                            curve: Curves.easeOutCubic,
+                                            style: GoogleFonts.inter(
+                                              fontSize: 10,
+                                              fontWeight: isSelected
+                                                  ? FontWeight.w600
+                                                  : FontWeight.bold,
+                                              color: isSelected
+                                                  ? const Color(0xFF15271E)
+                                                  : Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurface
+                                                        .withOpacity(0.55),
+                                              letterSpacing: 1,
+                                            ),
+                                            child: Text(filter.toUpperCase()),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
 
                 const SizedBox(height: 24),
 
