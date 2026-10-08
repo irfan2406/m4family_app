@@ -303,10 +303,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         Container(color: Theme.of(context).colorScheme.surfaceContainerHighest);
     final s = raw?.trim() ?? '';
     if (s.isEmpty) return fallback;
+    // PNG/SVG logos -> contain (full), JPEG photos -> cover (fill).
+    final effFit = fit == BoxFit.cover ? fitForMediaUrl(s) : fit;
     if (s.startsWith('assets/')) {
       return Image.asset(
         s,
-        fit: fit,
+        fit: effFit,
         errorBuilder: (_, __, ___) => fallback,
       );
     }
@@ -321,7 +323,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         );
         return Image(
           image: provider,
-          fit: fit,
+          fit: effFit,
           errorBuilder: (_, __, ___) => fallback,
         );
       } catch (_) {
@@ -334,7 +336,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     return CachedNetworkImage(
       memCacheWidth: cacheWidth,
       imageUrl: url,
-      fit: fit,
+      fit: effFit,
       fadeInDuration: const Duration(milliseconds: 120),
       placeholder: placeholder == null ? null : (_, __) => placeholder,
       errorWidget: (_, __, ___) => fallback,

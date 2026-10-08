@@ -15,6 +15,7 @@ import 'dart:typed_data';
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/core/utils/image_prewarm.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/hero_slider_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
@@ -1586,6 +1587,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     // a stock photo.
     final src = raw.trim();
     if (src.isEmpty) return errorBox();
+    // Fit by file type when the caller asked for cover: PNG/SVG logos show in
+    // full (contain), JPEG photos fill the frame (cover).
+    final effFit = fit == BoxFit.cover ? fitForMediaUrl(src) : fit;
 
     if (src.startsWith('assets/')) {
       return Image.asset(
@@ -1593,7 +1597,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         key: key,
         width: width,
         height: height,
-        fit: fit,
+        fit: effFit,
         errorBuilder: (_, __, ___) => errorBox(),
       );
     }
@@ -1613,7 +1617,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           key: key,
           width: width,
           height: height,
-          fit: fit,
+          fit: effFit,
           gaplessPlayback: true,
           // Downsample large images to keep decode cost + memory in check.
           cacheWidth: 1080,
@@ -1637,7 +1641,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       imageUrl: url,
       width: width,
       height: height,
-      fit: fit,
+      fit: effFit,
       placeholder: (context, u) => Container(color: Colors.black12),
       errorWidget: (context, u, e) => errorBox(),
     );

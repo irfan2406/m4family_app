@@ -221,7 +221,8 @@ class _GuestCustomViewsScreenState
                                 ? const SizedBox.shrink()
                                 : CachedNetworkImage(
                                     imageUrl: cat['image']!,
-                                    fit: BoxFit.cover,
+                                    // PNG/SVG logos -> contain, JPEG -> cover.
+                                    fit: fitForMediaUrl(cat['image']!),
                                     memCacheWidth: 800,
                                     maxWidthDiskCache: 1200,
                                     fadeInDuration: const Duration(

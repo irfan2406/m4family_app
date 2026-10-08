@@ -16,6 +16,7 @@ import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:m4_mobile/core/utils/project_highlights.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/core/utils/image_prewarm.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/hero_slider_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
@@ -183,6 +184,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
 
     final src = raw.trim();
     if (src.isEmpty) return errorBox();
+    // PNG/SVG logos -> contain (full), JPEG photos -> cover (fill).
+    final effFit = fit == BoxFit.cover ? fitForMediaUrl(src) : fit;
 
     if (src.startsWith('assets/')) {
       return Image.asset(
@@ -190,7 +193,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         key: key,
         width: width,
         height: height,
-        fit: fit,
+        fit: effFit,
         alignment: alignment,
         errorBuilder: (_, __, ___) => errorBox(),
       );
@@ -211,7 +214,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           key: key,
           width: width,
           height: height,
-          fit: fit,
+          fit: effFit,
           alignment: alignment,
           gaplessPlayback: true,
           cacheWidth: 1080,
@@ -235,7 +238,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       imageUrl: url,
       width: width,
       height: height,
-      fit: fit,
+      fit: effFit,
       alignment: alignment,
       placeholder: (c, u) => Container(color: Colors.black12),
       errorWidget: (c, u, e) => errorBox(),

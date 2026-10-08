@@ -13,6 +13,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
@@ -32,6 +33,9 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
   );
   // Backend-driven: empty URL -> branded placeholder (no stock, no bad request).
   if (url.trim().isEmpty) return errorBox();
+  // Fit by file type when the caller asked for cover: PNG/SVG logos show in
+  // full (contain), JPEG photos fill the frame (cover).
+  final effFit = fit == BoxFit.cover ? fitForMediaUrl(url) : fit;
   if (url.startsWith('data:')) {
     try {
       final bytes = base64Decode(
@@ -39,7 +43,7 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
       );
       return Image.memory(
         bytes,
-        fit: fit,
+        fit: effFit,
         cacheWidth: 1080,
         errorBuilder: (_, __, ___) => errorBox(),
       );
@@ -54,7 +58,7 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
     maxWidthDiskCache: 1600,
     maxHeightDiskCache: 1600,
     imageUrl: url,
-    fit: fit,
+    fit: effFit,
     placeholder: (context, u) => Container(color: Colors.black12),
     errorWidget: (context, u, e) => errorBox(),
   );

@@ -986,6 +986,8 @@ class _InvestorProjectDetailScreenState
   Widget _projectImage(String? src, {BoxFit fit = BoxFit.cover}) {
     final raw = (src ?? '').trim();
     if (raw.isEmpty) return Container(color: Colors.black12);
+    // PNG/SVG logos -> contain (full), JPEG photos -> cover (fill).
+    final effFit = fit == BoxFit.cover ? fitForMediaUrl(raw) : fit;
     if (raw.startsWith('data:')) {
       try {
         final bytes = _investorDetailB64Cache.putIfAbsent(
@@ -996,7 +998,7 @@ class _InvestorProjectDetailScreenState
         );
         return Image.memory(
           bytes,
-          fit: fit,
+          fit: effFit,
           cacheWidth: 1080,
           gaplessPlayback: true,
           errorBuilder: (_, __, ___) => Container(color: Colors.black12),
@@ -1011,7 +1013,7 @@ class _InvestorProjectDetailScreenState
     return CachedNetworkImage(
       memCacheWidth: 1080,
       imageUrl: url,
-      fit: fit,
+      fit: effFit,
       placeholder: (c, u) => Container(color: Colors.black12),
       errorWidget: (c, u, e) => Container(color: Colors.black12),
     );

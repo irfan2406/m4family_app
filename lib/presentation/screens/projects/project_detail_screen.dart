@@ -2707,6 +2707,8 @@ class _ProjectImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (url.isEmpty) return _fallback();
+    // PNG/SVG logos -> contain (full), JPEG photos -> cover (fill).
+    final effFit = fitForMediaUrl(url);
 
     if (url.startsWith('data:')) {
       final comma = url.indexOf(',');
@@ -2715,7 +2717,7 @@ class _ProjectImage extends StatelessWidget {
         final bytes = base64Decode(url.substring(comma + 1));
         return Image.memory(
           bytes,
-          fit: BoxFit.cover,
+          fit: effFit,
           width: double.infinity,
           height: double.infinity,
           cacheWidth: memCacheWidth,
@@ -2729,7 +2731,7 @@ class _ProjectImage extends StatelessWidget {
 
     return CachedNetworkImage(
       imageUrl: url,
-      fit: BoxFit.cover,
+      fit: effFit,
       memCacheWidth: memCacheWidth,
       fadeInDuration: Duration.zero,
       placeholder: (context, url) => _fallback(),

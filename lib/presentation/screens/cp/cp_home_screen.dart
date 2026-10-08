@@ -15,6 +15,7 @@ import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/project_highlights.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/core/utils/image_prewarm.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/hero_slider_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
@@ -642,6 +643,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     // Backend-driven: no image URL -> branded placeholder, never a stock photo.
     final src = raw.trim();
     if (src.isEmpty) return errorBox();
+    // PNG/SVG logos -> contain (full), JPEG photos -> cover (fill).
+    final effFit = fit == BoxFit.cover ? fitForMediaUrl(src) : fit;
 
     if (src.startsWith('data:')) {
       try {
@@ -655,7 +658,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           key: key,
           width: width,
           height: height,
-          fit: fit,
+          fit: effFit,
           errorBuilder: (_, __, ___) => errorBox(),
         );
       } catch (_) {
@@ -676,7 +679,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
       imageUrl: url,
       width: width,
       height: height,
-      fit: fit,
+      fit: effFit,
       placeholder: (context, u) => Container(color: Colors.black12),
       errorWidget: (context, u, e) => errorBox(),
     );

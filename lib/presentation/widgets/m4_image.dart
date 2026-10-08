@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,6 +34,10 @@ class M4Image extends ConsumerWidget {
       return _buildFallback();
     }
 
+    // Fit by file type when the caller asked for cover: PNG/SVG (logos) are
+    // shown in full (contain), JPEG/other (photos) fill the frame (cover).
+    final effFit = fit == BoxFit.cover ? fitForMediaUrl(imageUrl!) : fit;
+
     // Check if the URL is a base64 Data URI
     if (imageUrl!.startsWith('data:image/') && imageUrl!.contains('base64,')) {
       try {
@@ -46,7 +51,7 @@ class M4Image extends ConsumerWidget {
           });
           return Image.memory(
             bytes,
-            fit: fit,
+            fit: effFit,
             cacheWidth: 1080,
             width: width,
             height: height,
@@ -75,7 +80,7 @@ class M4Image extends ConsumerWidget {
 
     return CachedNetworkImage(
       imageUrl: resolvedUrl,
-      fit: fit,
+      fit: effFit,
       width: width,
       height: height,
       memCacheWidth: memWidth,
