@@ -1981,6 +1981,9 @@ class _InvestorProjectDetailScreenState
               child: Stack(
                 fit: StackFit.expand,
                 children: [
+                  // Dark backdrop so an uploaded image with a transparent/white
+                  // background still shows.
+                  Container(color: const Color(0xFF0C312B)),
                   isAssetImg
                       ? Image.asset(imageUrl, fit: BoxFit.cover)
                       : CachedNetworkImage(

@@ -2194,6 +2194,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             child: Stack(
               fit: StackFit.expand,
               children: [
+                // Dark backdrop so an uploaded image with a transparent/white
+                // background still shows.
+                Container(color: const Color(0xFF0C312B)),
                 _projectImage(img, fit: BoxFit.cover),
                 Positioned.fill(
                   child: Material(

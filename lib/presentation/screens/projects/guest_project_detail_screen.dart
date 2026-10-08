@@ -3306,48 +3306,32 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                             ),
                                           ),
                                         )
-                                      : isAssetImg
-                                      // Bundled construction fallback for a real
-                                      // phase with no uploaded photo.
-                                      ? Image.asset(
-                                          imageUrl,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : CachedNetworkImage(
-                                    memCacheWidth: 1080,
-                                    imageUrl: imageUrl,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                    placeholder: (c, u) => Container(
-                                      color: isDark
-                                          ? const Color(0xFF141B3A)
-                                          : const Color(0xFFF4EFE3),
-                                      child: Icon(
-                                        LucideIcons.image,
-                                        color: isDark
-                                            ? Colors.white24
-                                            : const Color(0x420C312B),
-                                        size: 24,
-                                      ),
-                                    ),
-                                    // Backend image only — a blank tile when the
-                                    // backend image is absent or fails to load
-                                    // (no bundled fallback).
-                                    errorWidget: (c, e, s) => Container(
-                                      height: 220,
-                                      color: isDark
-                                          ? const Color(0xFF141B3A)
-                                          : const Color(0xFFF4EFE3),
-                                      child: Icon(
-                                        LucideIcons.image,
-                                        color: isDark
-                                            ? Colors.white24
-                                            : const Color(0x420C312B),
-                                        size: 24,
-                                      ),
-                                    ),
-                                  ),
+                                      : Stack(
+                                          fit: StackFit.expand,
+                                          children: [
+                                            // Dark backdrop so a transparent /
+                                            // white uploaded image still shows.
+                                            Container(
+                                              color: const Color(0xFF0C312B),
+                                            ),
+                                            isAssetImg
+                                                ? Image.asset(
+                                                    imageUrl,
+                                                    width: double.infinity,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : CachedNetworkImage(
+                                                    memCacheWidth: 1080,
+                                                    imageUrl: imageUrl,
+                                                    width: double.infinity,
+                                                    fit: BoxFit.cover,
+                                                    placeholder: (c, u) =>
+                                                        const SizedBox.shrink(),
+                                                    errorWidget: (c, e, s) =>
+                                                        const SizedBox.shrink(),
+                                                  ),
+                                          ],
+                                        ),
                                 ),
                               ),
                               Positioned(
