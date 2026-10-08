@@ -136,6 +136,11 @@ class LuxuryAmenityIcon extends StatelessWidget {
           width: size,
           height: size,
           fit: BoxFit.contain,
+          // No fade: on reopen the (disk-cached) icon should appear instantly
+          // instead of animating in from the fallback glyph each time.
+          fadeInDuration: Duration.zero,
+          fadeOutDuration: Duration.zero,
+          placeholderFadeInDuration: Duration.zero,
           placeholder: (c, u) => _fallbackGlyph(),
           imageBuilder: (c, provider) {
             final image = Image(
