@@ -31,10 +31,6 @@ class LiquidGlassBar extends StatefulWidget {
     required this.slotBuilder,
     required this.height,
     required this.radius,
-    required this.barTintDark,
-    required this.barTintCream,
-    required this.beadTintDark,
-    required this.beadTintCream,
     this.beadWidth = 0,
     this.beadHeight = 0,
     this.beadInset = 3,
@@ -54,13 +50,6 @@ class LiquidGlassBar extends StatefulWidget {
 
   final double height;
   final double radius;
-
-  /// White-tint alphas for the glass, per surface. Every styling decision
-  /// lives here rather than in Swift.
-  final double barTintDark;
-  final double barTintCream;
-  final double beadTintDark;
-  final double beadTintCream;
 
   /// Bead size. Either dimension left at 0 means "fill the slot, less
   /// [beadInset]" — which is what turns this into a segmented control.
@@ -263,10 +252,6 @@ class _LiquidGlassBarState extends State<LiquidGlassBar> {
                     count: widget.slotCount,
                     index: widget.currentIndex,
                     onCream: _onCream,
-                    barTintDark: widget.barTintDark,
-                    barTintCream: widget.barTintCream,
-                    beadTintDark: widget.beadTintDark,
-                    beadTintCream: widget.beadTintCream,
                     onCreated: _onCreated,
                   ),
                 ),
@@ -309,10 +294,6 @@ class _NativeGlass extends StatelessWidget {
     required this.count,
     required this.index,
     required this.onCream,
-    required this.barTintDark,
-    required this.barTintCream,
-    required this.beadTintDark,
-    required this.beadTintCream,
     required this.onCreated,
   });
 
@@ -323,10 +304,6 @@ class _NativeGlass extends StatelessWidget {
   final int count;
   final int index;
   final bool onCream;
-  final double barTintDark;
-  final double barTintCream;
-  final double beadTintDark;
-  final double beadTintCream;
   final ValueChanged<int> onCreated;
 
   @override
@@ -341,10 +318,6 @@ class _NativeGlass extends StatelessWidget {
         'count': count,
         'index': index,
         'onCream': onCream,
-        'barTintDark': barTintDark,
-        'barTintCream': barTintCream,
-        'beadTintDark': beadTintDark,
-        'beadTintCream': beadTintCream,
       },
       creationParamsCodec: const StandardMessageCodec(),
       onPlatformViewCreated: onCreated,

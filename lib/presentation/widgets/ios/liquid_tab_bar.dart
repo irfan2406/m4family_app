@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:m4_mobile/presentation/widgets/ios/liquid_glass_bar.dart';
+import 'package:m4_mobile/presentation/widgets/ios/native_tab_bar.dart';
 import 'package:m4_mobile/presentation/widgets/nav_style.dart';
 
 /// iOS: the M4 bottom bar as a real Liquid Glass tab bar.
 ///
-/// All the glass and all the motion live in [LiquidGlassBar]; this is the M4
+/// UIKit draws and drives the whole bar (see [NativeTabBar]); this is the M4
 /// bottom nav's share of it — the Figma footprint (329 × 65, radius 32.5), the
 /// round 50pt bead, and the glyph colours for each surface.
 class LiquidTabBar extends StatelessWidget {
@@ -43,36 +43,24 @@ class LiquidTabBar extends StatelessWidget {
                 borderRadius: BorderRadius.circular(M4Nav.radius),
                 boxShadow: M4Nav.shadow(!onCream),
               ),
-              child: LiquidGlassBar(
-                slotCount: icons.length,
+              child: NativeTabBar(
+                icons: icons,
                 currentIndex: currentIndex,
-                onSelected: onTap,
+                onTap: onTap,
                 height: M4Nav.height,
                 radius: M4Nav.radius,
                 // A round bead, shrunk only when a bar with many tabs on a
                 // narrow phone has less room than that per tab.
                 beadWidth: M4Nav.activeDisc,
                 beadHeight: M4Nav.activeDisc,
-                barTintDark: 0.11,
-                barTintCream: 0.14,
-                beadTintDark: 0.24,
-                beadTintCream: 0.30,
-                slotBuilder: (context, i, isActive) {
-                  // Over the clear glass bead the selected glyph takes the ink
-                  // of the surface: white on the green screens, M4 green on
-                  // the cream ones.
-                  final Color glyph = isActive
-                      ? (onCream ? M4Nav.discGreen : M4Nav.glyphOnGreen)
-                      : (onCream ? M4Nav.glyphOnCream : M4Nav.glyphOnGreen)
-                            .withValues(alpha: M4Nav.inactiveOpacity);
-                  return TweenAnimationBuilder<Color?>(
-                    tween: ColorTween(end: glyph),
-                    duration: M4Nav.animation,
-                    curve: M4Nav.curve,
-                    builder: (context, color, _) =>
-                        Icon(icons[i], size: M4Nav.iconSize, color: color),
-                  );
-                },
+                iconSize: M4Nav.iconSize,
+                // Over the clear glass bead the selected glyph takes the ink
+                // of the surface: white on the green screens, M4 green on the
+                // cream ones.
+                activeColor: onCream ? M4Nav.discGreen : M4Nav.glyphOnGreen,
+                inactiveColor:
+                    (onCream ? M4Nav.glyphOnCream : M4Nav.glyphOnGreen)
+                        .withValues(alpha: M4Nav.inactiveOpacity),
               ),
             ),
           ),

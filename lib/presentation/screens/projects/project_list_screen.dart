@@ -657,8 +657,12 @@ class ProjectListScreen extends ConsumerWidget {
                           ],
                           // Web parity: grid / list view segmented toggle
                           // (active button filled black, matching projects/page.tsx).
-                          // CP catalog shows one fixed card layout - no grid/list switch.
-                          if (!cpCatalogMode) ...[
+                          // Every portal gets it. The CP catalog used to hide
+                          // it while still reading the same shared
+                          // `projectLayoutProvider`, so switching to list
+                          // anywhere else left the catalog on rows with no
+                          // control to switch back.
+                          ...[
                             const SizedBox(width: 6),
                             Container(
                               padding: const EdgeInsets.all(3),

@@ -12,11 +12,22 @@ import 'package:m4_mobile/presentation/widgets/investor_sidebar_menu.dart';
 
 /// Investor shell: web `InvestorBottomNav` + `InvestorSidebar` (drawer).
 /// Tabs: 0 Home, 1 Projects, 2 Support, 3 Profile.
-class InvestorMainShell extends ConsumerWidget {
+class InvestorMainShell extends ConsumerStatefulWidget {
   const InvestorMainShell({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<InvestorMainShell> createState() => _InvestorMainShellState();
+}
+
+class _InvestorMainShellState extends ConsumerState<InvestorMainShell> {
+  /// The floating nav is a platform view the drawer's scrim cannot dim, and
+  /// the drawer panel is itself translucent, so leaving the bar up shows it
+  /// glowing through an open menu. The customer and guest shells already drop
+  /// it for the same reason.
+  bool _isDrawerOpen = false;
+
+  @override
+  Widget build(BuildContext context) {
     final idx = ref.watch(investorNavigationIndexProvider);
 
     // Home (0) & Projects (1) are the deep-green "showcase" screens (white
@@ -43,6 +54,7 @@ class InvestorMainShell extends ConsumerWidget {
     return Scaffold(
       backgroundColor: navTheme.scaffoldBackgroundColor,
       drawer: const InvestorSidebarMenu(),
+      onDrawerChanged: (isOpen) => setState(() => _isDrawerOpen = isOpen),
       // extendBody: the body runs the full height behind the floating pill, so
       // no reserved slot is left around it. Reserving one (extendBody: false)
       // filled the pill's own float margins with the page background, showing
@@ -58,14 +70,17 @@ class InvestorMainShell extends ConsumerWidget {
             ref.read(investorNavigationIndexProvider.notifier).state = i,
         child: IndexedStack(index: idx, children: screens),
       ),
-      bottomNavigationBar: Theme(
-        data: navTheme,
-        child: InvestorBottomNav(
-          currentIndex: idx,
-          onTap: (i) =>
-              ref.read(investorNavigationIndexProvider.notifier).state = i,
-        ),
-      ),
+      bottomNavigationBar: _isDrawerOpen
+          ? null
+          : Theme(
+              data: navTheme,
+              child: InvestorBottomNav(
+                currentIndex: idx,
+                onTap: (i) =>
+                    ref.read(investorNavigationIndexProvider.notifier).state =
+                        i,
+              ),
+            ),
     );
   }
 }

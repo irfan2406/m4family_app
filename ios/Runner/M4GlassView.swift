@@ -4,13 +4,16 @@ import UIKit
 
 /// The material and the selection for M4's glass bars, drawn by UIKit.
 ///
-/// Flutter owns layout, glyphs, labels and every touch; this platform view owns
-/// only what Flutter cannot draw — Apple's real Liquid Glass. On iOS 26+ that
-/// means an actual `UIGlassEffect` capsule for the track and a second glass
+/// Flutter owns layout, glyphs, labels and every touch; this platform view
+/// owns only what Flutter cannot draw — Apple's real Liquid Glass. On iOS 26+
+/// that is an actual `UIGlassEffect` capsule for the track and a second glass
 /// element for the selection bead, the latter inside a `UIGlassContainerEffect`
 /// so the bead and the trail it leaves behind merge into one shape and pinch
 /// apart as it travels. Below iOS 26 the same geometry and motion run on a
 /// system material blur, which still reads as glass.
+///
+/// The glass is Apple's, untinted and otherwise untouched: no wash over it, no
+/// tint colours of ours. Everything this view adds is geometry and motion.
 ///
 /// The track and the bead are deliberately in SEPARATE containers. Glass
 /// elements inside one container merge into a single shape, so a bead sharing
@@ -23,28 +26,45 @@ import UIKit
 /// Flutter drives it over a per-view method channel (`m4/glass/<id>`):
 ///   • `setSelection` → `{ index, count, animated }`
 ///   • `setStyle`     → `{ onCream }`
-///   • `dragBegin`    → `{ x }`      finger down: grab the bead at x
+///   • `dragBegin`    → `{ x }`      finger down: take hold of the bead
 ///   • `dragTo`       → `{ x }`      finger moved: the bead follows, stretching
 ///   • `dragEnd`      → `{ index }`  finger up: settle on that slot
 ///   • `hasLiquidGlass` → Bool, so Dart can tell whether the real material is live
 final class M4GlassView: NSObject, FlutterPlatformView {
-  // MARK: Geometry and style handed down from Flutter, in logical points
+  // MARK: Geometry handed down from Flutter, in logical points
 
   private var radius: CGFloat = 32.5
-  /// Bead size. Either dimension at 0 means "fill the slot/track, less inset".
+  /// Bead size. Either dimension at 0 means "fill the slot, less the inset".
   private var beadWidth: CGFloat = 0
   private var beadHeight: CGFloat = 0
   /// Smallest gap the bead keeps from its slot's edges.
   private var beadInset: CGFloat = 3
   private var slotCount: Int = 5
   private var selected: Int = -1
-
-  /// White-tint alphas, per surface. Every styling decision lives in Dart.
-  private var barTintDark: CGFloat = 0.11
-  private var barTintCream: CGFloat = 0.14
-  private var beadTintDark: CGFloat = 0.24
-  private var beadTintCream: CGFloat = 0.30
+  /// Which surface the bar floats over. Only the pre-26 painted fallback
+  /// still varies with it; the real glass is the same on both.
   private var onCream: Bool = false
+
+  /// Glyphs, in slot order, rasterised by Flutter from the same Lucide font
+  /// the Android bar uses. When this is non-empty the view is a real UIKit
+  /// bar: it draws its own glyphs, owns its own touches and gets Apple's
+  /// interactive glass. Empty, it is a decorative surface with Flutter
+  /// content and Flutter gestures on top (the segmented controls).
+  private var icons: [UIImage] = []
+  private var iconViews: [UIImageView] = []
+  private var iconSize: CGFloat = 24
+  private var activeColor: UIColor = .white
+  private var inactiveColor: UIColor = UIColor.white.withAlphaComponent(0.72)
+  private let haptics = UISelectionFeedbackGenerator()
+
+  /// True when this view draws the bar itself and handles its own touches.
+  private var ownsTouches: Bool { !icons.isEmpty }
+
+  /// The slot under the finger while one is down, else nil. Drives the glyph
+  /// tints so a glyph lights as the bead reaches it, not on release.
+  private var heldSlot: Int?
+  /// Where the finger went down, for telling a tap from a drag.
+  private var touchDownX: CGFloat = 0
 
   // MARK: Views
 
@@ -88,6 +108,21 @@ final class M4GlassView: NSObject, FlutterPlatformView {
 
   private var hasSelection: Bool { selected >= 0 && selected < slotCount }
 
+  /// Which appearance the glass renders in: matched to the surface behind it.
+  ///
+  /// This is what decides whether the bar reads as a lens or as paint. Glass
+  /// only looks transparent when its material is close in tone to whatever is
+  /// behind it — WhatsApp's bar looks almost colourless because the chat list
+  /// under it is near-white, not because the glass is white. Put that same
+  /// light material over M4's deep green and the contrast turns it into a
+  /// pale slab you cannot see through.
+  ///
+  /// So: dark glass on the green showcase screens, light glass on the cream
+  /// ones. Driven by the surface rather than the phone, because these are
+  /// system materials that otherwise follow Dark Mode — and dark glass under
+  /// deep-green glyphs on a cream screen is unreadable.
+  private var surfaceStyle: UIUserInterfaceStyle { onCream ? .light : .dark }
+
   init(
     frame: CGRect,
     viewIdentifier viewId: Int64,
@@ -107,17 +142,31 @@ final class M4GlassView: NSObject, FlutterPlatformView {
     beadInset = M4GlassView.number(params?["beadInset"]) ?? beadInset
     slotCount = max(1, Int(M4GlassView.number(params?["count"]) ?? 5))
     selected = Int(M4GlassView.number(params?["index"]) ?? -1)
-    barTintDark = M4GlassView.number(params?["barTintDark"]) ?? barTintDark
-    barTintCream = M4GlassView.number(params?["barTintCream"]) ?? barTintCream
-    beadTintDark = M4GlassView.number(params?["beadTintDark"]) ?? beadTintDark
-    beadTintCream = M4GlassView.number(params?["beadTintCream"]) ?? beadTintCream
     onCream = (params?["onCream"] as? NSNumber)?.boolValue ?? false
+    iconSize = M4GlassView.number(params?["iconSize"]) ?? iconSize
+    activeColor = M4GlassView.color(params?["activeColor"]) ?? activeColor
+    inactiveColor = M4GlassView.color(params?["inactiveColor"]) ?? inactiveColor
+    icons = M4GlassView.images(params?["icons"])
 
     root.frame = frame
     root.backgroundColor = .clear
-    // Every touch belongs to the Flutter glyphs above this view.
-    root.isUserInteractionEnabled = false
+    // A bar that draws its own glyphs takes its own touches, which is what
+    // lets Apple's interactive glass respond to them. A decorative surface
+    // leaves every touch to the Flutter content above it.
+    root.isUserInteractionEnabled = ownsTouches
+    if ownsTouches {
+      // minimumPressDuration 0 reports touch-down, movement and lift, which
+      // is press, drag and release without a long-press delay.
+      let press = UILongPressGestureRecognizer(
+        target: self,
+        action: #selector(handlePress(_:))
+      )
+      press.minimumPressDuration = 0
+      press.allowableMovement = .greatestFiniteMagnitude
+      root.addGestureRecognizer(press)
+    }
     root.onLayout = { [weak self] in self?.layoutSurface() }
+    root.overrideUserInterfaceStyle = surfaceStyle
 
     build()
     layoutSurface()
@@ -133,9 +182,7 @@ final class M4GlassView: NSObject, FlutterPlatformView {
 
   private func build() {
     if #available(iOS 26.0, *) {
-      // The track: real Liquid Glass, clear enough that the screen behind it
-      // refracts through the edges instead of being frosted flat.
-      let surface = UIVisualEffectView(effect: trackEffect())
+      let surface = UIVisualEffectView(effect: UIGlassEffect())
       surface.cornerConfiguration = .capsule(maximumRadius: radius)
       root.addSubview(surface)
       track = surface
@@ -175,29 +222,54 @@ final class M4GlassView: NSObject, FlutterPlatformView {
     beadHost?.addSubview(lens)
     lens.alpha = hasSelection ? 1 : 0
     bead = lens
+
+    // Glyphs last, so they sit above the merged glass the way the labels in
+    // Apple's own tab bar do.
+    for image in icons {
+      let view = UIImageView(image: image.withRenderingMode(.alwaysTemplate))
+      view.contentMode = .scaleAspectFit
+      view.isUserInteractionEnabled = false
+      beadHost?.addSubview(view)
+      iconViews.append(view)
+    }
+    refreshIcons(animated: false)
   }
 
-  @available(iOS 26.0, *)
-  private func trackEffect() -> UIGlassEffect {
-    let effect = UIGlassEffect(style: .clear)
-    effect.tintColor = UIColor.white
-      .withAlphaComponent(onCream ? barTintCream : barTintDark)
-    return effect
+  /// Tints every glyph for the current selection. `heldSlot` wins while a
+  /// finger is down, so a glyph lights as the bead reaches it.
+  private func refreshIcons(animated: Bool) {
+    let active = heldSlot ?? selected
+    let apply = {
+      for (i, view) in self.iconViews.enumerated() {
+        view.tintColor = (i == active) ? self.activeColor : self.inactiveColor
+      }
+    }
+    guard animated else { return apply() }
+    UIView.transition(
+      with: root,
+      duration: 0.22,
+      options: [.transitionCrossDissolve, .allowUserInteraction],
+      animations: apply
+    )
   }
 
-  /// A selection bead: a clear glass element on iOS 26+, a lit translucent
+  /// A selection bead: a stock glass element on iOS 26+, a lit translucent
   /// capsule below it. Also used for the trail a hand-off leaves behind.
   private func makeBead() -> UIView {
-    let alpha = onCream ? beadTintCream : beadTintDark
     if #available(iOS 26.0, *) {
-      let effect = UIGlassEffect(style: .clear)
-      effect.tintColor = UIColor.white.withAlphaComponent(alpha)
-      let view = UIVisualEffectView(effect: effect)
+      // `isInteractive` is deliberately off, and this was measured rather
+      // than assumed: with it on, the bead turns into an opaque grey slab the
+      // instant a finger lands and stays one for the whole drag — the moment
+      // it most needs to read as glass. Apple's interactive glass is built to
+      // brighten and solidify under a press, which suits a button and ruins a
+      // travelling lens.
+      let view = UIVisualEffectView(effect: UIGlassEffect())
       view.cornerConfiguration = .capsule()
       return view
     }
     let view = UIView()
-    view.backgroundColor = UIColor.white.withAlphaComponent(alpha * 2.4)
+    view.backgroundColor = UIColor.white
+      .withAlphaComponent(onCream ? 0.58 : 0.20)
     view.layer.borderWidth = 1
     view.layer.borderColor = UIColor.white
       .withAlphaComponent(onCream ? 0.80 : 0.38).cgColor
@@ -214,9 +286,19 @@ final class M4GlassView: NSObject, FlutterPlatformView {
     track?.frame = bounds
     beadContainer?.frame = bounds
     if #unavailable(iOS 26.0) {
-      track?.layer.cornerRadius = min(radius, bounds.height / 2)
-      beadContainer?.layer.cornerRadius = min(radius, bounds.height / 2)
+      let r = min(radius, bounds.height / 2)
+      track?.layer.cornerRadius = r
+      beadContainer?.layer.cornerRadius = r
       bead?.layer.cornerRadius = beadSize().height / 2
+    }
+
+    let slot = bounds.width / CGFloat(max(1, slotCount))
+    for (i, view) in iconViews.enumerated() {
+      view.bounds = CGRect(x: 0, y: 0, width: iconSize, height: iconSize)
+      view.center = CGPoint(
+        x: (CGFloat(i) + 0.5) * slot,
+        y: bounds.midY
+      )
     }
 
     // A layout pass mid-flight would yank the bead out from under the spring —
@@ -283,6 +365,7 @@ final class M4GlassView: NSObject, FlutterPlatformView {
 
     slotCount = max(1, count)
     selected = index
+    refreshIcons(animated: true)
 
     guard let lens = bead else { return }
 
@@ -290,15 +373,18 @@ final class M4GlassView: NSObject, FlutterPlatformView {
       // Nothing selected any more: the bead shrinks away where it stood.
       morphToken += 1
       morphing = false
+      let shrunk = lens.frame
       UIView.animate(withDuration: 0.22) {
         lens.alpha = 0
-        lens.transform = CGAffineTransform(scaleX: 0.4, y: 0.4)
+        lens.frame = shrunk.insetBy(
+          dx: shrunk.width * 0.3,
+          dy: shrunk.height * 0.3
+        )
       }
       return
     }
 
     let to = beadFrame(for: selected)
-    lens.transform = .identity
     lens.alpha = 1
 
     // No journey to make: a first selection, an un-animated push, or a tap on
@@ -308,14 +394,14 @@ final class M4GlassView: NSObject, FlutterPlatformView {
       morphing = false
       lens.frame = to
       if !wasSelected {
-        lens.transform = CGAffineTransform(scaleX: 0.4, y: 0.4)
+        lens.frame = to.insetBy(dx: to.width * 0.3, dy: to.height * 0.3)
         UIView.animate(
           withDuration: 0.42,
           delay: 0,
           usingSpringWithDamping: 0.70,
           initialSpringVelocity: 0.4,
           options: [.beginFromCurrentState, .allowUserInteraction],
-          animations: { lens.transform = .identity }
+          animations: { lens.frame = to }
         )
       }
       return
@@ -363,7 +449,7 @@ final class M4GlassView: NSObject, FlutterPlatformView {
       options: [.beginFromCurrentState, .allowUserInteraction],
       animations: {
         lens.frame = stretched
-        trail.transform = CGAffineTransform(scaleX: 0.3, y: 0.3)
+        trail.frame = from.insetBy(dx: from.width * 0.35, dy: from.height * 0.35)
         trail.alpha = 0
       },
       completion: { _ in trail.removeFromSuperview() }
@@ -407,8 +493,19 @@ final class M4GlassView: NSObject, FlutterPlatformView {
       usingSpringWithDamping: 0.80,
       initialSpringVelocity: 0,
       options: [.beginFromCurrentState, .allowUserInteraction],
-      animations: { lens.transform = CGAffineTransform(scaleX: 0.95, y: 0.95) }
+      animations: { lens.frame = self.sunk(self.beadFrame(for: self.selected)) }
     )
+  }
+
+  /// The pressed size of a bead.
+  ///
+  /// Every "scale" in this view is done by frame, never by transform. A
+  /// `CGAffineTransform` on a `UIVisualEffectView` makes iOS flatten it to a
+  /// snapshot and drop the live material, so the bead would turn into a grey
+  /// slab the moment a finger touched it — and stay one for the rest of the
+  /// gesture.
+  private func sunk(_ frame: CGRect) -> CGRect {
+    frame.insetBy(dx: frame.width * 0.035, dy: frame.height * 0.035)
   }
 
   /// Finger moved. The bead chases it, elongating toward the direction of
@@ -462,10 +559,7 @@ final class M4GlassView: NSObject, FlutterPlatformView {
       withDuration: 0.09,
       delay: 0,
       options: [.curveLinear, .beginFromCurrentState, .allowUserInteraction],
-      animations: {
-        lens.frame = frame
-        lens.transform = .identity
-      }
+      animations: { lens.frame = frame }
     )
   }
 
@@ -487,7 +581,7 @@ final class M4GlassView: NSObject, FlutterPlatformView {
         usingSpringWithDamping: 0.80,
         initialSpringVelocity: 0,
         options: [.beginFromCurrentState, .allowUserInteraction],
-        animations: { lens.transform = .identity }
+        animations: { lens.frame = self.beadFrame(for: self.selected) }
       )
       return
     }
@@ -496,10 +590,7 @@ final class M4GlassView: NSObject, FlutterPlatformView {
 
     guard hasSelection else {
       morphing = false
-      UIView.animate(withDuration: 0.22) {
-        lens.alpha = 0
-        lens.transform = .identity
-      }
+      UIView.animate(withDuration: 0.22) { lens.alpha = 0 }
       return
     }
 
@@ -512,10 +603,7 @@ final class M4GlassView: NSObject, FlutterPlatformView {
       usingSpringWithDamping: 0.74,
       initialSpringVelocity: 0.7,
       options: [.beginFromCurrentState, .allowUserInteraction],
-      animations: {
-        lens.transform = .identity
-        lens.frame = self.beadFrame(for: index)
-      },
+      animations: { lens.frame = self.beadFrame(for: index) },
       completion: { [weak self] _ in
         guard let self, self.morphToken == token else { return }
         self.morphing = false
@@ -523,23 +611,81 @@ final class M4GlassView: NSObject, FlutterPlatformView {
     )
   }
 
+  // MARK: - Touch
+
+  private func slotAt(_ x: CGFloat) -> Int {
+    let slot = root.bounds.width / CGFloat(max(1, slotCount))
+    guard slot > 0 else { return 0 }
+    return min(max(Int(x / slot), 0), slotCount - 1)
+  }
+
+  /// Press, drag and release, in one recognizer.
+  ///
+  /// The commit happens here rather than waiting for Flutter to echo the new
+  /// index back: a round trip through the channel would put a frame or two
+  /// between the finger lifting and the bead moving, which is exactly the lag
+  /// a native bar is supposed to not have. Flutter is told afterwards.
+  @objc private func handlePress(_ gesture: UILongPressGestureRecognizer) {
+    let x = gesture.location(in: root).x
+
+    switch gesture.state {
+    case .began:
+      touchDownX = x
+      haptics.prepare()
+      dragBegin(x: x)
+
+    case .changed:
+      guard dragging else { return }
+      // A fingertip jitters a point or two on an ordinary tap, and taking the
+      // bead over for that would cost the tap its morph.
+      if !dragMoved && abs(x - touchDownX) < 2 { return }
+      dragTo(x: x)
+      let slot = slotAt(x)
+      if slot != heldSlot {
+        heldSlot = slot
+        haptics.selectionChanged()
+        refreshIcons(animated: true)
+      }
+
+    case .ended:
+      let slot = slotAt(x)
+      let wasDrag = dragMoved
+      let previous = selected
+      heldSlot = nil
+      // Settles a drag on its slot; a tap it only un-sinks.
+      dragEnd(index: slot)
+      if !wasDrag && slot != previous {
+        // The tap's own hand-off, with the full stretch and trail.
+        select(index: slot, count: slotCount, animated: true)
+      }
+      if slot != previous {
+        if !wasDrag { haptics.selectionChanged() }
+        channel.invokeMethod("onSelected", arguments: slot)
+      }
+      refreshIcons(animated: true)
+
+    case .cancelled, .failed:
+      heldSlot = nil
+      dragEnd(index: selected)
+      refreshIcons(animated: true)
+
+    default:
+      break
+    }
+  }
+
   // MARK: - Style
 
   private func restyle(onCream: Bool) {
     guard onCream != self.onCream else { return }
     self.onCream = onCream
+    root.overrideUserInterfaceStyle = surfaceStyle
 
-    if #available(iOS 26.0, *) {
-      track?.effect = trackEffect()
-      if let lens = bead as? UIVisualEffectView {
-        let effect = UIGlassEffect(style: .clear)
-        effect.tintColor = UIColor.white
-          .withAlphaComponent(onCream ? beadTintCream : beadTintDark)
-        lens.effect = effect
-      }
-    } else {
-      let alpha = onCream ? beadTintCream : beadTintDark
-      bead?.backgroundColor = UIColor.white.withAlphaComponent(alpha * 2.4)
+    // Nothing to restyle on iOS 26: the glass is Apple's and carries no tint
+    // of ours. Only the pre-26 painted fallback follows the surface.
+    if #unavailable(iOS 26.0) {
+      bead?.backgroundColor = UIColor.white
+        .withAlphaComponent(onCream ? 0.58 : 0.20)
       bead?.layer.borderColor = UIColor.white
         .withAlphaComponent(onCream ? 0.80 : 0.38).cgColor
     }
@@ -559,6 +705,14 @@ final class M4GlassView: NSObject, FlutterPlatformView {
         count: Int(M4GlassView.number(args?["count"]) ?? CGFloat(slotCount)),
         animated: (args?["animated"] as? NSNumber)?.boolValue ?? true
       )
+      result(nil)
+    case "setColors":
+      // The glyph tints follow the surface, so they arrive after creation as
+      // well as with it: the bar crosses between the green and cream screens
+      // without being rebuilt.
+      if let c = M4GlassView.color(args?["activeColor"]) { activeColor = c }
+      if let c = M4GlassView.color(args?["inactiveColor"]) { inactiveColor = c }
+      refreshIcons(animated: true)
       result(nil)
     case "setStyle":
       restyle(onCream: (args?["onCream"] as? NSNumber)?.boolValue ?? false)
@@ -582,6 +736,33 @@ final class M4GlassView: NSObject, FlutterPlatformView {
   private static func number(_ value: Any?) -> CGFloat? {
     guard let n = value as? NSNumber else { return nil }
     return CGFloat(n.doubleValue)
+  }
+
+  /// Dart sends colours as 0xAARRGGBB, the way `Color.value` packs them.
+  private static func color(_ value: Any?) -> UIColor? {
+    guard let n = value as? NSNumber else { return nil }
+    let v = UInt32(truncatingIfNeeded: n.int64Value)
+    return UIColor(
+      red: CGFloat((v >> 16) & 0xFF) / 255,
+      green: CGFloat((v >> 8) & 0xFF) / 255,
+      blue: CGFloat(v & 0xFF) / 255,
+      alpha: CGFloat((v >> 24) & 0xFF) / 255
+    )
+  }
+
+  /// Glyph PNGs, drawn by Flutter at the screen's scale.
+  private static func images(_ value: Any?) -> [UIImage] {
+    guard let list = value as? [Any] else { return [] }
+    return list.compactMap { item in
+      let data: Data?
+      if let typed = item as? FlutterStandardTypedData {
+        data = typed.data
+      } else {
+        data = item as? Data
+      }
+      guard let data else { return nil }
+      return UIImage(data: data, scale: UIScreen.main.scale)
+    }
   }
 }
 

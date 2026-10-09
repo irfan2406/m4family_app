@@ -38,20 +38,19 @@ class LiquidSegmentedControl extends StatelessWidget {
       radius: radius,
       // Both dimensions left at 0: the chip fills its slot, less the inset.
       beadInset: 3,
-      barTintDark: 0.10,
-      barTintCream: 0.12,
-      // Brighter than the nav's bead so the chip still reads as the light
-      // plate Figma asks for, and so dark ink sits legibly on it.
-      beadTintDark: 0.46,
-      beadTintCream: 0.38,
       slotBuilder: (context, i, isActive) => AnimatedDefaultTextStyle(
         duration: const Duration(milliseconds: 280),
         curve: Curves.easeOutCubic,
         style: GoogleFonts.inter(
           fontSize: 10,
           fontWeight: isActive ? FontWeight.w600 : FontWeight.bold,
+          // Over stock glass the chip takes its tone from whatever is behind
+          // the control, so the selected label has to follow the surface the
+          // way the nav glyphs do. A fixed dark ink was legible only while the
+          // chip was being brightened with a white tint of our own; on the
+          // green screens it now disappears into the glass.
           color: isActive
-              ? const Color(0xFF15271E)
+              ? (onCream ? const Color(0xFF15271E) : Colors.white)
               : Theme.of(context).colorScheme.onSurface.withValues(
                   alpha: onCream ? 0.60 : 0.55,
                 ),

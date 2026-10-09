@@ -12,11 +12,22 @@ import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 
 /// Channel Partner shell: web `CPBottomNav` + `CPSidebar` (drawer).
-class CpMainShell extends ConsumerWidget {
+class CpMainShell extends ConsumerStatefulWidget {
   const CpMainShell({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CpMainShell> createState() => _CpMainShellState();
+}
+
+class _CpMainShellState extends ConsumerState<CpMainShell> {
+  /// The floating nav is a platform view the drawer's scrim cannot dim, and
+  /// the drawer panel is itself translucent, so leaving the bar up shows it
+  /// glowing through an open menu. The customer and guest shells already drop
+  /// it for the same reason.
+  bool _isDrawerOpen = false;
+
+  @override
+  Widget build(BuildContext context) {
     final idx = ref.watch(cpNavigationIndexProvider);
 
     // Home (0) & Projects (2) are the deep-green "showcase" screens (white
@@ -41,6 +52,7 @@ class CpMainShell extends ConsumerWidget {
     return Scaffold(
       backgroundColor: navTheme.scaffoldBackgroundColor,
       drawer: const CpSidebarMenu(),
+      onDrawerChanged: (isOpen) => setState(() => _isDrawerOpen = isOpen),
       // Content runs to the bottom edge behind the floating pill, so scrolling
       // reads as full-screen. Each tab carries 96px trailing clearance so the
       // last card still comes to rest above the bar.
@@ -54,13 +66,16 @@ class CpMainShell extends ConsumerWidget {
             ref.read(cpNavigationIndexProvider.notifier).state = i,
         child: IndexedStack(index: idx, children: screens),
       ),
-      bottomNavigationBar: Theme(
-        data: navTheme,
-        child: CpBottomNav(
-          currentIndex: idx,
-          onTap: (i) => ref.read(cpNavigationIndexProvider.notifier).state = i,
-        ),
-      ),
+      bottomNavigationBar: _isDrawerOpen
+          ? null
+          : Theme(
+              data: navTheme,
+              child: CpBottomNav(
+                currentIndex: idx,
+                onTap: (i) =>
+                    ref.read(cpNavigationIndexProvider.notifier).state = i,
+              ),
+            ),
     );
   }
 }
