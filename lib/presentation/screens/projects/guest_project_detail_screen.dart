@@ -2,6 +2,7 @@ import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/core/utils/external_link.dart';
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter/cupertino.dart';
@@ -487,19 +488,29 @@ class _GuestProjectDetailScreenState
     );
   }
 
-  Future<void> _launchThreeSixty(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
+  /// Opens a walkthrough video or 360° tour.
+  ///
+  /// [label] names what the user actually tapped: this used to be the 360°
+  /// handler only, so a failed walkthrough video reported "virtual tour link"
+  /// and sent people looking at the wrong thing.
+  Future<void> _launchExternalLink(
+    String url, {
+    required String label,
+  }) async {
+    // Admin-entered links often omit the scheme (SKAI's walkthrough is stored
+    // as `youtube.com/watch?...`), which `canLaunchUrl` refuses outright.
+    final uri = externalUri(url);
+    if (uri != null && await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Color(0xFFC65B46),
-            content: Text('Could not launch virtual tour link'),
-          ),
-        );
-      }
+      return;
+    }
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFC65B46),
+          content: Text('Could not open the $label'),
+        ),
+      );
     }
   }
 
@@ -1268,7 +1279,7 @@ class _GuestProjectDetailScreenState
                                 label: '360° VIEW',
                                 isVR: true,
                                 onTap: () => tour.isNotEmpty
-                                    ? _launchThreeSixty(tour)
+                                    ? _launchExternalLink(tour, label: 'virtual tour')
                                     : _launchAction(
                                         '360° Virtual Tour coming soon',
                                       ),
@@ -1681,7 +1692,8 @@ class _GuestProjectDetailScreenState
             const SizedBox(height: 32),
             _WalkthroughVideoCard(
               isDark: isDark,
-              onWatch: () => _launchThreeSixty(walkthrough),
+              onWatch: () =>
+                  _launchExternalLink(walkthrough, label: 'walkthrough video'),
             ),
           ],
           // Web parity: 360° VIRTUAL TOUR card — only when the backend carries a
@@ -1690,7 +1702,7 @@ class _GuestProjectDetailScreenState
             SizedBox(height: walkthrough.isNotEmpty ? 16 : 32),
             _VirtualTourCard(
               isDark: isDark,
-              onExplore: () => _launchThreeSixty(tour),
+              onExplore: () => _launchExternalLink(tour, label: 'virtual tour'),
             ),
           ],
         ],

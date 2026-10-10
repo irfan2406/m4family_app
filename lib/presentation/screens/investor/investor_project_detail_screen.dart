@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/core/utils/external_link.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -205,9 +206,13 @@ class _InvestorProjectDetailScreenState
       await SupportHandlers.launchEmail(url.replaceFirst('mailto:', ''));
       return;
     }
+    // An external link is launched as-is, with a scheme added when the admin
+    // omitted one. Only a site-relative path falls through to resolveUrl —
+    // otherwise `youtube.com/watch?...` had the API host prepended and 404'd.
+    final external = externalUri(url);
     final apiClient = ref.read(apiClientProvider);
-    final resolved = apiClient.resolveUrl(url);
-    final uri = Uri.parse(resolved);
+    final resolved = external?.toString() ?? apiClient.resolveUrl(url);
+    final uri = external ?? Uri.parse(resolved);
     if (await canLaunchUrl(uri)) {
       await launchUrl(
         uri,

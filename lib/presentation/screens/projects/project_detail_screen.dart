@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/core/utils/external_link.dart';
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
@@ -298,8 +299,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   /// Opens an external link (360° tour / walkthrough video) in the browser.
   Future<void> _launchExternal(String url) async {
-    if (url.trim().isEmpty) return;
-    final uri = Uri.parse(url.trim());
+    // Admin-entered links often omit the scheme, which `canLaunchUrl` refuses.
+    final uri = externalUri(url);
+    if (uri == null) return;
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else if (mounted) {
