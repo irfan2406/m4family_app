@@ -915,11 +915,19 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           child: Builder(
             builder: (context) {
               final isCommunities = _activeTab == 'Communities';
-              final items = isCommunities ? _communities : _projects;
+              final isMediaTab = _activeTab == 'Media';
+              // Media is the admin's published media library — the feed this
+              // screen already fetches into `_media`. It used to render the
+              // projects payload instead, which is why the tab showed catalog
+              // projects captioned with their names (and, since the catalog's
+              // `thumbnail` is seeded with stock, an Unsplash photo).
+              final items = isCommunities
+                  ? _communities
+                  : (isMediaTab ? _media : _projects);
               // Properties/Media render the projects payload, which arrives via
               // projectsProvider and can take a while (multi-MB). Surface its
               // real state — an empty box while loading/failed reads as broken.
-              if (items.isEmpty && !isCommunities) {
+              if (items.isEmpty && !isCommunities && !isMediaTab) {
                 final projectsAsync = ref.watch(projectsProvider);
                 if (projectsAsync is AsyncLoading) {
                   return const Center(
@@ -953,8 +961,6 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
-                // Web parity: the Media tab is a visual gallery of the catalog
-                // projects (hero image + title), not the CMS media articles.
                 itemCount: items.length,
                 itemBuilder: (context, index) => _buildTabCard(items[index]),
               );
@@ -1334,11 +1340,15 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   }
 
   Widget _buildMediaCard(dynamic item) {
+    // A media record carries its own uploaded thumbnail. The stock guard
+    // matters because the catalog seeds `thumbnail` with Unsplash, and this
+    // card used to be handed catalog projects.
     final rawImage = _pickImage([
-      item['thumbnail'],
-      item['heroImage'],
-      item['image'],
-    ], '');
+      mediaUrlOf(item['thumbnail']),
+      mediaUrlOf(item['image']),
+      mediaUrlOf(item['coverImage']),
+      projectHeroUrl(item),
+    ].where((u) => u.isNotEmpty && !isStockImageUrl(u)).toList(), '');
     return _ScaleButton(
       // Media tiles open the Media Gallery (content hub) — the same target as
       // the menu's Media entry. They used to open the project detail page,
@@ -1720,18 +1730,13 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     aspectRatio: 16 / 9,
                     child: Builder(
                       builder: (context) {
-                        final hero = project['heroImages'];
-                        final raw =
-                            (hero is List &&
-                                hero.isNotEmpty &&
-                                hero.first != null &&
-                                hero.first.toString().trim().isNotEmpty)
-                            ? hero.first.toString()
-                            : (project['heroImage'] ??
-                                      project['image'] ??
-                                      project['coverImage'] ??
-                                      '')
-                                  .toString();
+                        // One agreed order across every portal: the gallery
+                        // used to win here, and it carries a stock photo while
+                        // `heroImage` carries the admin's upload.
+                        final heroUrl = projectHeroUrl(project);
+                        final raw = heroUrl.isNotEmpty
+                            ? heroUrl
+                            : (project['coverImage'] ?? '').toString();
                         // Backend image only — no hardcoded/stock fallback. A
                         // blank tile shows when the backend has uploaded none.
                         if (raw.trim().isEmpty) {

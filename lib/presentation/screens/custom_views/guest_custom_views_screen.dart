@@ -12,6 +12,13 @@ import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 
+/// Corner radius for the Interactive Living tiles.
+///
+/// Two-up 16:9 tiles come out around 92pt tall on a phone, so the 44 this
+/// used to carry was nearly half their height — the ends rounded into
+/// semicircles and the artwork was clipped into an ellipse.
+const BorderRadius _tileRadius = BorderRadius.all(Radius.circular(20));
+
 class GuestCustomViewsScreen extends ConsumerStatefulWidget {
   const GuestCustomViewsScreen({super.key});
 
@@ -195,7 +202,7 @@ class _GuestCustomViewsScreenState
                 final cat = _categories[index];
                 return Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(44),
+                        borderRadius: _tileRadius,
                         boxShadow: [
                           BoxShadow(
                             color:
@@ -209,7 +216,7 @@ class _GuestCustomViewsScreenState
                         ],
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(44),
+                        borderRadius: _tileRadius,
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
@@ -217,49 +224,70 @@ class _GuestCustomViewsScreenState
                             // transparent / white background (e.g. a logo PNG)
                             // is still visible, the way the admin panel shows it.
                             Container(color: const Color(0xFF0C312B)),
-                            (cat['image'] ?? '').isEmpty
-                                ? const SizedBox.shrink()
-                                : CachedNetworkImage(
-                                    imageUrl: cat['image']!,
-                                    // PNG/SVG logos -> contain, JPEG -> cover.
-                                    fit: fitForMediaUrl(cat['image']!),
-                                    memCacheWidth: 800,
-                                    maxWidthDiskCache: 1200,
-                                    fadeInDuration: const Duration(
-                                      milliseconds: 200,
-                                    ),
-                                    placeholder: (context, url) =>
-                                        Container(color: Colors.black12),
-                                    errorWidget: (context, url, error) =>
-                                        Container(color: Colors.black12),
+                            if ((cat['image'] ?? '').isNotEmpty)
+                              Padding(
+                                // A logo is drawn whole and centred, so it
+                                // lands exactly where the title sits and the
+                                // two read as one jumble. Holding it clear of
+                                // the caption band keeps both legible. A photo
+                                // fills the tile and the scrim carries the
+                                // title instead.
+                                padding:
+                                    fitForMediaUrl(cat['image']!) ==
+                                        BoxFit.contain
+                                    ? const EdgeInsets.fromLTRB(8, 7, 8, 24)
+                                    : EdgeInsets.zero,
+                                child: CachedNetworkImage(
+                                  imageUrl: cat['image']!,
+                                  // PNG/SVG logos -> contain, JPEG -> cover.
+                                  fit: fitForMediaUrl(cat['image']!),
+                                  memCacheWidth: 800,
+                                  maxWidthDiskCache: 1200,
+                                  fadeInDuration: const Duration(
+                                    milliseconds: 200,
                                   ),
+                                  placeholder: (context, url) =>
+                                      Container(color: Colors.black12),
+                                  errorWidget: (context, url, error) =>
+                                      Container(color: Colors.black12),
+                                ),
+                              ),
                             Container(
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   begin: Alignment.bottomCenter,
-                                  end: Alignment.center,
+                                  end: Alignment.topCenter,
+                                  // Reaches further up and holds longer than a
+                                  // half-height fade: these tiles are only
+                                  // ~92pt tall, and a title over a bright
+                                  // photo had nothing behind it to sit on.
                                   colors: [
-                                    Colors.black.withOpacity(0.7),
+                                    Colors.black.withValues(alpha: 0.82),
+                                    Colors.black.withValues(alpha: 0.42),
                                     Colors.transparent,
                                   ],
+                                  stops: const [0.0, 0.45, 0.95],
                                 ),
                               ),
-                              // Web parity: title bottom-left, wide tracking.
+                              // Web parity: title bottom-left, wide tracking —
+                              // at a gutter the tile can actually spare.
                               padding: const EdgeInsets.fromLTRB(
-                                24,
-                                24,
-                                16,
-                                28,
+                                14,
+                                10,
+                                12,
+                                12,
                               ),
                               alignment: Alignment.bottomLeft,
                               child: Text(
                                 cat['title']!,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.gelasio(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white,
-                                  letterSpacing: 2.5,
-                                  height: 1.3,
+                                  letterSpacing: 1.6,
+                                  height: 1.25,
                                 ),
                               ),
                             ),

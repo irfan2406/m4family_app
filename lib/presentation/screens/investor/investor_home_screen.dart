@@ -573,10 +573,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         final mainImage =
                             _adminHeroImage ??
                             (heroProject != null
+                                // The bundled M4 render is the only stand-in;
+                                // a stock photo from the catalog is not one.
                                 ? _pickImage([
-                                    heroProject['heroImage'],
-                                    heroProject['image'],
-                                    heroProject['coverImage'],
+                                    projectHeroUrl(heroProject),
                                   ], 'assets/hero_artistic.jpg')
                                 // No live project: bundled brand render only.
                                 : 'assets/hero_artistic.jpg');
@@ -1121,20 +1121,22 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     final isMedia = _activeTab.toLowerCase() == 'media';
     final apiClient = ref.read(apiClientProvider);
 
+    // Stock-filtered throughout: the catalog seeds `thumbnail`, `coverImage`
+    // and `heroImages` with the same Unsplash photo on every project, so a
+    // plain field chain reaches stock the moment an upload is missing.
     final picked = isCommunity
-        ? _pickImage([item['image'], item['heroImage']], '')
+        ? _pickImage([
+            mediaUrlOf(item['image']),
+            mediaUrlOf(item['heroImage']),
+          ].where((u) => u.isNotEmpty && !isStockImageUrl(u)).toList(), '')
         : (isMedia
               ? _pickImage([
-                  item['thumbnail'],
-                  item['image'],
-                  item['heroImage'],
-                  item['coverImage'],
-                ], '')
-              : _pickImage([
-                  item['heroImage'],
-                  item['image'],
-                  item['coverImage'],
-                ], ''));
+                  mediaUrlOf(item['thumbnail']),
+                  mediaUrlOf(item['image']),
+                  mediaUrlOf(item['coverImage']),
+                  projectHeroUrl(item),
+                ].where((u) => u.isNotEmpty && !isStockImageUrl(u)).toList(), '')
+              : projectHeroUrl(item));
     // Asset paths must bypass resolveUrl (it would prepend the backend host and
     // 404); http/relative paths still resolve normally.
     final imageUrl = picked.isEmpty
@@ -1428,9 +1430,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     aspectRatio: 16 / 9,
                     child: _buildProjectImage(
                       _pickImage([
-                        project['heroImage'],
-                        project['image'],
-                        project['coverImage'],
+                        projectHeroUrl(project),
                       ], 'assets/hero_artistic.jpg'),
                       height: double.infinity,
                       width: double.infinity,

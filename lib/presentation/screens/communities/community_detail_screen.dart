@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -216,16 +217,15 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     final isCp = role == 'cp';
     final cpIdx = ref.watch(cpNavigationIndexProvider);
     final apiClient = ref.watch(apiClientProvider);
-    // Match the community card/thumbnail image exactly: use the community's own
-    // image when present, otherwise the same Unsplash fallback the card uses
-    // (guest_dashboard `_pickImage([item['image']], …photo-1486406146926…)`), so
-    // the detail hero shows the same picture the thumbnail does.
-    final rawCommunityImage = (widget.community['image'] ?? '')
-        .toString()
-        .trim();
-    final heroImageUrl = rawCommunityImage.isNotEmpty
-        ? apiClient.resolveUrl(rawCommunityImage)
-        : 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80';
+    // The community's own uploaded image, or nothing. There used to be an
+    // Unsplash stand-in here so the hero always had a picture; it meant a
+    // community with no artwork quietly showed stock as if it were the
+    // client's. Empty lets the renderer draw the branded placeholder.
+    final rawCommunityImage = mediaUrlOf(widget.community['image']);
+    final heroImageUrl =
+        (rawCommunityImage.isEmpty || isStockImageUrl(rawCommunityImage))
+        ? ''
+        : apiClient.resolveUrl(rawCommunityImage);
     final benefitsRaw = widget.community['benefits'] as List? ?? [];
     final benefits = benefitsRaw.isNotEmpty
         ? benefitsRaw

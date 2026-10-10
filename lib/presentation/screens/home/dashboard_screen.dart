@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -82,6 +83,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   bool _updatesLoading = true;
   String _updateCategory = 'PROPERTIES';
   List<dynamic> _communities = [];
+  /// The admin's published media, same feed the guest, investor and CP homes
+  /// read. Empty until the backend has media; the tab says so rather than
+  /// filling itself with something else.
+  List<dynamic> _media = [];
   bool _communitiesLoading = true;
   String _topTabCategory = 'COMMUNITIES';
 
@@ -109,7 +114,26 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     _fetchProjects();
     _fetchUpdates();
     _fetchCommunities();
+    _fetchMedia();
     _startTimers();
+  }
+
+  Future<void> _fetchMedia() async {
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final role = (ref.read(authProvider).user?['role'] ?? 'guest')
+          .toString()
+          .toLowerCase();
+      final res = await apiClient.getContent(
+        'media',
+        role: role.isEmpty ? 'guest' : role,
+      );
+      if (!mounted) return;
+      setState(() => _media = res.data['data'] as List? ?? const []);
+    } catch (_) {
+      // Leave it empty: the tab shows its own "no media" line rather than
+      // standing in something that is not media.
+    }
   }
 
   Future<void> _fetchCommunities() async {
@@ -165,30 +189,26 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     });
   }
 
-  /// Web parity (SharedHomePage.getImg): prefer heroImages[idx], then the
-  /// singular heroImage (idx 0), then images[0], then a stock fallback. The web
-  /// hero/cards read heroImages first — the app previously read heroImage /
-  /// images[0], which surfaced concept/palette graphics instead of the real
-  /// interior renders.
+  /// The card image for a project.
+  ///
+  /// This used to prefer `heroImages[idx]` on the grounds that the web reads
+  /// the gallery first. The live catalog says otherwise: `heroImages` holds
+  /// stock Unsplash URLs while `heroImage` holds the admin's upload, so that
+  /// order put a stock photo on the card and the real artwork in the catalog.
+  ///
+  /// [idx] picks a slide for the rotating hero and is only honoured when the
+  /// project actually has a gallery; a card (idx 0) always resolves through
+  /// [projectHeroUrl], so the same project shows the admin's upload here and
+  /// in the catalog rather than the stock photo `heroImages` carries.
   String _projImg(dynamic p, int idx) {
-    if (p is Map) {
-      final hero = p['heroImages'];
-      if (hero is List && idx < hero.length) {
-        final v = hero[idx]?.toString();
-        if (v != null && v.isNotEmpty) return v;
-      }
-      if (idx == 0) {
-        final single = p['heroImage']?.toString();
-        if (single != null && single.isNotEmpty) return single;
-        final imgs = p['images'];
-        if (imgs is List && imgs.isNotEmpty) {
-          final v = imgs[0]?.toString();
-          if (v != null && v.isNotEmpty) return v;
-        }
-      }
+    if (p is! Map) return '';
+    if (idx > 0) {
+      final gallery = mediaUrlList(p['heroImages']);
+      if (gallery.isNotEmpty) return gallery[idx % gallery.length];
     }
+    final hero = projectHeroUrl(p);
     // Backend-driven: no image -> empty so the renderer shows its placeholder.
-    return '';
+    return hero.isNotEmpty ? hero : firstMediaUrl(p['images']);
   }
 
   /// Warms the shared image cache with the first cards' hero photos as soon as
@@ -210,24 +230,26 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     prewarmImages(urls);
   }
 
-  /// Web parity: MEDIA tab = a gallery built from every project's heroImages.
+  /// The MEDIA tab: the admin's published media library.
+  ///
+  /// It used to be built by flattening every project's hero photos into
+  /// "media" items, so the tab showed building shots captioned with project
+  /// names — and, since `heroImages` carries stock, often a stock photo. The
+  /// other three portals read the real feed; this one now does too, and shows
+  /// nothing when the backend has published nothing.
   Widget _buildMediaRow(BuildContext context) {
     final media = <Map<String, dynamic>>[];
-    for (final p in _projects) {
-      if (p is! Map) continue;
-      final hero = p['heroImages'];
-      final list = hero is List
-          ? hero
-          : (p['heroImage'] != null ? [p['heroImage']] : const []);
-      for (final img in list) {
-        final url = img?.toString() ?? '';
-        if (url.isEmpty) continue;
-        media.add({
-          'image': url,
-          'title': p['title']?.toString() ?? '',
-          'project': p,
-        });
-      }
+    for (final m in _media) {
+      if (m is! Map) continue;
+      final url = [
+        mediaUrlOf(m['thumbnail']),
+        mediaUrlOf(m['image']),
+      ].firstWhere(
+        (u) => u.isNotEmpty && !isStockImageUrl(u),
+        orElse: () => '',
+      );
+      if (url.isEmpty) continue;
+      media.add({'image': url, 'title': m['title']?.toString() ?? ''});
     }
     if (media.isEmpty) {
       return Center(
@@ -818,17 +840,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   // photos here, which is why Mazgaon showed a
                                   // villa instead of the artwork the Admin
                                   // Panel had published for it.
-                                  final rawImg = item['image']?.toString();
-                                  if (rawImg != null &&
-                                      rawImg.isNotEmpty &&
+                                  final rawImg = mediaUrlOf(item['image']);
+                                  if (rawImg.isNotEmpty &&
                                       rawImg != 'null' &&
                                       rawImg != '[]' &&
-                                      rawImg.trim().isNotEmpty) {
+                                      !isStockImageUrl(rawImg)) {
                                     return rawImg;
                                   }
-                                  final heroImgs = item['heroImages'];
-                                  if (heroImgs is List && heroImgs.isNotEmpty) {
-                                    return heroImgs[0].toString();
+                                  for (final u in mediaUrlList(
+                                    item['heroImages'],
+                                  )) {
+                                    if (!isStockImageUrl(u)) return u;
                                   }
                                   // Backend-driven: blank placeholder, no stock.
                                   return '';

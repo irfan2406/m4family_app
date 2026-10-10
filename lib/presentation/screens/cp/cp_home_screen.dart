@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -122,6 +123,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
       }
       final projectsFuture = ref.read(projectsProvider.future);
       final communitiesFuture = apiClient.getCommunities();
+      final mediaFuture = apiClient.getContent('media', role: 'cp');
       // Awaited independently. Both used to sit under one try, so when the
       // projects call failed (it is the bloated multi-MB catalog and can time
       // out) the already-successful communities response was discarded with it
@@ -139,34 +141,24 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
       } catch (_) {
         communities = const [];
       }
+      // The Media tab is the admin's media library, the same feed the guest
+      // and investor homes read. It used to be faked by flattening every
+      // project's hero photos into "media" items, so the tab showed building
+      // shots captioned with project names instead of published articles.
+      List<dynamic> media = const [];
+      try {
+        final mediaRes = await mediaFuture;
+        media = mediaRes.data['data'] ?? const [];
+      } catch (_) {
+        media = const [];
+      }
 
       if (mounted) {
         setState(() {
           _projects = projects;
           _communities = communities;
 
-          // Media tab mirrors web: flatten each project's heroImages (or its
-          // single heroImage) into one media item per image.
-          _media = [];
-          for (final p in _projects) {
-            if (p is! Map) continue;
-            final hi = p['heroImages'];
-            final imgs = (hi is List && hi.isNotEmpty)
-                ? hi
-                : ((p['heroImage']?.toString().trim().isNotEmpty ?? false)
-                      ? [p['heroImage']]
-                      : const []);
-            for (var idx = 0; idx < imgs.length; idx++) {
-              _media.add({
-                '_id': '${p['_id']}-media-$idx',
-                'image': imgs[idx],
-                'thumbnail': imgs[idx],
-                'title': p['title'],
-                'type': 'Image',
-                'projectId': p['_id'],
-              });
-            }
-          }
+          _media = media;
           _loading = false;
         });
         _prewarmHomeImages();
@@ -595,21 +587,19 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
   /// Mirrors web `getImg(p, idx)`: prefer `heroImages[idx]`, then (for the first
   /// slide only) `heroImage`. Backend-driven: with no image the caller gets an
   /// empty string and renders the branded placeholder (no stock photo).
+  /// The card image for a project.
+  ///
+  /// [idx] picks a slide for the rotating hero and is only honoured when the
+  /// project actually has a gallery; a card (idx 0) always resolves through
+  /// [projectHeroUrl]. Reaching for `heroImages` first is what put a stock
+  /// Unsplash photo on these cards while the catalog showed the real upload.
   String _getImg(dynamic p, [int idx = 0]) {
-    if (p is Map) {
-      final heroImages = p['heroImages'];
-      if (heroImages is List &&
-          idx < heroImages.length &&
-          heroImages[idx] != null &&
-          heroImages[idx].toString().trim().isNotEmpty) {
-        return heroImages[idx].toString();
-      }
-      if (idx == 0) {
-        final h = p['heroImage'];
-        if (h != null && h.toString().trim().isNotEmpty) return h.toString();
-      }
+    if (p is! Map) return '';
+    if (idx > 0) {
+      final gallery = mediaUrlList(p['heroImages']);
+      if (gallery.isNotEmpty) return gallery[idx % gallery.length];
     }
-    return '';
+    return projectHeroUrl(p);
   }
 
   /// Web `value || fallback` semantics: null, empty, or whitespace -> fallback.
@@ -914,9 +904,15 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
 
     // Community/media only (properties return early above). Backend-driven:
     // empty image fields render the branded placeholder, not stock.
-    final rawImage = isCommunity
-        ? _imgOr(item['image'], '')
-        : _imgOr(item['thumbnail'] ?? item['image'], '');
+    // Stock-filtered: the catalog seeds `thumbnail` with Unsplash, so a media
+    // tile handed a project record used to show stock.
+    final rawImage = (isCommunity
+            ? [mediaUrlOf(item['image'])]
+            : [mediaUrlOf(item['thumbnail']), mediaUrlOf(item['image'])])
+        .firstWhere(
+          (u) => u.isNotEmpty && !isStockImageUrl(u),
+          orElse: () => '',
+        );
 
     // Guest parity: Media is the plain gallery tile (image + title), the same
     // card the Guest home draws.
