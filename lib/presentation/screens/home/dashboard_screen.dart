@@ -2799,51 +2799,44 @@ class _CommunityCard extends StatelessWidget {
                 bottom: 24,
                 left: 24,
                 right: 24,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                // Community: title bottom-left, arrow bottom-right, badge
+                // top-right — the name sits in the corner, not the middle.
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      // Web parity: community title is title-case ("Mazgaon").
-                      title,
-                      // One line: a 16:9 tile fits one title line, two
-                      // description lines and the action row.
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.gelasio(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: -0.5,
+                    Expanded(
+                      child: Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.gelasio(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: -0.5,
+                        ),
                       ),
                     ),
-                    // Web parity: community tiles show no subtitle under title.
-                    const SizedBox(height: 24),
-                    Row(
-                      // Web parity: community tiles show only the arrow.
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.2),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
                           ),
-                          child: const Icon(
-                            LucideIcons.arrowRight,
-                            color: Color(0xFF0C312B),
-                            size: 18,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      child: const Icon(
+                        LucideIcons.arrowRight,
+                        color: Color(0xFF0C312B),
+                        size: 18,
+                      ),
                     ),
                   ],
                 ),

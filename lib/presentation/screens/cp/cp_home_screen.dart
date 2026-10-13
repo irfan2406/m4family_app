@@ -1043,97 +1043,124 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 bottom: 24,
                 left: 24,
                 right: 24,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      // Web parity: community titles are title-case ("Mazgaon"),
-                      // Properties/Media stay upper-case.
-                      isCommunity
-                          ? (item['title'] ?? item['name'] ?? '').toString()
-                          : (item['title'] ?? item['name'] ?? '')
-                                .toString()
-                                .toUpperCase(),
-                      // One line: a 16:9 tile fits one title line, two
-                      // description lines and the action row.
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.gelasio(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    // Web parity: community tiles show no subtitle under the
-                    // title. Properties/Media keep their location line.
-                    if (!isCommunity) ...[
-                      const SizedBox(height: 10),
-                      Text(
-                        (item['location'] is Map
-                                ? item['location']['name']
-                                : item['location'] ?? 'MAZGAON')
-                            .toString()
-                            .toUpperCase(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
-                          color: Colors.white.withValues(alpha: 0.7),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: isCommunity
-                          ? MainAxisAlignment.end
-                          : MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Web parity: community tiles show only the arrow (no
-                        // "EXPLORE COMMUNITY" label); Properties/Media keep it.
-                        if (!isCommunity)
+                child: isCommunity
+                    // Community: title bottom-left, arrow bottom-right, badge
+                    // top-right — the name sits in the corner, not the middle.
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
                           Expanded(
                             child: Text(
-                              isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY',
+                              (item['title'] ?? item['name'] ?? '').toString(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.gelasio(
                                 color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 1.2,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: -0.5,
+                              ),
                             ),
                           ),
-                        ),
-                        if (!isCommunity) const SizedBox(width: 8),
-                        Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.2),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
+                          const SizedBox(width: 8),
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.2),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              LucideIcons.arrowRight,
+                              color: Color(0xFF0C312B),
+                              size: 18,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            (item['title'] ?? item['name'] ?? '')
+                                .toString()
+                                .toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.gelasio(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            (item['location'] is Map
+                                    ? item['location']['name']
+                                    : item['location'] ?? 'MAZGAON')
+                                .toString()
+                                .toUpperCase(),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              color: Colors.white.withValues(alpha: 0.7),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.5,
+                              height: 1.4,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.2),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  LucideIcons.arrowRight,
+                                  color: Color(0xFF0C312B),
+                                  size: 18,
+                                ),
                               ),
                             ],
                           ),
-                          child: const Icon(
-                            LucideIcons.arrowRight,
-                            color: const Color(0xFF0C312B),
-                            size: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                        ],
+                      ),
               ),
             ],
           ),
