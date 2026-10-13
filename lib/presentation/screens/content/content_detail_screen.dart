@@ -187,15 +187,14 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   void _shareContent(ApiClient apiClient) {
     final String title = widget.content['title'] ?? 'M4 Family Article';
     final String slug = widget.content['slug'] ?? '';
-    final String type = widget.content['type'] ?? 'media';
 
-    // Construct web URL based on API base URL
-    String webUrl = apiClient.baseUrl;
-    if (webUrl.endsWith('/api'))
-      webUrl = webUrl.substring(0, webUrl.length - 4);
-    if (webUrl.endsWith('/')) webUrl = webUrl.substring(0, webUrl.length - 1);
-
-    final String fullUrl = '$webUrl/$type/$slug';
+    // Articles are published on the M4 Group site at https://m4group.in/<slug>/
+    // (verified). The previous link used the API host (api.mym4family.com),
+    // which serves no web pages, so opening a shared link showed "cannot get
+    // blog" / a blank page.
+    final String fullUrl = slug.isNotEmpty
+        ? 'https://m4group.in/$slug/'
+        : 'https://m4group.in/';
 
     Share.share(
       'Check out this article from M4 Family: $title\n\nRead more at: $fullUrl',
@@ -402,12 +401,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           const SizedBox(height: 30),
                           Text(
                             widget.content['description'].toString().trim(),
-                            // Justified, as the article reads on the web.
-                            textAlign: TextAlign.justify,
+                            // Left-aligned: justify stretched each line and left
+                            // large uneven gaps between words.
+                            textAlign: TextAlign.start,
                             style: GoogleFonts.inter(
                               fontSize: 15,
                               color: scheme.onSurface.withOpacity(0.6),
-                              height: 1.8,
+                              height: 1.6,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -421,27 +421,27 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           if (_isHtmlBody(widget.content['content']))
                             HtmlWidget(
                               widget.content['content'],
-                              // Justified, as the article reads on the web.
+                              // Left-aligned (justify left uneven word gaps).
                               customStylesBuilder: (element) => const {
-                                'text-align': 'justify',
+                                'text-align': 'left',
                               },
                               textStyle: GoogleFonts.inter(
                                 fontSize: 15,
                                 color: scheme.onSurface.withOpacity(0.6),
-                                height: 1.8,
+                                height: 1.6,
                               ),
                             )
                           else
-                            // Plain prose: justified here, where it actually
-                            // takes effect. The blank lines between paragraphs
-                            // are preserved as they arrive.
+                            // Plain prose: left-aligned for even word spacing.
+                            // Blank lines between paragraphs are preserved as
+                            // they arrive.
                             Text(
                               widget.content['content'].toString(),
-                              textAlign: TextAlign.justify,
+                              textAlign: TextAlign.start,
                               style: GoogleFonts.inter(
                                 fontSize: 15,
                                 color: scheme.onSurface.withOpacity(0.6),
-                                height: 1.8,
+                                height: 1.6,
                               ),
                             ),
                         ],
