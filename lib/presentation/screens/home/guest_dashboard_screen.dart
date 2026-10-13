@@ -747,7 +747,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
                   child: _buildTabsSection(),
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildPhilosophy(),
@@ -763,7 +763,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   const SizedBox(height: 40),
                   _buildFeaturedSection(),
                 ],
-                const SizedBox(height: 40),
+                const SizedBox(height: 24),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildConnectGrid(),
