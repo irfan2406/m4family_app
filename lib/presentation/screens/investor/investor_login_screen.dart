@@ -65,6 +65,13 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(backgroundColor: const Color(0xFFC65B46), content: Text(err)),
       );
+      return;
+    }
+    // Logged in with a temporary key: the session is NOT saved — go set a new
+    // password first (web parity). A normal login authenticates and the
+    // listener below routes to the portal.
+    if (ref.read(authProvider).mustChangePassword) {
+      context.go('/investor/set-password');
     }
   }
 
@@ -72,13 +79,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
   Widget build(BuildContext context) {
     ref.listen<AuthState>(authProvider, (prev, next) {
       if (next.status == AuthStatus.authenticated) {
-        // Logged in with a temporary key → force the password change first
-        // (web parity), instead of dropping straight into the portal.
-        if (next.mustChangePassword) {
-          context.go('/investor/change-password');
-        } else {
-          context.go('/home');
-        }
+        context.go('/home');
       }
     });
 

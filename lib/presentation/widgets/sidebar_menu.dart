@@ -37,12 +37,10 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
     final user = authState.user;
     final role = user?['role']?.toString().toLowerCase();
     final isInvestor = role == 'investor';
-    // Web parity: the user accent is `primary` (near-black in light mode),
-    // not white — a hardcoded white active state is invisible on the light
-    // glass sidebar.
-    final accentColor = isInvestor
-        ? const Color(0xFFC5A35B)
-        : const Color(0xFFF4EFE3);
+    // One cream accent for every portal. Investors used gold (0xFFC5A35B),
+    // which tinted Home / Communities / Properties / Notifications yellow
+    // against the rest of the menu.
+    const accentColor = Color(0xFFF4EFE3);
 
     void navigateTo(int index) {
       final currentIndex = ref.read(navigationProvider);

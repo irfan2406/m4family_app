@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
-import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
@@ -73,14 +72,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     if (_playableVideo(videoUrl)) {
       final apiClient = ref.read(apiClientProvider);
       final resolvedUrl = apiClient.resolveUrl(videoUrl);
-      final imageUrl = cacheBustUrl(
-        apiClient.resolveUrl(
-          (widget.content['image'] != null &&
-                  widget.content['image'].toString().isNotEmpty)
-              ? widget.content['image']
-              : widget.content['thumbnail'],
-        ),
-        widget.content['updatedAt'],
+      final imageUrl = apiClient.resolveUrl(
+        (widget.content['image'] != null &&
+                widget.content['image'].toString().isNotEmpty)
+            ? widget.content['image']
+            : widget.content['thumbnail'],
       );
 
       try {
@@ -251,9 +247,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               widget.content['thumbnail'].toString().isNotEmpty)
         ? widget.content['thumbnail']
         : widget.content['coverImage'];
-    // Cache-bust by the content's updatedAt so a replaced image reflects at once.
-    final imageUrl =
-        cacheBustUrl(apiClient.resolveUrl(rawImage), widget.content['updatedAt']);
+    final imageUrl = apiClient.resolveUrl(rawImage);
     final date =
         DateTime.tryParse(widget.content['createdAt'] ?? '') ?? DateTime.now();
     final formattedDate = DateFormat('MM/dd/yyyy').format(date);
@@ -440,9 +434,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           Text(
                             _tightenText(
                                 widget.content['description'].toString()),
-                            // Left-aligned: justify stretched each line and left
-                            // large uneven gaps between words.
-                            textAlign: TextAlign.start,
+                            // Justified: every full line runs edge to edge; the
+                            // last line of each paragraph stays left-aligned.
+                            textAlign: TextAlign.justify,
                             style: GoogleFonts.inter(
                               fontSize: 15,
                               color: scheme.onSurface.withOpacity(0.6),
@@ -460,9 +454,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           if (_isHtmlBody(widget.content['content']))
                             HtmlWidget(
                               widget.content['content'],
-                              // Left-aligned (justify left uneven word gaps).
+                              // Justified, matching the plain-text body.
                               customStylesBuilder: (element) => const {
-                                'text-align': 'left',
+                                'text-align': 'justify',
                               },
                               textStyle: GoogleFonts.inter(
                                 fontSize: 15,
@@ -471,13 +465,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                               ),
                             )
                           else
-                            // Plain prose: left-aligned for even word spacing.
-                            // Blank lines between paragraphs are preserved as
-                            // they arrive.
+                            // Plain prose, justified edge to edge. Blank lines
+                            // between paragraphs are preserved as they arrive.
                             Text(
                               _tightenParagraphs(
                                   widget.content['content'].toString()),
-                              textAlign: TextAlign.start,
+                              textAlign: TextAlign.justify,
                               style: GoogleFonts.inter(
                                 fontSize: 15,
                                 color: scheme.onSurface.withOpacity(0.6),

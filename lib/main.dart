@@ -61,6 +61,7 @@ import 'package:m4_mobile/presentation/screens/investor/investor_cp_screen.dart'
 import 'package:m4_mobile/presentation/screens/investor/investor_settings_screen.dart';
 import 'package:m4_mobile/presentation/screens/investor/investor_security_screen.dart';
 import 'package:m4_mobile/presentation/screens/investor/investor_change_password_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_set_password_screen.dart';
 import 'package:m4_mobile/presentation/screens/investor/investor_profile_details_screen.dart';
 import 'package:m4_mobile/presentation/screens/investor/investor_profile_change_password_screen.dart';
 import 'package:m4_mobile/presentation/screens/investor/investor_delete_account_screen.dart';
@@ -124,7 +125,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/rendering.dart';
-import 'package:m4_mobile/core/cache/image_cache_tools.dart';
 
 void main() async {
   debugPaintSizeEnabled = false;
@@ -159,14 +159,6 @@ void main() async {
   // whose ApiClient calls dotenv.get() — loading it lazily would throw. It is
   // a small bundled asset (~ms), so it is not what delayed the splash.
   await dotenv.load(fileName: ".env");
-
-  // Drop stale cached images/icons so admin-replaced media reflects on its own.
-  // Cached images are keyed by URL, so a replacement at the same URL would
-  // otherwise keep serving the old file for ~30 days. This self-heals on cold
-  // start, at most once every few hours; the Purge Cache screen forces it
-  // immediately. Awaited so stale files are gone before any image loads; it is
-  // a no-op (one prefs read) on launches inside the refresh window.
-  await refreshStaleImageCacheOnLaunch();
 
   // No theme preference to read: the app is light-only, so nothing has to be
   // restored from storage before the first frame.
@@ -715,6 +707,11 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/investor/change-password',
       builder: (context, state) => const InvestorChangePasswordScreen(),
+    ),
+    GoRoute(
+      // Forced first-login password set (investor temporary-key flow).
+      path: '/investor/set-password',
+      builder: (context, state) => const InvestorSetPasswordScreen(),
     ),
     GoRoute(
       path: '/investor/profile/details',

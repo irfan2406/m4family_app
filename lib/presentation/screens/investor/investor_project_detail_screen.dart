@@ -1561,14 +1561,12 @@ class _InvestorProjectDetailScreenState
     );
   }
 
-  // Resolved + cache-busted amenity icon URL (mirrors the guest project
-  // screen, so a replaced icon reflects immediately here too).
+  // Resolved amenity icon URL (mirrors the guest project screen).
   String? _investorAmenityIconUrl(dynamic amenity) {
     final raw = amenity is Map ? amenity['icon']?.toString() : null;
     if (raw == null || raw.isEmpty) return null;
     final url = ref.read(apiClientProvider).resolveUrl(raw);
-    if (url.isEmpty) return null;
-    return cacheBustUrl(url, amenity is Map ? amenity['updatedAt'] : null);
+    return url.isEmpty ? null : url;
   }
 
   Widget _buildAmenitiesSection(Map<String, dynamic> project, bool isDark) {
@@ -2962,7 +2960,7 @@ class _IconThumb extends StatelessWidget {
             // Vector 360 glyph in M4 green (web parity), replacing the
             // 360-vr.png bitmap so it tints cleanly on the white card.
             const Icon(
-              LucideIcons.rotate3d,
+              LucideIcons.orbit,
               size: 24,
               color: Color(0xFF155A4F),
             ),
@@ -3356,7 +3354,7 @@ class _VirtualTourCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
-              LucideIcons.rotate3d,
+              LucideIcons.orbit,
               color: isDark ? Colors.white : const Color(0xFF0C312B),
               size: 18,
             ),

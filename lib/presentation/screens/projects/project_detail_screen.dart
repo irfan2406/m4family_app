@@ -1498,70 +1498,52 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 const SizedBox(height: 24),
                 _buildTitleSection(project, isDark),
                 const SizedBox(height: 24),
-                // Web parity: a 2x2 grid — COMPLETION · CONFIG on top,
-                // VIDEO CALL · SITE VISIT below. All values are backend-driven;
-                // CONFIG falls back to the web's "3 & 4 BHK" until the backend
-                // carries a `config` field.
+                // A single row of three cards — VIDEO CALL · COMPLETION ·
+                // SITE VISIT (the CONFIG card was removed). IntrinsicHeight +
+                // stretch keeps all three the same height.
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _OverviewActionCard(
-                              label: 'COMPLETION',
-                              value: '${project?['completion'] ?? 0}%',
-                              icon: LucideIcons.calendar,
+                  child: IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: _OverviewActionCard(
+                            label: 'VIDEO CALL',
+                            value: 'Connect Now',
+                            icon: LucideIcons.video,
+                            isAction: true,
+                            onTap: () => _showRequestDetailsDialog(
+                              project,
+                              null,
+                              'VC',
                             ),
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: _OverviewActionCard(
-                              label: 'CONFIG',
-                              value:
-                                  (project?['config'] ??
-                                          project?['configuration'] ??
-                                          '3 & 4 BHK')
-                                      .toString(),
-                              icon: LucideIcons.building2,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _OverviewActionCard(
+                            label: 'COMPLETION',
+                            value: '${project?['completion'] ?? 0}%',
+                            icon: LucideIcons.calendar,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _OverviewActionCard(
+                            label: 'SITE VISIT',
+                            value: 'Book Tour',
+                            icon: LucideIcons.eye,
+                            isAction: true,
+                            onTap: () => _showRequestDetailsDialog(
+                              project,
+                              null,
+                              'Site Visit',
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _OverviewActionCard(
-                              label: 'VIDEO CALL',
-                              value: 'Connect Now',
-                              icon: LucideIcons.video,
-                              isAction: true,
-                              onTap: () => _showRequestDetailsDialog(
-                                project,
-                                null,
-                                'VC',
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: _OverviewActionCard(
-                              label: 'SITE VISIT',
-                              value: 'Book Tour',
-                              icon: LucideIcons.eye,
-                              isAction: true,
-                              onTap: () => _showRequestDetailsDialog(
-                                project,
-                                null,
-                                'Site Visit',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -1949,7 +1931,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             title: '360° VIRTUAL TOUR',
             subtitle: 'INTERACTIVE VR EXPERIENCE',
             cta: 'EXPLORE 360°',
-            icon: LucideIcons.rotate3d,
+            icon: LucideIcons.orbit,
             onTap: () => _launchExternal(tour),
           ),
         ],
@@ -2274,12 +2256,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     final raw = amenityIconUrl(amenity);
     if (raw == null) return null;
     final url = ref.read(apiClientProvider).resolveUrl(raw);
-    if (url.isEmpty) return null;
-    // Cache-bust by the amenity's own updatedAt so a replaced icon shows
-    // immediately instead of serving the old cached file. Both this and the
-    // prewarmer call here, so the busted URL stays identical for cache hits.
-    final version = amenity is Map ? amenity['updatedAt'] : null;
-    return cacheBustUrl(url, version);
+    return url.isEmpty ? null : url;
   }
 
   Widget _buildAmenities(dynamic project) {
@@ -4048,7 +4025,7 @@ class _HeroMediaThumb extends StatelessWidget {
                       // tints with the theme and needs no multiply blend to
                       // hide the PNG's white plate.
                       const Icon(
-                        LucideIcons.rotate3d,
+                        LucideIcons.orbit,
                         size: 26,
                         color: Color(0xFF155A4F),
                       ),

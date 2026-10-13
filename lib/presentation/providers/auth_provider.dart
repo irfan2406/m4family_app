@@ -30,10 +30,13 @@ class AuthState {
   // True once the initial stored-token check has completed (prevents the
   // guest-shell flash on cold start while resolving the session).
   final bool bootstrapped;
-  // True when the account signed in with a temporary key and the backend
-  // requires a password change before using the portal (investor flow — the
-  // login screen routes to Change Password instead of the dashboard).
+  // True when the investor signed in with a temporary key and must set a new
+  // password before using the portal (login routes to Set New Password).
   final bool mustChangePassword;
+  // The /investor/login token for the first-login flow, held IN MEMORY ONLY and
+  // never written to storage (spec rule 02: no session is saved while a
+  // password change is required). Used only to call investorSetPassword.
+  final String? firstLoginToken;
 
   AuthState({
     this.status = AuthStatus.initial,
@@ -44,6 +47,7 @@ class AuthState {
     this.user,
     this.bootstrapped = false,
     this.mustChangePassword = false,
+    this.firstLoginToken,
   });
 
   AuthState copyWith({
@@ -55,6 +59,8 @@ class AuthState {
     Map<String, dynamic>? user,
     bool? bootstrapped,
     bool? mustChangePassword,
+    String? firstLoginToken,
+    bool clearFirstLoginToken = false,
   }) {
     return AuthState(
       status: status ?? this.status,
@@ -65,6 +71,9 @@ class AuthState {
       user: user ?? this.user,
       bootstrapped: bootstrapped ?? this.bootstrapped,
       mustChangePassword: mustChangePassword ?? this.mustChangePassword,
+      firstLoginToken: clearFirstLoginToken
+          ? null
+          : (firstLoginToken ?? this.firstLoginToken),
     );
   }
 }
@@ -265,6 +274,21 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state = state.copyWith(status: AuthStatus.initial, error: null);
         return 'Login failed: missing session token.';
       }
+
+      // Spec: when the backend returns `data.user.firstLoginRequired: true`, a
+      // temporary key was used and a new password must be set first. Do NOT
+      // save the session or enter the portal — hold the token in memory so the
+      // Set New Password screen can call the API, and route there instead.
+      if (_isFirstLoginRequired(data)) {
+        state = state.copyWith(
+          status: AuthStatus.initial,
+          error: null,
+          mustChangePassword: true,
+          firstLoginToken: token,
+        );
+        return null;
+      }
+
       await _storage.write(key: 'jwt_token', value: token);
       final userResponse = await _apiClient.getCurrentUser();
       final raw = userResponse.data['data'] ?? userResponse.data;
@@ -274,15 +298,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
       } else if (raw is Map) {
         userMap = Map<String, dynamic>.from(raw);
       }
-      // A temporary key must be replaced before using the portal: detect the
-      // backend's "must change password" signal (its exact name varies, so
-      // check the common variants on the login payload and the user object) and
-      // let the login screen route to Change Password instead of the dashboard.
-      final mustChange = _detectMustChangePassword(data, userMap);
       state = state.copyWith(
         status: AuthStatus.authenticated,
         user: userMap,
-        mustChangePassword: mustChange,
+        mustChangePassword: false,
+        clearFirstLoginToken: true,
       );
       return null;
     } on DioException catch (e) {
@@ -296,50 +316,63 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  /// Whether a login response signals that a temporary key was used and the
-  /// password must be changed. The backend field name is not fixed, so this
-  /// checks the common variants on the login `data`, its nested `user`, and the
-  /// resolved `/auth/me` user object. Accepts true, 1, "true", "1".
-  static bool _detectMustChangePassword(
-    dynamic data,
-    Map<String, dynamic>? user,
-  ) {
-    const keys = <String>[
-      'mustChangePassword',
-      'isTemporaryPassword',
-      'passwordChangeRequired',
-      'forcePasswordChange',
-      'requirePasswordChange',
-      'isTempPassword',
-      'temporaryPassword',
-      'passwordResetRequired',
-      'forcePasswordReset',
-      'changePasswordRequired',
-      'needsPasswordChange',
-      'isPasswordTemporary',
-    ];
-    bool truthy(dynamic v) =>
-        v == true ||
+  /// Reads the backend's first-login signal: `data.user.firstLoginRequired`
+  /// (spec). Accepts true, 1, "true", "1". Falls back to a top-level key if the
+  /// server ever moves it.
+  static bool _isFirstLoginRequired(dynamic data) {
+    if (data is! Map) return false;
+    final user = data['user'];
+    dynamic v = (user is Map) ? user['firstLoginRequired'] : null;
+    v ??= data['firstLoginRequired'];
+    return v == true ||
         v == 1 ||
         (v is String && (v.toLowerCase() == 'true' || v == '1'));
-    bool scan(dynamic m) {
-      if (m is! Map) return false;
-      for (final k in keys) {
-        if (m.containsKey(k) && truthy(m[k])) return true;
-      }
-      return false;
-    }
-
-    return scan(data) ||
-        scan(data is Map ? data['user'] : null) ||
-        scan(user);
   }
 
-  /// Clears the temporary-key flag once the password has been changed.
-  void clearMustChangePassword() {
-    if (state.mustChangePassword) {
-      state = state.copyWith(mustChangePassword: false);
+  /// Sets the new password in the investor first-login flow using the in-memory
+  /// token (spec: POST /api/investor/change-password {newPassword}). On success
+  /// the token is discarded — the investor then logs in again with the new
+  /// password. Returns an error message, or null on success.
+  Future<String?> completeFirstLoginPassword(String newPassword) async {
+    final token = state.firstLoginToken;
+    if (token == null || token.isEmpty) {
+      return 'Your session expired. Please log in again.';
     }
+    try {
+      final res = await _apiClient.investorSetPassword(
+        token: token,
+        newPassword: newPassword,
+      );
+      final ok =
+          res.statusCode == 200 && (res.data is Map && res.data['status'] == true);
+      if (!ok) {
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
+        return msg ?? 'Failed to update password';
+      }
+      state = state.copyWith(
+        mustChangePassword: false,
+        clearFirstLoginToken: true,
+      );
+      return null;
+    } on DioException catch (e) {
+      final m = e.response?.data is Map
+          ? (e.response!.data as Map)['message']?.toString()
+          : null;
+      return m ?? e.message ?? 'Failed to update password';
+    } catch (_) {
+      return 'Failed to update password';
+    }
+  }
+
+  /// Abandons the first-login flow (back / cancel): drops the in-memory token
+  /// and flag so the portal stays unreachable and the investor returns to Login.
+  void cancelFirstLogin() {
+    state = state.copyWith(
+      mustChangePassword: false,
+      clearFirstLoginToken: true,
+    );
   }
 
   Future<void> verifyOtp(String code) async {

@@ -26,9 +26,15 @@ class ApiClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = await storage.read(key: 'jwt_token');
-          if (token != null) {
-            options.headers['Authorization'] = 'Bearer $token';
+          // Don't overwrite an Authorization header set explicitly on the
+          // request. The investor first-login password change uses the token
+          // from /investor/login directly, held in memory and deliberately NOT
+          // persisted to storage until the investor logs in again.
+          if (options.headers['Authorization'] == null) {
+            final token = await storage.read(key: 'jwt_token');
+            if (token != null) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
           }
           return handler.next(options);
         },
@@ -546,6 +552,22 @@ class ApiClient {
     return dio.post(
       '/api/investor/login',
       data: {'identifier': identifier, 'password': password},
+    );
+  }
+
+  /// First-login password set for the investor temporary-key flow.
+  /// Spec: POST /api/investor/change-password with `{newPassword}` only and the
+  /// token from /investor/login as a Bearer header. That token is held in
+  /// memory and never written to storage, so it is passed explicitly here
+  /// rather than read from secure storage by the interceptor.
+  Future<Response> investorSetPassword({
+    required String token,
+    required String newPassword,
+  }) async {
+    return dio.post(
+      '/api/investor/change-password',
+      data: {'newPassword': newPassword},
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
   }
 

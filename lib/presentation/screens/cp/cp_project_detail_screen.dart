@@ -1414,7 +1414,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               // Vector 360 glyph in M4 green (web parity), replacing the
               // 360-vr.png bitmap so it tints cleanly on the white card.
               const Icon(
-                LucideIcons.rotate3d,
+                LucideIcons.orbit,
                 size: 22,
                 color: Color(0xFF155A4F),
               ),
@@ -1722,7 +1722,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           title: '360° VIRTUAL TOUR',
           subtitle: 'INTERACTIVE VR EXPERIENCE',
           cta: 'EXPLORE 360°',
-          icon: LucideIcons.rotate3d,
+          icon: LucideIcons.orbit,
           onTap: () => _openUrl(tour),
         ),
       );

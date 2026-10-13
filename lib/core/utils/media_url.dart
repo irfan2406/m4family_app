@@ -22,27 +22,6 @@ BoxFit fitForMediaUrl(String url) {
       : BoxFit.cover;
 }
 
-/// Appends an asset's version ([version], typically the owning record's
-/// `updatedAt`) to [url] as a `?v=` token, so an admin replacing the file — even
-/// at the SAME URL — produces a URL the app has never requested before. That
-/// makes the replacement reflect immediately: it misses the on-device image
-/// cache AND the CDN edge (both key on the full URL), so the new file is fetched
-/// the next time the image is shown, instead of the stale copy lingering.
-///
-/// Safe no-op for empty/`data:` URLs or a missing version. Preserves any
-/// existing query string, and strips the version down to a URL-safe token so a
-/// timestamp like `2026-10-13T08:15:53.621Z` becomes `v=20261013T081553621Z`.
-String cacheBustUrl(String url, Object? version) {
-  if (url.isEmpty || url.startsWith('data:')) return url;
-  final token = (version?.toString() ?? '').replaceAll(
-    RegExp(r'[^0-9A-Za-z]'),
-    '',
-  );
-  if (token.isEmpty) return url;
-  final sep = url.contains('?') ? '&' : '?';
-  return '$url${sep}v=$token';
-}
-
 /// Extracts a URL string from [v], which may be a plain string or an object
 /// carrying the URL under one of several common keys. Returns '' when none.
 String mediaUrlOf(dynamic v) {

@@ -1698,11 +1698,26 @@ class _GuestProjectDetailScreenState
           ],
           // Web parity: 360° VIRTUAL TOUR card — only when the backend carries a
           // tour link (hidden otherwise, e.g. completed projects); app colours.
+          // The tour is for logged-in users only: guests see "LOG IN TO VIEW"
+          // and the tap routes to login instead of opening the tour.
           if (tour.isNotEmpty) ...[
             SizedBox(height: walkthrough.isNotEmpty ? 16 : 32),
-            _VirtualTourCard(
-              isDark: isDark,
-              onExplore: () => _launchExternalLink(tour, label: 'virtual tour'),
+            Builder(
+              builder: (context) {
+                final loggedIn = ref.watch(
+                  authProvider.select(
+                    (s) => s.status == AuthStatus.authenticated,
+                  ),
+                );
+                return _VirtualTourCard(
+                  isDark: isDark,
+                  locked: !loggedIn,
+                  onExplore: loggedIn
+                      ? () =>
+                            _launchExternalLink(tour, label: 'virtual tour')
+                      : () => context.go('/login'),
+                );
+              },
             ),
           ],
         ],
@@ -2498,7 +2513,7 @@ class _HeroMediaThumb extends StatelessWidget {
                         children: [
                           Icon(
                             isVR
-                                ? LucideIcons.rotate3d
+                                ? LucideIcons.orbit
                                 : LucideIcons.playCircle,
                             color: isVR
                                 ? const Color(0xFF155A4F)
@@ -2908,7 +2923,14 @@ class _WalkthroughVideoCard extends StatelessWidget {
 class _VirtualTourCard extends StatelessWidget {
   final bool isDark;
   final VoidCallback onExplore;
-  const _VirtualTourCard({required this.isDark, required this.onExplore});
+  // Guests can't open the 360° tour (logged-in only): show "LOG IN TO VIEW"
+  // and route the tap to login instead of launching the tour.
+  final bool locked;
+  const _VirtualTourCard({
+    required this.isDark,
+    required this.onExplore,
+    this.locked = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -2943,7 +2965,7 @@ class _VirtualTourCard extends StatelessWidget {
               color: accent.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(LucideIcons.rotate3d, color: accent, size: 18),
+            child: Icon(LucideIcons.orbit, color: accent, size: 18),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -2983,16 +3005,31 @@ class _VirtualTourCard extends StatelessWidget {
                 color: isDark ? Colors.white : const Color(0xFF0C312B),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
-                'EXPLORE 360°',
-                style: GoogleFonts.inter(
-                  fontSize: 7.5,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? const Color(0xFF0C312B)
-                      : const Color(0xFFF4EFE3),
-                  letterSpacing: 1.0,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (locked) ...[
+                    Icon(
+                      LucideIcons.lock,
+                      size: 9,
+                      color: isDark
+                          ? const Color(0xFF0C312B)
+                          : const Color(0xFFF4EFE3),
+                    ),
+                    const SizedBox(width: 5),
+                  ],
+                  Text(
+                    locked ? 'LOG IN TO VIEW' : 'EXPLORE 360°',
+                    style: GoogleFonts.inter(
+                      fontSize: 7.5,
+                      fontWeight: FontWeight.w600,
+                      color: isDark
+                          ? const Color(0xFF0C312B)
+                          : const Color(0xFFF4EFE3),
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
