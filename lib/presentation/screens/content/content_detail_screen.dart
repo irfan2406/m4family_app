@@ -192,8 +192,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     // (verified). The previous link used the API host (api.mym4family.com),
     // which serves no web pages, so opening a shared link showed "cannot get
     // blog" / a blank page.
-    final String fullUrl = slug.isNotEmpty
-        ? 'https://m4group.in/$slug/'
+    //
+    // The API slugified "CLÉDOR" by dropping the É (-> "cl-dor"), while the web
+    // (WordPress) kept it as "cledor", so CLÉDOR articles 404'd. Normalise it
+    // back so those links resolve; other slugs are unaffected.
+    final String webSlug = slug.replaceAll('cl-dor', 'cledor');
+    final String fullUrl = webSlug.isNotEmpty
+        ? 'https://m4group.in/$webSlug/'
         : 'https://m4group.in/';
 
     Share.share(
