@@ -99,6 +99,13 @@ class _InvestorChangePasswordScreenState
   }
 
   void _back() {
+    // In the forced temporary-key flow, Back must not slip into the portal
+    // without a password change: sign out and return to the investor login.
+    if (ref.read(authProvider).mustChangePassword) {
+      ref.read(authProvider.notifier).logout();
+      context.go('/investor/login');
+      return;
+    }
     if (context.canPop()) {
       context.pop();
     } else {
@@ -142,13 +149,22 @@ class _InvestorChangePasswordScreenState
       if (!mounted) return;
       final ok = res.data is Map && (res.data as Map)['status'] == true;
       if (ok) {
+        // If this was the forced temporary-key change, the login replaced the
+        // navigation stack (there is nothing to pop back to), so clear the flag
+        // and enter the portal. Otherwise (reached from settings) pop back.
+        final forced = ref.read(authProvider).mustChangePassword;
+        ref.read(authProvider.notifier).clearMustChangePassword();
         _snack('Security key established successfully');
         _current.clear();
         _newPass.clear();
         _confirm.clear();
         await Future.delayed(const Duration(milliseconds: 800));
         if (!mounted) return;
-        _back();
+        if (forced) {
+          context.go('/investor/home');
+        } else {
+          _back();
+        }
       } else {
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
@@ -169,6 +185,11 @@ class _InvestorChangePasswordScreenState
 
   @override
   Widget build(BuildContext context) {
+    // Forced temporary-key flow: intercept the system back gesture too, so it
+    // can't bypass the required change (handled in [_back]).
+    final forced = ref.watch(
+      authProvider.select((s) => s.mustChangePassword),
+    );
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
@@ -182,7 +203,12 @@ class _InvestorChangePasswordScreenState
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
 
-    return Scaffold(
+    return PopScope(
+      canPop: !forced,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _back();
+      },
+      child: Scaffold(
       backgroundColor: bg,
       body: Stack(
         children: [
@@ -282,6 +308,7 @@ class _InvestorChangePasswordScreenState
             ),
           ),
         ],
+      ),
       ),
     );
   }

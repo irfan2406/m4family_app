@@ -558,14 +558,21 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
                   child: _buildTabsSection(),
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: 12),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildPhilosophy(),
                 ),
-                const SizedBox(height: 40),
-                _buildFeaturedSection(),
-                const SizedBox(height: 40),
+                if (_projects.any(
+                  (p) =>
+                      p is Map &&
+                      (p['featured'] == true ||
+                          p['featured']?.toString().toLowerCase() == 'true'),
+                )) ...[
+                  const SizedBox(height: 40),
+                  _buildFeaturedSection(),
+                ],
+                const SizedBox(height: 12),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildConnectGrid(),
@@ -689,7 +696,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             letterSpacing: -0.5,
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 8),
         RichText(
           text: TextSpan(
             style: GoogleFonts.inter(

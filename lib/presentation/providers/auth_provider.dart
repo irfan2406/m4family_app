@@ -30,6 +30,10 @@ class AuthState {
   // True once the initial stored-token check has completed (prevents the
   // guest-shell flash on cold start while resolving the session).
   final bool bootstrapped;
+  // True when the account signed in with a temporary key and the backend
+  // requires a password change before using the portal (investor flow — the
+  // login screen routes to Change Password instead of the dashboard).
+  final bool mustChangePassword;
 
   AuthState({
     this.status = AuthStatus.initial,
@@ -39,6 +43,7 @@ class AuthState {
     this.role,
     this.user,
     this.bootstrapped = false,
+    this.mustChangePassword = false,
   });
 
   AuthState copyWith({
@@ -49,6 +54,7 @@ class AuthState {
     String? role,
     Map<String, dynamic>? user,
     bool? bootstrapped,
+    bool? mustChangePassword,
   }) {
     return AuthState(
       status: status ?? this.status,
@@ -58,6 +64,7 @@ class AuthState {
       role: role ?? this.role,
       user: user ?? this.user,
       bootstrapped: bootstrapped ?? this.bootstrapped,
+      mustChangePassword: mustChangePassword ?? this.mustChangePassword,
     );
   }
 }
@@ -267,7 +274,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
       } else if (raw is Map) {
         userMap = Map<String, dynamic>.from(raw);
       }
-      state = state.copyWith(status: AuthStatus.authenticated, user: userMap);
+      // A temporary key must be replaced before using the portal: detect the
+      // backend's "must change password" signal (its exact name varies, so
+      // check the common variants on the login payload and the user object) and
+      // let the login screen route to Change Password instead of the dashboard.
+      final mustChange = _detectMustChangePassword(data, userMap);
+      state = state.copyWith(
+        status: AuthStatus.authenticated,
+        user: userMap,
+        mustChangePassword: mustChange,
+      );
       return null;
     } on DioException catch (e) {
       final data = e.response?.data;
@@ -277,6 +293,52 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(status: AuthStatus.initial, error: null);
       return e.toString();
+    }
+  }
+
+  /// Whether a login response signals that a temporary key was used and the
+  /// password must be changed. The backend field name is not fixed, so this
+  /// checks the common variants on the login `data`, its nested `user`, and the
+  /// resolved `/auth/me` user object. Accepts true, 1, "true", "1".
+  static bool _detectMustChangePassword(
+    dynamic data,
+    Map<String, dynamic>? user,
+  ) {
+    const keys = <String>[
+      'mustChangePassword',
+      'isTemporaryPassword',
+      'passwordChangeRequired',
+      'forcePasswordChange',
+      'requirePasswordChange',
+      'isTempPassword',
+      'temporaryPassword',
+      'passwordResetRequired',
+      'forcePasswordReset',
+      'changePasswordRequired',
+      'needsPasswordChange',
+      'isPasswordTemporary',
+    ];
+    bool truthy(dynamic v) =>
+        v == true ||
+        v == 1 ||
+        (v is String && (v.toLowerCase() == 'true' || v == '1'));
+    bool scan(dynamic m) {
+      if (m is! Map) return false;
+      for (final k in keys) {
+        if (m.containsKey(k) && truthy(m[k])) return true;
+      }
+      return false;
+    }
+
+    return scan(data) ||
+        scan(data is Map ? data['user'] : null) ||
+        scan(user);
+  }
+
+  /// Clears the temporary-key flag once the password has been changed.
+  void clearMustChangePassword() {
+    if (state.mustChangePassword) {
+      state = state.copyWith(mustChangePassword: false);
     }
   }
 

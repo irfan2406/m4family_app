@@ -711,13 +711,21 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 12),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildPhilosophy(),
                 ),
-                const SizedBox(height: 40),
-                _buildFeaturedSection(),
-                const SizedBox(height: 40),
+                if (_projects.any(
+                  (p) =>
+                      p is Map &&
+                      (p['featured'] == true ||
+                          p['featured']?.toString().toLowerCase() == 'true'),
+                )) ...[
+                  const SizedBox(height: 40),
+                  _buildFeaturedSection(),
+                ],
+                const SizedBox(height: 12),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildConnectGrid(),
@@ -750,7 +758,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             letterSpacing: -0.5,
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 8),
         RichText(
           text: TextSpan(
             style: GoogleFonts.inter(

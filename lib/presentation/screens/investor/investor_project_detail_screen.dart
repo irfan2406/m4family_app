@@ -1561,6 +1561,16 @@ class _InvestorProjectDetailScreenState
     );
   }
 
+  // Resolved + cache-busted amenity icon URL (mirrors the guest project
+  // screen, so a replaced icon reflects immediately here too).
+  String? _investorAmenityIconUrl(dynamic amenity) {
+    final raw = amenity is Map ? amenity['icon']?.toString() : null;
+    if (raw == null || raw.isEmpty) return null;
+    final url = ref.read(apiClientProvider).resolveUrl(raw);
+    if (url.isEmpty) return null;
+    return cacheBustUrl(url, amenity is Map ? amenity['updatedAt'] : null);
+  }
+
   Widget _buildAmenitiesSection(Map<String, dynamic> project, bool isDark) {
     final amenities = project['amenities'] as List? ?? [];
     return Padding(
@@ -1583,83 +1593,63 @@ class _InvestorProjectDetailScreenState
               ),
             )
           else
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.zero,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                // Cap each cell to just the icon + label height. childAspectRatio
-                // 1.0 made tall square cells, so a single amenity ("Lobby") left
-                // a big empty band below it.
-                mainAxisExtent: 100,
-              ),
-              itemCount: amenities.length,
-              itemBuilder: (context, index) {
-                final amenity = amenities[index];
-                final name =
-                    (amenity is Map
-                            ? (amenity['name']?.toString() ?? 'Amenity')
-                            : amenity.toString())
-                        .toUpperCase();
-                // Web parity: use the same LuxuryAmenityIcon as the web/CP so a
-                // backend-uploaded (gold-tinted) icon renders identically — the
-                // "Lobby" desk icon is an uploaded asset, not a Lucide glyph.
-                final iconRaw = amenity is Map
-                    ? amenity['icon']?.toString()
-                    : null;
-                final iconUrl = (iconRaw != null && iconRaw.isNotEmpty)
-                    ? ref.read(apiClientProvider).resolveUrl(iconRaw)
-                    : null;
-                return Container(
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.03)
-                        : const Color(0xFFF4EFE3),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.08)
-                          : Colors.black.withValues(alpha: 0.06),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      LuxuryAmenityIcon(
-                        name: name,
-                        iconUrl: iconUrl,
-                        size: 30,
-                        fallbackAsset: name.toUpperCase() == 'LOBBY'
-                            ? 'assets/amenity_lobby.png'
-                            : null,
-                        // Gold washes out on the cream light surface, so draw
-                        // the icon dark in light mode; keep gold on dark.
-                        color: isDark
-                            ? kAmenityGold
-                            : const Color(0xFF0C312B),
-                      ),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          name,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.inter(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: isDark
-                                ? Colors.white
-                                : const Color(0xFF155A4F),
-                            letterSpacing: 1,
-                            height: 1.2,
-                          ),
+            // Bare amenities (guest-portal look): just the icon and its label,
+            // with no card, outline, or badge behind the icon.
+            Builder(
+              builder: (context) {
+                final iconColor =
+                    isDark ? kAmenityGold : const Color(0xFF0C312B);
+                final cellW =
+                    (MediaQuery.sizeOf(context).width - 48 - 20) / 3;
+                return Wrap(
+                  spacing: 10,
+                  runSpacing: 24,
+                  children: [
+                    for (final amenity in amenities)
+                      SizedBox(
+                        width: cellW,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            LuxuryAmenityIcon(
+                              name: amenity is Map
+                                  ? (amenity['name']?.toString() ?? 'Amenity')
+                                  : amenity.toString(),
+                              iconUrl: _investorAmenityIconUrl(amenity),
+                              size: 40,
+                              color: iconColor,
+                              fallbackAsset:
+                                  (amenity is Map
+                                              ? (amenity['name']?.toString() ??
+                                                    '')
+                                              : amenity.toString())
+                                          .toUpperCase() ==
+                                      'LOBBY'
+                                  ? 'assets/amenity_lobby.png'
+                                  : null,
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              amenity is Map
+                                  ? (amenity['name']?.toString() ?? 'Amenity')
+                                  : amenity.toString(),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.inter(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.9)
+                                    : const Color(0xFF141B3A),
+                                letterSpacing: 0.3,
+                                height: 1.2,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                  ],
                 );
               },
             ),

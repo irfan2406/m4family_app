@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
@@ -72,11 +73,14 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     if (_playableVideo(videoUrl)) {
       final apiClient = ref.read(apiClientProvider);
       final resolvedUrl = apiClient.resolveUrl(videoUrl);
-      final imageUrl = apiClient.resolveUrl(
-        (widget.content['image'] != null &&
-                widget.content['image'].toString().isNotEmpty)
-            ? widget.content['image']
-            : widget.content['thumbnail'],
+      final imageUrl = cacheBustUrl(
+        apiClient.resolveUrl(
+          (widget.content['image'] != null &&
+                  widget.content['image'].toString().isNotEmpty)
+              ? widget.content['image']
+              : widget.content['thumbnail'],
+        ),
+        widget.content['updatedAt'],
       );
 
       try {
@@ -184,25 +188,52 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     super.dispose();
   }
 
-  void _shareContent(ApiClient apiClient) {
-    final String title = widget.content['title'] ?? 'M4 Family Article';
-    final String slug = widget.content['slug'] ?? '';
+  // Collapse the stray blank lines the backend puts inside short blurbs (e.g.
+  // a lone "—" on its own line with empty lines around it), which rendered as
+  // big vertical gaps. Keeps real line breaks, just drops the empty ones and
+  // trailing spaces.
+  static String _tightenText(String raw) {
+    return raw
+        .replaceAll('\r\n', '\n')
+        .replaceAll(RegExp(r'[ \t]+\n'), '\n')
+        .replaceAll(RegExp(r'\n{2,}'), '\n')
+        .trim();
+  }
 
-    // Articles are published on the M4 Group site at https://m4group.in/<slug>/
-    // (verified). The previous link used the API host (api.mym4family.com),
-    // which serves no web pages, so opening a shared link showed "cannot get
-    // blog" / a blank page.
+  // For longer prose bodies, keep paragraph separation but cap it at a single
+  // blank line so runs of empty lines don't open large gaps.
+  static String _tightenParagraphs(String raw) {
+    return raw
+        .replaceAll('\r\n', '\n')
+        .replaceAll(RegExp(r'[ \t]+\n'), '\n')
+        .replaceAll(RegExp(r'\n{3,}'), '\n\n')
+        .trim();
+  }
+
+  void _shareContent(ApiClient apiClient) {
+    final String title = widget.content['title'] ?? 'M4 Family';
+    final String slug = widget.content['slug'] ?? '';
+    final String type =
+        (widget.content['type'] ?? '').toString().toLowerCase();
+
+    // Only BLOG posts have a public web page on the M4 Group site at
+    // https://m4group.in/<slug>/ (verified against the site's post sitemap).
+    // Media, highlight and event items live only in the app, so building a
+    // https://m4group.in/<slug>/ link for them 404'd ("cannot get event" /
+    // blank page). For those, link to the M4 Group site itself (which always
+    // resolves) instead of a dead slug URL.
     //
     // The API slugified "CLÉDOR" by dropping the É (-> "cl-dor"), while the web
     // (WordPress) kept it as "cledor", so CLÉDOR articles 404'd. Normalise it
     // back so those links resolve; other slugs are unaffected.
+    final bool isBlog = type == 'blog';
     final String webSlug = slug.replaceAll('cl-dor', 'cledor');
-    final String fullUrl = webSlug.isNotEmpty
+    final String fullUrl = (isBlog && webSlug.isNotEmpty)
         ? 'https://m4group.in/$webSlug/'
         : 'https://m4group.in/';
 
     Share.share(
-      'Check out this article from M4 Family: $title\n\nRead more at: $fullUrl',
+      'Check out this from M4 Family: $title\n\nRead more at: $fullUrl',
       subject: title,
     );
   }
@@ -220,7 +251,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               widget.content['thumbnail'].toString().isNotEmpty)
         ? widget.content['thumbnail']
         : widget.content['coverImage'];
-    final imageUrl = apiClient.resolveUrl(rawImage);
+    // Cache-bust by the content's updatedAt so a replaced image reflects at once.
+    final imageUrl =
+        cacheBustUrl(apiClient.resolveUrl(rawImage), widget.content['updatedAt']);
     final date =
         DateTime.tryParse(widget.content['createdAt'] ?? '') ?? DateTime.now();
     final formattedDate = DateFormat('MM/dd/yyyy').format(date);
@@ -405,7 +438,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             false) ...[
                           const SizedBox(height: 30),
                           Text(
-                            widget.content['description'].toString().trim(),
+                            _tightenText(
+                                widget.content['description'].toString()),
                             // Left-aligned: justify stretched each line and left
                             // large uneven gaps between words.
                             textAlign: TextAlign.start,
@@ -441,7 +475,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             // Blank lines between paragraphs are preserved as
                             // they arrive.
                             Text(
-                              widget.content['content'].toString(),
+                              _tightenParagraphs(
+                                  widget.content['content'].toString()),
                               textAlign: TextAlign.start,
                               style: GoogleFonts.inter(
                                 fontSize: 15,

@@ -2274,7 +2274,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     final raw = amenityIconUrl(amenity);
     if (raw == null) return null;
     final url = ref.read(apiClientProvider).resolveUrl(raw);
-    return url.isEmpty ? null : url;
+    if (url.isEmpty) return null;
+    // Cache-bust by the amenity's own updatedAt so a replaced icon shows
+    // immediately instead of serving the old cached file. Both this and the
+    // prewarmer call here, so the busted URL stays identical for cache hits.
+    final version = amenity is Map ? amenity['updatedAt'] : null;
+    return cacheBustUrl(url, version);
   }
 
   Widget _buildAmenities(dynamic project) {
@@ -2283,72 +2288,55 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       return const _EmptyTabContent(message: 'Coming soon');
     }
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Bare amenities (guest-portal look): just the icon and its label, with no
+    // card, outline, or badge behind the icon.
+    final iconColor = isDark ? kAmenityGold : const Color(0xFF0C312B);
     final cellW = (MediaQuery.sizeOf(context).width - 48 - 20) / 3;
 
     return Wrap(
       spacing: 10,
-      runSpacing: 10,
+      runSpacing: 24,
       children: [
         for (final amenity in amenitiesRaw)
           SizedBox(
             width: cellW,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
-              decoration: BoxDecoration(
-                // No white tile — match the cream page, with a hairline border
-                // so the amenity still reads as its own cell.
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.06)
-                    : const Color(0xFFF4EFE3),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.10)
-                      : Colors.black.withValues(alpha: 0.06),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LuxuryAmenityIcon(
+                  name: amenity is Map
+                      ? (amenity['name']?.toString() ?? 'Amenity')
+                      : amenity.toString(),
+                  iconUrl: _amenityIconUrl(amenity),
+                  size: 40,
+                  color: iconColor,
+                  fallbackAsset: (amenity is Map
+                                  ? (amenity['name']?.toString() ?? '')
+                                  : amenity.toString())
+                              .toUpperCase() ==
+                          'LOBBY'
+                      ? 'assets/amenity_lobby.png'
+                      : null,
                 ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  LuxuryAmenityIcon(
-                    name: amenity is Map
-                        ? (amenity['name']?.toString() ?? 'Amenity')
-                        : amenity.toString(),
-                    iconUrl: _amenityIconUrl(amenity),
-                    size: 30,
-                    // Gold washes out on the cream light surface, so draw the
-                    // icon dark in light mode; keep gold on the dark surface.
+                const SizedBox(height: 10),
+                Text(
+                  amenity is Map
+                      ? (amenity['name']?.toString() ?? 'Amenity')
+                      : amenity.toString(),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
                     color: isDark
-                        ? kAmenityGold
-                        : const Color(0xFF0C312B),
-                    fallbackAsset: (amenity is Map
-                                    ? (amenity['name']?.toString() ?? '')
-                                    : amenity.toString())
-                                .toUpperCase() ==
-                            'LOBBY'
-                        ? 'assets/amenity_lobby.png'
-                        : null,
+                        ? Colors.white.withValues(alpha: 0.9)
+                        : const Color(0xFF141B3A),
+                    letterSpacing: 0.3,
+                    height: 1.2,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    amenity is Map
-                        ? (amenity['name']?.toString() ?? 'Amenity')
-                        : amenity.toString(),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
-                      fontSize: 9.5,
-                      fontWeight: FontWeight.w700,
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.9)
-                          : const Color(0xFF141B3A),
-                      letterSpacing: 0.3,
-                      height: 1.15,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
       ],

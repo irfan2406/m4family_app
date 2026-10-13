@@ -796,7 +796,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             letterSpacing: -0.5,
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 8),
         RichText(
           text: TextSpan(
             style: GoogleFonts.inter(

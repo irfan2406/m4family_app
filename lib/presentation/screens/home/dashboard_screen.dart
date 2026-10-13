@@ -909,7 +909,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           // 5. 📜 Stage 5: Our Philosophy
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(30, 40, 30, 40),
+              padding: const EdgeInsets.fromLTRB(30, 12, 30, 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -922,7 +922,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       letterSpacing: -0.5,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 8),
                   // Web parity: the philosophy ends with a "Who We Are" link to
                   // the About page.
                   Text.rich(

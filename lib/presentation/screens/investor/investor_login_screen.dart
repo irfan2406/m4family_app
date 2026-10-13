@@ -72,7 +72,13 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
   Widget build(BuildContext context) {
     ref.listen<AuthState>(authProvider, (prev, next) {
       if (next.status == AuthStatus.authenticated) {
-        context.go('/home');
+        // Logged in with a temporary key → force the password change first
+        // (web parity), instead of dropping straight into the portal.
+        if (next.mustChangePassword) {
+          context.go('/investor/change-password');
+        } else {
+          context.go('/home');
+        }
       }
     });
 
@@ -97,7 +103,14 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                 child: IconButton(
                   onPressed: () {
                     if (_step == 1) {
-                      setState(() => _step = 0);
+                      // Clear the entered credentials so returning to the
+                      // credentials step shows empty fields, not the old text.
+                      _emailController.clear();
+                      _passwordController.clear();
+                      setState(() {
+                        _showPassword = false;
+                        _step = 0;
+                      });
                     } else {
                       context.go('/home');
                     }

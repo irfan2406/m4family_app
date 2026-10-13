@@ -400,42 +400,25 @@ class _CommunityCard extends ConsumerWidget {
                 ),
               ),
             ),
-            // Content — non-positioned so it can push the card past 16:9
-            // rather than being clipped by it.
-            Padding(
-              padding: const EdgeInsets.fromLTRB(30, 40, 30, 40),
+            // Content: name bottom-left, arrow bottom-right (no subtitle).
+            Positioned(
+              left: 30,
+              right: 30,
+              bottom: 24,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          community['title']?.toString() ?? 'COMMUNITY',
-                          style: GoogleFonts.gelasio(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          community['subtitle'] ??
-                              community['description'] ??
-                              '',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            // Brighter on the dark card = more readable.
-                            color: Colors.white.withOpacity(0.9),
-                            height: 1.5,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      community['title']?.toString() ?? 'COMMUNITY',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.gelasio(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                        letterSpacing: -0.5,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 15),

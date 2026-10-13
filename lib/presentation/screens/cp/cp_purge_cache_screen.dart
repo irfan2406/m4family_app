@@ -1,9 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/cache/image_cache_tools.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 
 /// CP Purge Cache — mobile parity with web `app/(cp)/cp/profile/purge-cache`.
@@ -76,8 +76,11 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
       PaintingBinding.instance.imageCache.clearLiveImages();
       await _tick('Image cache buffers flushed');
 
-      // 2. CachedNetworkImage on-disk + memory store (browser/media cache).
-      await CachedNetworkImage.evictFromCache('');
+      // 2. On-disk network-image + SVG store. The old
+      // `CachedNetworkImage.evictFromCache('')` passed an empty URL and cleared
+      // nothing, so admin-replaced images kept coming back from disk after a
+      // restart. Empty the whole cache manager instead so they re-download.
+      await clearImageCaches();
       await _tick('Network media buffers released');
 
       // 3. Transient session artifacts (in-memory only; auth token preserved).
