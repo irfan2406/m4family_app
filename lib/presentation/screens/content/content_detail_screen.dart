@@ -434,9 +434,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           Text(
                             _tightenText(
                                 widget.content['description'].toString()),
-                            // Justified: every full line runs edge to edge; the
-                            // last line of each paragraph stays left-aligned.
-                            textAlign: TextAlign.justify,
+                            // Natural word spacing, deliberately not justified:
+                            // on a phone width justify stretched word gaps.
                             style: GoogleFonts.inter(
                               fontSize: 15,
                               color: scheme.onSurface.withOpacity(0.6),
@@ -454,10 +453,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           if (_isHtmlBody(widget.content['content']))
                             HtmlWidget(
                               widget.content['content'],
-                              // Justified, matching the plain-text body.
-                              customStylesBuilder: (element) => const {
-                                'text-align': 'justify',
-                              },
+                              // Natural word spacing, matching the plain-text
+                              // body (no justify: it stretched word gaps).
                               textStyle: GoogleFonts.inter(
                                 fontSize: 15,
                                 color: scheme.onSurface.withOpacity(0.6),
@@ -465,12 +462,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                               ),
                             )
                           else
-                            // Plain prose, justified edge to edge. Blank lines
-                            // between paragraphs are preserved as they arrive.
+                            // Plain prose with natural word spacing. Blank
+                            // lines between paragraphs are preserved as they
+                            // arrive.
                             Text(
                               _tightenParagraphs(
                                   widget.content['content'].toString()),
-                              textAlign: TextAlign.justify,
                               style: GoogleFonts.inter(
                                 fontSize: 15,
                                 color: scheme.onSurface.withOpacity(0.6),

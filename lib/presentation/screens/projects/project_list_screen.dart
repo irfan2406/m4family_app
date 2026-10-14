@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/platform/m4_platform.dart';
+import 'package:m4_mobile/presentation/widgets/image_overlay_label.dart';
 import 'package:m4_mobile/presentation/widgets/ios/liquid_segmented_control.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,6 +55,8 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
     }
   }
   return CachedNetworkImage(
+    fadeInDuration: Duration.zero,
+    fadeOutDuration: Duration.zero,
     memCacheWidth: 1080,
     // Backend serves multi-MB originals; cache a downscaled copy on disk to
     // bound memory and make repeat views instant.
@@ -914,7 +917,6 @@ class ProjectListScreen extends ConsumerWidget {
 
                                   final rawHero =
                                       plainOf('heroImage') ??
-                                      firstOf('heroImages') ??
                                       firstOf('exteriorImages') ??
                                       firstOf('interiorImages') ??
                                       firstOf('media');
@@ -1146,25 +1148,27 @@ class _ProjectGridItem extends StatelessWidget {
             Positioned(
               top: 20,
               right: 20,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  // Figma: pale translucent glass over the photo, not a dark
-                  // chip — the label reads light against the image.
-                  color: Colors.white.withOpacity(0.18),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white.withOpacity(0.22)),
-                ),
-                child: Text(
-                  'ARTISTIC IMPRESSION',
-                  style: GoogleFonts.gelasio(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white.withOpacity(0.9),
-                    letterSpacing: 1.5,
+              child: ImageOverlayLabel(
+                builder: (label) => Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    // Figma: pale translucent glass over the photo, not a dark
+                    // chip — the label reads light against the image.
+                    color: Colors.white.withOpacity(0.18),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white.withOpacity(0.22)),
+                  ),
+                  child: Text(
+                    label,
+                    style: GoogleFonts.gelasio(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white.withOpacity(0.9),
+                      letterSpacing: 1.5,
+                    ),
                   ),
                 ),
               ),

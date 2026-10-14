@@ -481,6 +481,8 @@ class _InvestorEliteInvestorConnectScreenState
                       width: 56,
                       height: 56,
                       child: CachedNetworkImage(
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
                         memCacheWidth: 1080,
                         imageUrl: ref
                             .read(apiClientProvider)
@@ -672,6 +674,8 @@ class _InvestorEliteInvestorConnectScreenState
                   fit: StackFit.expand,
                   children: [
                     CachedNetworkImage(
+                      fadeInDuration: Duration.zero,
+                      fadeOutDuration: Duration.zero,
                       memCacheWidth: 1080,
                       imageUrl: ref.read(apiClientProvider).resolveUrl(d.image),
                       fit: BoxFit.cover,

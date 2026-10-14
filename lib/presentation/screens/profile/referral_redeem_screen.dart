@@ -338,6 +338,8 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                         ),
                       )
                     : CachedNetworkImage(
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
                         imageUrl: image,
                         fit: BoxFit.cover,
                         memCacheWidth: 200,

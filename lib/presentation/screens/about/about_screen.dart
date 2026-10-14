@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -68,6 +69,11 @@ void _showTopToast(
     if (entry.mounted) entry.remove();
   });
 }
+
+/// Brand green for every icon on this page in light mode (Figma #155A4F, the
+/// active step fill). The theme's light `primary` is a near-black green, which
+/// made the step and section icons read as black.
+const Color _kIconGreen = Color(0xFF155A4F);
 
 class AboutScreen extends ConsumerStatefulWidget {
   /// True when this is a tab inside [GuestMainShell], which already owns the
@@ -193,10 +199,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     _fetchAboutContent();
   }
 
+  /// `GET /api/cms/about-us`, fresh on every open so pictures and text saved
+  /// in the Admin Panel show straight away (backend: testing point 8). A
+  /// failed reload keeps what is already on screen.
   Future<void> _fetchAboutContent() async {
     try {
       final apiClient = ref.read(apiClientProvider);
       final response = await apiClient.getCmsPage('about-us');
+      if (!mounted) return;
       if (response.data['status'] == true) {
         setState(() {
           _cmsData = response.data['data'];
@@ -206,13 +216,20 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         setState(() => _isLoading = false);
       }
     } catch (_) {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // As the guest shell's About tab (index 2 of an IndexedStack) this screen
+    // stays mounted, so initState runs once: re-read each time the tab opens.
+    if (widget.embedded) {
+      ref.listen<int>(guestNavigationProvider, (previous, next) {
+        if (next == 2 && previous != 2) _fetchAboutContent();
+      });
+    }
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
@@ -381,7 +398,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 top: 20,
                 left: stepWidth / 2,
                 width: (_currentStep == 0) ? 0 : (stepWidth * _currentStep),
-                child: Container(height: 2, color: colorScheme.primary),
+                child: Container(
+                  height: 2,
+                  color: isDark ? colorScheme.primary : _kIconGreen,
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -411,15 +431,16 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                             width: 39,
                             height: 39,
                             decoration: BoxDecoration(
+                              // Light mode: done and upcoming steps share one
+                              // cream circle, so the strip doesn't fade from
+                              // dark to light across the steps.
                               color: isActive
                                   ? const Color(0xFF155A4F)
+                                  : !isDark
+                                  ? const Color(0xFFF4EFE3)
                                   : isCompleted
-                                  ? (isDark
-                                        ? const Color(0xFF141B3A)
-                                        : const Color(0xFFF4EFE3))
-                                  : (isDark
-                                        ? Colors.white.withOpacity(0.05)
-                                        : Colors.black.withOpacity(0.04)),
+                                  ? const Color(0xFF141B3A)
+                                  : Colors.white.withOpacity(0.05),
                               // Always a rectangle: the active step is a
                               // rounded square (radius 8), inactive steps use a
                               // full radius (39/2) so they read as circles.
@@ -432,11 +453,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               border: Border.all(
                                 color: isActive
                                     ? const Color(0xFF155A4F)
+                                    : !isDark
+                                    ? _kIconGreen.withOpacity(0.35)
                                     : isCompleted
                                     ? colorScheme.primary.withOpacity(0.55)
-                                    : (isDark
-                                          ? Colors.white.withOpacity(0.1)
-                                          : Colors.black.withOpacity(0.1)),
+                                    : Colors.white.withOpacity(0.1),
                                 width: 2,
                               ),
                             ),
@@ -446,11 +467,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                   ? (isDark
                                         ? const Color(0xFF141B3A)
                                         : const Color(0xFFF4EFE3))
+                                  : !isDark
+                                  ? _kIconGreen
                                   : isCompleted
                                   ? colorScheme.primary.withOpacity(0.62)
-                                  : (isDark
-                                        ? Colors.white60
-                                        : const Color(0xFF155A4F)),
+                                  : Colors.white60,
                               size: 16,
                             ),
                           ),
@@ -524,8 +545,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       key: const ValueKey('step_0'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildHeroCard(),
-        const SizedBox(height: 48),
+        // media[0] = the main banner; "removed" in the Admin Panel hides it.
+        if (_cmsMediaAt(0) != null) ...[
+          _buildHeroCard(),
+          const SizedBox(height: 48),
+        ],
         _buildSectionHeader(LucideIcons.briefcase, 'OUR STORY'),
         const SizedBox(height: 24),
         _buildGlassCard(
@@ -579,6 +603,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
     final List milestones = (_cmsData?['milestones'] as List?) ?? _milestones;
+    final markColor = isDark ? colorScheme.primary : _kIconGreen;
 
     return Column(
       key: const ValueKey('step_1'),
@@ -604,20 +629,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           shape: BoxShape.circle,
-                          border: Border.all(
-                            color: colorScheme.primary,
-                            width: 4,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: colorScheme.primary.withOpacity(0.2),
-                              blurRadius: 10,
-                            ),
-                          ],
+                          border: Border.all(color: markColor, width: 4),
                         ),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: colorScheme.primary,
+                            color: markColor,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -630,10 +646,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [
-                                  colorScheme.primary,
-                                  colorScheme.primary.withOpacity(0.1),
-                                ],
+                                colors: [markColor, markColor.withOpacity(0.1)],
                               ),
                             ),
                           ),
@@ -716,9 +729,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           itemCount: pillars.length,
           itemBuilder: (context, idx) {
             final pillar = pillars[idx];
-            final iconData = (pillar['icon'] is IconData)
-                ? pillar['icon']
-                : _getIconData(pillar['icon'].toString());
+            final iconContent = _pillarIcon(
+              pillar['icon'],
+              idx,
+              isDark ? colorScheme.primary : _kIconGreen,
+            );
 
             return Container(
               padding: const EdgeInsets.all(20),
@@ -745,16 +760,21 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(14),
+                  // "removed" in the Admin Panel: no icon tile at all.
+                  if (iconContent != null) ...[
+                    Container(
+                      width: 44,
+                      height: 44,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: (isDark ? colorScheme.primary : _kIconGreen)
+                            .withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: iconContent,
                     ),
-                    child: Icon(iconData, color: colorScheme.primary, size: 22),
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
+                  ],
                   // A pillar title is one label and has to read as one line.
                   // Wrapping put the longest one over two lines and, having no
                   // space to break at, split it mid-word ("TRANSPARE / NCY").
@@ -848,18 +868,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           ),
         ),
         const SizedBox(height: 40),
-        // Backend-driven (web parity): the Custom Views promo image is the CMS
-        // media[1] slot (media[0] is the About hero banner). A change in the
-        // Admin Panel reflects here; the old hardcoded /public renders are gone.
-        Builder(
-          builder: (context) {
-            final customViewsImg = _cmsMediaAt(1);
-            if (customViewsImg.isEmpty) return const SizedBox.shrink();
-            return _buildPromoImage(
-              ref.read(apiClientProvider).resolveUrl(customViewsImg),
-            );
-          },
-        ),
+        // Backend-driven (web parity): the living room and kitchen pictures
+        // are CMS media[1] and media[2] (media[0] is the About banner), so an
+        // Admin Panel change reflects here.
+        _buildRoomPictures(),
         const SizedBox(height: 40),
         _buildFinalCTA(),
       ],
@@ -910,30 +922,120 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     );
   }
 
-  /// Returns the CMS `media[i]` value as a usable image URL, or '' when the
-  /// slot is missing or a placeholder (the backend stores "removed" for a
-  /// cleared slot). media[0] = About hero banner, media[1] = Custom Views image.
-  String _cmsMediaAt(int i) {
+  /// The CMS `media[i]` picture: [0] main banner, [1] living room, [2] kitchen.
+  /// Per the backend:
+  /// - an uploaded path → its URL ([_cmsImageUrl]);
+  /// - "removed" → null: the admin took the picture out, so it is hidden;
+  /// - empty or missing → '': the app's default picture is shown.
+  String? _cmsMediaAt(int i) {
     final media = _cmsData?['media'];
-    if (media is List && i >= 0 && i < media.length) {
-      final s = media[i]?.toString().trim() ?? '';
-      if (s.startsWith('/uploads') ||
-          s.startsWith('http') ||
-          s.startsWith('data:')) {
-        return s;
-      }
+    final s = (media is List && i >= 0 && i < media.length)
+        ? (media[i]?.toString().trim() ?? '')
+        : '';
+    if (s.toLowerCase() == 'removed') return null;
+    return _cmsImageUrl(s);
+  }
+
+  /// A CMS picture value as a loadable URL, or '' when it is not one. An
+  /// `/uploads/media/` path is loaded straight from the media bucket (the API
+  /// host would answer it with a 302 redirect there).
+  String _cmsImageUrl(String s) {
+    if (s.startsWith('http') || s.startsWith('data:')) return s;
+    if (s.startsWith('/uploads')) {
+      final direct = directUploadUrl(s);
+      return direct.isNotEmpty
+          ? direct
+          : ref.read(apiClientProvider).resolveUrl(s);
     }
     return '';
   }
 
+  /// A pillar's icon (`pillars[].icon`), by the backend's rule: an icon name
+  /// (ShieldCheck, Eye, Milestone, Heart, …) or an uploaded picture path;
+  /// "removed" → null (no icon); empty → that pillar's default icon.
+  Widget? _pillarIcon(dynamic raw, int idx, Color color) {
+    final fallback = Icon(
+      _pillars[idx % _pillars.length]['icon'] as IconData,
+      color: color,
+      size: 22,
+    );
+    if (raw is IconData) return Icon(raw, color: color, size: 22);
+    final s = raw?.toString().trim() ?? '';
+    if (s.toLowerCase() == 'removed') return null;
+    if (s.isEmpty) return fallback;
+    final url = _cmsImageUrl(s);
+    if (url.isNotEmpty) {
+      return CachedNetworkImage(
+        imageUrl: url,
+        width: 24,
+        height: 24,
+        fit: BoxFit.contain,
+        fadeInDuration: Duration.zero,
+        fadeOutDuration: Duration.zero,
+        placeholder: (c, u) => const SizedBox.shrink(),
+        errorWidget: (c, u, e) => fallback,
+      );
+    }
+    return Icon(_getIconData(s), color: color, size: 22);
+  }
+
+  /// The app's own default picture: the brand gradient with a faint M4 mark
+  /// (what the banner has always shown without an upload).
+  Widget _defaultPicturePanel({double markSize = 120}) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF0C312B), Color(0xFF07201C), Color(0xFF040E0C)],
+          stops: [0.0, 0.55, 1.0],
+        ),
+      ),
+      child: Center(
+        child: Text(
+          'M4',
+          style: GoogleFonts.gelasio(
+            color: Colors.white.withOpacity(0.06),
+            fontSize: markSize,
+            fontWeight: FontWeight.w700,
+            height: 1,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// media[1] (living room) and media[2] (kitchen), side by side. A removed
+  /// picture is left out and the other takes the full width; an empty one
+  /// shows its default ([defaultAsset], or the branded panel).
+  Widget _buildRoomPictures() {
+    const slots = [
+      (index: 1, defaultAsset: 'assets/custom_view_1.png'),
+      (index: 2, defaultAsset: null),
+    ];
+    final pictures = <Widget>[];
+    for (final slot in slots) {
+      final url = _cmsMediaAt(slot.index);
+      if (url == null) continue;
+      pictures.add(_buildPromoImage(url, defaultAsset: slot.defaultAsset));
+    }
+    if (pictures.isEmpty) return const SizedBox.shrink();
+    return Row(
+      children: [
+        for (var i = 0; i < pictures.length; i++) ...[
+          if (i > 0) const SizedBox(width: 16),
+          Expanded(child: pictures[i]),
+        ],
+      ],
+    );
+  }
+
   Widget _buildHeroCard() {
     // Backend-driven (web parity): the hero shows the CMS media[0] banner (the
-    // branded "M4 GROUP" image), so an Admin Panel change reflects here. Only
-    // the title ("ABOUT M4") is overlaid; the subtitle is part of the design.
-    final heroImg = _cmsMediaAt(0);
-    final title = (_cmsData?['title']?.toString().trim().isNotEmpty ?? false)
-        ? _cmsData!['title'].toString().trim()
-        : 'About M4';
+    // branded "M4 GROUP" image), so an Admin Panel change reflects here. No
+    // text is overlaid on it: the "ABOUT M4" title was removed by request.
+    // Only built when media[0] is not "removed"; '' = the default panel.
+    final heroImg = _cmsMediaAt(0) ?? '';
     return Container(
       height: 200,
       width: double.infinity,
@@ -962,11 +1064,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             // + faint M4 watermark when the CMS has no image.
             if (heroImg.isNotEmpty)
               CachedNetworkImage(
+                fadeInDuration: Duration.zero,
+                fadeOutDuration: Duration.zero,
                 memCacheWidth: 1080,
-                imageUrl: ref.read(apiClientProvider).resolveUrl(heroImg),
+                imageUrl: heroImg,
                 fit: BoxFit.cover,
                 placeholder: (c, u) => const SizedBox.shrink(),
-                errorWidget: (c, u, e) => const SizedBox.shrink(),
+                // A picture that fails to load falls back to the default.
+                errorWidget: (c, u, e) => _defaultPicturePanel(),
               )
             else
               Center(
@@ -980,7 +1085,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   ),
                 ),
               ),
-            // Readability scrim so the title stays legible over the banner.
+            // Bottom scrim, part of the banner's look.
             Positioned.fill(
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -993,23 +1098,6 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       Colors.black.withOpacity(0.7),
                     ],
                     stops: const [0.0, 0.5, 1.0],
-                  ),
-                ),
-              ),
-            ),
-            // Web parity, per request: only the title is overlaid ("ABOUT M4").
-            Padding(
-              padding: const EdgeInsets.all(32),
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Text(
-                  title.toUpperCase(),
-                  style: GoogleFonts.gelasio(
-                    color: Colors.white,
-                    fontSize: 34,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -1,
-                    height: 1.1,
                   ),
                 ),
               ),
@@ -1028,29 +1116,27 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         Container(
           width: 44,
           height: 44,
+          // A flat, solid tile: no backdrop blur and no drop shadow. The blur
+          // re-sampled the page behind it while scrolling, so the icon seemed
+          // to shift and dip as the content moved.
           decoration: BoxDecoration(
-            color: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
+            color: isDark
+                ? Colors.black.withOpacity(0.8)
+                : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: (isDark ? Colors.white : const Color(0xFF0C312B))
                   .withOpacity(0.05),
             ),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
-            ],
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Center(
-                // Softer green, matching the step marks above.
-                child: Icon(
-                  icon,
-                  color: colorScheme.primary.withOpacity(0.62),
-                  size: 18,
-                ),
-              ),
+          child: Center(
+            // Brand green, matching the step marks above.
+            child: Icon(
+              icon,
+              color: isDark
+                  ? colorScheme.primary.withOpacity(0.62)
+                  : _kIconGreen,
+              size: 18,
             ),
           ),
         ),
@@ -1135,7 +1221,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  // Web: glass white tile, rounded-2xl, subtle border + shadow.
+                  // Flat tile with a subtle border, no drop shadow (same as
+                  // the section header icons).
                   color: isDark
                       ? Colors.white.withOpacity(0.06)
                       : const Color(0xFFF4EFE3),
@@ -1143,20 +1230,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   border: Border.all(
                     color: colorScheme.primary.withOpacity(0.1),
                   ),
-                  boxShadow: isDark
-                      ? null
-                      : [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.06),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
                 ),
                 child: Center(
                   child: Icon(
                     _sectionIcon(section['icon']?.toString()),
-                    color: colorScheme.primary,
+                    color: isDark ? colorScheme.primary : _kIconGreen,
                     size: 22,
                   ),
                 ),
@@ -1207,8 +1285,32 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     );
   }
 
-  Widget _buildPromoImage(String url) {
+  /// A square picture card. An empty [url] (or one that fails to load) shows
+  /// the default: [defaultAsset] when given, else the branded panel. While
+  /// the CMS is still loading a plain tint stands in, so the default does not
+  /// flash before the admin's picture.
+  Widget _buildPromoImage(String url, {String? defaultAsset}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    Widget fallback() => defaultAsset != null
+        ? Image.asset(
+            defaultAsset,
+            fit: BoxFit.cover,
+            errorBuilder: (c, e, s) => _defaultPicturePanel(markSize: 48),
+          )
+        : _defaultPicturePanel(markSize: 48);
+    final Widget picture = url.isNotEmpty
+        ? CachedNetworkImage(
+            fadeInDuration: Duration.zero,
+            fadeOutDuration: Duration.zero,
+            memCacheWidth: 1080,
+            imageUrl: url,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Container(color: Colors.black12),
+            errorWidget: (context, url, error) => fallback(),
+          )
+        : (_cmsData == null && _isLoading)
+        ? Container(color: Colors.black12)
+        : fallback();
     return AspectRatio(
       aspectRatio: 1,
       child: Container(
@@ -1222,14 +1324,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: CachedNetworkImage(
-            memCacheWidth: 1080,
-            imageUrl: url,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => Container(color: Colors.black12),
-            errorWidget: (context, url, error) =>
-                Container(color: Colors.black12),
-          ),
+          child: picture,
         ),
       ),
     );

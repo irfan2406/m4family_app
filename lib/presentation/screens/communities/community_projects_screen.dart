@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -9,6 +10,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
+import 'package:m4_mobile/presentation/widgets/image_overlay_label.dart';
 
 /// GUEST: all projects within a single community, scoped by [slug].
 /// Mirrors web `/guest/communities/[slug]/projects`.
@@ -34,11 +37,14 @@ class _CommunityProjectsListScreenState
     _fetchData();
   }
 
-  Future<void> _fetchData() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
+  /// [silent] refreshes in place (live sync) without the full-page spinner.
+  Future<void> _fetchData({bool silent = false}) async {
+    if (!silent) {
+      setState(() {
+        _loading = true;
+        _error = null;
+      });
+    }
     try {
       final apiClient = ref.read(apiClientProvider);
 
@@ -94,6 +100,12 @@ class _CommunityProjectsListScreenState
 
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.catalog, SyncTopic.communities},
+      () => _fetchData(silent: true),
+    );
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
@@ -196,20 +208,12 @@ class _CommunityProjectsListScreenState
                             project: project,
                             apiClient: apiClient,
                             index: index,
-                            onTap: () {
-                              final projectId =
-                                  (project['_id'] ?? project['id'])
-                                      ?.toString() ??
-                                  '';
-                              if (projectId.isEmpty) return;
-                              final map = project is Map<String, dynamic>
-                                  ? project
-                                  : Map<String, dynamic>.from(project as Map);
-                              context.push(
-                                '/guest/projects/$projectId',
-                                extra: map,
-                              );
-                            },
+                            // Same routing as the community page: guests get
+                            // the guest project screen, logged-in users the
+                            // full one. (This used to push /guest/projects/:id,
+                            // a route that does not exist.)
+                            onTap: () =>
+                                openCommunityProject(context, ref, project),
                           );
                         }, childCount: _projects.length),
                       ),
@@ -520,13 +524,15 @@ class _ProjectCard extends StatelessWidget {
                   Positioned(
                     bottom: 16,
                     left: 18,
-                    child: Text(
-                      '* ARTISTIC IMPRESSION',
-                      style: GoogleFonts.gelasio(
-                        fontSize: 6,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white.withValues(alpha: 0.75),
-                        letterSpacing: 1.5,
+                    child: ImageOverlayLabel(
+                      builder: (label) => Text(
+                        '* $label',
+                        style: GoogleFonts.gelasio(
+                          fontSize: 6,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white.withValues(alpha: 0.75),
+                          letterSpacing: 1.5,
+                        ),
                       ),
                     ),
                   ),

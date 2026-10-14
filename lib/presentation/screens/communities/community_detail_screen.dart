@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/utils/media_url.dart';
+import 'package:m4_mobile/presentation/widgets/image_overlay_label.dart';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -12,10 +14,12 @@ import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
+import 'package:m4_mobile/presentation/widgets/article_text.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
@@ -50,11 +54,34 @@ Widget _communityProjectImage(String url) {
     }
   }
   return CachedNetworkImage(
+    fadeInDuration: Duration.zero,
+    fadeOutDuration: Duration.zero,
     memCacheWidth: 1080,
     imageUrl: url,
     fit: BoxFit.cover,
     placeholder: (context, u) => Container(color: Colors.black12),
     errorWidget: (context, u, e) => fallback(),
+  );
+}
+
+/// Opens a community project the same way the project list and search do:
+/// logged-in users get the full project screen, guests get the guest screen.
+/// Shared by the community page and the community projects list.
+void openCommunityProject(
+  BuildContext context,
+  WidgetRef ref,
+  dynamic project,
+) {
+  final projectId = (project['_id'] ?? project['id'])?.toString() ?? '';
+  if (projectId.isEmpty) return;
+  final loggedIn = ref.read(authProvider).status == AuthStatus.authenticated;
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => loggedIn
+          ? ProjectDetailScreen(projectId: projectId, projectData: project)
+          : GuestProjectDetailScreen(projectId: projectId, projectData: project),
+    ),
   );
 }
 
@@ -68,12 +95,40 @@ class CommunityDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
+  // Fresh copy of this community from the server (live sync), merged over the
+  // one the screen was opened with. Until it arrives the original is shown.
+  Map<String, dynamic>? _freshCommunity;
+  dynamic get _community => _freshCommunity ?? widget.community;
+
+  /// Re-reads this community so admin edits to its title, description, images
+  /// and benefits show while the screen is open. Merged over the current copy:
+  /// the by-slug endpoint omits fields the list carries (e.g. projectCount).
+  Future<void> _refreshCommunity() async {
+    final current = _community;
+    if (current is! Map) return;
+    final id = (current['_id'] ?? current['id'])?.toString() ?? '';
+    final isObjectId =
+        id.length == 24 && !id.contains(RegExp(r'[^0-9a-fA-F]'));
+    // Routes opened without `extra` carry the slug in `_id`.
+    final slug = (current['slug'] ?? (isObjectId ? '' : id)).toString();
+    if (slug.isEmpty) return;
+    try {
+      final res = await ref.read(apiClientProvider).getCommunityBySlug(slug);
+      final body = res.data;
+      final data = body is Map ? (body['data'] ?? body) : null;
+      if (!mounted || data is! Map) return;
+      setState(() {
+        _freshCommunity = Map<String, dynamic>.from(current)
+          ..addAll(Map<String, dynamic>.from(data));
+      });
+    } catch (_) {}
+  }
+
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _inquiryKey = GlobalKey();
   List<dynamic> _projects = [];
   bool _projectsLoading = true;
   bool _isSubmitting = false;
-  bool _aboutExpanded = false;
   String _selectedProject = 'Any';
 
   final TextEditingController _nameController = TextEditingController();
@@ -108,7 +163,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
   Future<void> _fetchCommunityProjects() async {
     try {
       final apiClient = ref.read(apiClientProvider);
-      var communityId = (widget.community['_id'] ?? widget.community['id'])
+      var communityId = (_community['_id'] ?? _community['id'])
           ?.toString();
       // Routes that open this screen without `extra` put the SLUG in `_id`.
       // The projects endpoint casts that value straight to an ObjectId and
@@ -129,6 +184,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
       }
       if (communityId != null && communityId.isNotEmpty) {
         final res = await apiClient.getProjectsByCommunity(communityId);
+        if (!mounted) return;
         if (res.data['status'] == true) {
           setState(() {
             _projects = res.data['data'] as List;
@@ -174,11 +230,11 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
         // other. Anything else is rejected with a 400.
         'interest': 'Buying',
         'message':
-            'Expressing interest in community: ${widget.community['title']}'
+            'Expressing interest in community: ${_community['title']}'
             '${_selectedProject != 'Any' ? ' | Interested Project: $_selectedProject' : ''}',
         'projectName': _selectedProject != 'Any'
             ? _selectedProject
-            : widget.community['title'],
+            : _community['title'],
         'source': 'online',
       });
 
@@ -211,6 +267,17 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.communities},
+      _refreshCommunity,
+    );
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.catalog, SyncTopic.communities},
+      _fetchCommunityProjects,
+    );
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final user = ref.watch(authProvider).user;
     final role = user?['role']?.toString().toLowerCase();
@@ -221,12 +288,12 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     // Unsplash stand-in here so the hero always had a picture; it meant a
     // community with no artwork quietly showed stock as if it were the
     // client's. Empty lets the renderer draw the branded placeholder.
-    final rawCommunityImage = mediaUrlOf(widget.community['image']);
+    final rawCommunityImage = mediaUrlOf(_community['image']);
     final heroImageUrl =
         (rawCommunityImage.isEmpty || isStockImageUrl(rawCommunityImage))
         ? ''
         : apiClient.resolveUrl(rawCommunityImage);
-    final benefitsRaw = widget.community['benefits'] as List? ?? [];
+    final benefitsRaw = _community['benefits'] as List? ?? [];
     final benefits = benefitsRaw.isNotEmpty
         ? benefitsRaw
         : [
@@ -308,6 +375,8 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                   fit: StackFit.expand,
                   children: [
                     CachedNetworkImage(
+                      fadeInDuration: Duration.zero,
+                      fadeOutDuration: Duration.zero,
                       memCacheWidth: 1080,
                       imageUrl: heroImageUrl,
                       fit: BoxFit.cover,
@@ -336,16 +405,20 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         ),
                       ),
                     ),
-                    // Web: `absolute bottom-10 left-8 right-8`.
+                    // Web: `absolute bottom-10 left-8 right-8`. Title is pinned
+                    // to the bottom-left corner; the subtitle only reserves
+                    // space when it actually has text (otherwise the title
+                    // floats up, leaving a gap beneath it).
                     Positioned(
                       bottom: 40,
                       left: 32,
                       right: 32,
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.community['title']?.toString() ?? '',
+                            _community['title']?.toString() ?? '',
                             style: GoogleFonts.gelasio(
                               // Web: `text-3xl font-light tracking-tight` — a
                               // light serif, not the heavy weight we had.
@@ -362,18 +435,23 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                               ],
                             ),
                           ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2),
-                          const SizedBox(height: 12),
-                          Text(
-                            (widget.community['subtitle'] ?? '')
-                                .toString()
-                                .toUpperCase(),
-                            style: GoogleFonts.gelasio(
-                              color: const Color(0xFFF4EFE3),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 3,
-                            ),
-                          ).animate().fadeIn(delay: 400.ms),
+                          if ((_community['subtitle'] ?? '')
+                              .toString()
+                              .trim()
+                              .isNotEmpty) ...[
+                            const SizedBox(height: 12),
+                            Text(
+                              (_community['subtitle'] ?? '')
+                                  .toString()
+                                  .toUpperCase(),
+                              style: GoogleFonts.gelasio(
+                                color: const Color(0xFFF4EFE3),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 3,
+                              ),
+                            ).animate().fadeIn(delay: 400.ms),
+                          ],
                         ],
                       ),
                     ),
@@ -394,7 +472,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                   GestureDetector(
                     onTap: () async {
                       final query = Uri.encodeComponent(
-                        widget.community['location'] ?? 'Dubai',
+                        _community['location'] ?? 'Dubai',
                       );
                       final url = Uri.parse(
                         'https://www.google.com/maps/search/?api=1&query=$query',
@@ -433,7 +511,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           ),
                           const SizedBox(width: 15),
                           Text(
-                            (widget.community['location'] ?? '')
+                            (_community['location'] ?? '')
                                 .toString()
                                 .toUpperCase(),
                             style: GoogleFonts.inter(
@@ -459,16 +537,31 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                   _SectionHeader(
                     title: 'About the community',
                     subtitle:
-                        'About ${widget.community['title']?.toString() ?? 'Community'}',
+                        'About ${_community['title']?.toString() ?? 'Community'}',
                   ),
                   const SizedBox(height: 25),
-                  _buildAboutBody(
-                    (widget.community['overview'] ??
-                            widget.community['description'] ??
-                            '')
-                        .toString(),
-                    isDark,
-                  ),
+                  ArticleText(
+                    text:
+                        (_community['overview'] ??
+                                _community['description'] ??
+                                '')
+                            .toString(),
+                    style: GoogleFonts.inter(
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withOpacity(0.6),
+                      fontSize: 14,
+                      height: 1.55,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    linkColor: isDark
+                        ? Colors.white
+                        : const Color(0xFF155A4F),
+                    // Edge to edge without widened word gaps (plain justify
+                    // left big gaps on a phone width), and a tight gap
+                    // between paragraphs.
+                    balancedJustify: true,
+                    paragraphGap: 4,
+                  ).animate().fadeIn(delay: 200.ms),
 
                   const SizedBox(height: 50),
 
@@ -601,7 +694,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           child: _SectionHeader(
                             title: 'Projects',
                             subtitle:
-                                'Explore ${widget.community['title']?.toString() ?? 'Community'} Masterpieces',
+                                'Explore ${_community['title']?.toString() ?? 'Community'} Masterpieces',
                           ),
                         ),
                         TextButton(
@@ -609,7 +702,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => CommunityProjectsScreen(
-                                community: widget.community,
+                                community: _community,
                                 projects: _projects,
                               ),
                             ),
@@ -639,15 +732,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         itemBuilder: (context, index) {
                           final project = _projects[index];
                           return GestureDetector(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProjectDetailScreen(
-                                  projectId: project['_id'] ?? project['id'],
-                                  projectData: project,
-                                ),
-                              ),
-                            ),
+                            onTap: () => openCommunityProject(context, ref, project),
                             child: Container(
                               width: 248,
                               margin: const EdgeInsets.only(right: 14),
@@ -967,66 +1052,6 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
   /// paragraphs ourselves gives one even rhythm, and a single newline inside a
   /// paragraph (the "A community that grows." run) still breaks the line.
   ///
-  /// Long copy is collapsed to the first few paragraphs behind Read more,
-  /// matching the community list's control.
-  static const int _aboutCollapsedParagraphs = 3;
-
-  Widget _buildAboutBody(String raw, bool isDark) {
-    final fg = isDark ? Colors.white : const Color(0xFF0C312B);
-    final paragraphs = raw
-        .split(RegExp(r'\n[ \t]*\n'))
-        .map((p) => p.trim())
-        .where((p) => p.isNotEmpty)
-        .toList();
-
-    if (paragraphs.isEmpty) return const SizedBox.shrink();
-
-    final hasMore = paragraphs.length > _aboutCollapsedParagraphs;
-    final shown = (!hasMore || _aboutExpanded)
-        ? paragraphs
-        : paragraphs.take(_aboutCollapsedParagraphs).toList();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        for (var i = 0; i < shown.length; i++) ...[
-          if (i > 0) const SizedBox(height: 14),
-          Text(
-            shown[i],
-            style: GoogleFonts.inter(
-              color: fg.withOpacity(0.6),
-              fontSize: 14,
-              height: 1.55,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-        if (hasMore) ...[
-          const SizedBox(height: 16),
-          GestureDetector(
-            onTap: () => setState(() => _aboutExpanded = !_aboutExpanded),
-            child: Container(
-              padding: const EdgeInsets.only(bottom: 2),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: fg.withOpacity(0.3), width: 1),
-                ),
-              ),
-              child: Text(
-                _aboutExpanded ? 'Read less' : 'Read more',
-                style: GoogleFonts.inter(
-                  color: isDark ? Colors.white : const Color(0xFF155A4F),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ],
-    ).animate().fadeIn(delay: 200.ms);
-  }
-
   IconData _getIcon(String icon) {
     // The CMS is not consistent about how an icon name is written — the same
     // glyph arrives as "LayoutGrid", "layout-grid" or "layout grid" depending
@@ -1279,15 +1304,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                     .toString();
 
                 return GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProjectDetailScreen(
-                        projectId: project['_id'] ?? project['id'],
-                        projectData: project,
-                      ),
-                    ),
-                  ),
+                  onTap: () => openCommunityProject(context, ref, project),
                   child: AspectRatio(
                     aspectRatio: 16 / 9,
                     child: Container(
@@ -1308,6 +1325,8 @@ class CommunityProjectsScreen extends ConsumerWidget {
                           fit: StackFit.expand,
                           children: [
                             CachedNetworkImage(
+                              fadeInDuration: Duration.zero,
+                              fadeOutDuration: Duration.zero,
                               memCacheWidth: 1080,
                               imageUrl: apiClient.resolveUrl(
                                 project['heroImage'] ?? project['image'],
@@ -1451,13 +1470,15 @@ class CommunityProjectsScreen extends ConsumerWidget {
                             Positioned(
                               bottom: 16,
                               left: 18,
-                              child: Text(
-                                '* ARTISTIC IMPRESSION',
-                                style: GoogleFonts.gelasio(
-                                  color: Colors.white.withValues(alpha: 0.75),
-                                  fontSize: 6,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 1.5,
+                              child: ImageOverlayLabel(
+                                builder: (label) => Text(
+                                  '* $label',
+                                  style: GoogleFonts.gelasio(
+                                    color: Colors.white.withValues(alpha: 0.75),
+                                    fontSize: 6,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 1.5,
+                                  ),
                                 ),
                               ),
                             ),

@@ -440,6 +440,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         )
                       : _avatarUrl != null
                       ? CachedNetworkImage(
+                          fadeInDuration: Duration.zero,
+                          fadeOutDuration: Duration.zero,
                           memCacheWidth: 1080,
                           imageUrl: apiClient.resolveUrl(_avatarUrl),
                           fit: BoxFit.cover,

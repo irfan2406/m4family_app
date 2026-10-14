@@ -359,6 +359,8 @@ class _CpEliteInvestorConnectScreenState
                   fit: StackFit.expand,
                   children: [
                     CachedNetworkImage(
+                      fadeInDuration: Duration.zero,
+                      fadeOutDuration: Duration.zero,
                       memCacheWidth: 1080,
                       imageUrl: o.image,
                       fit: BoxFit.cover,

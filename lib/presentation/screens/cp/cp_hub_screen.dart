@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -113,6 +114,12 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.catalog},
+      _load,
+    );
     final user = ref.watch(authProvider).user;
     final name =
         user?['firstName']?.toString() ??
@@ -1132,6 +1139,8 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             children: [
               if (bg != null && bg.isNotEmpty)
                 CachedNetworkImage(
+                  fadeInDuration: Duration.zero,
+                  fadeOutDuration: Duration.zero,
                   memCacheWidth: 1080,
                   imageUrl: bg,
                   fit: BoxFit.cover,

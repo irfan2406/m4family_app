@@ -292,6 +292,8 @@ class _InvestorRelationsScreenState
       child: AspectRatio(
         aspectRatio: 4 / 3,
         child: CachedNetworkImage(
+          fadeInDuration: Duration.zero,
+          fadeOutDuration: Duration.zero,
           memCacheWidth: 1080,
           imageUrl:
               'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',

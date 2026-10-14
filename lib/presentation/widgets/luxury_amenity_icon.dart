@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -33,6 +35,56 @@ bool _hasOwnAlpha(String url) {
 bool _isSvgIcon(String url) =>
     (Uri.tryParse(url)?.path ?? url).toLowerCase().endsWith('.svg');
 
+/// Memory-cache width of a raster amenity icon. [precacheAmenityIcons] must use
+/// the same value as [LuxuryAmenityIcon], or the warmed image is a cache miss.
+/// 192 keeps the larger amenity icons (up to ~56pt at 3x) sharp: a smaller
+/// decode thinned the line art into faint grey.
+const int kAmenityIconCacheWidth = 192;
+
+/// How strongly an emphasised (amenity-grid) icon is drawn: 0.9 = 10% lighter
+/// than the full bold-and-dark treatment.
+const double kAmenityEmphasisOpacity = 0.9;
+
+/// The emphasised icon's darkening, tuned on the live amenity drawings: dense
+/// art (Jacuzzi, Kid Play Area, Barbeque) must keep its detail. A stronger 1.5
+/// with heavier strokes filled them into dark blobs; 1.25 with a light stroke
+/// reads clearly without losing the drawing.
+const double _kEmphasisAlphaGain = 1.25;
+
+/// Stroke thickening as a fraction of the icon size (see `_embolden`).
+const double _kEmphasisStroke = 0.005;
+
+/// One size and colour for the amenity grid in every portal (guest, customer,
+/// CP, investor), so the same amenity looks identical everywhere.
+const double kAmenityGridIconSize = 52;
+
+/// Dark green on the cream surface; gold on the dark (navy) one, where it
+/// reads well and dark green would vanish.
+Color amenityGridIconColor(bool isDark) =>
+    isDark ? kAmenityGold : const Color(0xFF0C312B);
+
+/// Downloads and decodes amenity icons into Flutter's memory image cache ahead
+/// of time. An image already in memory skips the placeholder entirely, so the
+/// Amenities grid draws every icon in its first frame instead of popping them
+/// in one by one as each download finishes. SVG icons are left to the widget.
+void precacheAmenityIcons(BuildContext context, Iterable<String?> urls) {
+  for (final url in urls.whereType<String>().toSet()) {
+    if (!url.startsWith('http') || _isSvgIcon(url)) continue;
+    unawaited(
+      precacheImage(
+        ResizeImage.resizeIfNeeded(
+          kAmenityIconCacheWidth,
+          null,
+          CachedNetworkImageProvider(url),
+        ),
+        context,
+        // Best-effort: a failed icon falls back to its glyph in the widget.
+        onError: (_, _) {},
+      ),
+    );
+  }
+}
+
 /// Gold tint for an OPAQUE image — black line art on a white background, which
 /// is how the backend uploads these icons (the "lobby" amenity is a 1254x1254
 /// JPEG of black art on white).
@@ -58,11 +110,25 @@ bool _isSvgIcon(String url) =>
 /// Same luminance→alpha curve, but the fill RGB is taken from [c] so the tint
 /// follows the caller's colour — gold by default, or a darker accent where the
 /// surface is light (cream) and gold would wash out.
-List<double> _tintFromLuminance(Color c) => <double>[
+///
+/// [gain] is the "×2" above; an emphasised icon uses 2.5, which keeps the thin
+/// strokes of a scaled-down drawing solid without filling in dense art.
+List<double> _tintFromLuminance(Color c, {double gain = 2}) => <double>[
   0, 0, 0, 0, c.r * 255.0, // R -> c.red
   0, 0, 0, 0, c.g * 255.0, // G -> c.green
   0, 0, 0, 0, c.b * 255.0, // B -> c.blue
-  -0.4252, -1.4304, -0.1444, 0, 450, // A -> 2*(255 - luminance) - 60
+  // A -> gain*(255 - luminance) - 60
+  -0.2126 * gain, -0.7152 * gain, -0.0722 * gain, 0, 255 * gain - 60,
+];
+
+/// `BlendMode.srcIn` tint (every drawn pixel becomes [c], keeping the image's
+/// own alpha), with that alpha multiplied by [alphaGain] — so faint,
+/// anti-aliased strokes of a transparent PNG / SVG come out darker.
+List<double> _tintKeepingAlpha(Color c, double alphaGain) => <double>[
+  0, 0, 0, 0, c.r * 255.0,
+  0, 0, 0, 0, c.g * 255.0,
+  0, 0, 0, 0, c.b * 255.0,
+  0, 0, 0, alphaGain, 0,
 ];
 
 class LuxuryAmenityIcon extends StatelessWidget {
@@ -77,6 +143,12 @@ class LuxuryAmenityIcon extends StatelessWidget {
   /// backend /uploads endpoint is broken). Gold-tinted like the rest.
   final String? fallbackAsset;
 
+  /// Clearly visible: the amenity grids. The drawing is darkened by
+  /// [_kEmphasisAlphaGain] (see [_tintFromLuminance] / [_tintKeepingAlpha])
+  /// and its strokes are thickened lightly ([_embolden]). Off elsewhere (e.g.
+  /// community Benefits), which keep the original weight.
+  final bool emphasized;
+
   const LuxuryAmenityIcon({
     super.key,
     required this.name,
@@ -84,7 +156,10 @@ class LuxuryAmenityIcon extends StatelessWidget {
     this.size = 44,
     this.color = kAmenityGold,
     this.fallbackAsset,
+    this.emphasized = false,
   });
+
+  double get _luminanceGain => emphasized ? 2 * _kEmphasisAlphaGain : 2;
 
   /// Clip hard: a large JPEG inside ColorFiltered otherwise paints a full-
   /// screen gold wash while scrolling (amenities disappear behind mustard).
@@ -94,6 +169,51 @@ class LuxuryAmenityIcon extends StatelessWidget {
         child: ClipRect(child: child),
       );
 
+  /// Thicker strokes for an [emphasized] icon: the drawing is painted again a
+  /// fraction of a point left, right, up and down, which widens every line
+  /// evenly without changing the icon's size or shape. Fine line art has no
+  /// heavier weight to switch to, so this is how it is made bold.
+  ///
+  /// [copy] builds one tinted copy with its drawing shifted by the offset.
+  /// Only the drawing moves: a white backdrop shifted by a fraction of a pixel
+  /// leaves half-covered edge pixels that the luminance tint reads as dark,
+  /// which drew a hairline square around the icon.
+  Widget _embolden(Widget Function(Offset offset) copy) {
+    if (!emphasized) return copy(Offset.zero);
+    final d = size * _kEmphasisStroke;
+    // The finished bold icon is drawn at 90%: 10% lighter, evenly across
+    // every icon type, so it reads dark without looking heavy.
+    return Opacity(
+      opacity: kAmenityEmphasisOpacity,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          for (final o in [
+            Offset(-d, 0),
+            Offset(d, 0),
+            Offset(0, -d),
+            Offset(0, d),
+            Offset.zero,
+          ])
+            copy(o),
+        ],
+      ),
+    );
+  }
+
+  static Widget _shift(Offset o, Widget child) =>
+      o == Offset.zero ? child : Transform.translate(offset: o, child: child);
+
+  /// Luminance-tinted copy of an opaque drawing (see [_tintFromLuminance]).
+  /// The white backdrop keeps every pixel defined, so no tinted hairline leaks
+  /// down the sub-pixel transparent edge of the scaled image.
+  Widget _luminanceCopy(Widget image, Offset o) => ColorFiltered(
+    colorFilter: ColorFilter.matrix(
+      _tintFromLuminance(color, gain: _luminanceGain),
+    ),
+    child: ColoredBox(color: Colors.white, child: _shift(o, image)),
+  );
+
   Widget _renderAssetIcon(String asset) {
     final image = Image.asset(
       asset,
@@ -101,13 +221,13 @@ class LuxuryAmenityIcon extends StatelessWidget {
       height: size,
       fit: BoxFit.contain,
     );
-    return _box(
-      ColorFiltered(
-        colorFilter: ColorFilter.matrix(_tintFromLuminance(color)),
-        child: ColoredBox(color: Colors.white, child: image),
-      ),
-    );
+    return _box(_embolden((o) => _luminanceCopy(image, o)));
   }
+
+  /// The tint for a drawing that has its own transparency (PNG / SVG).
+  ColorFilter get _alphaTint => emphasized
+      ? ColorFilter.matrix(_tintKeepingAlpha(color, _kEmphasisAlphaGain))
+      : ColorFilter.mode(color, BlendMode.srcIn);
 
   @override
   Widget build(BuildContext context) {
@@ -118,22 +238,27 @@ class LuxuryAmenityIcon extends StatelessWidget {
 
       if (_isSvgIcon(url)) {
         return _box(
-          SvgPicture.network(
-            url,
-            width: size,
-            height: size,
-            fit: BoxFit.contain,
-            colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-            // Transparent placeholder (not the fallback glyph) so the icon never
-            // visibly morphs from a stand-in glyph into the real icon.
-            placeholderBuilder: (c) => SizedBox(width: size, height: size),
+          _embolden(
+            (o) => _shift(
+              o,
+              SvgPicture.network(
+                url,
+                width: size,
+                height: size,
+                fit: BoxFit.contain,
+                colorFilter: _alphaTint,
+                // Transparent placeholder (not the fallback glyph) so the icon
+                // never visibly morphs from a stand-in glyph into the real one.
+                placeholderBuilder: (c) => SizedBox(width: size, height: size),
+              ),
+            ),
           ),
         );
       }
 
       return _box(
         CachedNetworkImage(
-          memCacheWidth: 128,
+          memCacheWidth: kAmenityIconCacheWidth,
           imageUrl: url,
           width: size,
           height: size,
@@ -153,19 +278,16 @@ class LuxuryAmenityIcon extends StatelessWidget {
               alignment: Alignment.center,
             );
             if (hasAlpha) {
-              return ColorFiltered(
-                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-                child: image,
+              return _embolden(
+                (o) => ColorFiltered(
+                  colorFilter: _alphaTint,
+                  child: _shift(o, image),
+                ),
               );
             }
             // JPEG is opaque, so its white background is dissolved by luminance
-            // instead — see _tintFromLuminance. The white ColoredBox backdrop
-            // keeps every pixel defined so no tinted hairline leaks down the
-            // sub-pixel transparent edge of the scaled image.
-            return ColorFiltered(
-              colorFilter: ColorFilter.matrix(_tintFromLuminance(color)),
-              child: ColoredBox(color: Colors.white, child: image),
-            );
+            // instead — see _luminanceCopy.
+            return _embolden((o) => _luminanceCopy(image, o));
           },
           errorWidget: (c, u, e) => fallbackAsset != null
               ? _renderAssetIcon(fallbackAsset!)
@@ -187,15 +309,24 @@ class LuxuryAmenityIcon extends StatelessWidget {
     final svg = key != null ? _svgIcons[key] : null;
     if (svg != null) {
       return _box(
-        SvgPicture.string(
-          svg,
-          width: size,
-          height: size,
-          theme: SvgTheme(currentColor: color),
+        _embolden(
+          (o) => _shift(
+            o,
+            SvgPicture.string(
+              svg,
+              width: size,
+              height: size,
+              theme: SvgTheme(currentColor: color),
+            ),
+          ),
         ),
       );
     }
-    return _box(Icon(_lucideFallback(name), color: color, size: size));
+    return _box(
+      _embolden(
+        (o) => _shift(o, Icon(_lucideFallback(name), color: color, size: size)),
+      ),
+    );
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/privacy_mode_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -31,6 +32,9 @@ class InvestorPaymentDetailScreen extends ConsumerStatefulWidget {
 
 class _InvestorPaymentDetailScreenState
     extends ConsumerState<InvestorPaymentDetailScreen> {
+  // Privacy mode (Settings → Mask sensitive values) hides money figures.
+  bool get _hideAmounts => ref.read(privacyModeProvider);
+
   static const _gold = Color(0xFFC5A35B);
   static const _green = Color(0xFF163A2C);
 
@@ -140,6 +144,7 @@ class _InvestorPaymentDetailScreenState
   }
 
   String _amountLabel() {
+    if (_hideAmounts) return 'AED $kHiddenAmount';
     final amount = _payment?['amountDue'] ?? _payment?['amount'];
     final num value = amount is num
         ? amount
@@ -189,6 +194,8 @@ class _InvestorPaymentDetailScreenState
 
   @override
   Widget build(BuildContext context) {
+    // Redraw with figures hidden or shown when privacy mode changes.
+    ref.watch(privacyModeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
@@ -344,7 +351,7 @@ class _InvestorPaymentDetailScreenState
             ),
             const SizedBox(height: 16),
             Text(
-              '${credit ? '+' : '-'}${_amountLabel()}',
+              '${_hideAmounts ? '' : (credit ? '+' : '-')}${_amountLabel()}',
               style: GoogleFonts.gelasio(
                 fontSize: 30,
                 fontWeight: FontWeight.w700,

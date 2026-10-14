@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -22,6 +23,7 @@ import 'package:m4_mobile/presentation/providers/hero_slider_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
+import 'package:m4_mobile/presentation/widgets/image_overlay_label.dart';
 
 /// Mirrors web `app/(cp)/cp/home/page.tsx`, which renders the same
 /// `SharedHomePage` component as the guest/user home. This is a TAB inside
@@ -177,12 +179,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     final urls = <String>[];
     for (final p in _projects.take(4)) {
       if (p is! Map) continue;
-      final hero = (p['heroImage'] ?? '').toString().trim();
+      // The card shows the Project Master Image (`heroImage`) only.
+      final hero = projectHeroUrl(p);
       if (hero.isNotEmpty) urls.add(api.resolveUrl(hero));
-      final heroImages = p['heroImages'];
-      if (heroImages is List && heroImages.isNotEmpty) {
-        urls.add(api.resolveUrl(heroImages.first.toString()));
-      }
     }
     prewarmImages(urls);
   }
@@ -292,6 +291,12 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.catalog, SyncTopic.content, SyncTopic.communities},
+      _fetchData,
+    );
     // Sidebar quick action: scroll partner inquiry into view.
     // The hero reads the admin slider through [_adminHeroImage], which uses
     // ref.read so the cycling timer can call it too. Watch it here so the page
@@ -489,25 +494,27 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           Positioned(
                             top: 16,
                             right: 16,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withValues(alpha: 0.4),
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.1),
+                            child: ImageOverlayLabel(
+                              builder: (label) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
                                 ),
-                              ),
-                              child: Text(
-                                'ARTISTIC IMPRESSION',
-                                style: GoogleFonts.gelasio(
-                                  color: Colors.white,
-                                  fontSize: 7,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 1.5,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.4),
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.1),
+                                  ),
+                                ),
+                                child: Text(
+                                  label,
+                                  style: GoogleFonts.gelasio(
+                                    color: Colors.white,
+                                    fontSize: 7,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 1.5,
+                                  ),
                                 ),
                               ),
                             ),
@@ -596,16 +603,11 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
   /// empty string and renders the branded placeholder (no stock photo).
   /// The card image for a project.
   ///
-  /// [idx] picks a slide for the rotating hero and is only honoured when the
-  /// project actually has a gallery; a card (idx 0) always resolves through
-  /// [projectHeroUrl]. Reaching for `heroImages` first is what put a stock
-  /// Unsplash photo on these cards while the catalog showed the real upload.
+  /// Always the Project Master Image via [projectHeroUrl]: the `heroImages`
+  /// gallery [idx] used to rotate through held demo stock photos and has
+  /// been removed from every project.
   String _getImg(dynamic p, [int idx = 0]) {
     if (p is! Map) return '';
-    if (idx > 0) {
-      final gallery = mediaUrlList(p['heroImages']);
-      if (gallery.isNotEmpty) return gallery[idx % gallery.length];
-    }
     return projectHeroUrl(p);
   }
 
@@ -667,6 +669,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         ? src
         : ref.read(apiClientProvider).resolveUrl(src);
     return CachedNetworkImage(
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
       memCacheWidth: 1080,
       // Backend serves multi-MB originals; cache a downscaled copy on disk to
       // bound memory and make repeat views instant.
@@ -698,6 +702,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         ),
         const SizedBox(height: 8),
         RichText(
+          // Natural word spacing, deliberately not justified: on a phone
+          // width justify stretched the gaps between words very wide.
           text: TextSpan(
             style: GoogleFonts.inter(
               color: Theme.of(
@@ -1478,25 +1484,27 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   Positioned(
                     top: 24,
                     right: 24,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.6),
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.2),
+                    child: ImageOverlayLabel(
+                      builder: (label) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
                         ),
-                      ),
-                      child: Text(
-                        'ARTISTIC IMPRESSION',
-                        style: GoogleFonts.gelasio(
-                          color: Colors.white,
-                          fontSize: 7,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.5,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.2),
+                          ),
+                        ),
+                        child: Text(
+                          label,
+                          style: GoogleFonts.gelasio(
+                            color: Colors.white,
+                            fontSize: 7,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.5,
+                          ),
                         ),
                       ),
                     ),

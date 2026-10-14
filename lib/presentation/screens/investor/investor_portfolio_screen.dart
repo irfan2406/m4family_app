@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/privacy_mode_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -35,6 +36,9 @@ class InvestorPortfolioScreen extends ConsumerStatefulWidget {
 
 class _InvestorPortfolioScreenState
     extends ConsumerState<InvestorPortfolioScreen> {
+  // Privacy mode (Settings → Mask sensitive values) hides money figures.
+  bool get _hideAmounts => ref.read(privacyModeProvider);
+
   static const Color _gold = Color(0xFFC5A35B);
   static const Color _green = Color(0xFF163A2C);
   static const Color _amber = Color(0xFFC5A35B);
@@ -140,6 +144,8 @@ class _InvestorPortfolioScreenState
 
   @override
   Widget build(BuildContext context) {
+    // Redraw with figures hidden or shown when privacy mode changes.
+    ref.watch(privacyModeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
 
@@ -465,7 +471,7 @@ class _InvestorPortfolioScreenState
                 ? LucideIcons.trendingUp
                 : LucideIcons.trendingDown,
             label: 'UNREALISED GAINS',
-            value: '${_gains >= 0 ? '+' : '-'}${_formatValue(_gains.abs())}',
+            value: '${_hideAmounts ? '' : (_gains >= 0 ? '+' : '-')}${_formatValue(_gains.abs())}',
             accent: _gains >= 0 ? _green : _amber,
           ),
         ),
@@ -899,6 +905,8 @@ class _InvestorPortfolioScreenState
     }
     final apiClient = ref.read(apiClientProvider);
     return CachedNetworkImage(
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
       memCacheWidth: 1080,
       imageUrl: apiClient.resolveUrl(url),
       fit: BoxFit.cover,
@@ -1084,7 +1092,7 @@ class _InvestorPortfolioScreenState
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      '${gains >= 0 ? '+' : '-'}${_formatValue(gains.abs())}',
+                                      '${_hideAmounts ? '' : (gains >= 0 ? '+' : '-')}${_formatValue(gains.abs())}',
                                       style: GoogleFonts.gelasio(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w700,
@@ -1379,21 +1387,15 @@ class _InvestorPortfolioScreenState
 
   String? _firstImage(dynamic holding) {
     if (holding is! Map) return null;
-    final candidates = [
-      holding['image'],
-      holding['coverImage'],
-      holding['thumbnail'],
-    ];
+    // The project's Master Image (`heroImage`) leads. The old `coverImage` /
+    // `thumbnail` fields held demo stock photos and have been removed.
+    final candidates = [holding['heroImage'], holding['image']];
     for (final c in candidates) {
       if (c is String && c.isNotEmpty) return c;
     }
     final project = holding['project'];
     if (project is Map) {
-      final pc = [
-        project['coverImage'],
-        project['image'],
-        project['thumbnail'],
-      ];
+      final pc = [project['heroImage'], project['image']];
       for (final c in pc) {
         if (c is String && c.isNotEmpty) return c;
       }
@@ -1416,6 +1418,8 @@ class _InvestorPortfolioScreenState
   }
 
   String _formatValue(double value) {
+    // Hidden whatever the value, so even a zero isn't revealed.
+    if (_hideAmounts) return 'AED $kHiddenAmount';
     if (value <= 0) return 'AED --';
     return 'AED ${NumberFormat('#,##,###').format(value)}';
   }

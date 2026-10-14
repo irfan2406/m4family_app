@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
@@ -33,6 +34,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
     try {
       final api = ref.read(apiClientProvider);
       final res = await api.getContent('blog', role: 'cp');
+      if (!mounted) return;
       if (res.statusCode == 200) {
         setState(() {
           _items = res.data['data'] ?? [];
@@ -41,12 +43,18 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
       }
     } catch (e) {
       debugPrint('Failed to load blog posts: $e');
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.content},
+      _fetchBlogPosts,
+    );
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLight = !isDark;
     final scheme = Theme.of(context).colorScheme;
@@ -283,6 +291,8 @@ class _BlogCard extends ConsumerWidget {
                     width: 120,
                     height: 67.5,
                     child: CachedNetworkImage(
+                      fadeInDuration: Duration.zero,
+                      fadeOutDuration: Duration.zero,
                       memCacheWidth: 1080,
                       imageUrl: imageUrl,
                       fit: BoxFit.cover,

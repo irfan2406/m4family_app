@@ -79,6 +79,14 @@ DateTime? _liveCatalogAt;
 /// still resolves instantly instead of downloading the multi-MB payload twice.
 const Duration _catalogFreshFor = Duration(seconds: 20);
 
+/// Forgets the memoised catalog so the next read of [projectsProvider] goes
+/// back to the network. Live sync calls this when the server reports that the
+/// catalog changed, so the refresh can't be served the pre-change copy.
+void forgetCatalogMemo() {
+  _liveCatalog = null;
+  _liveCatalogAt = null;
+}
+
 final projectsProvider = FutureProvider<List<dynamic>>((ref) async {
   final apiClient = ref.watch(apiClientProvider);
 

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/custom_views_provider.dart';
 import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/screens/investor/investor_relations_screen.dart';
@@ -290,11 +291,14 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                             () => _isCustomViewsOpen = !_isCustomViewsOpen,
                           ),
                           subItems: [
-                            _SidebarSubItem(
-                              icon: LucideIcons.sparkles,
-                              label: 'Custom Views',
-                              onTap: () => _go('/investor/custom-views'),
-                            ),
+                            // Hidden when Custom Views is off for investors; the
+                            // My Custom Views history stays available.
+                            if (!ref.watch(customViewsClosedProvider))
+                              _SidebarSubItem(
+                                icon: LucideIcons.sparkles,
+                                label: 'Custom Views',
+                                onTap: () => _go('/investor/custom-views'),
+                              ),
                             _SidebarSubItem(
                               icon: LucideIcons.star,
                               label: 'My Custom Views',

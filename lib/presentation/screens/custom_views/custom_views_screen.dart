@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +16,7 @@ import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CustomViewsScreen extends ConsumerStatefulWidget {
   const CustomViewsScreen({super.key});
@@ -104,6 +106,11 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
     } catch (e) {
       if (!mounted) return;
       messenger.hideCurrentSnackBar();
+      // 403 CUSTOM_VIEWS_CLOSED: the server has turned Custom Views off — re-read
+      // the config so the screen flips to the "not available" state.
+      if (isCustomViewsClosedError(e)) {
+        ref.invalidate(customizationPageProvider);
+      }
       messenger.showSnackBar(
         SnackBar(
           // Say what the server said, rather than one opaque line for every
@@ -125,7 +132,29 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
     // Web parity: auto-load the user's latest customization draft on entry so
     // project/unit/config resume seamlessly (web's fetchExistingCustomization).
     Future.microtask(_loadLatestCustomization);
+    // Admin Panel edits must show the next time this screen opens, so a copy
+    // fetched earlier in the session is re-read instead of reused. Checked
+    // here, before the first build loads anything: the very first open has
+    // nothing cached and just loads normally (no second fetch).
+    final cached =
+        ref.exists(customizationPageProvider) ||
+        ref.exists(customizationOptionsProvider) ||
+        ref.exists(customViewsConfigProvider);
+    if (cached) {
+      Future.microtask(() {
+        if (mounted) reloadCustomViewsData(ref);
+      });
+    }
   }
+
+  // Web parity: same hero asset web uses (custom_view_1.png).
+  Widget _bundledBanner(BuildContext context) => Image.asset(
+    'assets/custom_view_1.png',
+    fit: BoxFit.cover,
+    errorBuilder: (context, error, stackTrace) => Container(
+      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+    ),
+  );
 
   Future<void> _loadLatestCustomization() async {
     // Don't override an explicit context (e.g. entered from My Custom Views).
@@ -190,6 +219,18 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
   Widget build(BuildContext context) {
     final currentStep = ref.watch(customViewsStepProvider);
     const isSubmitted = false;
+    // In the customer shell this screen stays mounted (tab 6 of an
+    // IndexedStack), so initState runs once: reload each time the tab opens.
+    ref.listen<int>(navigationProvider, (previous, next) {
+      if (next == 6 && previous != 6) reloadCustomViewsData(ref);
+    });
+    // Admin Panel page copy and banner; empty until it loads or when unset,
+    // and the built-in copy is used in its place.
+    final pageAsync = ref.watch(customizationPageProvider);
+    final page = pageAsync.valueOrNull ?? CustomizationPageContent.empty;
+    // Admin Panel switches: hide everything behind a "not available" state when
+    // Custom Views is off for this user's role.
+    final closed = ref.watch(customViewsClosedProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -258,326 +299,393 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
               ),
             ),
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Banner Section (always visible, exactly as Web CP)
-                    SizedBox(
-                      height: 200,
-                      width: double.infinity,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          // Web parity: same hero asset web uses (custom_view_1.png).
-                          Image.asset(
-                            'assets/custom_view_1.png',
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Container(
+              // Switched off for this user (global / CP / investor): show the
+              // "not available" state instead of the whole screen.
+              child: closed
+                  ? _buildUnavailable(context)
+                  : RefreshIndicator(
+                // Pull down to re-read the Admin Panel's Custom Views data.
+                onRefresh: () => reloadCustomViewsData(ref),
+                child: SingleChildScrollView(
+                  // Pull-to-refresh works on short pages too.
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      // Intro (banner, title, subtitle, overview text, CTA) is
+                      // hidden when customization_is_visible is OFF.
+                      if (page.isVisible) ...[
+                      // Banner Section
+                      SizedBox(
+                        height: 200,
+                        width: double.infinity,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            // The Admin Panel banner (customization_hero_image).
+                            // The bundled hero stands in when none is set or it
+                            // fails to load; a plain tint covers the first load
+                            // so the bundled one doesn't flash before it.
+                            if (page.heroImage.isNotEmpty)
+                              CachedNetworkImage(
+                                imageUrl: page.heroImage,
+                                fit: BoxFit.cover,
+                                fadeInDuration: Duration.zero,
+                                fadeOutDuration: Duration.zero,
+                                placeholder: (context, url) => Container(
                                   color: Theme.of(context).colorScheme.onSurface
                                       .withValues(alpha: 0.05),
                                 ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Theme.of(context).scaffoldBackgroundColor
-                                      .withValues(alpha: 0.4),
-                                  Theme.of(context).scaffoldBackgroundColor,
-                                ],
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 16,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'PERSONALISE',
-                                    style: GoogleFonts.gelasio(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w400,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
-                                      letterSpacing: 6,
-                                      shadows: [
-                                        Shadow(
-                                          color:
-                                              Theme.of(context).brightness ==
-                                                  Brightness.light
-                                              ? Colors.white.withOpacity(0.5)
-                                              : const Color(
-                                                  0xFF0C312B,
-                                                ).withOpacity(0.5),
-                                          offset: const Offset(0, 1),
-                                          blurRadius: 4,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Text(
-                                    'YOUR LEGACY',
-                                    style: GoogleFonts.gelasio(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.w700,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
-                                      shadows: [
-                                        Shadow(
-                                          color:
-                                              Theme.of(context).brightness ==
-                                                  Brightness.light
-                                              ? Colors.white.withOpacity(0.5)
-                                              : const Color(
-                                                  0xFF0C312B,
-                                                ).withOpacity(0.5),
-                                          offset: const Offset(0, 1),
-                                          blurRadius: 4,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    width: 40,
-                                    height: 2,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Overview Section
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'OVERVIEW',
-                            style: GoogleFonts.gelasio(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 3,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Your home is a reflection of your soul. Experience total creative freedom in our Personalisation Suite. From master suites to bespoke kitchens, curate every detail of your future residence with real-time visualisation and elite material selections.',
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              height: 1.7,
-                              fontWeight: FontWeight.w500,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.75),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Journey Steps Track (4 steps with icons, exactly as Web CP)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _StepIconIndicator(
-                            index: 0,
-                            title: 'PROJECT &\nUNIT',
-                            icon: LucideIcons.building2,
-                          ),
-                          _StepIconIndicator(
-                            index: 1,
-                            title: 'SELECT\nSPACE',
-                            icon: LucideIcons.home,
-                          ),
-                          _StepIconIndicator(
-                            index: 2,
-                            title: 'CHOOSE\nMATERIALS',
-                            icon: LucideIcons.layers,
-                          ),
-                          _StepIconIndicator(
-                            index: 3,
-                            title: 'FINALISE',
-                            icon: LucideIcons.check,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Wizard Content Card
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      padding: const EdgeInsets.all(28),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color(0xFF141B3A)
-                            : Colors.white.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(40),
-                        border: Border.all(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.08),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.04),
-                            blurRadius: 24,
-                            offset: const Offset(0, 12),
-                          ),
-                        ],
-                      ),
-                      child: Consumer(
-                        builder: (context, ref, child) {
-                          final currentStepVal = ref.watch(
-                            customViewsStepProvider,
-                          );
-                          final activeStep = currentStepVal == -1
-                              ? 0
-                              : currentStepVal;
-                          // Web parity: when the unit is allotted by admin
-                          // (bookingId present), SELECT SPACE (step 1) is the
-                          // first usable step, so there is no BACK to the locked
-                          // ALLOTTED step.
-                          final bookingId = ref.watch(
-                            customViewsBookingIdProvider,
-                          );
-                          final minStep = bookingId != null ? 1 : 0;
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildStepWizardBody(activeStep),
-
-                              const SizedBox(height: 32),
-
-                              // Separator line before footer
+                                errorWidget: (context, url, error) =>
+                                    _bundledBanner(context),
+                              )
+                            else if (!pageAsync.hasValue)
                               Container(
-                                height: 1,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.08),
+                                color: Theme.of(context).colorScheme.onSurface
+                                    .withValues(alpha: 0.05),
+                              )
+                            else
+                              _bundledBanner(context),
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Theme.of(context).scaffoldBackgroundColor
+                                        .withValues(alpha: 0.4),
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                  ],
+                                ),
                               ),
-                              const SizedBox(height: 20),
-
-                              // Navigation Footer — web parity: NEXT centered on
-                              // top, BACK centered below (mobile flex-col-reverse).
-                              SizedBox(
-                                width: double.infinity,
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 16,
+                                ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
-                                  verticalDirection: VerticalDirection.up,
-                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    // Hidden entirely when the current step is
-                                    // the first usable one (web parity: no BACK
-                                    // on SELECT SPACE for an admin allotment).
-                                    if (activeStep > minStep) ...[
+                                    Text(
+                                      'PERSONALISE',
+                                      style: GoogleFonts.gelasio(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w400,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                        letterSpacing: 6,
+                                        shadows: [
+                                          Shadow(
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                    Brightness.light
+                                                ? Colors.white.withOpacity(0.5)
+                                                : const Color(
+                                                    0xFF0C312B,
+                                                  ).withOpacity(0.5),
+                                            offset: const Offset(0, 1),
+                                            blurRadius: 4,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // Admin Panel page title
+                                    // (customization_hero_title); a longer
+                                    // title is set smaller so it fits the
+                                    // banner.
+                                    Text(
+                                      page.title.isNotEmpty
+                                          ? page.title.toUpperCase()
+                                          : 'YOUR LEGACY',
+                                      textAlign: TextAlign.center,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.gelasio(
+                                        fontSize: page.title.length > 16
+                                            ? 20
+                                            : 28,
+                                        fontWeight: FontWeight.w700,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                        shadows: [
+                                          Shadow(
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                    Brightness.light
+                                                ? Colors.white.withOpacity(0.5)
+                                                : const Color(
+                                                    0xFF0C312B,
+                                                  ).withOpacity(0.5),
+                                            offset: const Offset(0, 1),
+                                            blurRadius: 4,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // Admin Panel subtitle
+                                    // (customization_hero_subtitle), under title.
+                                    if (page.subtitle.isNotEmpty) ...[
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        page.subtitle,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 1,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withValues(alpha: 0.8),
+                                        ),
+                                      ),
+                                    ],
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      width: 40,
+                                      height: 2,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Overview Section
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'OVERVIEW',
+                              style: GoogleFonts.gelasio(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 3,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              // Admin Panel page text (customization_description).
+                              page.description.isNotEmpty
+                                  ? page.description
+                                  : 'Your home is a reflection of your soul. Experience total creative freedom in our Personalisation Suite. From master suites to bespoke kitchens, curate every detail of your future residence with real-time visualisation and elite material selections.',
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                height: 1.7,
+                                fontWeight: FontWeight.w500,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.75),
+                              ),
+                            ),
+                            // Admin Panel CTA (customization_cta_text / _link).
+                            if (page.ctaText.isNotEmpty) ...[
+                              const SizedBox(height: 20),
+                              _ctaButton(context, page),
+                            ],
+                          ],
+                        ),
+                      ),
+                      ],
+
+                      const SizedBox(height: 24),
+
+                      // Journey Steps Track (4 steps with icons, exactly as Web CP)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _StepIconIndicator(
+                              index: 0,
+                              title: 'PROJECT &\nUNIT',
+                              icon: LucideIcons.building2,
+                            ),
+                            _StepIconIndicator(
+                              index: 1,
+                              title: 'SELECT\nSPACE',
+                              icon: LucideIcons.home,
+                            ),
+                            _StepIconIndicator(
+                              index: 2,
+                              title: 'CHOOSE\nMATERIALS',
+                              icon: LucideIcons.layers,
+                            ),
+                            _StepIconIndicator(
+                              index: 3,
+                              title: 'FINALISE',
+                              icon: LucideIcons.check,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Wizard Content Card
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.all(28),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF141B3A)
+                              : Colors.white.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(40),
+                          border: Border.all(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.08),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.04),
+                              blurRadius: 24,
+                              offset: const Offset(0, 12),
+                            ),
+                          ],
+                        ),
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            final currentStepVal = ref.watch(
+                              customViewsStepProvider,
+                            );
+                            final activeStep = currentStepVal == -1
+                                ? 0
+                                : currentStepVal;
+                            // Web parity: when the unit is allotted by admin
+                            // (bookingId present), SELECT SPACE (step 1) is the
+                            // first usable step, so there is no BACK to the locked
+                            // ALLOTTED step.
+                            final bookingId = ref.watch(
+                              customViewsBookingIdProvider,
+                            );
+                            final minStep = bookingId != null ? 1 : 0;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildStepWizardBody(activeStep),
+
+                                const SizedBox(height: 32),
+
+                                // Separator line before footer
+                                Container(
+                                  height: 1,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withValues(alpha: 0.08),
+                                ),
+                                const SizedBox(height: 20),
+
+                                // Navigation Footer — web parity: NEXT centered on
+                                // top, BACK centered below (mobile flex-col-reverse).
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    verticalDirection: VerticalDirection.up,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // Hidden entirely when the current step is
+                                      // the first usable one (web parity: no BACK
+                                      // on SELECT SPACE for an admin allotment).
+                                      if (activeStep > minStep) ...[
+                                        GestureDetector(
+                                          onTap: () =>
+                                              ref
+                                                      .read(
+                                                        customViewsStepProvider
+                                                            .notifier,
+                                                      )
+                                                      .state =
+                                                  activeStep - 1,
+                                          child: Text(
+                                            'BACK',
+                                            style: GoogleFonts.gelasio(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w700,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface
+                                                  .withValues(alpha: 0.75),
+                                              letterSpacing: 2,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 18),
+                                      ],
                                       GestureDetector(
-                                        onTap: () =>
+                                        onTap: () {
+                                          if (activeStep < 3) {
                                             ref
                                                     .read(
                                                       customViewsStepProvider
                                                           .notifier,
                                                     )
                                                     .state =
-                                                activeStep - 1,
-                                        child: Text(
-                                          'BACK',
-                                          style: GoogleFonts.gelasio(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w700,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface
-                                                .withValues(alpha: 0.75),
-                                            letterSpacing: 2,
+                                                activeStep + 1;
+                                            return;
+                                          }
+                                          _confirmSelections();
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 32,
+                                            vertical: 14,
                                           ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 18),
-                                    ],
-                                    GestureDetector(
-                                      onTap: () {
-                                        if (activeStep < 3) {
-                                          ref
-                                                  .read(
-                                                    customViewsStepProvider
-                                                        .notifier,
-                                                  )
-                                                  .state =
-                                              activeStep + 1;
-                                          return;
-                                        }
-                                        _confirmSelections();
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 32,
-                                          vertical: 14,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onSurface,
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          activeStep < 3
-                                              ? 'NEXT STEP'
-                                              : (_saving
-                                                    ? 'SAVING…'
-                                                    : 'CONFIRM SELECTIONS'),
-                                          style: GoogleFonts.gelasio(
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w700,
+                                          decoration: BoxDecoration(
                                             color: Theme.of(
                                               context,
-                                            ).colorScheme.surface,
-                                            letterSpacing: 1.5,
+                                            ).colorScheme.onSurface,
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            activeStep < 3
+                                                ? 'NEXT STEP'
+                                                : (_saving
+                                                      ? 'SAVING…'
+                                                      : 'CONFIRM SELECTIONS'),
+                                            style: GoogleFonts.gelasio(
+                                              fontSize: 9,
+                                              fontWeight: FontWeight.w700,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.surface,
+                                              letterSpacing: 1.5,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          );
-                        },
+                              ],
+                            );
+                          },
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(height: 64),
-                  ],
+                      const SizedBox(height: 64),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -585,6 +693,94 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
         ),
       ),
     );
+  }
+
+  /// Shown when the Admin Panel has switched Custom Views off for this user
+  /// (globally, or for CP / investor accounts) — or when the server replies
+  /// 403 CUSTOM_VIEWS_CLOSED.
+  Widget _buildUnavailable(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(LucideIcons.lock, size: 40, color: onSurface.withValues(alpha: 0.4)),
+            const SizedBox(height: 20),
+            Text(
+              "Custom Views isn't available right now",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.gelasio(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: onSurface,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Please check back later.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                color: onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// The intro's main button (customization_cta_text).
+  Widget _ctaButton(BuildContext context, CustomizationPageContent page) {
+    return GestureDetector(
+      onTap: () => _onCta(context, page),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.onSurface,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          page.ctaText.toUpperCase(),
+          style: GoogleFonts.gelasio(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.5,
+            color: Theme.of(context).colorScheme.surface,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _onCta(
+    BuildContext context,
+    CustomizationPageContent page,
+  ) async {
+    final link = page.ctaLink.trim();
+    // Any real external link just opens.
+    if (link.startsWith('http')) {
+      final uri = Uri.tryParse(link);
+      if (uri != null && await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+      return;
+    }
+    // "/custom-views" (or empty) stays on this screen: users who can customise
+    // (an admin-allotted unit / a project context) begin the wizard; everyone
+    // else gets the enquiry form.
+    final canCustomise =
+        ref.read(customViewsBookingIdProvider) != null ||
+        (ref.read(customViewsProjectProvider)?.isNotEmpty ?? false);
+    if (canCustomise) {
+      ref.read(customViewsStepProvider.notifier).state = 1;
+    } else if (context.mounted) {
+      _ConsultationSection._showConsultationDialog(context, ref);
+    }
   }
 
   Widget _buildStepWizardBody(int step) {
@@ -1609,9 +1805,22 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                                     opt['colorCode'],
                                                   ),
                                                 )
-                                              : opt['image'] != null
+                                              // An empty image gets the
+                                              // placeholder below; an
+                                              // /uploads path is resolved
+                                              // against the API host.
+                                              : (opt['image'] ?? '')
+                                                    .toString()
+                                                    .trim()
+                                                    .isNotEmpty
                                               ? Image.network(
-                                                  opt['image'],
+                                                  ref
+                                                      .read(apiClientProvider)
+                                                      .resolveUrl(
+                                                        opt['image']
+                                                            .toString()
+                                                            .trim(),
+                                                      ),
                                                   fit: BoxFit.cover,
                                                   errorBuilder:
                                                       (
@@ -2163,7 +2372,7 @@ class _PremiumMaterialsSection extends StatelessWidget {
 class _ConsultationSection extends ConsumerWidget {
   const _ConsultationSection();
 
-  void _showConsultationDialog(BuildContext context, WidgetRef ref) {
+  static void _showConsultationDialog(BuildContext context, WidgetRef ref) {
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     final emailController = TextEditingController();
@@ -2277,13 +2486,20 @@ class _ConsultationSection extends ConsumerWidget {
                           setState(() => isLoading = true);
                           try {
                             final apiClient = ref.read(apiClientProvider);
+                            // Backend spec for the Custom Views enquiry lead:
+                            // project / interest / source / status are fixed
+                            // values; email is optional (omitted when blank).
+                            final email = emailController.text.trim();
                             await apiClient.submitLead({
-                              'name': nameController.text,
-                              'phone': phoneController.text,
-                              'email': emailController.text,
+                              'name': nameController.text.trim(),
+                              'phone': phoneController.text.trim(),
+                              if (email.isNotEmpty) 'email': email,
+                              'project': 'Custom View Interest',
+                              'interest': 'General Enquiry',
                               // Server-side enum: source = online | cp |
                               // walk-in | referral | other.
                               'source': 'online',
+                              'status': 'NEW',
                             });
 
                             if (context.mounted) {
@@ -2365,7 +2581,7 @@ class _ConsultationSection extends ConsumerWidget {
     );
   }
 
-  Widget _buildField(
+  static Widget _buildField(
     BuildContext context,
     String label,
     IconData icon,

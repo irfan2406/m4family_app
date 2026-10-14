@@ -1,6 +1,8 @@
+import 'package:m4_mobile/presentation/widgets/article_text.dart';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/utils/external_link.dart';
 import 'package:flutter/services.dart';
@@ -145,6 +147,14 @@ class _GuestProjectDetailScreenState
             }
             _isLoading = false;
           });
+          // Download AND decode the amenity icons now, so the Amenities grid
+          // draws them all in its first frame instead of popping them in.
+          precacheAmenityIcons(
+            context,
+            ((_fullProject?['amenities'] as List?) ?? const []).map(
+              _amenityIconUrl,
+            ),
+          );
         })
         .catchError((_) {
           if (mounted) setState(() => _isLoading = false);
@@ -1069,6 +1079,8 @@ class _GuestProjectDetailScreenState
                               filterQuality: FilterQuality.high,
                             )
                           : CachedNetworkImage(
+                              fadeInDuration: Duration.zero,
+                              fadeOutDuration: Duration.zero,
                               memCacheWidth: 1080,
                               imageUrl: apiClient.resolveUrl(raw),
                               fit: BoxFit.contain,
@@ -1181,6 +1193,12 @@ class _GuestProjectDetailScreenState
 
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.catalog, SyncTopic.amenities},
+      _fetchProjectData,
+    );
     final project = _fullProject ?? widget.projectData;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final apiClient = ref.read(apiClientProvider);
@@ -1233,10 +1251,19 @@ class _GuestProjectDetailScreenState
                                 project?['virtualTour'])
                             ?.toString() ??
                         '';
+                    // The 360° tour is for logged-in users only.
+                    final loggedIn = ref.watch(
+                      authProvider.select(
+                        (s) => s.status == AuthStatus.authenticated,
+                      ),
+                    );
 
-                    // Web parity: the 360° VIEW tile always shows (even for a
-                    // completed project with no tour link, e.g. Ocean View),
-                    // so the quick-access row is always rendered.
+                    // The 360° VIEW tile is not offered in the guest portal:
+                    // it shows only to a logged-in user. A guest with no
+                    // exterior/interior photos gets no row (and no gap).
+                    if (!loggedIn && !hasExterior && !hasInterior) {
+                      return const SizedBox.shrink();
+                    }
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -1272,18 +1299,26 @@ class _GuestProjectDetailScreenState
                                   onTap: () =>
                                       _openHeroGallery(_interiorImages),
                                 ),
-                              // Web parity: the 360° VIEW tile always shows;
-                              // taps open the tour when the backend has one,
-                              // else a "coming soon" toast.
-                              _HeroMediaThumb(
-                                label: '360° VIEW',
-                                isVR: true,
-                                onTap: () => tour.isNotEmpty
-                                    ? _launchExternalLink(tour, label: 'virtual tour')
-                                    : _launchAction(
+                              // 360° VIEW: logged-in users only (removed from
+                              // the guest portal). Taps open the tour when the
+                              // backend has one, else a "coming soon" toast.
+                              if (loggedIn)
+                                _HeroMediaThumb(
+                                  label: '360° VIEW',
+                                  isVR: true,
+                                  onTap: () {
+                                    if (tour.isEmpty) {
+                                      _launchAction(
                                         '360° Virtual Tour coming soon',
-                                      ),
-                              ),
+                                      );
+                                    } else {
+                                      _launchExternalLink(
+                                        tour,
+                                        label: 'virtual tour',
+                                      );
+                                    }
+                                  },
+                                ),
                             ],
                           ),
                         ),
@@ -1504,9 +1539,9 @@ class _GuestProjectDetailScreenState
     );
   }
 
-  String _resolveHeroUrl(dynamic project) => ref
-      .read(apiClientProvider)
-      .resolveUrl(project?['heroImage'] ?? project?['coverImage']);
+  // The Project Master Image (`heroImage`).
+  String _resolveHeroUrl(dynamic project) =>
+      ref.read(apiClientProvider).resolveUrl(project?['heroImage']);
 
   /// Hero image that also understands inline base64 `data:` URIs (e.g.
   /// Cledor's heroImage) — CachedNetworkImage can only fetch network URLs.
@@ -1550,9 +1585,8 @@ class _GuestProjectDetailScreenState
 
   Widget _buildHero(dynamic project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
-    final heroUrl = apiClient.resolveUrl(
-      project?['heroImage'] ?? project?['coverImage'],
-    );
+    // The Project Master Image (`heroImage`) is the banner.
+    final heroUrl = apiClient.resolveUrl(project?['heroImage']);
 
     return AspectRatio(
       aspectRatio: 16 / 9,
@@ -1646,6 +1680,11 @@ class _GuestProjectDetailScreenState
 
   Widget _buildOverviewSection(dynamic project) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // The walkthrough video and the 360° tour are for logged-in users only:
+    // neither card is shown in the guest portal.
+    final loggedIn = ref.watch(
+      authProvider.select((s) => s.status == AuthStatus.authenticated),
+    );
     // 360° tour link from the backend; the card shows only when it exists.
     final tour =
         (project?['threeSixtyUrl'] ??
@@ -1669,11 +1708,10 @@ class _GuestProjectDetailScreenState
         children: [
           _buildSectionHeader('Overview'),
           const SizedBox(height: 24),
-          Text(
-            // The project's own copy, the way the web shows it. This was a
-            // fixed sentence that ignored the record; it now only stands in
-            // for a project with no description at all.
-            (project?['description']?.toString().trim().isNotEmpty ?? false)
+          // Justified article copy; collapses past 4 lines behind Read more.
+          ArticleText(
+            text:
+                (project?['description']?.toString().trim().isNotEmpty ?? false)
                 ? project['description'].toString().trim().toUpperCase()
                 : 'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
             style: GoogleFonts.inter(
@@ -1685,39 +1723,28 @@ class _GuestProjectDetailScreenState
               height: 1.6,
               letterSpacing: 0.5,
             ),
+            linkColor: isDark ? Colors.white : const Color(0xFF155A4F),
           ),
           // Web parity: WALKTHROUGH VIDEO card — only when the backend carries a
           // walkthrough/video link (e.g. Clédor); app colours (not web blue).
-          if (walkthrough.isNotEmpty) ...[
+          if (loggedIn && walkthrough.isNotEmpty) ...[
             const SizedBox(height: 32),
             _WalkthroughVideoCard(
               isDark: isDark,
-              onWatch: () =>
-                  _launchExternalLink(walkthrough, label: 'walkthrough video'),
+              onWatch: () => _launchExternalLink(
+                walkthrough,
+                label: 'walkthrough video',
+              ),
             ),
           ],
           // Web parity: 360° VIRTUAL TOUR card — only when the backend carries a
           // tour link (hidden otherwise, e.g. completed projects); app colours.
-          // The tour is for logged-in users only: guests see "LOG IN TO VIEW"
-          // and the tap routes to login instead of opening the tour.
-          if (tour.isNotEmpty) ...[
+          if (loggedIn && tour.isNotEmpty) ...[
             SizedBox(height: walkthrough.isNotEmpty ? 16 : 32),
-            Builder(
-              builder: (context) {
-                final loggedIn = ref.watch(
-                  authProvider.select(
-                    (s) => s.status == AuthStatus.authenticated,
-                  ),
-                );
-                return _VirtualTourCard(
-                  isDark: isDark,
-                  locked: !loggedIn,
-                  onExplore: loggedIn
-                      ? () =>
-                            _launchExternalLink(tour, label: 'virtual tour')
-                      : () => context.go('/login'),
-                );
-              },
+            _VirtualTourCard(
+              isDark: isDark,
+              onExplore: () =>
+                  _launchExternalLink(tour, label: 'virtual tour'),
             ),
           ],
         ],
@@ -1891,13 +1918,10 @@ class _GuestProjectDetailScreenState
                         ? (amenity['name']?.toString() ?? 'Amenity')
                         : amenity.toString(),
                     iconUrl: _amenityIconUrl(amenity),
-                    size: 34,
-                    // Gold washes out on the cream light surface, so draw the
-                    // icon in the section's dark green in light mode; keep gold
-                    // on the dark (navy) surface where it reads well.
-                    color: isDark
-                        ? kAmenityGold
-                        : const Color(0xFF0C312B),
+                    // Same size, weight and colour in every portal.
+                    size: kAmenityGridIconSize,
+                    emphasized: true,
+                    color: amenityGridIconColor(isDark),
                     fallbackAsset: (amenity is Map
                                     ? (amenity['name']?.toString() ?? '')
                                     : amenity.toString())
@@ -2898,16 +2922,21 @@ class _WalkthroughVideoCard extends StatelessWidget {
                 color: isDark ? Colors.white : const Color(0xFF0C312B),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
-                'WATCH VIDEO',
-                style: GoogleFonts.inter(
-                  fontSize: 7.5,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? const Color(0xFF0C312B)
-                      : const Color(0xFFF4EFE3),
-                  letterSpacing: 1.0,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'WATCH VIDEO',
+                    style: GoogleFonts.inter(
+                      fontSize: 7.5,
+                      fontWeight: FontWeight.w600,
+                      color: isDark
+                          ? const Color(0xFF0C312B)
+                          : const Color(0xFFF4EFE3),
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -2923,14 +2952,7 @@ class _WalkthroughVideoCard extends StatelessWidget {
 class _VirtualTourCard extends StatelessWidget {
   final bool isDark;
   final VoidCallback onExplore;
-  // Guests can't open the 360° tour (logged-in only): show "LOG IN TO VIEW"
-  // and route the tap to login instead of launching the tour.
-  final bool locked;
-  const _VirtualTourCard({
-    required this.isDark,
-    required this.onExplore,
-    this.locked = false,
-  });
+  const _VirtualTourCard({required this.isDark, required this.onExplore});
 
   @override
   Widget build(BuildContext context) {
@@ -3008,18 +3030,8 @@ class _VirtualTourCard extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (locked) ...[
-                    Icon(
-                      LucideIcons.lock,
-                      size: 9,
-                      color: isDark
-                          ? const Color(0xFF0C312B)
-                          : const Color(0xFFF4EFE3),
-                    ),
-                    const SizedBox(width: 5),
-                  ],
                   Text(
-                    locked ? 'LOG IN TO VIEW' : 'EXPLORE 360°',
+                    'EXPLORE 360°',
                     style: GoogleFonts.inter(
                       fontSize: 7.5,
                       fontWeight: FontWeight.w600,
@@ -3372,6 +3384,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                                     fit: fitForMediaUrl(imageUrl),
                                                   )
                                                 : CachedNetworkImage(
+                                                    fadeInDuration: Duration.zero,
+                                                    fadeOutDuration: Duration.zero,
                                                     memCacheWidth: 1080,
                                                     imageUrl: imageUrl,
                                                     width: double.infinity,
@@ -3993,7 +4007,6 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
     final project = widget.project;
     final hero = mediaUrlOf(project['heroImage']);
     if (hero.isNotEmpty) imgs.add(hero);
-    imgs.addAll(mediaUrlList(project['heroImages']));
     imgs.addAll(mediaUrlList(project['images']));
     imgs.addAll(mediaUrlList(project['exteriorImages']));
     imgs.addAll(mediaUrlList(project['interiorImages']));

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/privacy_mode_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -9,7 +10,7 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 /// Investor settings — parity with web `app/investor/settings/page.tsx`
-/// (profile fields name/email/phone + save, biometric / notifications /
+/// (profile fields name/email/phone + save, notifications /
 /// privacy-mode toggles, sign-out-all-devices). Follows M4 conventions.
 class InvestorSettingsScreen extends ConsumerStatefulWidget {
   const InvestorSettingsScreen({super.key});
@@ -29,7 +30,6 @@ class _InvestorSettingsScreenState
   final _phoneController = TextEditingController();
   String _email = '';
 
-  bool _biometric = true;
   bool _notifications = true;
   bool _privacyMode = false;
 
@@ -71,19 +71,25 @@ class _InvestorSettingsScreenState
       }();
       _applyUser(user);
 
+      // Privacy mode is also kept on this device (it masks figures at once and
+      // survives a preferences endpoint that can't be read back): start there.
+      if (mounted) _privacyMode = ref.read(privacyModeProvider);
       // Load saved preferences (best-effort — defaults apply on failure).
       try {
         final prefRes = await apiClient.getMyPreferences();
         final prefBody = prefRes.data;
         if (prefBody is Map && prefBody['data'] is Map) {
           final prefs = Map<String, dynamic>.from(prefBody['data'] as Map);
-          _biometric =
-              prefs['biometricAccess'] ?? prefs['biometric'] ?? _biometric;
           _notifications =
               prefs['pushNotifications'] ??
               prefs['notifications'] ??
               _notifications;
-          _privacyMode = prefs['privacyMode'] ?? _privacyMode;
+          final serverPrivacy = prefs['privacyMode'];
+          if (serverPrivacy is bool && mounted) {
+            // The account's saved value wins; keep the device copy in step.
+            _privacyMode = serverPrivacy;
+            ref.read(privacyModeProvider.notifier).set(serverPrivacy);
+          }
         }
       } catch (_) {}
     } catch (_) {
@@ -127,24 +133,34 @@ class _InvestorSettingsScreenState
     } catch (_) {
       ok = false;
     }
+    // Privacy mode applies on this device straight away; the server copy below
+    // keeps it with the account.
+    ref.read(privacyModeProvider.notifier).set(_privacyMode);
+    // A failed preferences save used to be swallowed while the toast still
+    // said "updated"; it is now reported.
+    bool prefsOk = true;
     try {
-      await apiClient.updatePreferences({
-        'biometricAccess': _biometric,
+      final res = await apiClient.updatePreferences({
         'pushNotifications': _notifications,
         'privacyMode': _privacyMode,
       });
+      final body = res.data;
+      if (body is Map && body['status'] == false) prefsOk = false;
     } catch (_) {
-      // Preferences are best-effort; profile save success drives the toast.
+      prefsOk = false;
     }
     if (!mounted) return;
     setState(() => _saving = false);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: ok ? _gold : const Color(0xFFC65B46),
+        backgroundColor: ok && prefsOk ? _gold : const Color(0xFFC65B46),
         content: Text(
-          ok
+          !ok
+              ? 'Could not save changes. Try again.'
+              : prefsOk
               ? 'Preferences updated securely'
-              : 'Could not save changes. Try again.',
+              : 'Profile saved, but your notification and privacy settings '
+                    'could not be saved to your account. Try again.',
           style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w700,
@@ -325,17 +341,6 @@ class _InvestorSettingsScreenState
                     const SizedBox(height: 28),
                     _sectionLabel('SECURITY & ACCESS', muted),
                     const SizedBox(height: 16),
-                    _toggleTile(
-                      isDark,
-                      textPrimary,
-                      muted,
-                      icon: LucideIcons.smartphone,
-                      title: 'BIOMETRIC LOGIN',
-                      subtitle: 'FACE ID / TOUCH ID',
-                      value: _biometric,
-                      onChanged: (v) => setState(() => _biometric = v),
-                    ),
-                    const SizedBox(height: 12),
                     _toggleTile(
                       isDark,
                       textPrimary,

@@ -3,7 +3,9 @@ import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:m4_mobile/presentation/widgets/image_overlay_label.dart';
 import 'package:m4_mobile/presentation/widgets/m4_image.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/project_highlights.dart';
@@ -196,16 +198,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   /// stock Unsplash URLs while `heroImage` holds the admin's upload, so that
   /// order put a stock photo on the card and the real artwork in the catalog.
   ///
-  /// [idx] picks a slide for the rotating hero and is only honoured when the
-  /// project actually has a gallery; a card (idx 0) always resolves through
-  /// [projectHeroUrl], so the same project shows the admin's upload here and
-  /// in the catalog rather than the stock photo `heroImages` carries.
+  /// Always the Project Master Image via [projectHeroUrl]: the `heroImages`
+  /// gallery [idx] used to rotate through held demo stock photos and has
+  /// been removed from every project.
   String _projImg(dynamic p, int idx) {
     if (p is! Map) return '';
-    if (idx > 0) {
-      final gallery = mediaUrlList(p['heroImages']);
-      if (gallery.isNotEmpty) return gallery[idx % gallery.length];
-    }
     final hero = projectHeroUrl(p);
     // Backend-driven: no image -> empty so the renderer shows its placeholder.
     return hero.isNotEmpty ? hero : firstMediaUrl(p['images']);
@@ -220,12 +217,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final urls = <String>[];
     for (final p in _projects.take(4)) {
       if (p is! Map) continue;
-      final hero = (p['heroImage'] ?? '').toString().trim();
+      // The card shows the Project Master Image (`heroImage`) only.
+      final hero = projectHeroUrl(p);
       if (hero.isNotEmpty) urls.add(api.resolveUrl(hero));
-      final heroImages = p['heroImages'];
-      if (heroImages is List && heroImages.isNotEmpty) {
-        urls.add(api.resolveUrl(heroImages.first.toString()));
-      }
     }
     prewarmImages(urls);
   }
@@ -460,6 +454,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.catalog, SyncTopic.content, SyncTopic.communities},
+      () {
+        _fetchProjects();
+        _fetchUpdates();
+        _fetchCommunities();
+        _fetchMedia();
+      },
+    );
     final apiClient = ref.watch(apiClientProvider);
     // The hero reads the admin slider through [_adminHeroImage], which uses
     // ref.read so the cycling timer can call it too. Watch it here so the page
@@ -641,25 +646,27 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             Positioned(
                               top: 16,
                               right: 16,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.1),
+                              child: ImageOverlayLabel(
+                                builder: (label) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
                                   ),
-                                ),
-                                child: Text(
-                                  'ARTISTIC IMPRESSION',
-                                  style: GoogleFonts.gelasio(
-                                    color: Colors.white,
-                                    fontSize: 7,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 1.5,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.6),
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.1),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    label,
+                                    style: GoogleFonts.gelasio(
+                                      color: Colors.white,
+                                      fontSize: 7,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.5,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -959,7 +966,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         ),
                       ],
                     ),
-                    textAlign: TextAlign.justify,
+                    // Natural word spacing, deliberately not justified: on
+                    // a phone width justify stretched the word gaps wide.
                   ),
                 ],
               ),
@@ -1096,29 +1104,31 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     Positioned(
                                       top: 25,
                                       right: 25,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 14,
-                                          vertical: 8,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.4),
-                                          borderRadius: BorderRadius.circular(
-                                            10,
+                                      child: ImageOverlayLabel(
+                                        builder: (label) => Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 14,
+                                            vertical: 8,
                                           ),
-                                          border: Border.all(
-                                            color: Colors.white.withOpacity(
-                                              0.1,
+                                          decoration: BoxDecoration(
+                                            color: Colors.black.withOpacity(0.4),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                            border: Border.all(
+                                              color: Colors.white.withOpacity(
+                                                0.1,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        child: Text(
-                                          'ARTISTIC IMPRESSION',
-                                          style: GoogleFonts.gelasio(
-                                            color: Colors.white,
-                                            fontSize: 8,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 1.5,
+                                          child: Text(
+                                            label,
+                                            style: GoogleFonts.gelasio(
+                                              color: Colors.white,
+                                              fontSize: 8,
+                                              fontWeight: FontWeight.w700,
+                                              letterSpacing: 1.5,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -2493,6 +2503,8 @@ class _UpdateCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(25),
               child: CachedNetworkImage(
+                fadeInDuration: Duration.zero,
+                fadeOutDuration: Duration.zero,
                 memCacheWidth: 1080,
                 imageUrl: imageUrl,
                 height: 120,

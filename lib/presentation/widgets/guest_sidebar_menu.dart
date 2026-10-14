@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:m4_mobile/presentation/providers/custom_views_provider.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
@@ -296,12 +297,14 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                             ],
                           ),
 
-                          _MenuItem(
-                            label: 'Custom Views',
-                            icon: LucideIcons.sparkles,
-                            isActive: currentPath == '/custom-views',
-                            onTap: () => context.push('/custom-views'),
-                          ),
+                          // Hidden when Admin Panel switches Custom Views off.
+                          if (!ref.watch(customViewsClosedProvider))
+                            _MenuItem(
+                              label: 'Custom Views',
+                              icon: LucideIcons.sparkles,
+                              isActive: currentPath == '/custom-views',
+                              onTap: () => context.push('/custom-views'),
+                            ),
                           _MenuItem(
                             label: 'Who We Are',
                             icon: LucideIcons.info,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/privacy_mode_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -19,6 +20,9 @@ class InvestorPaymentsScreen extends ConsumerStatefulWidget {
 
 class _InvestorPaymentsScreenState
     extends ConsumerState<InvestorPaymentsScreen> {
+  // Privacy mode (Settings → Mask sensitive values) hides money figures.
+  bool get _hideAmounts => ref.read(privacyModeProvider);
+
   static const _gold = Color(0xFFC5A35B);
   static const _green = Color(0xFF163A2C);
 
@@ -91,6 +95,8 @@ class _InvestorPaymentsScreenState
   }
 
   String _formatAmount(num value) {
+    // No sign either: callers add the currency label around it.
+    if (_hideAmounts) return kHiddenAmount;
     final whole = value.round();
     final str = whole.abs().toString();
     final buf = StringBuffer();
@@ -146,6 +152,8 @@ class _InvestorPaymentsScreenState
 
   @override
   Widget build(BuildContext context) {
+    // Redraw with figures hidden or shown when privacy mode changes.
+    ref.watch(privacyModeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
@@ -493,7 +501,7 @@ class _InvestorPaymentsScreenState
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '${isIn ? '+' : ''}AED ${_formatAmount(amount)}',
+                '${isIn && !_hideAmounts ? '+' : ''}AED ${_formatAmount(amount)}',
                 style: GoogleFonts.inter(
                   color: isIn ? _green : textPrimary,
                   fontSize: 13,

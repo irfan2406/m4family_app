@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/article_text.dart';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -12,6 +13,7 @@ import 'package:dio/dio.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -155,8 +157,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     super.dispose();
   }
 
-  Future<void> _load() async {
-    setState(() => _loading = true);
+  /// [silent] refreshes in place (live sync) without the full-page spinner.
+  Future<void> _load({bool silent = false}) async {
+    if (!silent) setState(() => _loading = true);
     try {
       final api = ref.read(apiClientProvider);
       final res = await api.getProjectDetails(widget.projectId);
@@ -213,7 +216,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     } catch (_) {
       _project = widget.projectData;
     }
-    if (mounted) setState(() => _loading = false);
+    if (mounted) {
+      setState(() => _loading = false);
+      final amenities = _project?['amenities'];
+      // Download AND decode the amenity icons now, so the Amenities grid
+      // draws them all in its first frame instead of popping them in.
+      precacheAmenityIcons(
+        context,
+        (amenities is List ? amenities : const []).map(
+          _amenityIconUrlOf,
+        ),
+      );
+    }
   }
 
   int _overallProgressPct() {
@@ -250,14 +264,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   String _heroImage() {
     final p = _project ?? widget.projectData ?? {};
     final api = ref.read(apiClientProvider);
-    // Prefer a real uploaded image (/uploads or a data URI) over any stock /
-    // placeholder URL (e.g. unsplash) the record may carry in heroImages —
-    // web parity. heroImage is the dedicated upload field, so it comes first.
-    final candidates = <String>[
-      p['heroImage']?.toString() ?? '',
-      if (p['heroImages'] is List)
-        for (final h in (p['heroImages'] as List)) h?.toString() ?? '',
-    ];
+    // The Project Master Image (`heroImage`), when it is a real upload
+    // (/uploads or a data URI). The old `heroImages` field held demo stock
+    // photos and has been removed from every project.
+    final candidates = <String>[p['heroImage']?.toString() ?? ''];
     bool isReal(String u) =>
         u.isNotEmpty && (u.contains('/uploads/') || u.startsWith('data:'));
     final real = candidates.firstWhere(
@@ -892,6 +902,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.catalog, SyncTopic.amenities},
+      () => _load(silent: true),
+    );
     final scheme = Theme.of(context).colorScheme;
     // M4 deep green, not black, on the light surfaces.
     final accent = scheme.brightness == Brightness.light
@@ -1183,12 +1199,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         const SizedBox(height: 22),
                         _sectionTitle('Overview', scheme, accent),
                         const SizedBox(height: 12),
-                        Text(
-                          // The project's own copy, the way the web shows it.
-                          // This was a fixed sentence that ignored the record;
-                          // it now only stands in for a project with no
-                          // description at all.
-                          (p['description']?.toString().trim().isNotEmpty ??
+                        // Justified; collapses past 4 lines behind Read more.
+                        ArticleText(
+                          text:
+                              (p['description']?.toString().trim().isNotEmpty ??
                                   false)
                               ? p['description'].toString().trim().toUpperCase()
                               : 'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
@@ -1197,8 +1211,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             fontWeight: FontWeight.w700,
                             letterSpacing: -0.2,
                             color: scheme.onSurfaceVariant,
-                            height: 1.5,
+                            // Consistent body line spacing across all portals.
+                            height: 1.6,
                           ),
+                          linkColor: accent,
                         ),
                         ..._promoCards(p, scheme),
                         ..._assetRows(p, scheme),
@@ -1879,6 +1895,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     );
   }
 
+  // Resolved amenity icon URL, shared by the grid and the icon preload so the
+  // preloaded image is exactly the one the grid asks for.
+  String? _amenityIconUrlOf(dynamic raw) {
+    final iconRaw = raw is Map ? raw['icon']?.toString() : null;
+    if (iconRaw == null || iconRaw.isEmpty) return null;
+    return ref.read(apiClientProvider).resolveUrl(iconRaw);
+  }
+
   Widget _amenitiesGrid(Map<String, dynamic> p, ColorScheme scheme) {
     final am = p['amenities'];
     final rawList = am is List ? am : <dynamic>[];
@@ -1910,10 +1934,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             final name =
                 (raw is String ? raw : (raw is Map ? raw['name'] : raw))
                     .toString();
-            final iconRaw = raw is Map ? raw['icon']?.toString() : null;
-            final iconUrl = (iconRaw != null && iconRaw.isNotEmpty)
-                ? ref.read(apiClientProvider).resolveUrl(iconRaw)
-                : null;
+            final iconUrl = _amenityIconUrlOf(raw);
             // Web parity: gold, name-mapped LuxuryAmenityIcon + Title-case label.
             return SizedBox(
               width: itemWidth,
@@ -1923,15 +1944,15 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   LuxuryAmenityIcon(
                     name: name,
                     iconUrl: iconUrl,
-                    size: 44,
+                    // Same size, weight and colour in every portal.
+                    size: kAmenityGridIconSize,
+                    emphasized: true,
                     fallbackAsset: name.toUpperCase() == 'LOBBY'
                         ? 'assets/amenity_lobby.png'
                         : null,
-                    // Gold washes out on the cream light surface, so draw the
-                    // icon dark in light mode; keep gold on the dark surface.
-                    color: scheme.brightness == Brightness.dark
-                        ? kAmenityGold
-                        : const Color(0xFF0C312B),
+                    color: amenityGridIconColor(
+                      scheme.brightness == Brightness.dark,
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Text(

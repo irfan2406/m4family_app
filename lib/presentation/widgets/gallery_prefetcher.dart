@@ -41,7 +41,7 @@ class GalleryPrefetcher {
   int _walk = 0;
   int? _savedCacheBytes;
 
-  /// The provider a `CachedNetworkImage(imageUrl: url, memCacheWidth: w)` page
+  /// The provider a `CachedNetworkImage(fadeInDuration: Duration.zero, fadeOutDuration: Duration.zero, imageUrl: url, memCacheWidth: w)` page
   /// actually draws through: the network provider wrapped in a [ResizeImage].
   /// Precaching the bare network provider instead fills a different cache
   /// entry — a full-size decode the page never uses.

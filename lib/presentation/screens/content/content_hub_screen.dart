@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
@@ -36,11 +37,15 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
     }
   }
 
-  Future<void> _fetchContent() async {
-    setState(() {
-      _isLoading = true;
-      _items = []; // Clear old items to avoid stale UI
-    });
+  Future<void> _fetchContent({bool silent = false}) async {
+    // A silent (live-sync) refresh keeps the current items on screen until the
+    // new ones arrive, instead of clearing them behind a spinner.
+    if (!silent) {
+      setState(() {
+        _isLoading = true;
+        _items = []; // Clear old items to avoid stale UI
+      });
+    }
     try {
       final apiClient = ref.read(apiClientProvider);
       final authState = ref.read(authProvider);
@@ -136,6 +141,12 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.content},
+      () => _fetchContent(silent: true),
+    );
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final scheme = Theme.of(context).colorScheme;
 

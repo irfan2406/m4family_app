@@ -45,6 +45,21 @@ String mediaUrlOf(dynamic v) {
   return v.toString().trim();
 }
 
+/// The public media bucket the website loads uploads from. The API host's
+/// `/uploads/media/<file>` answers with a 302 redirect to `<bucket>/<file>`,
+/// so loading from here directly skips that round trip (backend guidance).
+const String kMediaBucketBase =
+    'https://pub-5a1384bd1cd04b29bc2523807d384a92.r2.dev/m4/';
+
+/// The direct bucket URL for an `/uploads/media/<file>` path, or '' for any
+/// other value (the caller then resolves it against the API host as before).
+String directUploadUrl(String path) {
+  const prefix = '/uploads/media/';
+  if (!path.startsWith(prefix)) return '';
+  final file = path.substring(prefix.length);
+  return file.isEmpty ? '' : '$kMediaBucketBase$file';
+}
+
 /// First non-empty media URL from [list] (entries may be strings or objects).
 String firstMediaUrl(dynamic list) {
   if (list is! List) return '';
@@ -93,14 +108,15 @@ bool isStockImageUrl(String url) {
       _stockImageHosts.any((h) => host.endsWith('.$h'));
 }
 
-/// The card image for a project, in the one order every portal must agree on.
+/// The card and banner image for a project, in the one order every portal
+/// must agree on.
 ///
-/// `heroImage` (SINGULAR) is what the catalog populates on every project and
-/// what the web card shows. `heroImages` (plural) is a gallery that only some
-/// projects carry, and when a screen reached for it first it rendered a
-/// different photo for the same project than the list did — the same tower
-/// showing as a sea view on one tab and a villa on another. The galleries are
-/// the fallback, never the first choice.
+/// `heroImage` is the Project Master Image the admin picks, and it is what
+/// project cards and banners show (backend). The old `bannerImage`,
+/// `coverImage`, `thumbnail` and `heroImages` fields held demo stock photos and
+/// have been removed from every project, so they are no longer read. The
+/// project's own galleries are only a fallback for a project with no master
+/// image.
 ///
 /// Returns '' when the project has no usable image, so the caller can render
 /// its branded placeholder rather than stock.
@@ -109,7 +125,6 @@ String projectHeroUrl(dynamic project) {
   final single = mediaUrlOf(project['heroImage']);
   if (single.isNotEmpty && !isStockImageUrl(single)) return single;
   for (final key in const [
-    'heroImages',
     'exteriorImages',
     'interiorImages',
     'media',
@@ -119,10 +134,8 @@ String projectHeroUrl(dynamic project) {
       if (!isStockImageUrl(candidate)) return candidate;
     }
   }
-  for (final key in const ['image', 'thumbnail', 'coverImage']) {
-    final s = mediaUrlOf(project[key]);
-    if (s.isNotEmpty && !isStockImageUrl(s)) return s;
-  }
+  final image = mediaUrlOf(project['image']);
+  if (image.isNotEmpty && !isStockImageUrl(image)) return image;
   // Nothing the admin uploaded: let the caller draw its branded placeholder
   // rather than dressing the card in a stock photo.
   return '';

@@ -13,6 +13,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/image_overlay_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_home_screen.dart';
@@ -446,6 +447,11 @@ Future<void> renderGolden(
         overrides: [
           apiClientProvider.overrideWithValue(_FakeApiClient()),
           projectsProvider.overrideWith((ref) async => _projects),
+          // The masters were recorded with Settings > Image Overlay switched
+          // on, so the scenes pin it on rather than depend on the fake config.
+          imageOverlayProvider.overrideWith(
+            (ref) async => const ImageOverlaySetting(enabled: true),
+          ),
           guestHomeCacheProvider.overrideWith(
             (ref) => const GuestHomeData(
               projects: _projects,

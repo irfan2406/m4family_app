@@ -1094,60 +1094,34 @@ class _RelationDropdown extends StatelessWidget {
     final selected = predefined.contains(value)
         ? value
         : (isCustom ? 'Other' : null);
+    final ink = isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0C312B);
 
-    return Container(
-      height: 50,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: isDark
-            ? const Color(0xFFF4EFE3).withValues(alpha: 0.03)
-            : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: (isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0C312B))
-              .withValues(alpha: 0.08),
+    // A menu anchored BELOW the field and as wide as it. The stock dropdown
+    // laid its menu over the selected row, so it opened on top of the dialog
+    // and hid the title and the fields above, and slabbed the selected row in
+    // the framework's default grey.
+    return LayoutBuilder(
+      builder: (context, constraints) => Theme(
+        data: Theme.of(context).copyWith(
+          // Press / hover feedback in the brand ink, not the default grey.
+          highlightColor: ink.withValues(alpha: 0.06),
+          splashColor: ink.withValues(alpha: 0.06),
+          hoverColor: ink.withValues(alpha: 0.04),
         ),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          isExpanded: true,
-          value: selected,
-          hint: Text(
-            'Select Relation',
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color:
-                  (isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0C312B))
-                      .withValues(alpha: 0.3),
-            ),
+        child: PopupMenuButton<String>(
+          tooltip: 'Select relation',
+          position: PopupMenuPosition.under,
+          offset: const Offset(0, 6),
+          constraints: BoxConstraints.tightFor(width: constraints.maxWidth),
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          surfaceTintColor: Colors.transparent,
+          // Same light lift as the app's other form menus (referral sheet).
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: ink.withValues(alpha: 0.08)),
           ),
-          icon: Icon(
-            LucideIcons.chevronDown,
-            size: 16,
-            color: (isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0C312B))
-                .withValues(alpha: 0.4),
-          ),
-          dropdownColor: isDark
-              ? const Color(0xFF141B3A)
-              : const Color(0xFFF4EFE3),
-          borderRadius: BorderRadius.circular(16),
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0C312B),
-          ),
-          items: [
-            ...predefined.map(
-              (p) => DropdownMenuItem(value: p, child: Text(p)),
-            ),
-            const DropdownMenuItem(
-              value: 'Other',
-              child: Text('Other / Custom'),
-            ),
-          ],
-          onChanged: (val) {
-            if (val == null) return;
+          onSelected: (val) {
             if (val == 'Other') {
               // Clear so custom input becomes visible; keep empty until typed.
               onChanged(isCustom ? value : '');
@@ -1155,7 +1129,97 @@ class _RelationDropdown extends StatelessWidget {
               onChanged(val);
             }
           },
+          itemBuilder: (context) => [
+            for (final option in [...predefined, 'Other'])
+              PopupMenuItem<String>(
+                value: option,
+                height: 48,
+                padding: EdgeInsets.zero,
+                child: _RelationOption(
+                  label: option == 'Other' ? 'Other / Custom' : option,
+                  selected: option == selected,
+                  ink: ink,
+                ),
+              ),
+          ],
+          child: Container(
+            height: 50,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xFFF4EFE3).withValues(alpha: 0.03)
+                  : const Color(0xFFF4EFE3),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: ink.withValues(alpha: 0.08)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    selected == null
+                        ? 'Select Relation'
+                        : (selected == 'Other' ? 'Other / Custom' : selected),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: selected == null
+                        ? GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: ink.withValues(alpha: 0.3),
+                          )
+                        : GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: ink,
+                          ),
+                  ),
+                ),
+                Icon(
+                  LucideIcons.chevronDown,
+                  size: 16,
+                  color: ink.withValues(alpha: 0.4),
+                ),
+              ],
+            ),
+          ),
         ),
+      ),
+    );
+  }
+}
+
+/// One row of the relation menu: the current relation is tinted and ticked.
+class _RelationOption extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final Color ink;
+  const _RelationOption({
+    required this.label,
+    required this.selected,
+    required this.ink,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 48,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      color: selected ? ink.withValues(alpha: 0.06) : null,
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                color: ink,
+              ),
+            ),
+          ),
+          if (selected) Icon(LucideIcons.check, size: 16, color: ink),
+        ],
       ),
     );
   }

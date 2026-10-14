@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/privacy_mode_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -20,6 +21,9 @@ class InvestorTaxReportsScreen extends ConsumerStatefulWidget {
 
 class _InvestorTaxReportsScreenState
     extends ConsumerState<InvestorTaxReportsScreen> {
+  // Privacy mode (Settings → Mask sensitive values) hides money figures.
+  bool get _hideAmounts => ref.read(privacyModeProvider);
+
   static const Color _gold = Color(0xFFC5A35B);
 
   List<dynamic> _rows = [];
@@ -109,6 +113,8 @@ class _InvestorTaxReportsScreenState
 
   @override
   Widget build(BuildContext context) {
+    // Redraw with figures hidden or shown when privacy mode changes.
+    ref.watch(privacyModeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : const Color(0xFF0C312B);
@@ -338,7 +344,7 @@ class _InvestorTaxReportsScreenState
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      fmt.format(total),
+                      _hideAmounts ? '₹ $kHiddenAmount' : fmt.format(total),
                       style: GoogleFonts.gelasio(
                         fontSize: 36,
                         fontWeight: FontWeight.w700,

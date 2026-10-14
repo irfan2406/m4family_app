@@ -350,6 +350,8 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                   ),
                   child: hasPhoto
                       ? CachedNetworkImage(
+                          fadeInDuration: Duration.zero,
+                          fadeOutDuration: Duration.zero,
                           imageUrl: avatarUrl,
                           fit: BoxFit.cover,
                           memCacheWidth: 160,

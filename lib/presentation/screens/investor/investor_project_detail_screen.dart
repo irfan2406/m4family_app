@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/utils/external_link.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -18,6 +19,7 @@ import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/article_text.dart';
 import 'package:m4_mobile/presentation/widgets/gallery_prefetcher.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
@@ -149,6 +151,14 @@ class _InvestorProjectDetailScreenState
         _isLoading = false;
         _hasError = _project == null;
       });
+      // Download AND decode the amenity icons now, so the Amenities grid
+      // draws them all in its first frame instead of popping them in.
+      precacheAmenityIcons(
+        context,
+        ((_project?['amenities'] as List?) ?? const []).map(
+          _investorAmenityIconUrl,
+        ),
+      );
     } catch (_) {
       if (mounted) {
         setState(() {
@@ -807,6 +817,8 @@ class _InvestorProjectDetailScreenState
               itemBuilder: (context, index) => Center(
                 child: InteractiveViewer(
                   child: CachedNetworkImage(
+                    fadeInDuration: Duration.zero,
+                    fadeOutDuration: Duration.zero,
                     memCacheWidth: 1080,
                     imageUrl: apiClient.resolveUrl(urls[index]),
                     fit: BoxFit.contain,
@@ -854,6 +866,12 @@ class _InvestorProjectDetailScreenState
   // ─── Build ───────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.catalog, SyncTopic.amenities},
+      _fetchProject,
+    );
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
 
@@ -971,8 +989,6 @@ class _InvestorProjectDetailScreenState
             const SizedBox(height: 32),
             _buildConstructionSection(project, isDark),
             const SizedBox(height: 32),
-            _buildGallerySection(project, isDark),
-            const SizedBox(height: 32),
             _buildPaymentPlansSection(isDark),
             const SizedBox(height: 32),
             _buildInvestSection(project, isDark),
@@ -1016,6 +1032,8 @@ class _InvestorProjectDetailScreenState
         ? raw
         : ref.read(apiClientProvider).resolveUrl(raw);
     return CachedNetworkImage(
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
       memCacheWidth: 1080,
       imageUrl: url,
       fit: effFit,
@@ -1025,10 +1043,8 @@ class _InvestorProjectDetailScreenState
   }
 
   Widget _buildHero(Map<String, dynamic> project, bool isDark) {
-    final heroList = project['heroImages'] as List?;
-    final heroSrc = (heroList != null && heroList.isNotEmpty)
-        ? heroList.first.toString()
-        : (project['heroImage'] ?? project['coverImage'])?.toString();
+    // The Project Master Image (`heroImage`) is the banner.
+    final heroSrc = project['heroImage']?.toString();
     return AspectRatio(
       aspectRatio: 16 / 9,
       child: Stack(
@@ -1191,7 +1207,7 @@ class _InvestorProjectDetailScreenState
   Widget _buildMediaThumbs(Map<String, dynamic> project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
     final heroFallback = apiClient.resolveUrl(
-      (project['heroImage'] ?? project['coverImage'])?.toString(),
+      project['heroImage']?.toString(),
     );
     final threeSixty = project['threeSixtyUrl']?.toString();
 
@@ -1300,23 +1316,22 @@ class _InvestorProjectDetailScreenState
         children: [
           _sectionHeader('Overview', isDark),
           const SizedBox(height: 24),
-          Text(
-            (description != null && description.isNotEmpty
-                    ? description
-                    : 'Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation.')
-                .toUpperCase(),
-            // Web parity: overview copy is capped at 3 lines.
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
+          // Justified article copy; collapses past 4 lines behind Read more.
+          ArticleText(
+            text:
+                (description != null && description.isNotEmpty
+                        ? description
+                        : 'Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation.')
+                    .toUpperCase(),
             style: GoogleFonts.inter(
-              // Was the legacy gold accent (low contrast). High-contrast dark,
-              // a touch larger, so the overview copy reads clearly.
               fontSize: 12.5,
               color: isDark ? Colors.white : const Color(0xFF155A4F),
               fontWeight: FontWeight.w500,
-              height: 1.65,
+              // Consistent body line spacing across all portals.
+              height: 1.6,
               letterSpacing: 0.5,
             ),
+            linkColor: isDark ? Colors.white : const Color(0xFF155A4F),
           ),
           if (startingPrice != null &&
               startingPrice.isNotEmpty &&
@@ -1483,6 +1498,8 @@ class _InvestorProjectDetailScreenState
                       Expanded(
                         child: img != null && img.isNotEmpty
                             ? CachedNetworkImage(
+                                fadeInDuration: Duration.zero,
+                                fadeOutDuration: Duration.zero,
                                 memCacheWidth: 1080,
                                 imageUrl: apiClient.resolveUrl(img),
                                 width: double.infinity,
@@ -1595,8 +1612,6 @@ class _InvestorProjectDetailScreenState
             // with no card, outline, or badge behind the icon.
             Builder(
               builder: (context) {
-                final iconColor =
-                    isDark ? kAmenityGold : const Color(0xFF0C312B);
                 final cellW =
                     (MediaQuery.sizeOf(context).width - 48 - 20) / 3;
                 return Wrap(
@@ -1614,8 +1629,10 @@ class _InvestorProjectDetailScreenState
                                   ? (amenity['name']?.toString() ?? 'Amenity')
                                   : amenity.toString(),
                               iconUrl: _investorAmenityIconUrl(amenity),
-                              size: 40,
-                              color: iconColor,
+                              // Same size, weight and colour in every portal.
+                              size: kAmenityGridIconSize,
+                              emphasized: true,
+                              color: amenityGridIconColor(isDark),
                               fallbackAsset:
                                   (amenity is Map
                                               ? (amenity['name']?.toString() ??
@@ -1895,6 +1912,11 @@ class _InvestorProjectDetailScreenState
                   // card, right below the phase preview (not a separate section).
                   const SizedBox(height: 28),
                   _buildPhaseTrackingSection(isDark),
+                ] else ...[
+                  // No phases yet (e.g. a completed project such as OCEAN
+                  // VIEW): say so rather than leaving the card silent.
+                  const SizedBox(height: 32),
+                  _buildNoPhasesRecorded(isDark),
                 ],
               ],
             ),
@@ -1983,6 +2005,8 @@ class _InvestorProjectDetailScreenState
                       // PNG/SVG (logos) -> contain (full), JPEG (photos) -> cover.
                       ? Image.asset(imageUrl, fit: fitForMediaUrl(imageUrl))
                       : CachedNetworkImage(
+                          fadeInDuration: Duration.zero,
+                          fadeOutDuration: Duration.zero,
                           memCacheWidth: 1080,
                           imageUrl: imageUrl,
                           fit: fitForMediaUrl(imageUrl),
@@ -2112,6 +2136,31 @@ class _InvestorProjectDetailScreenState
   // Web parity (image 4 / CP properties): "PHASE TRACKING" summary — a header
   // with a milestone-count badge, then one card per phase showing index, name,
   // status and a progress bar.
+  /// Empty state for a project with no construction phases (same words as the
+  /// guest and customer project screens).
+  Widget _buildNoPhasesRecorded(bool isDark) {
+    final ink = isDark ? Colors.white : const Color(0xFF0C312B);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 28),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: ink.withValues(alpha: 0.12)),
+      ),
+      child: Center(
+        child: Text(
+          'NO PHASES RECORDED',
+          style: GoogleFonts.gelasio(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: ink.withValues(alpha: 0.55),
+            letterSpacing: 1.5,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildPhaseTrackingSection(bool isDark) {
     if (_progressPhases.isEmpty) return const SizedBox.shrink();
     final phases = _progressPhases
@@ -2311,86 +2360,6 @@ class _InvestorProjectDetailScreenState
           );
         }),
       ],
-    );
-  }
-
-  // Collects every usable image for the gallery grid: dedicated gallery/images
-  // fields, the exterior/interior sets, and any media urls.
-  List<String> _galleryImages() {
-    final imgs = <String>[];
-    void addList(dynamic v) {
-      if (v is List) {
-        for (final e in v) {
-          if (e is String) {
-            imgs.add(e);
-          } else if (e is Map && e['url'] != null) {
-            imgs.add(e['url'].toString());
-          }
-        }
-      }
-    }
-
-    addList(_project?['gallery']);
-    addList(_project?['images']);
-    addList(_project?['galleryImages']);
-    imgs.addAll(_exteriorImages);
-    imgs.addAll(_interiorImages);
-    addList(_project?['media']);
-    return imgs.where((s) => s.trim().isNotEmpty).toSet().toList();
-  }
-
-  Widget _buildGallerySection(Map<String, dynamic> project, bool isDark) {
-    final apiClient = ref.read(apiClientProvider);
-    final images = _galleryImages();
-    if (images.isEmpty) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _sectionHeader('Gallery', isDark),
-          const SizedBox(height: 24),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.zero,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 1.1,
-            ),
-            itemCount: images.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () => _openGallery(images, initialIndex: index),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: CachedNetworkImage(
-                    memCacheWidth: 1080,
-                    imageUrl: apiClient.resolveUrl(images[index]),
-                    fit: BoxFit.cover,
-                    placeholder: (c, u) => Container(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.04)
-                          : Colors.black12,
-                    ),
-                    errorWidget: (c, u, e) => Container(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.04)
-                          : Colors.black12,
-                      child: const Icon(
-                        LucideIcons.image,
-                        color: Colors.white30,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
     );
   }
 
@@ -2878,6 +2847,8 @@ class _MediaThumb extends StatelessWidget {
             // heavy flat overlay) with a soft bottom gradient for the label.
             if (imageUrl != null && imageUrl!.isNotEmpty)
               CachedNetworkImage(
+                fadeInDuration: Duration.zero,
+                fadeOutDuration: Duration.zero,
                 memCacheWidth: 1080,
                 imageUrl: imageUrl!,
                 fit: BoxFit.cover,

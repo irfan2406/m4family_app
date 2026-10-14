@@ -535,6 +535,8 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
     }
     final apiClient = ref.read(apiClientProvider);
     return CachedNetworkImage(
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
       memCacheWidth: 1080,
       imageUrl: apiClient.resolveUrl(url),
       fit: BoxFit.cover,
@@ -842,11 +844,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   // ─── Helpers ────────────────────────────────────────────────────────────────
   String? _firstImage(dynamic project) {
     if (project == null) return null;
-    final candidates = [
-      project['coverImage'],
-      project['image'],
-      project['thumbnail'],
-    ];
+    // The project's Master Image (`heroImage`) leads. The old `coverImage` /
+    // `thumbnail` fields held demo stock photos and have been removed.
+    final candidates = [project['heroImage'], project['image']];
     for (final c in candidates) {
       if (c is String && c.isNotEmpty) return c;
     }

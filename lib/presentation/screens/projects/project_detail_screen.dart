@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:m4_mobile/presentation/widgets/article_text.dart';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/utils/external_link.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +13,6 @@ import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/core/utils/media_url.dart';
-import 'package:m4_mobile/core/utils/image_prewarm.dart';
 import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -117,13 +118,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           }
           _isLoading = false;
         });
-        // Warm the amenity icons into the disk cache so they appear instantly
-        // (no load-in) when the Amenities section renders.
-        final iconUrls = ((_fullProject?['amenities'] as List?) ?? const [])
-            .map((a) => _amenityIconUrl(a) ?? '')
-            .where((u) => u.isNotEmpty)
-            .toList();
-        prewarmImages(iconUrls);
+        // Download AND decode the amenity icons now, so the Amenities grid
+        // draws them all in its first frame instead of popping them in.
+        precacheAmenityIcons(
+          context,
+          ((_fullProject?['amenities'] as List?) ?? const []).map(
+            _amenityIconUrl,
+          ),
+        );
       }
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);
@@ -1467,6 +1469,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.catalog, SyncTopic.amenities},
+      _fetchProjectData,
+    );
     final project = _fullProject ?? widget.projectData;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -1636,12 +1644,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   Widget _buildHero(dynamic project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
-    final heroRaw = [
-      mediaUrlOf(project?['heroImage']),
-      mediaUrlOf(project?['coverImage']),
-      firstMediaUrl(project?['heroImages']),
-    ].firstWhere((s) => s.isNotEmpty, orElse: () => '');
-    final heroUrl = apiClient.resolveUrl(heroRaw);
+    // The Project Master Image (`heroImage`) is the banner.
+    final heroUrl = apiClient.resolveUrl(mediaUrlOf(project?['heroImage']));
 
     return AspectRatio(
       aspectRatio: 1920 / 1080,
@@ -1748,6 +1752,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   Widget _buildMediaQuickActions(dynamic project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
+    // The 360° tour is for logged-in users only.
+    final loggedIn = ref.watch(
+      authProvider.select((s) => s.status == AuthStatus.authenticated),
+    );
     // A photo tile is rendered only when the catalog actually holds images
     // for it. Skyline Heights ships `exteriorImages: []` and
     // `interiorImages: []`, so both tiles fell back to the hero — the same
@@ -1755,7 +1763,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     // gallery on tap. Projects that do have galleries (Cledor, Clédor, Ocean
     // View) are untouched, and the tiles come back on their own once images
     // are uploaded. The 360 tile is an icon rather than a photo, so it always
-    // stays.
+    // stays for a logged-in user (guests don't get it).
     // Robust to both string and {url, caption} object entries.
     final extUrls = mediaUrlList(project?['exteriorImages']);
     final intUrls = mediaUrlList(project?['interiorImages']);
@@ -1801,14 +1809,16 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             ),
             const SizedBox(width: 12),
           ],
-          _HeroMediaThumb(
-            label: '360° VIEW',
-            isVR: true,
-            onTap: () => _launchAction(
-              'Virtual Tour coming soon!',
-              project?['threeSixtyUrl'] ?? project?['virtualTourUrl'],
+          // 360° VIEW: logged-in users only (removed from the guest portal).
+          if (loggedIn)
+            _HeroMediaThumb(
+              label: '360° VIEW',
+              isVR: true,
+              onTap: () => _launchAction(
+                'Virtual Tour coming soon!',
+                project?['threeSixtyUrl'] ?? project?['virtualTourUrl'],
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -1841,6 +1851,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   Widget _buildOverviewSection(dynamic project) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // The walkthrough video and the 360° tour are for logged-in users only.
+    // Guests can reach this screen from a community page; neither card is
+    // shown to them.
+    final loggedIn = ref.watch(
+      authProvider.select((s) => s.status == AuthStatus.authenticated),
+    );
     // Backend-driven media links (web parity): the promo cards below show only
     // when the project actually carries that link.
     final tour =
@@ -1863,26 +1879,23 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       children: [
         _buildSectionHeader('Overview'),
         const SizedBox(height: 24),
-        Text(
-          // The project's own copy. This used to PREPEND a fixed sentence to
-          // it, so every project showed the boilerplate and then its real
-          // description; the sentence is now only a fallback.
-          ((project?['description']?.toString().trim().isNotEmpty ?? false)
-                  ? project['description'].toString().trim()
-                  : 'Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation.')
-              .toUpperCase(),
-          // Web parity: overview copy capped at 3 lines.
-          maxLines: 3,
-          overflow: TextOverflow.ellipsis,
+        // Justified article copy; collapses past 4 lines behind Read more.
+        ArticleText(
+          text:
+              ((project?['description']?.toString().trim().isNotEmpty ?? false)
+                      ? project['description'].toString().trim()
+                      : 'Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation.')
+                  .toUpperCase(),
           style: GoogleFonts.inter(
-            // Was 11 / 60% — small & faint. Bigger + darker.
             fontSize: 12.5,
             color: (isDark ? Colors.white : const Color(0xFF0C312B))
                 .withOpacity(0.78),
-            height: 1.7,
+            // Consistent body line spacing across all portals.
+            height: 1.6,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.2,
           ),
+          linkColor: isDark ? Colors.white : const Color(0xFF155A4F),
         ),
         const SizedBox(height: 32),
         // Only when the project actually carries one. Clédor's `flyer` is
@@ -1913,7 +1926,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         // Web parity: the 360° VIRTUAL TOUR (web pink) and WALKTHROUGH VIDEO
         // (web blue) promo cards — here in the app's own colours, and each
         // shown only when the backend carries that link (Clédor carries both).
-        if (walkthrough.isNotEmpty) ...[
+        if (loggedIn && walkthrough.isNotEmpty) ...[
           const SizedBox(height: 32),
           _VirtualTourCard(
             isDark: isDark,
@@ -1924,7 +1937,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             onTap: () => _launchExternal(walkthrough),
           ),
         ],
-        if (tour.isNotEmpty) ...[
+        if (loggedIn && tour.isNotEmpty) ...[
           SizedBox(height: walkthrough.isNotEmpty ? 16 : 32),
           _VirtualTourCard(
             isDark: isDark,
@@ -1947,7 +1960,19 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         const SizedBox(height: 24),
         _ConstructionDashboardCard(
           overallProgress: project?['completion'] ?? 0,
-          estimatedCompletion: project?['estimatedCompletion'] ?? 'Q1 2029',
+          // The backend field is `estimatedCompletionDate` (the guest, investor
+          // and CP screens read it). This read `estimatedCompletion`, which the
+          // API never sends, so every project showed the 'Q1 2029' fallback.
+          estimatedCompletion: () {
+            for (final v in [
+              project?['estimatedCompletionDate'],
+              project?['possessionDate'],
+            ]) {
+              final s = (v ?? '').toString().trim();
+              if (s.isNotEmpty) return s.toUpperCase();
+            }
+            return 'Q1 2029';
+          }(),
           projectTitle: project?['title']?.toString() ?? 'PROJECT',
           phases: _progressPhases,
           onPhaseTap: (img) => _showMediaLightbox(img, 'IMAGE'),
@@ -2267,7 +2292,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     // Bare amenities (guest-portal look): just the icon and its label, with no
     // card, outline, or badge behind the icon.
-    final iconColor = isDark ? kAmenityGold : const Color(0xFF0C312B);
     final cellW = (MediaQuery.sizeOf(context).width - 48 - 20) / 3;
 
     return Wrap(
@@ -2285,8 +2309,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       ? (amenity['name']?.toString() ?? 'Amenity')
                       : amenity.toString(),
                   iconUrl: _amenityIconUrl(amenity),
-                  size: 40,
-                  color: iconColor,
+                  // Same size, weight and colour in every portal.
+                  size: kAmenityGridIconSize,
+                  emphasized: true,
+                  color: amenityGridIconColor(isDark),
                   fallbackAsset: (amenity is Map
                                   ? (amenity['name']?.toString() ?? '')
                                   : amenity.toString())
@@ -3648,16 +3674,21 @@ class _VirtualTourCard extends StatelessWidget {
                 color: isDark ? Colors.white : const Color(0xFF0C312B),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
-                cta,
-                style: GoogleFonts.inter(
-                  fontSize: 7.5,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? const Color(0xFF0C312B)
-                      : const Color(0xFFF4EFE3),
-                  letterSpacing: 1.0,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    cta,
+                    style: GoogleFonts.inter(
+                      fontSize: 7.5,
+                      fontWeight: FontWeight.w600,
+                      color: isDark
+                          ? const Color(0xFF0C312B)
+                          : const Color(0xFFF4EFE3),
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -4413,297 +4444,302 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 40),
-          // Web parity: timeline node (year + line + dot) above the phase cards.
-          Builder(
-            builder: (context) {
-              // Web parity: the timeline node year is 2026.
-              const year = '2026';
-              return Row(
-                children: [
-                  Text(
-                    year,
-                    style: GoogleFonts.gelasio(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : const Color(0xFF0C312B),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isDark
-                          ? const Color(0xFF141B3A)
-                          : const Color(0xFFF4EFE3),
-                      border: Border.all(
+          // Only when there are phases. With none (e.g. a completed project such
+          // as OCEAN VIEW) the year rail and the 345-tall empty carousel left a
+          // large blank gap; PHASE TRACKING below then says NO PHASES RECORDED.
+          if (phases.isNotEmpty) ...[
+            // Web parity: timeline node (year + line + dot) above the phase cards.
+            Builder(
+              builder: (context) {
+                // Web parity: the timeline node year is 2026.
+                const year = '2026';
+                return Row(
+                  children: [
+                    Text(
+                      year,
+                      style: GoogleFonts.gelasio(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
                         color: isDark ? Colors.white : const Color(0xFF0C312B),
-                        width: 2,
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      height: 1,
-                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                          .withOpacity(0.2),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 20),
-          // Construction Dashboard Cards
-          SizedBox(
-            // Same as the guest portal: 220 image + ~125 footer.
-            height: 345,
-            child: PageView.builder(
-              controller: PageController(viewportFraction: 1.0),
-              physics: const BouncingScrollPhysics(),
-              padEnds: false,
-              itemCount: phases.length,
-              itemBuilder: (context, index) {
-                final phase = phases[index];
-                // Phase images may be plain strings or {url, caption} objects
-                // (the backend's current shape) — mediaUrlOf handles both.
-                final rawPhaseImg = firstMediaUrl(phase['images']).isNotEmpty
-                    ? firstMediaUrl(phase['images'])
-                    : mediaUrlOf(phase['image']);
-                final resolved = apiClient.resolveUrl(rawPhaseImg);
-                // Web parity: a phase with no uploaded photo still shows a
-                // construction image rather than a blank grey tile.
-                const constructionFallback =
-                    'assets/cledor_phase_demolition.jpg';
-                final imageUrl = resolved.trim().isEmpty
-                    ? constructionFallback
-                    : resolved;
-                final isAssetImg = imageUrl.startsWith('assets/');
-                return Container(
-                  // Match the guest portal phase card: full width + shadow
-                  // (was a fixed 260-wide horizontal card).
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withOpacity(0.03)
-                        // Theme surface — M4Theme.lightCard, the warm cream the
-                        // rest of the app's cards use. A hardcoded white read
-                        // as a stark block on the cream page, and the theme
-                        // rules it out ("warm cream card (never white)").
-                        : Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(24),
-                    // Subtle in dark so the border doesn't show as a bright edge
-                    // behind the image.
-                    border: Border.all(
-                      color: isDark
-                          ? Colors.white.withOpacity(0.08)
-                          : Colors.black.withOpacity(0.10),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(isDark ? 0.35 : 0.07),
-                        blurRadius: 14,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _ScaleButton(
-                        // Only open the lightbox for a real uploaded photo; the
-                        // bundled construction fallback is not zoomable.
-                        onTap: () => isAssetImg ? null : onPhaseTap(imageUrl),
-                        child: Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(24),
-                              ),
-                              // 16:9 thumbnail — the ratio every card image
-                              // uses, the guest portal phase card included.
-                              child: AspectRatio(
-                                aspectRatio: 16 / 9,
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    // Dark backdrop so an uploaded image with a
-                                    // transparent/white background still shows.
-                                    Container(color: const Color(0xFF0C312B)),
-                                    isAssetImg
-                                        ? Image.asset(
-                                            imageUrl,
-                                            width: double.infinity,
-                                            // PNG/SVG (logos) -> contain (full),
-                                            // JPEG (photos) -> cover (fill).
-                                            fit: fitForMediaUrl(imageUrl),
-                                          )
-                                        : CachedNetworkImage(
-                                            imageUrl: imageUrl,
-                                            width: double.infinity,
-                                            fit: fitForMediaUrl(imageUrl),
-                                            memCacheWidth: 600,
-                                            fadeInDuration: Duration.zero,
-                                            placeholder: (context, url) =>
-                                                const SizedBox.shrink(),
-                                            errorWidget: (context, url, error) =>
-                                                const SizedBox.shrink(),
-                                          ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            // Status badge (web parity): completed=green,
-                            // in-progress=solid, else=muted.
-                            Positioned(
-                              top: 14,
-                              left: 14,
-                              child: Builder(
-                                builder: (_) {
-                                  final status =
-                                      (phase['status']?.toString() ??
-                                      'Upcoming');
-                                  final s = status.toLowerCase();
-                                  final bg = s == 'completed'
-                                      ? const Color(0xFF163A2C)
-                                      : s == 'in progress'
-                                      ? (isDark
-                                            ? Colors.white
-                                            : const Color(0xFF0C312B))
-                                      : (isDark
-                                            ? Colors.white24
-                                            : const Color(
-                                                0xFF163A2C,
-                                              ).withOpacity(0.12));
-                                  final fg = s == 'completed'
-                                      ? Colors.white
-                                      : s == 'in progress'
-                                      ? (isDark ? Colors.black : Colors.white)
-                                      : (isDark
-                                            ? Colors.white70
-                                            : const Color(0xFF0C312B));
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 5,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: bg,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      status.toUpperCase(),
-                                      style: GoogleFonts.inter(
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.w600,
-                                        color: fg,
-                                        letterSpacing: 1,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
+                    const SizedBox(width: 16),
+                    Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isDark
+                            ? const Color(0xFF141B3A)
+                            : const Color(0xFFF4EFE3),
+                        border: Border.all(
+                          color: isDark ? Colors.white : const Color(0xFF0C312B),
+                          width: 2,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Web parity: project title first (e.g. CLÉDOR).
-                            Text(
-                              projectTitle.toUpperCase(),
-                              style: GoogleFonts.inter(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: isDark
-                                    ? Colors.white
-                                    : const Color(0xFF141B3A),
-                                letterSpacing: 1,
-                              ),
-                            ),
-                            const SizedBox(height: 14),
-                            Row(
-                              children: [
-                                // Ring with % centered.
-                                Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    // Simple solid arc progress ring.
-                                    SizedBox(
-                                      width: 46,
-                                      height: 46,
-                                      child: CircularProgressIndicator(
-                                        value:
-                                            (phase['progressPercent'] ??
-                                                    phase['progress'] ??
-                                                    0)
-                                                .toDouble() /
-                                            100,
-                                        strokeWidth: 3,
-                                        backgroundColor:
-                                            (isDark
-                                                    ? Colors.white
-                                                    : const Color(0xFF0C312B))
-                                                .withOpacity(0.12),
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                              isDark
-                                                  ? Colors.white
-                                                  : const Color(0xFF0C312B),
-                                            ),
-                                      ),
-                                    ),
-                                    Text(
-                                      '${phase['progressPercent'] ?? phase['progress'] ?? 0}%',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w600,
-                                        color: isDark
-                                            ? Colors.white
-                                            : const Color(0xFF0C312B),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(width: 14),
-                                // Phase name (e.g. FOUNDATION).
-                                Expanded(
-                                  child: Text(
-                                    (phase['name'] ??
-                                            phase['phaseName'] ??
-                                            'PHASE')
-                                        .toString()
-                                        .toUpperCase(),
-                                    style: GoogleFonts.gelasio(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w700,
-                                      color:
-                                          (isDark
-                                                  ? Colors.white
-                                                  : const Color(0xFF0C312B))
-                                              .withOpacity(0.8),
-                                      letterSpacing: 2,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        height: 1,
+                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                            .withOpacity(0.2),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               },
             ),
-          ),
-          const SizedBox(height: 32),
+            const SizedBox(height: 20),
+            // Construction Dashboard Cards
+            SizedBox(
+              // Same as the guest portal: 220 image + ~125 footer.
+              height: 345,
+              child: PageView.builder(
+                controller: PageController(viewportFraction: 1.0),
+                physics: const BouncingScrollPhysics(),
+                padEnds: false,
+                itemCount: phases.length,
+                itemBuilder: (context, index) {
+                  final phase = phases[index];
+                  // Phase images may be plain strings or {url, caption} objects
+                  // (the backend's current shape) — mediaUrlOf handles both.
+                  final rawPhaseImg = firstMediaUrl(phase['images']).isNotEmpty
+                      ? firstMediaUrl(phase['images'])
+                      : mediaUrlOf(phase['image']);
+                  final resolved = apiClient.resolveUrl(rawPhaseImg);
+                  // Web parity: a phase with no uploaded photo still shows a
+                  // construction image rather than a blank grey tile.
+                  const constructionFallback =
+                      'assets/cledor_phase_demolition.jpg';
+                  final imageUrl = resolved.trim().isEmpty
+                      ? constructionFallback
+                      : resolved;
+                  final isAssetImg = imageUrl.startsWith('assets/');
+                  return Container(
+                    // Match the guest portal phase card: full width + shadow
+                    // (was a fixed 260-wide horizontal card).
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.03)
+                          // Theme surface — M4Theme.lightCard, the warm cream the
+                          // rest of the app's cards use. A hardcoded white read
+                          // as a stark block on the cream page, and the theme
+                          // rules it out ("warm cream card (never white)").
+                          : Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(24),
+                      // Subtle in dark so the border doesn't show as a bright edge
+                      // behind the image.
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.08)
+                            : Colors.black.withOpacity(0.10),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(isDark ? 0.35 : 0.07),
+                          blurRadius: 14,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _ScaleButton(
+                          // Only open the lightbox for a real uploaded photo; the
+                          // bundled construction fallback is not zoomable.
+                          onTap: () => isAssetImg ? null : onPhaseTap(imageUrl),
+                          child: Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(24),
+                                ),
+                                // 16:9 thumbnail — the ratio every card image
+                                // uses, the guest portal phase card included.
+                                child: AspectRatio(
+                                  aspectRatio: 16 / 9,
+                                  child: Stack(
+                                    fit: StackFit.expand,
+                                    children: [
+                                      // Dark backdrop so an uploaded image with a
+                                      // transparent/white background still shows.
+                                      Container(color: const Color(0xFF0C312B)),
+                                      isAssetImg
+                                          ? Image.asset(
+                                              imageUrl,
+                                              width: double.infinity,
+                                              // PNG/SVG (logos) -> contain (full),
+                                              // JPEG (photos) -> cover (fill).
+                                              fit: fitForMediaUrl(imageUrl),
+                                            )
+                                          : CachedNetworkImage(
+                                              imageUrl: imageUrl,
+                                              width: double.infinity,
+                                              fit: fitForMediaUrl(imageUrl),
+                                              memCacheWidth: 600,
+                                              fadeInDuration: Duration.zero,
+                                              placeholder: (context, url) =>
+                                                  const SizedBox.shrink(),
+                                              errorWidget: (context, url, error) =>
+                                                  const SizedBox.shrink(),
+                                            ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              // Status badge (web parity): completed=green,
+                              // in-progress=solid, else=muted.
+                              Positioned(
+                                top: 14,
+                                left: 14,
+                                child: Builder(
+                                  builder: (_) {
+                                    final status =
+                                        (phase['status']?.toString() ??
+                                        'Upcoming');
+                                    final s = status.toLowerCase();
+                                    final bg = s == 'completed'
+                                        ? const Color(0xFF163A2C)
+                                        : s == 'in progress'
+                                        ? (isDark
+                                              ? Colors.white
+                                              : const Color(0xFF0C312B))
+                                        : (isDark
+                                              ? Colors.white24
+                                              : const Color(
+                                                  0xFF163A2C,
+                                                ).withOpacity(0.12));
+                                    final fg = s == 'completed'
+                                        ? Colors.white
+                                        : s == 'in progress'
+                                        ? (isDark ? Colors.black : Colors.white)
+                                        : (isDark
+                                              ? Colors.white70
+                                              : const Color(0xFF0C312B));
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 5,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: bg,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Text(
+                                        status.toUpperCase(),
+                                        style: GoogleFonts.inter(
+                                          fontSize: 8,
+                                          fontWeight: FontWeight.w600,
+                                          color: fg,
+                                          letterSpacing: 1,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Web parity: project title first (e.g. CLÉDOR).
+                              Text(
+                                projectTitle.toUpperCase(),
+                                style: GoogleFonts.inter(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark
+                                      ? Colors.white
+                                      : const Color(0xFF141B3A),
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                              Row(
+                                children: [
+                                  // Ring with % centered.
+                                  Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      // Simple solid arc progress ring.
+                                      SizedBox(
+                                        width: 46,
+                                        height: 46,
+                                        child: CircularProgressIndicator(
+                                          value:
+                                              (phase['progressPercent'] ??
+                                                      phase['progress'] ??
+                                                      0)
+                                                  .toDouble() /
+                                              100,
+                                          strokeWidth: 3,
+                                          backgroundColor:
+                                              (isDark
+                                                      ? Colors.white
+                                                      : const Color(0xFF0C312B))
+                                                  .withOpacity(0.12),
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                isDark
+                                                    ? Colors.white
+                                                    : const Color(0xFF0C312B),
+                                              ),
+                                        ),
+                                      ),
+                                      Text(
+                                        '${phase['progressPercent'] ?? phase['progress'] ?? 0}%',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w600,
+                                          color: isDark
+                                              ? Colors.white
+                                              : const Color(0xFF0C312B),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 14),
+                                  // Phase name (e.g. FOUNDATION).
+                                  Expanded(
+                                    child: Text(
+                                      (phase['name'] ??
+                                              phase['phaseName'] ??
+                                              'PHASE')
+                                          .toString()
+                                          .toUpperCase(),
+                                      style: GoogleFonts.gelasio(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w700,
+                                        color:
+                                            (isDark
+                                                    ? Colors.white
+                                                    : const Color(0xFF0C312B))
+                                                .withOpacity(0.8),
+                                        letterSpacing: 2,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 32),
+          ],
           // Web parity: PHASE TRACKING — real-time milestone list.
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -4779,12 +4815,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
               ),
               child: Center(
                 child: Text(
-                  'AWAITING CONSTRUCTION DATA',
+                  'NO PHASES RECORDED',
                   style: GoogleFonts.gelasio(
-                    fontSize: 9,
+                    fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                        .withOpacity(0.35),
+                        .withOpacity(0.55),
                     letterSpacing: 1.5,
                   ),
                 ),

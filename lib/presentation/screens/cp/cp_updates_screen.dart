@@ -179,6 +179,8 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
                                   children: [
                                     if (thumb != null && thumb.isNotEmpty)
                                       CachedNetworkImage(
+                                        fadeInDuration: Duration.zero,
+                                        fadeOutDuration: Duration.zero,
                                         memCacheWidth: 1080,
                                         imageUrl: ref
                                             .read(apiClientProvider)

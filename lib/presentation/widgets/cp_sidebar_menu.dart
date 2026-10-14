@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/custom_views_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
@@ -252,12 +253,15 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           isActive: idx == 2,
                           onTap: () => _setTab(2),
                         ),
-                        _SidebarItem(
-                          icon: LucideIcons.sparkles,
-                          label: 'Custom Views',
-                          isActive: false,
-                          onTap: () => _go('/cp/custom-views'),
-                        ),
+                        // Hidden when Admin Panel switches Custom Views off for
+                        // partner accounts.
+                        if (!ref.watch(customViewsClosedProvider))
+                          _SidebarItem(
+                            icon: LucideIcons.sparkles,
+                            label: 'Custom Views',
+                            isActive: false,
+                            onTap: () => _go('/cp/custom-views'),
+                          ),
 
                         Theme(
                           data: Theme.of(

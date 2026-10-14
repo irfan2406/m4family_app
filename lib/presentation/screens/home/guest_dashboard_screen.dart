@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/project_highlights.dart';
@@ -26,6 +27,7 @@ import 'package:m4_mobile/presentation/screens/communities/community_list_screen
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'dart:async';
 import 'package:go_router/go_router.dart';
+import 'package:m4_mobile/presentation/widgets/image_overlay_label.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -449,6 +451,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.config, SyncTopic.content, SyncTopic.communities},
+      _fetchData,
+    );
     if (_loading)
       return Material(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -456,12 +464,13 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 34,
                 height: 34,
                 child: CircularProgressIndicator.adaptive(
+                  // Brand green (was M4 gold, which read as a yellow spinner).
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    M4Theme.premiumBlue,
+                    Theme.of(context).colorScheme.onSurface,
                   ),
                   strokeWidth: 2.5,
                 ),
@@ -630,25 +639,27 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                             Positioned(
                               top: 16,
                               right: 16,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.45),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.1),
+                              child: ImageOverlayLabel(
+                                builder: (label) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
                                   ),
-                                ),
-                                child: Text(
-                                  'ARTISTIC IMPRESSION',
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white,
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 1.5,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.45),
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.1),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    label,
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.5,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -798,6 +809,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         ),
         const SizedBox(height: 8),
         RichText(
+          // Natural word spacing, deliberately not justified: on a phone
+          // width justify stretched the gaps between words very wide.
           text: TextSpan(
             style: GoogleFonts.inter(
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
@@ -991,12 +1004,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     final urls = <String>[];
     for (final p in _projects.take(4)) {
       if (p is! Map) continue;
-      final hero = (p['heroImage'] ?? '').toString().trim();
+      // The card shows the Project Master Image (`heroImage`) only.
+      final hero = projectHeroUrl(p);
       if (hero.isNotEmpty) urls.add(api.resolveUrl(hero));
-      final heroImages = p['heroImages'];
-      if (heroImages is List && heroImages.isNotEmpty) {
-        urls.add(api.resolveUrl(heroImages.first.toString()));
-      }
     }
     prewarmImages(urls);
   }
@@ -1668,6 +1678,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         ? src
         : ref.read(apiClientProvider).resolveUrl(src);
     return CachedNetworkImage(
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
       memCacheWidth: 1080,
       // Backend serves multi-MB originals (up to ~16MB). Storing a downscaled
       // copy on disk keeps memory bounded and makes repeat views instant.
@@ -1759,10 +1771,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         // One agreed order across every portal: the gallery
                         // used to win here, and it carries a stock photo while
                         // `heroImage` carries the admin's upload.
-                        final heroUrl = projectHeroUrl(project);
-                        final raw = heroUrl.isNotEmpty
-                            ? heroUrl
-                            : (project['coverImage'] ?? '').toString();
+                        // Project Master Image (`heroImage`).
+                        final raw = projectHeroUrl(project);
                         // Backend image only — no hardcoded/stock fallback. A
                         // blank tile shows when the backend has uploaded none.
                         if (raw.trim().isEmpty) {
@@ -1796,25 +1806,27 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   Positioned(
                     top: 24,
                     right: 24,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
+                    child: ImageOverlayLabel(
+                      builder: (label) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
                         ),
-                      ),
-                      child: Text(
-                        'ARTISTIC IMPRESSION',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 7,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.5,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.2),
+                          ),
+                        ),
+                        child: Text(
+                          label,
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 7,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.5,
+                          ),
                         ),
                       ),
                     ),

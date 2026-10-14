@@ -63,6 +63,17 @@ String friendlyApiError(Object error, {String? fallback}) {
   return fallback ?? 'Something went wrong. Please try again.';
 }
 
+/// True when [error] is the backend's 403 "Custom Views is closed" response
+/// (`{"code":"CUSTOM_VIEWS_CLOSED", ...}`), so callers can flip to the
+/// "not available" state as well as showing the server's message.
+bool isCustomViewsClosedError(Object error) {
+  if (error is DioException && error.response?.statusCode == 403) {
+    final data = error.response?.data;
+    if (data is Map && data['code'] == 'CUSTOM_VIEWS_CLOSED') return true;
+  }
+  return false;
+}
+
 /// Digs a human message out of common API error shapes.
 String? _serverMessage(dynamic data) {
   if (data == null) return null;

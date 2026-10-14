@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/image_overlay_label.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
@@ -276,6 +277,8 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(16),
                                     child: CachedNetworkImage(
+                                      fadeInDuration: Duration.zero,
+                                      fadeOutDuration: Duration.zero,
                                       memCacheWidth: 1080,
                                       imageUrl:
                                           'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
@@ -302,25 +305,27 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                               Positioned(
                                 top: 16,
                                 right: 16,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.4),
-                                    borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(
-                                      color: Colors.white.withOpacity(0.1),
+                                child: ImageOverlayLabel(
+                                  builder: (label) => Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
                                     ),
-                                  ),
-                                  child: Text(
-                                    'ARTISTIC IMPRESSION',
-                                    style: GoogleFonts.gelasio(
-                                      color: Colors.white,
-                                      fontSize: 7,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 1.5,
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.4),
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.1),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      label,
+                                      style: GoogleFonts.gelasio(
+                                        color: Colors.white,
+                                        fontSize: 7,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 1.5,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -575,7 +580,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
               // 16:9 thumbnail frame — the ratio every card image uses.
               const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
               img.isNotEmpty
-                  ? CachedNetworkImage(imageUrl: img, fit: BoxFit.cover)
+                  ? CachedNetworkImage(fadeInDuration: Duration.zero, fadeOutDuration: Duration.zero, imageUrl: img, fit: BoxFit.cover)
                   : Container(color: Colors.grey.shade200),
               Container(
                 decoration: BoxDecoration(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
@@ -35,6 +36,14 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.communities},
+      () => ref
+          .read(communitiesProvider.notifier)
+          .fetchCommunities(silent: true),
+    );
     final state = ref.watch(communitiesProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     // Partner-menu screens show the CP bottom nav (pushed over the shell, so
@@ -333,6 +342,8 @@ Widget _communityImage(String url) {
   }
   if (url.isEmpty) return _communityImagePlaceholder();
   return CachedNetworkImage(
+    fadeInDuration: Duration.zero,
+    fadeOutDuration: Duration.zero,
     memCacheWidth: 1080,
     imageUrl: url,
     fit: BoxFit.cover,

@@ -121,6 +121,7 @@ import 'package:m4_mobile/presentation/screens/cp/cp_shell_entry_screen.dart';
 import 'package:m4_mobile/presentation/screens/selection_logs/selection_logs_screen.dart';
 import 'package:m4_mobile/presentation/screens/custom_views/my_custom_views_screen.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
+import 'package:m4_mobile/presentation/widgets/live_sync_scope.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -208,7 +209,9 @@ class M4FamilyApp extends ConsumerWidget {
         final scale = media.textScaler.scale(1).clamp(0.85, 1.5);
         return MediaQuery(
           data: media.copyWith(textScaler: TextScaler.linear(scale)),
-          child: child ?? const SizedBox.shrink(),
+          // Keeps admin edits flowing in while the app is open (see
+          // LiveSyncScope): projects, config, content and communities.
+          child: LiveSyncScope(child: child ?? const SizedBox.shrink()),
         );
       },
     );

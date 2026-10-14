@@ -513,13 +513,10 @@ class _ResultCard extends StatelessWidget {
   final VoidCallback onTap;
 
   String _resolveImage() {
+    // The Project Master Image (`heroImage`) first.
     final images = project['images'] as List?;
-    final heroImages = project['heroImages'] as List?;
     final raw =
         project['heroImage']?.toString() ??
-        ((heroImages != null && heroImages.isNotEmpty)
-            ? heroImages[0].toString()
-            : null) ??
         ((images != null && images.isNotEmpty) ? images[0].toString() : null);
     return apiClient.resolveUrl(raw);
   }
@@ -561,6 +558,8 @@ class _ResultCard extends StatelessWidget {
             const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
             Positioned.fill(
               child: CachedNetworkImage(
+                fadeInDuration: Duration.zero,
+                fadeOutDuration: Duration.zero,
                 memCacheWidth: 1080,
                 imageUrl: imageUrl,
                 fit: BoxFit.cover,

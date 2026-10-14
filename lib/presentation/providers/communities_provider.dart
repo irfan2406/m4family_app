@@ -32,8 +32,10 @@ class CommunitiesNotifier extends StateNotifier<CommunitiesState> {
     fetchCommunities();
   }
 
-  Future<void> fetchCommunities() async {
-    state = state.copyWith(isLoading: true, error: null);
+  /// [silent] refreshes in place (live sync) without flagging isLoading, so the
+  /// list on screen isn't swapped for a spinner while the new data loads.
+  Future<void> fetchCommunities({bool silent = false}) async {
+    if (!silent) state = state.copyWith(isLoading: true, error: null);
     try {
       final apiClient = _ref.read(apiClientProvider);
       final response = await apiClient.getCommunities();

@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show compute;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -24,6 +25,7 @@ import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/home/guest_dashboard_screen.dart'
     show guestHomeCacheProvider, GuestHomeData;
+import 'package:m4_mobile/presentation/widgets/image_overlay_label.dart';
 
 /// Mirrors web `app/investor/home/page.tsx`, which renders the same
 /// `SharedHomePage` component as the guest/cp home. This is a TAB inside
@@ -152,12 +154,9 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     final urls = <String>[];
     for (final p in _projects.take(4)) {
       if (p is! Map) continue;
-      final hero = (p['heroImage'] ?? '').toString().trim();
+      // The card shows the Project Master Image (`heroImage`) only.
+      final hero = projectHeroUrl(p);
       if (hero.isNotEmpty) urls.add(api.resolveUrl(hero));
-      final heroImages = p['heroImages'];
-      if (heroImages is List && heroImages.isNotEmpty) {
-        urls.add(api.resolveUrl(heroImages.first.toString()));
-      }
     }
     prewarmImages(urls);
   }
@@ -229,6 +228,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         ? src
         : ref.read(apiClientProvider).resolveUrl(src);
     return CachedNetworkImage(
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
       memCacheWidth: 1080,
       // Backend serves multi-MB originals; cache a downscaled copy on disk to
       // bound memory and make repeat views instant.
@@ -431,6 +432,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Admin edits: reload in place when the server reports a change.
+    listenForAdminChanges(
+      ref,
+      const {SyncTopic.catalog, SyncTopic.content, SyncTopic.communities},
+      _fetchData,
+    );
     // Sidebar "Enquiry" quick action: scroll the Register Interest form in.
     // The hero reads the admin slider through [_adminHeroImage], which uses
     // ref.read so the cycling timer can call it too. Watch it here so the page
@@ -628,25 +635,27 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                             Positioned(
                               top: 16,
                               right: 16,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withValues(alpha: 0.4),
-                                  borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.1),
+                              child: ImageOverlayLabel(
+                                builder: (label) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
                                   ),
-                                ),
-                                child: Text(
-                                  'ARTISTIC IMPRESSION',
-                                  style: GoogleFonts.gelasio(
-                                    color: const Color(0xFFF4EFE3),
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 1.5,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.4),
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: Colors.white.withValues(alpha: 0.1),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    label,
+                                    style: GoogleFonts.gelasio(
+                                      color: const Color(0xFFF4EFE3),
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.5,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -694,22 +703,15 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             padding: const EdgeInsets.only(bottom: 96),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                // Pull the tabs up under the hero, but keep them tappable: the
-                // internal SizedBox keeps the tab bar inside the sliver item's
-                // layout bounds so hit-testing lands correctly (a bare
-                // Transform on a sliver child shifts paint but not hit-tests).
-                Transform.translate(
-                  offset: const Offset(0, -60),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 84),
-                        _buildTabsSection(),
-                      ],
-                    ),
-                  ),
+                // Tabs sit in natural flow, 24 under the hero — exactly where
+                // they were drawn before. They used to be pushed down 84 and
+                // then painted 60 higher with Transform.translate, but a
+                // transform moves only the paint: layout still reserved those
+                // 60, which showed as an empty band between the cards and OUR
+                // PHILOSOPHY (guest had the same ghost gap, fixed the same way).
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                  child: _buildTabsSection(),
                 ),
                 const SizedBox(height: 12),
                 Padding(
@@ -760,14 +762,15 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         ),
         const SizedBox(height: 8),
         RichText(
+          // Natural word spacing, deliberately not justified: on a phone
+          // width justify stretched the gaps between words very wide.
           text: TextSpan(
             style: GoogleFonts.inter(
-              // Was 0.6 — too faint/grey to read. Darker + slightly heavier.
+              // Guest parity: the same softer 60% tone and regular weight.
               color: Theme.of(
                 context,
-              ).colorScheme.onSurface.withValues(alpha: 0.82),
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
               fontSize: 14,
-              fontWeight: FontWeight.w600,
               height: 1.8,
             ),
             children: [
@@ -1461,25 +1464,27 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                   Positioned(
                     top: 24,
                     right: 24,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.6),
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.2),
+                    child: ImageOverlayLabel(
+                      builder: (label) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
                         ),
-                      ),
-                      child: Text(
-                        'ARTISTIC IMPRESSION',
-                        style: GoogleFonts.gelasio(
-                          color: const Color(0xFFF4EFE3),
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.5,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.2),
+                          ),
+                        ),
+                        child: Text(
+                          label,
+                          style: GoogleFonts.gelasio(
+                            color: const Color(0xFFF4EFE3),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.5,
+                          ),
                         ),
                       ),
                     ),
