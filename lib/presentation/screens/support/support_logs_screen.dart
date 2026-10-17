@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/data/models/ticket_model.dart';
+import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/support_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:intl/intl.dart';
 import 'dart:ui';
 import 'package:m4_mobile/presentation/screens/support/create_ticket_screen.dart';
 import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
@@ -41,6 +42,11 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final state = ref.watch(supportProvider);
+    final role = (ref.watch(authProvider).user?['role'] ??
+            ref.watch(authProvider).role ??
+            '')
+        .toString()
+        .toLowerCase();
     final filteredTickets = state.tickets.where((ticket) {
       final matchesSearch =
           ticket.displayId.toLowerCase().contains(_searchQuery.toLowerCase()) ||
@@ -85,21 +91,42 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                           ),
                         )
                       : filteredTickets.isEmpty
-                      ? _buildEmptyState(isDark)
-                      : ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.only(
-                            left: 24,
-                            right: 24,
-                            bottom: 100,
+                      ? RefreshIndicator.adaptive(
+                          onRefresh: () => ref
+                              .read(supportProvider.notifier)
+                              .fetchTickets(),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF0C312B),
+                          child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(
+                              parent: BouncingScrollPhysics(),
+                            ),
+                            children: [_buildEmptyState(isDark)],
                           ),
-                          itemCount: filteredTickets.length,
-                          itemBuilder: (context, index) => _TicketCard(
-                            ticket: filteredTickets[index],
-                            isDark: isDark,
-                            onTap: () => _showTicketDetails(
-                              filteredTickets[index],
-                              isDark,
+                        )
+                      : RefreshIndicator.adaptive(
+                          onRefresh: () => ref
+                              .read(supportProvider.notifier)
+                              .fetchTickets(),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF0C312B),
+                          child: ListView.builder(
+                            physics: const AlwaysScrollableScrollPhysics(
+                              parent: BouncingScrollPhysics(),
+                            ),
+                            padding: const EdgeInsets.only(
+                              left: 24,
+                              right: 24,
+                              bottom: 100,
+                            ),
+                            itemCount: filteredTickets.length,
+                            itemBuilder: (context, index) => _TicketCard(
+                              ticket: filteredTickets[index],
+                              isDark: isDark,
+                              onTap: () =>
+                                  _openTicketChat(filteredTickets[index], role),
                             ),
                           ),
                         ),
@@ -373,13 +400,17 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
     );
   }
 
-  void _showTicketDetails(TicketModel ticket, bool isDark) {
-    showM4Sheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _TicketDetailSheet(ticket: ticket, isDark: isDark),
-    );
+  /// Open the ticket's conversation thread (so the user can read M4 Support's
+  /// replies), routed per portal. Every ticket list opens this same chat.
+  void _openTicketChat(TicketModel ticket, String role) {
+    final id = ticket.id.toString();
+    if (id.isEmpty) return;
+    final prefix = role == 'investor'
+        ? '/investor/support/tickets'
+        : role == 'cp'
+        ? '/cp/support/tickets'
+        : '/support/tickets';
+    context.push('$prefix/$id');
   }
 
   Widget _buildAuditHeader(int count, bool isDark) {
@@ -616,194 +647,6 @@ class _TicketCard extends StatelessWidget {
           ],
         ),
       ).animate().fadeIn().slideX(begin: 0.05),
-    );
-  }
-}
-
-class _TicketDetailSheet extends StatelessWidget {
-  final TicketModel ticket;
-  final bool isDark;
-  const _TicketDetailSheet({required this.ticket, required this.isDark});
-
-  @override
-  Widget build(BuildContext context) {
-    final isResolved =
-        ticket.status.toLowerCase() == 'resolved' ||
-        ticket.status.toLowerCase() == 'completed' ||
-        ticket.status.toLowerCase() == 'closed';
-
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-      ),
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                    .withOpacity(0.1),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 32),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                      .withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  ticket.displayId,
-                  style: GoogleFonts.inter(
-                    color: isDark ? Colors.white38 : const Color(0xFF155A4F),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: (isResolved ? Colors.green : const Color(0xFFC5A35B))
-                      .withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  ticket.status.toUpperCase(),
-                  style: GoogleFonts.inter(
-                    color: isResolved ? Colors.green : const Color(0xFFC5A35B),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Text(
-            ticket.subject.toUpperCase(),
-            style: GoogleFonts.gelasio(
-              color: isDark ? Colors.white : const Color(0xFF0C312B),
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 32),
-          _buildInfoRow('CATEGORY', ticket.category.toUpperCase(), isDark),
-          const SizedBox(height: 16),
-          _buildInfoRow(
-            'AUDIT DATE',
-            DateFormat(
-              'dd MMMM yyyy, hh:mm a',
-            ).format(ticket.createdAt).toUpperCase(),
-            isDark,
-          ),
-          const SizedBox(height: 16),
-          _buildInfoRow(
-            'PRIORITY',
-            ticket.priority.toUpperCase(),
-            isDark,
-            valueColor: ticket.priority.toLowerCase() == 'high'
-                ? Colors.red
-                : null,
-          ),
-          const SizedBox(height: 32),
-          Text(
-            'DESCRIPTION',
-            style: GoogleFonts.inter(
-              color: isDark ? Colors.white24 : const Color(0x420C312B),
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 1,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            ticket.message ?? 'No description provided.',
-            style: GoogleFonts.inter(
-              color: isDark ? Colors.white70 : const Color(0xFF0C312B),
-              fontSize: 13,
-              height: 1.6,
-            ),
-          ),
-          const SizedBox(height: 40),
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isDark
-                    ? Colors.white
-                    : const Color(0xFF0C312B),
-                foregroundColor: isDark
-                    ? Colors.black
-                    : const Color(0xFFF4EFE3),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              child: Text(
-                'DISMISS AUDIT',
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(
-    String label,
-    String value,
-    bool isDark, {
-    Color? valueColor,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            color: isDark ? Colors.white24 : const Color(0x420C312B),
-            fontSize: 10,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.5,
-          ),
-        ),
-        Text(
-          value,
-          style: GoogleFonts.inter(
-            color:
-                valueColor ?? (isDark ? Colors.white : const Color(0xFF0C312B)),
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
     );
   }
 }

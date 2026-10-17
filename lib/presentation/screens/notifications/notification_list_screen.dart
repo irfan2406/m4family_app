@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/data/models/notification_model.dart';
 import 'package:m4_mobile/presentation/providers/notification_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
@@ -32,11 +34,42 @@ import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
   }
 }
 
-class NotificationListScreen extends ConsumerWidget {
+class NotificationListScreen extends ConsumerStatefulWidget {
   const NotificationListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<NotificationListScreen> createState() =>
+      _NotificationListScreenState();
+}
+
+class _NotificationListScreenState extends ConsumerState<NotificationListScreen>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // Refresh on open so the list + unread badge are current.
+    Future.microtask(
+      () => ref.read(notificationProvider.notifier).fetchNotifications(),
+    );
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Refresh when the app returns to the foreground (web parity).
+    if (state == AppLifecycleState.resumed) {
+      ref.read(notificationProvider.notifier).fetchNotifications();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(notificationProvider);
     final scheme = Theme.of(context).colorScheme;
     final auth = ref.watch(authProvider);
@@ -271,14 +304,29 @@ class NotificationListScreen extends ConsumerWidget {
   }
 }
 
-class _NotificationItem extends StatelessWidget {
-  final dynamic notification;
+class _NotificationItem extends ConsumerWidget {
+  final NotificationModel notification;
   final bool isCp;
 
   const _NotificationItem({required this.notification, required this.isCp});
 
+  /// Open the ticket chat a TICKET_REPLY points at, routed per portal.
+  void _openTicketChat(BuildContext context, WidgetRef ref, String ticketId) {
+    final role = (ref.read(authProvider).user?['role'] ??
+            ref.read(authProvider).role ??
+            '')
+        .toString()
+        .toLowerCase();
+    final prefix = role == 'investor'
+        ? '/investor/support/tickets'
+        : role == 'cp'
+        ? '/cp/support/tickets'
+        : '/support/tickets';
+    context.push('$prefix/$ticketId');
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     const purple = Color(0xFFC5A35B);
@@ -292,7 +340,18 @@ class _NotificationItem extends StatelessWidget {
     final ic = _iconFor(notification.type);
 
     return GestureDetector(
-      onTap: () => _showNotificationDetail(context, notification, timeStr, ic),
+      onTap: () {
+        // An admin reply ("M4 Support replied") → mark read and jump straight
+        // into the ticket chat. Everything else keeps the info dialog.
+        if (notification.isTicketReply) {
+          if (!notification.read) {
+            ref.read(notificationProvider.notifier).markAsRead(notification.id);
+          }
+          _openTicketChat(context, ref, notification.ticketId!);
+        } else {
+          _showNotificationDetail(context, notification, timeStr, ic);
+        }
+      },
       child: Container(
         decoration: BoxDecoration(
           // Web: unread → elevated white card + accent ring; read → faded.

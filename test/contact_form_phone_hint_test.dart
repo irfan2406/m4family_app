@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'support/fake_webview_platform.dart';
 
@@ -26,6 +27,18 @@ void main() {
     binding.defaultBinaryMessenger.setMockMethodCallHandler(
       const MethodChannel('plugins.it_nomads.com/flutter_secure_storage'),
       (call) async => null,
+    );
+    // ApiClient names the app in every request's User-Agent, read through
+    // package_info_plus. On the test host that lookup does real file I/O,
+    // which never completes under the test's fake clock — so the page's
+    // config request never left and it sat on its spinner. A fixed value
+    // stands in, as the real phone answers instantly.
+    PackageInfo.setMockInitialValues(
+      appName: 'M4 Family',
+      packageName: 'com.m4family.m4_mobile',
+      version: '1.0.0',
+      buildNumber: '1',
+      buildSignature: '',
     );
   });
 

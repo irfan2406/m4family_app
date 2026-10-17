@@ -1,6 +1,10 @@
+import 'dart:io' show Platform;
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class ApiClient {
@@ -26,6 +30,14 @@ class ApiClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
+          // Name the phone in the User-Agent so admin › System Logs can show
+          // "Android • M4 App" / "iPhone • M4 App" instead of Dart's default
+          // agent. Computed once (device/package lookups are async) and cached.
+          final ua = await _userAgent();
+          if (ua != null) {
+            options.headers['User-Agent'] = ua;
+          }
+
           // Don't overwrite an Authorization header set explicitly on the
           // request. The investor first-login password change uses the token
           // from /investor/login directly, held in memory and deliberately NOT
@@ -66,6 +78,44 @@ class ApiClient {
           compact: true,
         ),
       );
+    }
+  }
+
+  // Cached User-Agent — device/package lookups run once for the whole app.
+  static String? _cachedUserAgent;
+  static Future<String?>? _userAgentFuture;
+
+  static Future<String?> _userAgent() {
+    if (_cachedUserAgent != null) return Future.value(_cachedUserAgent);
+    return _userAgentFuture ??= _buildUserAgent().then((ua) {
+      _cachedUserAgent = ua;
+      return ua;
+    });
+  }
+
+  static Future<String?> _buildUserAgent() async {
+    try {
+      final app = await PackageInfo.fromPlatform();
+      final info = DeviceInfoPlugin();
+      String ua;
+      if (Platform.isAndroid) {
+        final a = await info.androidInfo;
+        ua =
+            'M4FamilyApp/${app.version} (Android ${a.version.release}; '
+            '${a.manufacturer} ${a.model})';
+      } else if (Platform.isIOS) {
+        final i = await info.iosInfo;
+        ua =
+            'M4FamilyApp/${app.version} (iOS ${i.systemVersion}; '
+            '${i.utsname.machine})';
+      } else {
+        ua = 'M4FamilyApp/${app.version}';
+      }
+      // Headers must be plain ASCII.
+      return ua.replaceAll(RegExp(r'[^\x20-\x7E]'), '');
+    } catch (_) {
+      // Never let UA construction break a request.
+      return null;
     }
   }
 
@@ -388,6 +438,10 @@ class ApiClient {
   // Notifications
   Future<Response> getNotifications() async {
     return dio.get('/api/notifications');
+  }
+
+  Future<Response> markNotificationAsRead(String id) async {
+    return dio.patch('/api/notifications/$id/read');
   }
 
   Future<Response> markAllNotificationsAsRead() async {

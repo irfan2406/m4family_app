@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/notification_badge.dart';
 import 'package:m4_mobile/presentation/providers/custom_views_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
@@ -246,6 +247,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           label: 'Notifications',
                           isActive: false,
                           onTap: () => _go('/notifications'),
+                          trailing: const NotificationBadge(),
                         ),
                         _SidebarItem(
                           icon: LucideIcons.layoutGrid,
@@ -424,18 +426,25 @@ class _SidebarItem extends StatelessWidget {
   final String label;
   final bool isActive;
   final VoidCallback? onTap;
+  final Widget? trailing;
 
   const _SidebarItem({
     required this.icon,
     required this.label,
     required this.isActive,
     this.onTap,
+    this.trailing,
   });
 
   // Rendering is M4DrawerTile — the one row every portal uses.
   @override
-  Widget build(BuildContext context) =>
-      M4DrawerTile(icon: icon, label: label, isActive: isActive, onTap: onTap);
+  Widget build(BuildContext context) => M4DrawerTile(
+    icon: icon,
+    label: label,
+    isActive: isActive,
+    onTap: onTap,
+    trailing: trailing,
+  );
 }
 
 class _SubItem extends StatelessWidget {

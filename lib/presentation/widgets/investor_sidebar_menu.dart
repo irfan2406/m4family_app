@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/notification_badge.dart';
 import 'package:m4_mobile/presentation/providers/custom_views_provider.dart';
 import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
@@ -311,6 +312,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                           label: 'Notifications',
                           isActive: false,
                           onTap: () => _go('/investor/notifications'),
+                          trailing: const NotificationBadge(),
                         ),
                         _SidebarItem(
                           icon: LucideIcons.info,

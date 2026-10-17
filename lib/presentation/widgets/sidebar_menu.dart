@@ -12,6 +12,7 @@ import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
 import 'package:m4_mobile/presentation/screens/careers/careers_screen.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/notification_badge.dart';
 import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 class SidebarMenu extends ConsumerStatefulWidget {
@@ -224,6 +225,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                             isActive: currentIndex == 5,
                             activeColor: accentColor,
                             onTap: () => navigateTo(5),
+                            trailing: const NotificationBadge(),
                           ),
 
                           _SidebarItem(

@@ -60,6 +60,38 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
     }
   }
 
+  /// Mark a single notification read (web `PATCH /notifications/:id/read`).
+  /// Updates local state optimistically so the unread badge/dot clears at once.
+  Future<void> markAsRead(String id) async {
+    if (id.isEmpty) return;
+    final already = state.notifications
+        .firstWhere(
+          (n) => n.id == id,
+          orElse: () => NotificationModel(
+            id: '',
+            title: '',
+            message: '',
+            type: '',
+            read: true,
+            createdAt: DateTime.now(),
+          ),
+        )
+        .read;
+    if (already) return; // nothing to do
+
+    // Optimistic update first.
+    state = state.copyWith(
+      notifications: state.notifications
+          .map((n) => n.id == id ? n.copyWith(read: true) : n)
+          .toList(),
+    );
+    try {
+      await _ref.read(apiClientProvider).markNotificationAsRead(id);
+    } catch (_) {
+      // Keep the optimistic state; the next fetch reconciles if it failed.
+    }
+  }
+
   Future<void> markAllAsRead() async {
     try {
       final apiClient = _ref.read(apiClientProvider);
@@ -80,6 +112,11 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
 
   int get unreadCount => state.notifications.where((n) => !n.read).length;
 }
+
+/// Convenience: the live unread count, for badges on the notification bell.
+final unreadNotificationCountProvider = Provider<int>((ref) {
+  return ref.watch(notificationProvider).notifications.where((n) => !n.read).length;
+});
 
 final notificationProvider =
     StateNotifierProvider<NotificationNotifier, NotificationState>((ref) {

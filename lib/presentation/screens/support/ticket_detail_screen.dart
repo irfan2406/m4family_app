@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -46,6 +48,10 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
   /// The ticket owner id, used to decide user-vs-support bubble styling.
   String? _ownerId;
 
+  /// Polls the open chat every 15s so an admin's reply shows up live, the
+  /// same cadence the website uses.
+  Timer? _pollTimer;
+
   @override
   void initState() {
     super.initState();
@@ -53,10 +59,15 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     _messages = (widget.initialTicket?['messages'] as List<dynamic>?) ?? [];
     _ownerId = _extractId(widget.initialTicket?['user']);
     Future.microtask(_fetchTicket);
+    _pollTimer = Timer.periodic(
+      const Duration(seconds: 15),
+      (_) => _pollTicket(),
+    );
   }
 
   @override
   void dispose() {
+    _pollTimer?.cancel();
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -91,6 +102,31 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
         _loading = false;
         _error = e.toString();
       });
+    }
+  }
+
+  /// Silent refresh used by the 15s poll and pull-to-refresh: it never flips
+  /// the screen back to the loading/error state, it just folds in any new
+  /// messages and scrolls down when the count grows.
+  Future<void> _pollTicket() async {
+    if (_sending) return; // don't fight an in-flight send
+    try {
+      final data = await ref
+          .read(supportProvider.notifier)
+          .fetchTicketDetail(widget.ticketId);
+      if (!mounted || data == null) return;
+      final next = (data['messages'] as List<dynamic>?) ?? _messages;
+      final grew = next.length > _messages.length;
+      setState(() {
+        _ticket = data;
+        _messages = next;
+        _ownerId = _extractId(data['user']) ?? _ownerId;
+        _loading = false;
+        _error = null;
+      });
+      if (grew) _scrollToBottom();
+    } catch (_) {
+      // Polling is best-effort; keep whatever is already on screen.
     }
   }
 
@@ -147,15 +183,27 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     return value.toString();
   }
 
-  /// A message is "from the user" when its sender matches the ticket owner.
-  /// Anything else (support / admin) is rendered on the opposite side.
-  bool _isUserMessage(dynamic msg) {
+  /// A message is from M4 Support when its sender's role is ADMIN, or — in the
+  /// shapes where the sender is only an id — when it isn't the ticket owner.
+  /// Those render on the LEFT, labelled "M4 Support".
+  bool _isSupportMessage(dynamic msg) {
     if (msg is! Map) return false;
-    final sender = _extractId(msg['sender']);
-    if (_ownerId == null || sender == null)
-      return true; // default to right side
-    return sender == _ownerId;
+    final sender = msg['sender'];
+    // GET /tickets/:id populates sender as an object with a role — trust it.
+    if (sender is Map) {
+      final role = sender['role']?.toString().toUpperCase();
+      if (role == 'ADMIN') return true;
+      if (role != null && role.isNotEmpty) return false; // the user's own role
+    }
+    // Fallback (sender is a bare id, or role missing): support when it is not
+    // the ticket owner.
+    final sid = _extractId(sender);
+    if (sid == null || _ownerId == null) return false; // can't tell → user side
+    return sid != _ownerId;
   }
+
+  /// The user's own messages sit on the right; everything else (support) left.
+  bool _isUserMessage(dynamic msg) => !_isSupportMessage(msg);
 
   String _formatTime(dynamic msg) {
     final raw = (msg is Map) ? (msg['timestamp'] ?? msg['time']) : null;
@@ -372,41 +420,57 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     Color border,
   ) {
     if (_messages.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      return RefreshIndicator.adaptive(
+        onRefresh: _pollTicket,
+        color: textPrimary,
+        child: ListView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
           children: [
-            Icon(LucideIcons.messageSquare, size: 40, color: muted),
-            const SizedBox(height: 20),
-            Text(
-              'NO MESSAGES YET',
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: textPrimary,
-                letterSpacing: 1,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'START THE CONVERSATION BELOW',
-              style: GoogleFonts.inter(
-                fontSize: 9,
-                fontWeight: FontWeight.w600,
-                color: muted,
-                letterSpacing: 1,
-              ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(LucideIcons.messageSquare, size: 40, color: muted),
+                const SizedBox(height: 20),
+                Text(
+                  'NO MESSAGES YET',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: textPrimary,
+                    letterSpacing: 1,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'START THE CONVERSATION BELOW',
+                  style: GoogleFonts.inter(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w600,
+                    color: muted,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       );
     }
 
-    return ListView(
-      controller: _scrollController,
-      padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-      physics: const BouncingScrollPhysics(),
-      children: [
+    return RefreshIndicator.adaptive(
+      onRefresh: _pollTicket,
+      color: textPrimary,
+      child: ListView(
+        controller: _scrollController,
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
+        ),
+        children: [
         // Date chip (web: "Today, Jan 26")
         Center(
           child: Container(
@@ -459,7 +523,8 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             ),
           ),
         ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -495,6 +560,29 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             ? CrossAxisAlignment.end
             : CrossAxisAlignment.start,
         children: [
+          // Name the sender on support replies so the user can see it is M4,
+          // not their own message.
+          if (!isUser) ...[
+            Padding(
+              padding: const EdgeInsets.only(left: 4, bottom: 6),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(LucideIcons.shieldCheck, size: 11, color: muted),
+                  const SizedBox(width: 5),
+                  Text(
+                    'M4 SUPPORT',
+                    style: GoogleFonts.inter(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w700,
+                      color: muted,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
           ConstrainedBox(
             constraints: BoxConstraints(
               maxWidth: MediaQuery.of(context).size.width * 0.78,
