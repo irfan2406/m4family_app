@@ -25,12 +25,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
+import 'package:m4_mobile/presentation/widgets/home_image_card.dart';
 
 /// Project imagery arrives either as a URL or as an inline `data:image;base64`
 /// payload (the CMS stores some heroes that way — Skyline Heights is one).
 /// CachedNetworkImage is an HTTP loader and renders a data URI as an empty box,
 /// so those are decoded to bytes instead.
-Widget _communityProjectImage(String url) {
+Widget _communityProjectImage(String url, {BoxFit fit = BoxFit.cover}) {
   Widget fallback() => Container(
     color: const Color(0xFF141B3A),
     child: const Center(
@@ -45,7 +46,7 @@ Widget _communityProjectImage(String url) {
       );
       return Image.memory(
         bytes,
-        fit: BoxFit.cover,
+        fit: fit,
         cacheWidth: 1080,
         errorBuilder: (_, _, _) => fallback(),
       );
@@ -58,7 +59,7 @@ Widget _communityProjectImage(String url) {
     fadeOutDuration: Duration.zero,
     memCacheWidth: 1080,
     imageUrl: url,
-    fit: BoxFit.cover,
+    fit: fit,
     placeholder: (context, u) => Container(color: Colors.black12),
     errorWidget: (context, u, e) => fallback(),
   );
@@ -393,68 +394,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         ),
                       ),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black.withOpacity(0.8),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Web: `absolute bottom-10 left-8 right-8`. Title is pinned
-                    // to the bottom-left corner; the subtitle only reserves
-                    // space when it actually has text (otherwise the title
-                    // floats up, leaving a gap beneath it).
-                    Positioned(
-                      bottom: 40,
-                      left: 32,
-                      right: 32,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _community['title']?.toString() ?? '',
-                            style: GoogleFonts.gelasio(
-                              // Web: `text-3xl font-light tracking-tight` — a
-                              // light serif, not the heavy weight we had.
-                              fontSize: 34,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: -0.8,
-                              color: Colors.white,
-                              height: 1.05,
-                              shadows: const [
-                                Shadow(
-                                  blurRadius: 12,
-                                  color: const Color(0xFF155A4F),
-                                ),
-                              ],
-                            ),
-                          ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2),
-                          if ((_community['subtitle'] ?? '')
-                              .toString()
-                              .trim()
-                              .isNotEmpty) ...[
-                            const SizedBox(height: 12),
-                            Text(
-                              (_community['subtitle'] ?? '')
-                                  .toString()
-                                  .toUpperCase(),
-                              style: GoogleFonts.gelasio(
-                                color: const Color(0xFFF4EFE3),
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 3,
-                              ),
-                            ).animate().fadeIn(delay: 400.ms),
-                          ],
-                        ],
-                      ),
-                    ),
+                    // No name and no dark shade over the picture: the community
+                    // is already named in the header ("ABOUT <NAME>") right
+                    // below the hero, so the photo shows clean.
                   ],
                 ),
               ),
@@ -652,22 +594,52 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 6,
                                 ),
-                                child: Text(
-                                  benefit['label'].toString().toUpperCase(),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
-                                    color:
-                                        (isDark
-                                                ? Colors.white
-                                                : const Color(0xFF0C312B))
-                                            .withOpacity(0.7),
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.5,
-                                    height: 1.4,
-                                  ),
+                                child: Builder(
+                                  builder: (_) {
+                                    final labelStyle = GoogleFonts.inter(
+                                      color:
+                                          (isDark
+                                                  ? Colors.white
+                                                  : const Color(0xFF0C312B))
+                                              .withOpacity(0.7),
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.5,
+                                      height: 1.4,
+                                    );
+                                    // Every label gets room for two lines, the
+                                    // text centred in it. Otherwise a label
+                                    // that wraps (METRO CONNECTIVITY) made its
+                                    // tile's icon sit higher than its
+                                    // neighbours'. The hidden two-line text
+                                    // sizes the room with the label's own font,
+                                    // so it holds at any text size.
+                                    return Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Visibility(
+                                          visible: false,
+                                          maintainSize: true,
+                                          maintainAnimation: true,
+                                          maintainState: true,
+                                          child: Text(
+                                            ' \n ',
+                                            maxLines: 2,
+                                            style: labelStyle,
+                                          ),
+                                        ),
+                                        Text(
+                                          benefit['label']
+                                              .toString()
+                                              .toUpperCase(),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.center,
+                                          style: labelStyle,
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ),
                               ),
                             ],
@@ -725,142 +697,57 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                     ),
                     const SizedBox(height: 30),
                     SizedBox(
-                      height: 140,
+                      // The card (picture + name panel), its 10 bottom
+                      // margin, and 20 more so the card's shadow fades out
+                      // inside the row instead of being cut off by its edge.
+                      height: HomeImageCard.heightFor(260) + 30,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.only(bottom: 20),
+                        // Let the cards' soft shadow fade out past the row's
+                        // edges; clipped, it left a hard-edged band under them.
+                        clipBehavior: Clip.none,
                         itemCount: _projects.length,
                         itemBuilder: (context, index) {
                           final project = _projects[index];
+                          // "From ..." only when there is a price to show.
+                          final price =
+                              project['startingPrice']?.toString().trim() ??
+                              '';
+                          final showPrice =
+                              price.isNotEmpty &&
+                              !['price on request', 'upon request']
+                                  .contains(price.toLowerCase());
                           return GestureDetector(
                             onTap: () => openCommunityProject(context, ref, project),
-                            child: Container(
-                              width: 248,
-                              margin: const EdgeInsets.only(right: 14),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
+                            // The app's one image card: clean picture, name
+                            // and details on a panel beneath it.
+                            child: HomeImageCard(
+                              width: 260,
+                              margin: const EdgeInsets.only(
+                                right: 14,
+                                bottom: 10,
                               ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    _communityProjectImage(
-                                      apiClient.resolveUrl(
-                                        project['heroImage'] ??
-                                            project['image'],
-                                      ),
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Colors.transparent,
-                                            Colors.black.withOpacity(0.8),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(20),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            project['title']
-                                                    ?.toString()
-                                                    .toUpperCase() ??
-                                                '',
-                                            style: GoogleFonts.inter(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              letterSpacing: -0.5,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          if (project['startingPrice'] !=
-                                                  null &&
-                                              project['startingPrice']
-                                                      .toString()
-                                                      .toLowerCase() !=
-                                                  'price on request' &&
-                                              project['startingPrice']
-                                                      .toString()
-                                                      .toLowerCase() !=
-                                                  'upon request')
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                bottom: 2,
-                                              ),
-                                              child: Text(
-                                                project['startingPrice']
-                                                    .toString()
-                                                    .toUpperCase(),
-                                                style: GoogleFonts.inter(
-                                                  color: Colors.white70,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w700,
-                                                  letterSpacing: 0.5,
-                                                ),
-                                              ),
-                                            ),
-                                          Row(
-                                            children: [
-                                              const Icon(
-                                                LucideIcons.mapPin,
-                                                color: Colors.white54,
-                                                size: 10,
-                                              ),
-                                              const SizedBox(width: 5),
-                                              Text(
-                                                (project['location']?['name'] ??
-                                                        project['location'] ??
-                                                        '')
-                                                    .toString()
-                                                    .toUpperCase(),
-                                                style: GoogleFonts.inter(
-                                                  color: Colors.white70,
-                                                  fontSize: 8,
-                                                  fontWeight: FontWeight.bold,
-                                                  letterSpacing: 1,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Positioned(
-                                      bottom: 20,
-                                      right: 20,
-                                      child: Container(
-                                        width: 35,
-                                        height: 35,
-                                        decoration: const BoxDecoration(
-                                          color: const Color(0xFFF4EFE3),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(
-                                          LucideIcons.arrowRight,
-                                          color: const Color(0xFF0C312B),
-                                          size: 18,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                              image: (fit) => _communityProjectImage(
+                                apiClient.resolveUrl(
+                                  project['heroImage'] ?? project['image'],
                                 ),
+                                fit: fit,
                               ),
+                              title: project['title']?.toString() ?? '',
+                              caption: (project['location']?['name'] ??
+                                      project['location'] ??
+                                      '')
+                                  .toString(),
+                              tags: [if (showPrice) 'From $price'],
                             ),
                           );
                         },
                       ),
                     ),
-                    const SizedBox(height: 60),
+                    // 60 below the cards as before (20 of it is the row's
+                    // shadow room above).
+                    const SizedBox(height: 40),
                   ],
 
                   // Express Interest Form
@@ -1305,210 +1192,53 @@ class CommunityProjectsScreen extends ConsumerWidget {
 
                 return GestureDetector(
                   onTap: () => openCommunityProject(context, ref, project),
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            blurRadius: 16,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
+                  // The app's one image card: clean picture, name and
+                  // details on a panel beneath it.
+                  child: HomeImageCard(
+                    width: null,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    image: (fit) => CachedNetworkImage(
+                      fadeInDuration: Duration.zero,
+                      fadeOutDuration: Duration.zero,
+                      memCacheWidth: 1080,
+                      imageUrl: apiClient.resolveUrl(
+                        project['heroImage'] ?? project['image'],
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            CachedNetworkImage(
-                              fadeInDuration: Duration.zero,
-                              fadeOutDuration: Duration.zero,
-                              memCacheWidth: 1080,
-                              imageUrl: apiClient.resolveUrl(
-                                project['heroImage'] ?? project['image'],
-                              ),
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) =>
-                                  Container(color: Colors.black12),
-                              errorWidget: (context, url, error) => Container(
-                                color: const Color(0xFF141B3A),
-                                child: const Center(
-                                  child: Icon(
-                                    LucideIcons.building2,
-                                    color: Colors.white24,
-                                    size: 36,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // Gradient Overlays
-                            Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.black.withValues(alpha: 0.5),
-                                    Colors.transparent,
-                                    Colors.black.withValues(alpha: 0.8),
-                                  ],
-                                  stops: const [0.0, 0.45, 1.0],
-                                ),
-                              ),
-                            ),
-
-                            // Status Label (Top Right)
-                            if (status.isNotEmpty)
-                              Positioned(
-                                top: 16,
-                                right: 16,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 5,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.15),
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: Colors.white.withValues(alpha: 0.2),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    status.toUpperCase(),
-                                    style: GoogleFonts.gelasio(
-                                      color: Colors.white,
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 1.5,
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                            // Top Left Block: Title & Location
-                            Positioned(
-                              top: 18,
-                              left: 18,
-                              right: 75,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    (project['title'] ?? '')
-                                        .toString()
-                                        .toUpperCase(),
-                                    style: GoogleFonts.gelasio(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: -0.5,
-                                      height: 1.0,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 3),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        LucideIcons.mapPin,
-                                        color: Colors.white.withValues(alpha: 0.7),
-                                        size: 10,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Expanded(
-                                        child: Text(
-                                          location.toUpperCase(),
-                                          style: GoogleFonts.gelasio(
-                                            color: Colors.white.withValues(alpha: 0.7),
-                                            fontSize: 8,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 1.5,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  if (startingPrice != null &&
-                                      startingPrice.isNotEmpty &&
-                                      startingPrice.toLowerCase() !=
-                                          'price on request' &&
-                                      startingPrice.toLowerCase() !=
-                                          'upon request') ...[
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'STARTING FROM',
-                                      style: GoogleFonts.gelasio(
-                                        color: Colors.white.withValues(alpha: 0.65),
-                                        fontSize: 7,
-                                        fontWeight: FontWeight.w700,
-                                        letterSpacing: 1.5,
-                                      ),
-                                    ),
-                                    Text(
-                                      startingPrice.toUpperCase(),
-                                      style: GoogleFonts.inter(
-                                        color: const Color(0xFFF4EFE3),
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-
-                            // Bottom Left: Artistic Impression
-                            Positioned(
-                              bottom: 16,
-                              left: 18,
-                              child: ImageOverlayLabel(
-                                builder: (label) => Text(
-                                  '* $label',
-                                  style: GoogleFonts.gelasio(
-                                    color: Colors.white.withValues(alpha: 0.75),
-                                    fontSize: 6,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 1.5,
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            // Bottom Right: Arrow Action Button
-                            Positioned(
-                              bottom: 16,
-                              right: 16,
-                              child: Container(
-                                width: 38,
-                                height: 38,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF4EFE3),
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.2),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  LucideIcons.arrowRight,
-                                  color: Color(0xFF0C312B),
-                                  size: 16,
-                                ),
-                              ),
-                            ),
-                          ],
+                      fit: fit,
+                      placeholder: (context, url) =>
+                          Container(color: Colors.black12),
+                      errorWidget: (context, url, error) => Container(
+                        color: const Color(0xFF141B3A),
+                        child: const Center(
+                          child: Icon(
+                            LucideIcons.building2,
+                            color: Colors.white24,
+                            size: 36,
+                          ),
+                        ),
+                      ),
+                    ),
+                    title: project['title']?.toString() ?? '',
+                    caption: location,
+                    tags: [
+                      status,
+                      startingPrice != null &&
+                              startingPrice.isNotEmpty &&
+                              !['price on request', 'upon request']
+                                  .contains(startingPrice.toLowerCase())
+                          ? 'From $startingPrice'
+                          : '',
+                    ],
+                    // The Admin Panel image-overlay label, only while it is
+                    // switched on.
+                    imageBadge: ImageOverlayLabel(
+                      builder: (label) => Text(
+                        '* $label',
+                        style: GoogleFonts.gelasio(
+                          color: Colors.white.withValues(alpha: 0.85),
+                          fontSize: 7,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.5,
                         ),
                       ),
                     ),

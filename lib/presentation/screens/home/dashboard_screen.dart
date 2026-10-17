@@ -27,6 +27,7 @@ import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.da
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_list_screen.dart';
+import 'package:m4_mobile/presentation/widgets/home_image_card.dart';
 import 'dart:async';
 
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -772,7 +773,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               // pads 20 top and bottom and the cards carry a 10 bottom margin,
               // so the card is the row height minus 50 — 230 renders the
               // 180-tall tile at 320 wide, the same as CP, Investor and Guest.
-              height: 230,
+              // Every tab draws the same card (picture plus name panel); the
+              // list pads 20 above and below.
+              height: HomeImageCard.rowHeight + 40,
               child:
                   (_topTabCategory == 'COMMUNITIES'
                       ? _communitiesLoading
@@ -1626,145 +1629,21 @@ class _ProjectCard extends StatelessWidget {
     // image — the same shape the Communities and Media tiles use. It used to be
     // a photo above a light info panel with a full-width READ MORE button,
     // which the web does not have.
-    return GestureDetector(
+    return _ScaleButton(
       onTap: onTap,
-      child: Container(
-        // Same landscape tile width as every other portal and every other tab.
-        width: 320,
-        margin: const EdgeInsets.only(right: 20, bottom: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
+      child: HomeImageCard(
+        image: (fit) => M4Image(
+          imageUrl: imageUrl,
+          fill: true,
+          height: double.infinity,
+          width: double.infinity,
+          fit: fit,
+          placeholder: Container(color: Colors.black12),
+          errorWidget: Container(color: Colors.white10),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Stack(
-            children: [
-              // 16:9 thumbnail frame — the ratio every card image uses.
-              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
-              Positioned.fill(
-                child: M4Image(
-                  imageUrl: imageUrl,
-                  height: double.infinity,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  placeholder: Container(color: Colors.black12),
-                  errorWidget: Container(color: Colors.white10),
-                ),
-              ),
-              // Text scrim so the name stays readable on bright images.
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0.5, 1.0],
-                      colors: [
-                        Colors.transparent,
-                        const Color(0xFF0C312B).withOpacity(0.82),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              // Status pill
-              Positioned(
-                top: 16,
-                right: 16,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.75),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    status.toUpperCase(),
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
-              ),
-              // Name + locality, held clear of the arrow on the right.
-              Positioned(
-                bottom: 18,
-                left: 20,
-                right: 72,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.gelasio(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(
-                          LucideIcons.mapPin,
-                          size: 11,
-                          color: Colors.white.withOpacity(0.75),
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            location.toUpperCase(),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(
-                              color: Colors.white.withOpacity(0.75),
-                              fontSize: 9,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 1.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              // Round arrow — the card's affordance now the panel button is gone.
-              Positioned(
-                bottom: 16,
-                right: 16,
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    LucideIcons.chevronRight,
-                    color: Color(0xFF0C312B),
-                    size: 18,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        title: title,
+        caption: location,
+        tags: [status],
       ),
     );
   }
@@ -2602,67 +2481,17 @@ class _MediaCard extends StatelessWidget {
     // stretched the card to 320 x 190.
     return _ScaleButton(
       onTap: onTap,
-      child: Container(
-        width: 320,
-        margin: const EdgeInsets.only(right: 16, bottom: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
+      child: HomeImageCard(
+        image: (fit) => M4Image(
+          imageUrl: imageUrl,
+          fill: true,
+          height: double.infinity,
+          width: double.infinity,
+          fit: fit,
+          placeholder: Container(color: Colors.black12),
+          errorWidget: Container(color: Colors.white10),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Stack(
-            children: [
-              // 16:9 thumbnail frame — the ratio every card image uses.
-              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
-              Positioned.fill(
-                child: M4Image(
-                  imageUrl: imageUrl,
-                  height: double.infinity,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  placeholder: Container(color: Colors.black12),
-                  errorWidget: Container(color: Colors.white10),
-                ),
-              ),
-              // Soft scrim so the title stays readable on bright images.
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0.6, 1.0],
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withValues(alpha: 0.55),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 18,
-                bottom: 16,
-                child: Text(
-                  title.toUpperCase(),
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.5,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        title: title,
       ),
     );
   }
@@ -2730,132 +2559,21 @@ class _CommunityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The clean picture with the name and arrow on a panel beneath it —
+    // the same card on every portal's home.
     return _ScaleButton(
       onTap: onTap,
-      child: Container(
-        // Guest parity: the same 320 x 180 tile, margin, 24 corners and shadow
-        // as the Guest home's Communities card.
-        width: 320,
-        margin: const EdgeInsets.only(right: 16, bottom: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
+      child: HomeImageCard(
+        image: (fit) => M4Image(
+          imageUrl: imageUrl,
+          fill: true,
+          height: double.infinity,
+          width: double.infinity,
+          fit: fit,
+          placeholder: Container(color: Colors.black12),
+          errorWidget: Container(color: Colors.white10),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Stack(
-            children: [
-              // 16:9 thumbnail frame — the ratio every card image uses.
-              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
-              Positioned.fill(
-                child: M4Image(
-                  imageUrl: imageUrl,
-                  height: double.infinity,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  placeholder: Container(color: Colors.black12),
-                  errorWidget: Container(color: Colors.white10),
-                ),
-              ),
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    // Guest parity: the card stays bright and only the bottom
-                    // label area gets a soft dark fade.
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0.55, 1.0],
-                      colors: [
-                        Colors.transparent,
-                        const Color(0xFF0C312B).withValues(alpha: 0.82),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              // Badge — web parity: COMMUNITY pill.
-              Positioned(
-                top: 24,
-                right: 24,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0C312B).withValues(alpha: 0.72),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.1),
-                    ),
-                  ),
-                  child: Text(
-                    'COMMUNITY',
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 24,
-                left: 24,
-                right: 24,
-                // Community: title bottom-left, arrow bottom-right, badge
-                // top-right — the name sits in the corner, not the middle.
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.gelasio(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        LucideIcons.arrowRight,
-                        color: Color(0xFF0C312B),
-                        size: 18,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        title: title,
       ),
     );
   }

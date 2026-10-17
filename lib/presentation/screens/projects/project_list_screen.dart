@@ -24,10 +24,15 @@ import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_scr
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
+import 'package:m4_mobile/presentation/widgets/home_image_card.dart';
 
 /// Renders a project image, decoding base64 `data:` URIs via [Image.memory]
 /// (CachedNetworkImage can only fetch network URLs). Used by the project cards.
-Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
+Widget _projListImage(
+  String url, {
+  BoxFit fit = BoxFit.cover,
+  bool fill = false,
+}) {
   Widget errorBox() => Container(
     color: const Color(0xFF1C4535),
     child: const Center(
@@ -38,7 +43,8 @@ Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
   if (url.trim().isEmpty) return errorBox();
   // Fit by file type when the caller asked for cover: PNG/SVG logos show in
   // full (contain), JPEG photos fill the frame (cover).
-  final effFit = fit == BoxFit.cover ? fitForMediaUrl(url) : fit;
+  // [fill]: always fill the frame (the image card), even for a PNG.
+  final effFit = !fill && fit == BoxFit.cover ? fitForMediaUrl(url) : fit;
   if (url.startsWith('data:')) {
     try {
       final bytes = base64Decode(
@@ -1088,160 +1094,45 @@ class _ProjectGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final loc = project['location'];
     final locName = (loc is Map
         ? (loc['name']?.toString() ?? '')
         : (loc?.toString() ?? ''));
-    final locationLabel = (locName.isEmpty ? 'N/A' : locName).split(',').first;
-    return Container(
-      // Figma: cards stack close together and are softly rounded, not
-      // pill-round.
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(20),
-        // Figma depth: the card sits ON the green, lifted by a soft shadow that
-        // falls straight down and stays tucked under the card. The negative
-        // spread is what keeps it from haloing past the corners.
-        // (The dark branch used to be Colors.transparent — i.e. no shadow at
-        // all — so cards read as flat cut-outs on the green.)
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withOpacity(0.34)
-                : const Color(0xFF163A2C).withOpacity(0.10),
-            blurRadius: 26,
-            spreadRadius: -6,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          // 16:9 thumbnail frame — the ratio every card image uses. It was a
-          // flat 200, which is only 16:9 at one particular screen width.
-          const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
-          Positioned.fill(child: _projListImage(imageUrl)),
-          // Subtle Gradient Overlay for text readability on images
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.1),
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.6),
-                  ],
-                  stops: const [0.0, 0.4, 1.0],
+    final status = project['status']?.toString() ?? '';
+    // The clean picture with the name, locality and status on a panel
+    // beneath it — the app's one image card.
+    return HomeImageCard(
+      width: null,
+      margin: const EdgeInsets.only(bottom: 16),
+      image: (fit) => _projListImage(imageUrl, fit: fit, fill: true),
+      title: (project['title'] ?? 'M4 Project').toString(),
+      caption: locName.split(',').first,
+      tags: [status],
+      // The Admin Panel image-overlay label, only while it is switched on.
+      imageBadge: status.toLowerCase() != 'completed'
+          ? ImageOverlayLabel(
+              builder: (label) => Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
                 ),
-              ),
-            ),
-          ),
-
-          // Artistic Impression badge (web parity: only this badge, top-right, dark glass)
-          if (project['status']?.toString().toLowerCase() != 'completed')
-            Positioned(
-              top: 20,
-              right: 20,
-              child: ImageOverlayLabel(
-                builder: (label) => Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    // Figma: pale translucent glass over the photo, not a dark
-                    // chip — the label reads light against the image.
-                    color: Colors.white.withOpacity(0.18),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withOpacity(0.22)),
-                  ),
-                  child: Text(
-                    label,
-                    style: GoogleFonts.gelasio(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white.withOpacity(0.9),
-                      letterSpacing: 1.5,
-                    ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.18),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.white.withOpacity(0.22)),
+                ),
+                child: Text(
+                  label,
+                  style: GoogleFonts.gelasio(
+                    fontSize: 8,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white.withOpacity(0.9),
+                    letterSpacing: 1.5,
                   ),
                 ),
               ),
-            ),
-
-          // Bottom Content
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Figma order: a small tracked-out locality sits above the
-                // project name, and the name carries all the weight.
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        locationLabel.toUpperCase(),
-                        style: GoogleFonts.gelasio(
-                          fontSize: 9,
-                          color: Colors.white70,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.5,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        (project['title'] ?? 'M4 Project')
-                            .toString()
-                            .toUpperCase(),
-                        style: GoogleFonts.gelasio(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          letterSpacing: -0.5,
-                          height: 1.05,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(width: 16),
-
-                // Guest-portal parity: white glass circle with a green arrow.
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.4),
-                    ),
-                  ),
-                  child: const Icon(
-                    LucideIcons.arrowUpRight,
-                    color: Color(0xFF0C312B),
-                    size: 20,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+            )
+          : null,
     ).animate().fadeIn().slideY(begin: 0.05, end: 0);
   }
 }

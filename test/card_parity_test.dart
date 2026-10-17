@@ -11,6 +11,7 @@ import 'package:m4_mobile/presentation/screens/home/dashboard_screen.dart';
 import 'package:m4_mobile/presentation/screens/home/guest_dashboard_screen.dart'
     show GuestDashboardScreen, guestHomeCacheProvider, GuestHomeData;
 import 'package:m4_mobile/presentation/screens/investor/investor_home_screen.dart';
+import 'package:m4_mobile/presentation/widgets/home_image_card.dart';
 
 /// The home Communities and Media cards are one design, and the Guest home is
 /// its reference: the Investor, CP and Customer homes must draw exactly the
@@ -46,9 +47,14 @@ class _FakeApiClient extends ApiClient {
   }) async => Response(
     requestOptions: RequestOptions(path: '/api/content'),
     statusCode: 200,
-    data: {'status': true, 'data': const []},
+    data: {'status': true, 'data': type == 'media' ? _media : const []},
   );
 }
+
+const _media = [
+  {'_id': 'm1', 'title': 'Site Walkthrough', 'thumbnail': '/uploads/m1.jpg'},
+  {'_id': 'm2', 'title': 'Show Flat', 'thumbnail': '/uploads/m2.jpg'},
+];
 
 const _communities = [
   {
@@ -153,7 +159,8 @@ List<String> fingerprint(WidgetTester tester, Finder clip) {
       }
       if (d.shape == BoxShape.circle) {
         lines.add(
-          'circle ${r.width}x${r.height} ${_c(d.color)} '
+          // Rounded: layout arithmetic leaves 39.99999999999997 vs 40.0.
+          'circle ${r.width.toStringAsFixed(1)}x${r.height.toStringAsFixed(1)} ${_c(d.color)} '
           '${d.boxShadow?.map((s) => "${_c(s.color)}/${s.blurRadius}/${s.offset}").join(",")} '
           'at left=$left bottom=$bottom',
         );
@@ -180,7 +187,7 @@ void main() {
             (ref) => const GuestHomeData(
               projects: _projects,
               communities: _communities,
-              media: [],
+              media: _media,
             ),
           ),
         ],
@@ -194,18 +201,28 @@ void main() {
   }
 
   Future<void> openTab(WidgetTester tester, String tab) async {
-    await tester.tap(find.text(tab).first, warnIfMissed: false);
+    // The tab row scrolls sideways; bring the tab into view first, or the
+    // tap misses and the first card is still a Communities one.
+    await tester.ensureVisible(find.text(tab).first);
+    for (var i = 0; i < 3; i++) {
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+    await tester.tap(find.text(tab).first);
     for (var i = 0; i < 6; i++) {
       await tester.pump(const Duration(milliseconds: 300));
     }
   }
 
   /// The home cards are the 320-wide clipped tiles; the leftmost is the first.
+  /// Every tab draws [HomeImageCard]: the 16:9 picture plus its name panel
+  /// ([HomeImageCard.cardHeight] tall).
   Finder firstCard(WidgetTester tester) {
     final clips =
         find.byWidgetPredicate((w) => w is ClipRRect).evaluate().where((e) {
           final r = tester.getRect(find.byWidget(e.widget).first);
-          return (r.width - 320).abs() < 0.5 && (r.height - 180).abs() < 0.5;
+          return (r.width - 320).abs() < 0.5 &&
+              ((r.height - 180).abs() < 0.5 ||
+                  (r.height - HomeImageCard.cardHeight).abs() < 0.5);
         }).toList()..sort(
           (a, b) => tester
               .getRect(find.byWidget(a.widget).first)
@@ -223,7 +240,7 @@ void main() {
     'customer': () => const DashboardScreen(),
   };
 
-  for (final tab in ['COMMUNITIES', 'MEDIA']) {
+  for (final tab in ['COMMUNITIES', 'PROPERTIES', 'MEDIA']) {
     testWidgets('$tab cards match the Guest card in every portal', (
       tester,
     ) async {

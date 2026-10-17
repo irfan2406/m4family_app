@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_projects_screen.dart';
+import 'package:m4_mobile/presentation/widgets/home_image_card.dart';
 
 /// Community > "Discover all projects in this community": each project card is
 /// a YouTube-style 16:9 thumbnail. The 16:9 frame used to wrap the card's 16dp
@@ -118,13 +119,27 @@ void main() {
           await tester.pump(const Duration(milliseconds: 300));
         }
 
-        for (final title in ['SKAI', 'OCEAN VIEW', 'CLÉDOR']) {
+        // Names print as they come from the backend.
+        for (final title in ['SKAI', 'Ocean View', 'Clédor']) {
           final text = find.text(title);
           expect(text, findsOneWidget, reason: '$title card did not render');
-          // The card's layer stack fills the rounded, clipped card exactly, so
-          // its size is the thumbnail the user sees (the gap excluded).
-          cards[title] = tester.getRect(
-            find.ancestor(of: text, matching: find.byType(Stack)).first,
+          // HomeImageCard: the 16:9 picture is the clipped card minus its name
+          // panel underneath (the gap excluded).
+          final clip = tester.getRect(
+            find
+                .descendant(
+                  of: find
+                      .ancestor(of: text, matching: find.byType(HomeImageCard))
+                      .first,
+                  matching: find.byType(ClipRRect),
+                )
+                .first,
+          );
+          cards[title] = Rect.fromLTWH(
+            clip.left,
+            clip.top,
+            clip.width,
+            clip.height - HomeImageCard.panelHeight,
           );
         }
       } finally {

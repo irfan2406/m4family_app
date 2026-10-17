@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/project_highlights.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
@@ -28,6 +27,7 @@ import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'dart:async';
 import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/presentation/widgets/image_overlay_label.dart';
+import 'package:m4_mobile/presentation/widgets/home_image_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -924,7 +924,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           // Customer homes draw.
           // Every tab draws the same full-bleed 16:9 tile (320 wide -> 180
           // tall) plus the card's 10dp bottom margin.
-          height: 190,
+          // Every tab draws the same card: picture plus name panel.
+          height: HomeImageCard.rowHeight,
           child: Builder(
             builder: (context) {
               final isCommunities = _activeTab == 'Communities';
@@ -1107,254 +1108,19 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       return _buildPropertyCard(item, rawImage);
     }
 
+    // Communities only (Media and Properties returned above): the clean
+    // picture with the name and arrow on a panel beneath it, the same card
+    // on every portal's home.
     return _ScaleButton(
-      onTap: () {
-        if (isCommunity) {
-          context.push('/communities/${item['_id']}', extra: item);
-        } else if (isMedia) {
-          context.push('/media');
-        } else {
-          context.push('/projects/${item['_id']}', extra: item);
-        }
-      },
-      child: Container(
-        // Web parity: soft 24px corners. Same landscape tile width as every
-        // other portal — at 320 the 16:9 thumbnail is 180 tall, which is the
-        // room this card's overlay needs.
-        width: 320,
-        margin: const EdgeInsets.only(right: 16, bottom: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
+      onTap: () => context.push('/communities/${item['_id']}', extra: item),
+      child: HomeImageCard(
+        image: (fit) => _buildProjectImage(
+          rawImage,
+          errorIconSize: 40,
+          fit: fit,
+          fill: true,
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Stack(
-            children: [
-              // 🖼️ 16:9 thumbnail frame — the ratio every card image uses.
-              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
-
-              // 🖼️ High Resolution Image
-              Positioned.fill(
-                child: _buildProjectImage(rawImage, errorIconSize: 40),
-              ),
-
-              // 🌫️ Text scrim (web parity: cards stay bright, only the
-              // bottom label area gets a soft dark fade)
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0.55, 1.0],
-                      colors: [
-                        Colors.transparent,
-                        const Color(0xFF0C312B).withValues(alpha: 0.82),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              // 🎬 Play Icon for Media
-              if (isMedia)
-                Positioned.fill(
-                  child: Center(
-                    child:
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.4),
-                              width: 2,
-                            ),
-                          ),
-                          child: const Center(
-                            child: Icon(
-                              LucideIcons.play,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                          ),
-                        ).animate().scale(
-                          begin: const Offset(0.8, 0.8),
-                          curve: Curves.elasticOut,
-                          duration: 800.ms,
-                        ),
-                  ),
-                ),
-
-              // 🏷️ Badge — web parity: COMMUNITY on community tiles, else the
-              // status (Properties) or MEDIA.
-              Positioned(
-                top: 24,
-                right: 24,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0C312B).withValues(alpha: 0.72),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.1),
-                    ),
-                  ),
-                  child: Text(
-                    isCommunity
-                        ? 'COMMUNITY'
-                        : (isMedia
-                              ? 'MEDIA'
-                              : (item['status']?.toString() ?? 'ONGOING')
-                                    .toUpperCase()),
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
-              ),
-
-              // 📄 Content Section
-              Positioned(
-                bottom: 24,
-                left: 24,
-                right: 24,
-                child: isCommunity
-                    // Community: title bottom-left, arrow bottom-right, badge
-                    // top-right — the name sits in the corner, not the middle.
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              (item['title'] ?? item['name'] ?? '').toString(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.gelasio(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.2),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              LucideIcons.arrowRight,
-                              color: Color(0xFF0C312B),
-                              size: 18,
-                            ),
-                          ),
-                        ],
-                      )
-                    : Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            (item['title'] ?? item['name'] ?? '')
-                                .toString()
-                                .toUpperCase(),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.gelasio(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            (item['location'] is Map
-                                    ? item['location']['name']
-                                    : item['location'] ?? 'MAZGAON')
-                                .toString()
-                                .toUpperCase(),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(
-                              color: Colors.white.withValues(alpha: 0.7),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5,
-                              height: 1.4,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w400,
-                                    letterSpacing: 1.2,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.2),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  LucideIcons.arrowRight,
-                                  color: Color(0xFF0C312B),
-                                  size: 18,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-              ),
-            ],
-          ),
-        ),
+        title: (item['title'] ?? item['name'] ?? '').toString(),
       ),
     );
   }
@@ -1386,70 +1152,15 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       projectHeroUrl(item),
     ].where((u) => u.isNotEmpty && !isStockImageUrl(u)).toList(), '');
     return _ScaleButton(
-      // Media tiles open the Media Gallery (content hub) — the same target as
-      // the menu's Media entry. They used to open the project detail page,
-      // which is the Properties tab's destination, not this one's.
       onTap: () => context.push('/media'),
-      child: Container(
-        // Landscape tile: the row gives it 190dp of height, so this width
-        // keeps it wider than tall on every handset (≈1.4:1 at 320dp up to
-        // ≈1.8:1 at 411dp). Was 0.56, which read as a portrait card.
-        // Same landscape tile width as every other portal.
-        width: 320,
-        margin: const EdgeInsets.only(right: 16, bottom: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
+      child: HomeImageCard(
+        image: (fit) => _buildProjectImage(
+          rawImage,
+          errorIconSize: 40,
+          fit: fit,
+          fill: true,
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Stack(
-            children: [
-              // 16:9 thumbnail frame — the ratio every card image uses.
-              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
-              Positioned.fill(
-                child: _buildProjectImage(rawImage, errorIconSize: 40),
-              ),
-              // Soft scrim so the title stays readable on bright images.
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0.6, 1.0],
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withValues(alpha: 0.55),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 18,
-                bottom: 16,
-                child: Text(
-                  (item['title'] ?? item['name'] ?? '')
-                      .toString()
-                      .toUpperCase(),
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.5,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        title: (item['title'] ?? item['name'] ?? '').toString(),
       ),
     );
   }
@@ -1470,141 +1181,16 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
 
     return _ScaleButton(
       onTap: () => context.push('/projects/${item['_id']}', extra: item),
-      child: Container(
-        // Same landscape tile width as every other portal and every other tab.
-        width: 320,
-        margin: const EdgeInsets.only(right: 16, bottom: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
+      child: HomeImageCard(
+        image: (fit) => _buildProjectImage(
+          rawImage,
+          errorIconSize: 40,
+          fit: fit,
+          fill: true,
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Stack(
-            children: [
-              // 16:9 thumbnail frame — the ratio every card image uses.
-              const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
-              Positioned.fill(
-                child: _buildProjectImage(
-                  rawImage,
-                  height: double.infinity,
-                  width: double.infinity,
-                  errorIconSize: 40,
-                ),
-              ),
-              // Text scrim so the name stays readable on bright images.
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0.5, 1.0],
-                      colors: [
-                        Colors.transparent,
-                        const Color(0xFF0C312B).withValues(alpha: 0.82),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              // Status pill
-              Positioned(
-                top: 16,
-                right: 16,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.75),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    status.toUpperCase(),
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
-              ),
-              // Name + locality, held clear of the arrow on the right.
-              Positioned(
-                bottom: 18,
-                left: 20,
-                right: 72,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.gelasio(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(
-                          LucideIcons.mapPin,
-                          size: 11,
-                          color: Colors.white.withValues(alpha: 0.75),
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            location.toUpperCase(),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(
-                              color: Colors.white.withValues(alpha: 0.75),
-                              fontSize: 9,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 1.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              // Round arrow — the card's affordance now the panel button is gone.
-              Positioned(
-                bottom: 16,
-                right: 16,
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    LucideIcons.chevronRight,
-                    color: Color(0xFF0C312B),
-                    size: 18,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        title: title,
+        caption: location,
+        tags: [status],
       ),
     );
   }
@@ -1621,6 +1207,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     BoxFit fit = BoxFit.cover,
     IconData errorIcon = LucideIcons.building2,
     double errorIconSize = 64,
+    bool fill = false,
   }) {
     Widget errorBox() => Container(
       color: const Color(0xFF0C312B),
@@ -1635,7 +1222,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     if (src.isEmpty) return errorBox();
     // Fit by file type when the caller asked for cover: PNG/SVG logos show in
     // full (contain), JPEG photos fill the frame (cover).
-    final effFit = fit == BoxFit.cover ? fitForMediaUrl(src) : fit;
+    // [fill]: always fill the frame (the image cards), even for a PNG,
+    // which would otherwise be shown whole as if it were a logo.
+    final effFit = !fill && fit == BoxFit.cover ? fitForMediaUrl(src) : fit;
 
     if (src.startsWith('assets/')) {
       return Image.asset(

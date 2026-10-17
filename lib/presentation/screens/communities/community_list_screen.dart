@@ -14,6 +14,7 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
+import 'package:m4_mobile/presentation/widgets/home_image_card.dart';
 
 class CommunityListScreen extends ConsumerStatefulWidget {
   const CommunityListScreen({super.key});
@@ -324,13 +325,13 @@ Widget _communityImagePlaceholder() => Container(
 /// which CachedNetworkImage cannot decode (it only fetches over http) — those
 /// must go through Image.memory, or the card falls back to a black
 /// building-icon placeholder (the bug this fixes).
-Widget _communityImage(String url) {
+Widget _communityImage(String url, {BoxFit fit = BoxFit.cover}) {
   if (url.startsWith('data:')) {
     try {
       final base64Str = url.substring(url.indexOf(',') + 1);
       return Image.memory(
         base64Decode(base64Str),
-        fit: BoxFit.cover,
+        fit: fit,
         cacheWidth: 1080,
         width: double.infinity,
         height: double.infinity,
@@ -346,7 +347,7 @@ Widget _communityImage(String url) {
     fadeOutDuration: Duration.zero,
     memCacheWidth: 1080,
     imageUrl: url,
-    fit: BoxFit.cover,
+    fit: fit,
     placeholder: (context, u) => Container(color: Colors.black12),
     errorWidget: (context, u, e) => _communityImagePlaceholder(),
   );
@@ -358,7 +359,6 @@ class _CommunityCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final apiClient = ref.watch(apiClientProvider);
     final imageUrl = apiClient.resolveUrl(
       community['image'] ?? community['imageUrl'],
@@ -371,94 +371,14 @@ class _CommunityCard extends ConsumerWidget {
           builder: (context) => CommunityDetailScreen(community: community),
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        // No outer AspectRatio: it forced the card to exactly 16:9, so on narrow
-        // or large-font devices the title + 2-line subtitle overflowed the box
-        // ("BOTTOM OVERFLOWED BY N PIXELS"). The inner 16:9 frame still sets the
-        // minimum height; the content can now grow the card past it.
-        child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Stack(
-          children: [
-            // 16:9 thumbnail frame — the ratio every card image uses. It was a
-            // flat 350, which is only 16:9 at one particular screen width.
-            const AspectRatio(aspectRatio: 16 / 9, child: SizedBox.expand()),
-            Positioned.fill(child: _communityImage(imageUrl)),
-            // Gradient
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.2),
-                      Colors.black.withOpacity(0.8),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            // Content: name bottom-left, arrow bottom-right (no subtitle).
-            Positioned(
-              left: 30,
-              right: 30,
-              bottom: 24,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: Text(
-                      community['title']?.toString() ?? 'COMMUNITY',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.gelasio(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Container(
-                    width: 55,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.white : const Color(0xFF0C312B),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 10,
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      LucideIcons.arrowRight,
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      size: 24,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+      // The clean picture with the name and arrow on a panel beneath it —
+      // the app's one image card.
+      child: HomeImageCard(
+        width: null,
+        margin: const EdgeInsets.only(bottom: 20),
+        image: (fit) => _communityImage(imageUrl, fit: fit),
+        title: community['title']?.toString() ?? 'COMMUNITY',
       ),
-  ),
-);
+    );
   }
 }

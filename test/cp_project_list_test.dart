@@ -74,7 +74,7 @@ void main() {
     // "Ongoing" from the API vs the ONGOING tab: the compare is lowercased on
     // both sides, so the capitalisation must not matter.
     expect(find.text('NO ARCHITECTURAL MATCHES'), findsNothing);
-    expect(find.textContaining('CLÉDOR', findRichText: true), findsWidgets);
+    expect(find.textContaining('Clédor', findRichText: true), findsWidgets);
   });
 
   testWidgets('guest mode lists it too — the flag changes no data', (

@@ -18,6 +18,10 @@ class M4Image extends ConsumerWidget {
   final Widget? placeholder;
   final Widget? errorWidget;
 
+  /// Always fill the frame with [BoxFit.cover], even for a PNG (which is
+  /// otherwise shown whole, as if it were a logo). For the image cards.
+  final bool fill;
+
   const M4Image({
     super.key,
     required this.imageUrl,
@@ -26,6 +30,7 @@ class M4Image extends ConsumerWidget {
     this.height,
     this.placeholder,
     this.errorWidget,
+    this.fill = false,
   });
 
   @override
@@ -36,7 +41,9 @@ class M4Image extends ConsumerWidget {
 
     // Fit by file type when the caller asked for cover: PNG/SVG (logos) are
     // shown in full (contain), JPEG/other (photos) fill the frame (cover).
-    final effFit = fit == BoxFit.cover ? fitForMediaUrl(imageUrl!) : fit;
+    final effFit = !fill && fit == BoxFit.cover
+        ? fitForMediaUrl(imageUrl!)
+        : fit;
 
     // Check if the URL is a base64 Data URI
     if (imageUrl!.startsWith('data:image/') && imageUrl!.contains('base64,')) {

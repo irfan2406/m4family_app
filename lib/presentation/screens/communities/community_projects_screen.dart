@@ -6,12 +6,12 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
 import 'package:m4_mobile/presentation/widgets/image_overlay_label.dart';
+import 'package:m4_mobile/presentation/widgets/home_image_card.dart';
 
 /// GUEST: all projects within a single community, scoped by [slug].
 /// Mirrors web `/guest/communities/[slug]/projects`.
@@ -366,208 +366,45 @@ class _ProjectCard extends StatelessWidget {
 
     return _ScaleButton(
       onTap: onTap,
-      // The 16dp gap to the next card sits outside the 16:9 frame. As a margin
-      // inside it, the gap came off the card itself and left the thumbnail
-      // 16dp short of 16:9 (about 1.95:1 on a phone).
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: AspectRatio(
-          aspectRatio: 16 / 9,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                // Hero image
-                CachedNetworkImage(
-                  memCacheWidth: 1080,
-                  imageUrl: imageUrl,
-                  fit: BoxFit.cover,
-                  fadeInDuration: const Duration(milliseconds: 400),
-                  placeholder: (context, url) =>
-                      Container(color: Colors.black12),
-                  errorWidget: (context, url, error) => Container(
-                    color: Colors.black26,
-                    child: const Icon(
-                      LucideIcons.alertCircle,
-                      color: Colors.white38,
-                    ),
-                  ),
-                ),
-
-                // Gradient overlays
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withValues(alpha: 0.5),
-                        Colors.transparent,
-                        Colors.black.withValues(alpha: 0.8),
-                      ],
-                      stops: const [0.0, 0.45, 1.0],
-                    ),
-                  ),
-                ),
-
-                // Status badge (top-right)
-                if (status.isNotEmpty)
-                  Positioned(
-                    top: 16,
-                    right: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.2),
-                        ),
-                      ),
-                      child: Text(
-                        status.toUpperCase(),
-                        style: GoogleFonts.gelasio(
-                          fontSize: 8,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                // Top-left content block: Title & Location
-                Positioned(
-                  top: 18,
-                  left: 18,
-                  right: 75,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        (project['title'] ?? '').toString().toUpperCase(),
-                        style: GoogleFonts.gelasio(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          letterSpacing: -0.5,
-                          height: 1.0,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 3),
-                      Row(
-                        children: [
-                          Icon(
-                            LucideIcons.mapPin,
-                            size: 10,
-                            color: Colors.white.withValues(alpha: 0.7),
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              location.toUpperCase(),
-                              style: GoogleFonts.gelasio(
-                                fontSize: 8,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white.withValues(alpha: 0.7),
-                                letterSpacing: 1.5,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (_hasStartingPrice(startingPrice)) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          'STARTING FROM',
-                          style: GoogleFonts.gelasio(
-                            fontSize: 7,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white.withValues(alpha: 0.65),
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                        Text(
-                          startingPrice!,
-                          style: GoogleFonts.inter(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFFF4EFE3),
-                            letterSpacing: -0.2,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-
-                // Artistic impression label (bottom-left)
-                if (!isCompleted)
-                  Positioned(
-                    bottom: 16,
-                    left: 18,
-                    child: ImageOverlayLabel(
-                      builder: (label) => Text(
-                        '* $label',
-                        style: GoogleFonts.gelasio(
-                          fontSize: 6,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white.withValues(alpha: 0.75),
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                // Action arrow (bottom-right)
-                Positioned(
-                  bottom: 16,
-                  right: 16,
-                  child: Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF4EFE3),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      LucideIcons.arrowRight,
-                      color: Color(0xFF0C312B),
-                      size: 16,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+      // The app's one image card: clean picture, name and details on a panel
+      // beneath it.
+      child: HomeImageCard(
+        width: null,
+        margin: const EdgeInsets.only(bottom: 16),
+        image: (fit) => CachedNetworkImage(
+          memCacheWidth: 1080,
+          imageUrl: imageUrl,
+          fit: fit,
+          fadeInDuration: Duration.zero,
+          fadeOutDuration: Duration.zero,
+          placeholder: (context, url) => Container(color: Colors.black12),
+          errorWidget: (context, url, error) => Container(
+            color: Colors.black26,
+            child: const Icon(LucideIcons.alertCircle, color: Colors.white38),
           ),
         ),
+        title: project['title']?.toString() ?? '',
+        caption: location,
+        tags: [
+          status,
+          if (_hasStartingPrice(startingPrice)) 'From $startingPrice',
+        ],
+        // The Admin Panel image-overlay label, only while it is switched on.
+        imageBadge: isCompleted
+            ? null
+            : ImageOverlayLabel(
+                builder: (label) => Text(
+                  '* $label',
+                  style: GoogleFonts.gelasio(
+                    fontSize: 7,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white.withValues(alpha: 0.85),
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
       ),
-    ).animate().fadeIn(delay: (index * 80).ms).slideY(begin: 0.06, end: 0);
+    );
   }
 }
 

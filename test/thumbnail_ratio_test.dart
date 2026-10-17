@@ -11,6 +11,7 @@ import 'package:m4_mobile/presentation/screens/home/guest_dashboard_screen.dart'
     show GuestDashboardScreen, guestHomeCacheProvider, GuestHomeData;
 import 'package:m4_mobile/presentation/screens/investor/investor_home_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
+import 'package:m4_mobile/presentation/widgets/home_image_card.dart';
 
 /// Every card thumbnail in the app is a 16:9 frame — the YouTube thumbnail
 /// ratio — so a project looks the same width-for-height in Guest, Customer, CP
@@ -72,6 +73,29 @@ void expectSixteenByNine(
 }) {
   final title = find.text(text);
   expect(title, findsWidgets, reason: '$label: card did not render');
+
+  // HomeImageCard: the 16:9 picture is the clipped card minus its name panel
+  // underneath.
+  final imageCard = find.ancestor(
+    of: title.first,
+    matching: find.byType(HomeImageCard),
+  );
+  if (imageCard.evaluate().isNotEmpty) {
+    final clip = tester.getRect(
+      find
+          .descendant(of: imageCard.first, matching: find.byType(ClipRRect))
+          .first,
+    );
+    final pictureHeight = clip.height - HomeImageCard.panelHeight;
+    expect(
+      clip.width / pictureHeight,
+      closeTo(_ratio, 0.01),
+      reason:
+          '$label: picture is ${clip.width.toStringAsFixed(1)}x'
+          '${pictureHeight.toStringAsFixed(1)}, not 16:9',
+    );
+    return;
+  }
 
   final card = find.ancestor(of: title.first, matching: find.byType(Stack));
   expect(card, findsWidgets, reason: '$label: no card stack around the title');
@@ -212,7 +236,8 @@ void main() {
         await tester.pump(const Duration(milliseconds: 300));
       }
 
-      expectSixteenByNine(tester, 'properties list @ $at');
+      // The card prints the name as it comes from the backend.
+      expectSixteenByNine(tester, 'properties list @ $at', text: _title);
       expect(tester.takeException(), isNull);
     });
   }
