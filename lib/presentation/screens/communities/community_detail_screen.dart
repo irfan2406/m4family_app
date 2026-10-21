@@ -511,139 +511,74 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                   // Web shows a bare "BENEFITS" heading — no kicker.
                   const _SectionHeader(title: 'Benefits', subtitle: ''),
                   const SizedBox(height: 30),
-                  // Web parity: compact fixed-size squares packed from the left
-                  // (measured 126×126 with a 12px gap), NOT a 2-column grid —
-                  // that stretched each card to half the screen and pushed a
-                  // wide gap between them. Wrap also flows to a second row once
-                  // there are more than two benefits.
+                  // Same look as a project's Amenities: a bare vector icon with
+                  // its label underneath — no card or tile behind it — three
+                  // across. Each row's items are top-aligned, so every icon
+                  // sits at the same height even when a label wraps to two
+                  // lines.
                   Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
+                    spacing: 10,
+                    runSpacing: 24,
                     children: benefits.map((benefit) {
-                      // Web parity: three across, in reading order. The fixed
-                      // 126 only ever fitted two on a phone.
-                      final cell = (MediaQuery.of(context).size.width - 74) / 3;
+                      // Content width inside the page's 25px side padding.
+                      final cell =
+                          (MediaQuery.of(context).size.width - 50 - 20) / 3;
+                      final label = benefit is Map
+                          ? (benefit['label']?.toString() ?? '')
+                          : benefit.toString();
+                      // Backend-driven (web parity): each benefit carries an
+                      // uploaded icon image in R2 (benefit['image']); only fall
+                      // back to a Lucide glyph when it has none.
+                      final rawImg =
+                          (benefit is Map
+                                  ? benefit['image']?.toString()
+                                  : null)
+                              ?.trim() ??
+                          '';
                       return SizedBox(
                         width: cell,
-                        height: cell - 10,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color:
-                                (isDark
-                                        ? Colors.white
-                                        : const Color(0xFF0C312B))
-                                    .withOpacity(0.04),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color:
-                                  (isDark
-                                          ? Colors.white
-                                          : const Color(0xFF0C312B))
-                                      .withOpacity(0.06),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (rawImg.isNotEmpty)
+                              LuxuryAmenityIcon(
+                                name: label,
+                                iconUrl: apiClient.resolveUrl(rawImg),
+                                // Same size, weight and colour as Amenities.
+                                size: kAmenityGridIconSize,
+                                emphasized: true,
+                                color: amenityGridIconColor(isDark),
+                              )
+                            else
+                              SizedBox.square(
+                                dimension: kAmenityGridIconSize,
+                                child: Icon(
+                                  benefit is Map
+                                      ? _getIcon(
+                                          benefit['icon']?.toString() ?? '',
+                                        )
+                                      : LucideIcons.star,
+                                  color: amenityGridIconColor(isDark),
+                                  size: 40,
+                                ),
+                              ),
+                            const SizedBox(height: 10),
+                            Text(
+                              label,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.inter(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.9)
+                                    : const Color(0xFF0C312B),
+                                letterSpacing: 0.3,
+                                height: 1.2,
+                              ),
                             ),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 48,
-                                height: 48,
-                                decoration: BoxDecoration(
-                                  color:
-                                      (isDark
-                                              ? Colors.white
-                                              : const Color(0xFF0C312B))
-                                          .withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                // Backend-driven (web parity): each benefit
-                                // carries an uploaded icon image in R2
-                                // (benefit['image']). Render that, tinted to the
-                                // theme; only fall back to a Lucide glyph when
-                                // the backend has no image for it.
-                                child: Builder(
-                                  builder: (_) {
-                                    final benefitColor = isDark
-                                        ? Colors.white
-                                        : const Color(0xFF0C312B);
-                                    final rawImg =
-                                        (benefit is Map
-                                                ? benefit['image']?.toString()
-                                                : null)
-                                            ?.trim() ??
-                                        '';
-                                    if (rawImg.isNotEmpty) {
-                                      return LuxuryAmenityIcon(
-                                        name:
-                                            benefit['label']?.toString() ?? '',
-                                        iconUrl: apiClient.resolveUrl(rawImg),
-                                        size: 24,
-                                        color: benefitColor,
-                                      );
-                                    }
-                                    return Icon(
-                                      _getIcon(benefit['icon']),
-                                      color: benefitColor,
-                                      size: 24,
-                                    );
-                                  },
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                ),
-                                child: Builder(
-                                  builder: (_) {
-                                    final labelStyle = GoogleFonts.inter(
-                                      color:
-                                          (isDark
-                                                  ? Colors.white
-                                                  : const Color(0xFF0C312B))
-                                              .withOpacity(0.7),
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.5,
-                                      height: 1.4,
-                                    );
-                                    // Every label gets room for two lines, the
-                                    // text centred in it. Otherwise a label
-                                    // that wraps (METRO CONNECTIVITY) made its
-                                    // tile's icon sit higher than its
-                                    // neighbours'. The hidden two-line text
-                                    // sizes the room with the label's own font,
-                                    // so it holds at any text size.
-                                    return Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        Visibility(
-                                          visible: false,
-                                          maintainSize: true,
-                                          maintainAnimation: true,
-                                          maintainState: true,
-                                          child: Text(
-                                            ' \n ',
-                                            maxLines: 2,
-                                            style: labelStyle,
-                                          ),
-                                        ),
-                                        Text(
-                                          benefit['label']
-                                              .toString()
-                                              .toUpperCase(),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.center,
-                                          style: labelStyle,
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
+                          ],
                         ),
                       );
                     }).toList(),
