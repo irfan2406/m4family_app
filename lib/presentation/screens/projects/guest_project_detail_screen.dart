@@ -1,3 +1,6 @@
+import 'package:m4_mobile/presentation/widgets/hero_actions_top.dart';
+import 'package:m4_mobile/presentation/widgets/youtube_embed.dart';
+import 'package:m4_mobile/presentation/widgets/project_status_badge.dart';
 import 'package:m4_mobile/presentation/widgets/article_text.dart';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:dio/dio.dart';
@@ -248,6 +251,8 @@ class _GuestProjectDetailScreenState
         await SupportHandlers.launchEmail(url.replaceFirst('mailto:', ''));
         return;
       }
+      // A YouTube video (e.g. a 360° tour) plays inside the app.
+      if (openYouTubeInApp(context, url)) return;
 
       final apiClient = ref.read(apiClientProvider);
       final resolvedUrl = apiClient.resolveUrl(url);
@@ -507,6 +512,8 @@ class _GuestProjectDetailScreenState
     String url, {
     required String label,
   }) async {
+    // A YouTube walkthrough or tour plays inside the app.
+    if (openYouTubeInApp(context, url)) return;
     // Admin-entered links often omit the scheme (SKAI's walkthrough is stored
     // as `youtube.com/watch?...`), which `canLaunchUrl` refuses outright.
     final uri = externalUri(url);
@@ -1348,50 +1355,63 @@ class _GuestProjectDetailScreenState
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.05)
-                              : Colors.black.withValues(alpha: 0.03),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.08)
-                                : Colors.black.withValues(alpha: 0.08),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              LucideIcons.mapPin,
-                              color: isDark
-                                  ? Colors.white70
-                                  : const Color(0xFF0C312B),
-                              size: 14,
+                      // Location, then the project's status beside it (off
+                      // the picture).
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 8,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              (project?['locationName'] ??
-                                      (project?['location'] is Map
-                                          ? project?['location']?['name']
-                                          : project?['location']) ??
-                                      'Mazgaon')
-                                  .toString(),
-                              style: GoogleFonts.inter(
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.05)
+                                  : Colors.black.withValues(alpha: 0.03),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
                                 color: isDark
-                                    ? Colors.white
-                                    : const Color(0xFF155A4F),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500,
+                                    ? Colors.white.withValues(alpha: 0.08)
+                                    : Colors.black.withValues(alpha: 0.08),
                               ),
                             ),
-                          ],
-                        ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  LucideIcons.mapPin,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : const Color(0xFF0C312B),
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  (project?['locationName'] ??
+                                          (project?['location'] is Map
+                                              ? project?['location']?['name']
+                                              : project?['location']) ??
+                                          'Mazgaon')
+                                      .toString(),
+                                  style: GoogleFonts.inter(
+                                    color: isDark
+                                        ? Colors.white
+                                        : const Color(0xFF155A4F),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          ProjectStatusBadge(
+                            status:
+                                project?['status']?.toString() ?? 'ONGOING',
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -1451,6 +1471,10 @@ class _GuestProjectDetailScreenState
                 _buildOverviewSection(project),
                 const SizedBox(height: 32),
                 _buildAmenitiesSection(project),
+                if (_hasMediaResources(project)) ...[
+                  const SizedBox(height: 32),
+                  _buildMediaResourcesSection(project),
+                ],
                 const SizedBox(height: 32),
                 _buildConstructionSection(project),
                 const SizedBox(height: 32),
@@ -1609,36 +1633,12 @@ class _GuestProjectDetailScreenState
               ),
             ),
           ),
-          // Web parity: hero shows ONLY the status badge (bottom-left).
-          Positioned(
-            bottom: 24,
-            left: 24,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                (project?['status']?.toString().toUpperCase() ?? 'ONGOING'),
-                style: GoogleFonts.gelasio(
-                  color: Colors.white,
-                  fontSize: 8,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.5,
-                ),
-              ),
-            ),
-          ),
+          // Nothing written on the picture: the status pill sits beside the
+          // location below the title.
           // Scrollable Header Actions (Match Web Absolute Logic)
           Positioned(
-            // Sit closer to the top. On a punch-hole screen the safe-area
-            // inset (54dp on the test device) runs well below the status-bar
-            // text (~24dp), so parking 6dp under the whole inset left an
-            // obvious empty band above the row. Take some of that slack back,
-            // with a 26dp floor so the buttons still clear the clock on a
-            // device whose inset is only the status bar.
-            top: math.max(MediaQuery.of(context).padding.top - 12, 26.0),
+            // Same height as every portal's project page (see heroActionsTop).
+            top: heroActionsTop(context),
             left: 16,
             right: 16,
             child: Row(
@@ -1680,27 +1680,6 @@ class _GuestProjectDetailScreenState
 
   Widget _buildOverviewSection(dynamic project) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // The walkthrough video and the 360° tour are for logged-in users only:
-    // neither card is shown in the guest portal.
-    final loggedIn = ref.watch(
-      authProvider.select((s) => s.status == AuthStatus.authenticated),
-    );
-    // 360° tour link from the backend; the card shows only when it exists.
-    final tour =
-        (project?['threeSixtyUrl'] ??
-                project?['virtualTourUrl'] ??
-                project?['virtualTour'])
-            ?.toString() ??
-        '';
-    // Walkthrough/video link from the backend; the card shows only when it
-    // exists (e.g. Clédor carries a YouTube walkthrough).
-    final walkthrough =
-        (project?['walkthroughUrl'] ??
-                project?['videoUrl'] ??
-                project?['walkthrough'] ??
-                project?['videoTour'])
-            ?.toString() ??
-        '';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -1725,29 +1704,42 @@ class _GuestProjectDetailScreenState
             ),
             linkColor: isDark ? Colors.white : const Color(0xFF155A4F),
           ),
-          // Web parity: WALKTHROUGH VIDEO card — only when the backend carries a
-          // walkthrough/video link (e.g. Clédor); app colours (not web blue).
-          if (loggedIn && walkthrough.isNotEmpty) ...[
-            const SizedBox(height: 32),
-            _WalkthroughVideoCard(
-              isDark: isDark,
-              onWatch: () => _launchExternalLink(
-                walkthrough,
-                label: 'walkthrough video',
-              ),
-            ),
-          ],
-          // Web parity: 360° VIRTUAL TOUR card — only when the backend carries a
-          // tour link (hidden otherwise, e.g. completed projects); app colours.
-          if (loggedIn && tour.isNotEmpty) ...[
-            SizedBox(height: walkthrough.isNotEmpty ? 16 : 32),
-            _VirtualTourCard(
-              isDark: isDark,
-              onExplore: () =>
-                  _launchExternalLink(tour, label: 'virtual tour'),
-            ),
-          ],
         ],
+      ),
+    );
+  }
+
+  /// Backend walkthrough-video link (web parity), trimmed; '' when absent.
+  String _walkthroughUrl(dynamic project) {
+    return (project?['walkthroughUrl'] ??
+                project?['videoUrl'] ??
+                project?['walkthrough'] ??
+                project?['videoTour'])
+            ?.toString()
+            .trim() ??
+        '';
+  }
+
+  /// Whether to show the media section below Amenities (logged-in walkthrough).
+  bool _hasMediaResources(dynamic project) {
+    final loggedIn = ref.watch(
+      authProvider.select((s) => s.status == AuthStatus.authenticated),
+    );
+    return loggedIn && _walkthroughUrl(project).isNotEmpty;
+  }
+
+  /// The WALKTHROUGH VIDEO card, shown BELOW the Amenities section. The 360°
+  /// tour card was removed; the 360° view still lives in the hero thumbnails.
+  Widget _buildMediaResourcesSection(dynamic project) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final walkthrough = _walkthroughUrl(project);
+    if (!_hasMediaResources(project)) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: _WalkthroughVideoCard(
+        isDark: isDark,
+        onWatch: () =>
+            _launchExternalLink(walkthrough, label: 'walkthrough video'),
       ),
     );
   }
@@ -2927,111 +2919,6 @@ class _WalkthroughVideoCard extends StatelessWidget {
                 children: [
                   Text(
                     'WATCH VIDEO',
-                    style: GoogleFonts.inter(
-                      fontSize: 7.5,
-                      fontWeight: FontWeight.w600,
-                      color: isDark
-                          ? const Color(0xFF0C312B)
-                          : const Color(0xFFF4EFE3),
-                      letterSpacing: 1.0,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Web parity: the "360° VIRTUAL TOUR" row in the overview — a VR icon, the
-/// title/subtitle, and a single EXPLORE 360° CTA. Drawn in the app's own
-/// colours (dark green on cream / white on navy), not the web's pink.
-class _VirtualTourCard extends StatelessWidget {
-  final bool isDark;
-  final VoidCallback onExplore;
-  const _VirtualTourCard({required this.isDark, required this.onExplore});
-
-  @override
-  Widget build(BuildContext context) {
-    final accent = isDark ? Colors.white : const Color(0xFF0C312B);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.03)
-            : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : Colors.black.withValues(alpha: 0.06),
-        ),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: accent.withValues(alpha: 0.06),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(LucideIcons.orbit, color: accent, size: 18),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '360° VIRTUAL TOUR',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : const Color(0xFF155A4F),
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'INTERACTIVE VR EXPERIENCE',
-                  style: GoogleFonts.inter(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white60 : const Color(0xFF155A4F),
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          _ScaleButton(
-            onTap: onExplore,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.white : const Color(0xFF0C312B),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'EXPLORE 360°',
                     style: GoogleFonts.inter(
                       fontSize: 7.5,
                       fontWeight: FontWeight.w600,

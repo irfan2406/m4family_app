@@ -1,3 +1,6 @@
+import 'package:m4_mobile/presentation/widgets/hero_actions_top.dart';
+import 'package:m4_mobile/presentation/widgets/youtube_embed.dart';
+import 'package:m4_mobile/presentation/widgets/project_status_badge.dart';
 import 'package:m4_mobile/presentation/widgets/article_text.dart';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'dart:convert';
@@ -362,6 +365,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Future<void> _openUrl(String? url) async {
     if (url == null || url.isEmpty) return;
+    // A YouTube walkthrough or tour plays inside the app.
+    if (openYouTubeInApp(context, url)) return;
     final resolved = ref.read(apiClientProvider).resolveUrl(url);
     final uri = Uri.parse(resolved);
     await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -991,7 +996,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       ),
                     ),
                     Positioned(
-                      top: MediaQuery.of(context).padding.top + 12,
+                      // Same height as every portal's project page (see
+                      // heroActionsTop).
+                      top: heroActionsTop(context),
                       left: 16,
                       right: 16,
                       child: Row(
@@ -1026,29 +1033,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         ],
                       ),
                     ),
-                    Positioned(
-                      left: 24,
-                      bottom: 20,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: accent,
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          status,
-                          style: GoogleFonts.gelasio(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 2,
-                            color: accentFg,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Nothing written on the picture: the status pill sits
+                    // beside the location below the title.
                   ],
                 ),
               ),
@@ -1120,44 +1106,54 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           ),
                         ),
                         const SizedBox(height: 10),
+                        // Location, then the project's status beside it (off
+                        // the picture).
                         Align(
                           alignment: Alignment.centerLeft,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
-                                color: scheme.outlineVariant.withValues(
-                                  alpha: 0.5,
+                          child: Wrap(
+                            spacing: 10,
+                            runSpacing: 8,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
                                 ),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  LucideIcons.mapPin,
-                                  size: 13,
-                                  color: scheme.onSurface.withValues(
-                                    alpha: 0.7,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  _locationLine(),
-                                  style: GoogleFonts.inter(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500,
-                                    color: scheme.onSurface.withValues(
-                                      alpha: 0.85,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: scheme.outlineVariant.withValues(
+                                      alpha: 0.5,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      LucideIcons.mapPin,
+                                      size: 13,
+                                      color: scheme.onSurface.withValues(
+                                        alpha: 0.7,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      _locationLine(),
+                                      style: GoogleFonts.inter(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                        color: scheme.onSurface.withValues(
+                                          alpha: 0.85,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ProjectStatusBadge(status: status),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 22),
@@ -1216,12 +1212,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           ),
                           linkColor: accent,
                         ),
-                        ..._promoCards(p, scheme),
-                        ..._assetRows(p, scheme),
                         const SizedBox(height: 26),
                         _sectionTitle('Amenities', scheme, accent),
                         const SizedBox(height: 12),
                         _amenitiesGrid(p, scheme),
+                        // Media cards (PROJECT FLYER / E-BROCHURE / WALKTHROUGH)
+                        // sit BELOW Amenities now, not under the Overview text.
+                        ..._assetRows(p, scheme),
+                        ..._promoCards(p, scheme),
                         const SizedBox(height: 20),
                         _sectionTitle('Construction Progress', scheme, accent),
                         const SizedBox(height: 12),
@@ -1699,16 +1697,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     return rows.isEmpty ? const [] : [const SizedBox(height: 18), ...rows];
   }
 
-  /// Web parity: the 360° VIRTUAL TOUR (web pink) and WALKTHROUGH VIDEO (web
-  /// blue) promo cards, here in the app's own colours, each shown only when the
-  /// backend carries that link.
+  /// Web parity: the WALKTHROUGH VIDEO promo card, in the app's own colours,
+  /// shown only when the backend carries that link. The standalone 360° tour
+  /// card was removed; the 360° view still lives in the hero thumbnails.
   List<Widget> _promoCards(Map<String, dynamic> p, ColorScheme scheme) {
     final isDark = scheme.brightness == Brightness.dark;
-    final tour =
-        (p['threeSixtyUrl'] ?? p['virtualTourUrl'] ?? p['virtualTour'])
-            ?.toString()
-            .trim() ??
-        '';
     final walkthrough =
         (p['walkthroughUrl'] ??
                 p['videoUrl'] ??
@@ -1717,34 +1710,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             ?.toString()
             .trim() ??
         '';
-    final cards = <Widget>[];
-    if (walkthrough.isNotEmpty) {
-      cards.add(
-        _VirtualTourCard(
-          isDark: isDark,
-          title: 'WALKTHROUGH VIDEO',
-          subtitle: 'VIDEO SHOWCASE',
-          cta: 'WATCH VIDEO',
-          icon: LucideIcons.video,
-          onTap: () => _openUrl(walkthrough),
-        ),
-      );
-    }
-    if (tour.isNotEmpty) {
-      if (cards.isNotEmpty) cards.add(const SizedBox(height: 12));
-      cards.add(
-        _VirtualTourCard(
-          isDark: isDark,
-          title: '360° VIRTUAL TOUR',
-          subtitle: 'INTERACTIVE VR EXPERIENCE',
-          cta: 'EXPLORE 360°',
-          icon: LucideIcons.orbit,
-          onTap: () => _openUrl(tour),
-        ),
-      );
-    }
-    if (cards.isEmpty) return const [];
-    return [const SizedBox(height: 18), ...cards];
+    if (walkthrough.isEmpty) return const [];
+    return [
+      const SizedBox(height: 18),
+      _VirtualTourCard(
+        isDark: isDark,
+        title: 'WALKTHROUGH VIDEO',
+        subtitle: 'VIDEO SHOWCASE',
+        cta: 'WATCH VIDEO',
+        icon: LucideIcons.video,
+        onTap: () => _openUrl(walkthrough),
+      ),
+    ];
   }
 
   Widget _assetRow(

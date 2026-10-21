@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:m4_mobile/presentation/widgets/hero_actions_top.dart';
+import 'package:m4_mobile/presentation/widgets/youtube_embed.dart';
+import 'package:m4_mobile/presentation/widgets/project_status_badge.dart';
 import 'package:m4_mobile/presentation/widgets/article_text.dart';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:dio/dio.dart';
@@ -259,6 +262,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         await SupportHandlers.launchEmail(url.replaceFirst('mailto:', ''));
         return;
       }
+      // A YouTube video (e.g. a 360° tour) plays inside the app.
+      if (openYouTubeInApp(context, url)) return;
 
       final apiClient = ref.read(apiClientProvider);
       final resolvedUrl = apiClient.resolveUrl(url);
@@ -301,6 +306,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   /// Opens an external link (360° tour / walkthrough video) in the browser.
   Future<void> _launchExternal(String url) async {
+    // A YouTube walkthrough or tour plays inside the app.
+    if (openYouTubeInApp(context, url)) return;
     // Admin-entered links often omit the scheme, which `canLaunchUrl` refuses.
     final uri = externalUri(url);
     if (uri == null) return;
@@ -1562,9 +1569,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     children: [
                       _buildOverviewSection(project),
                       const SizedBox(height: 40),
-                      // Web parity: Amenities, then FLOOR PLANS, then
-                      // Construction Progress, then Location.
+                      // Amenities first, then the media cards (PROJECT FLYER /
+                      // E-BROCHURE / WALKTHROUGH) sit BELOW Amenities, then
+                      // FLOOR PLANS, Construction Progress and Location.
                       _buildAmenitiesSection(project),
+                      if (_hasMediaResources(project)) ...[
+                        const SizedBox(height: 40),
+                        _buildMediaResourcesSection(project),
+                      ],
                       if (((project?['plans'] as List?) ?? []).isNotEmpty) ...[
                         const SizedBox(height: 40),
                         _buildFloorPlansSection(project),
@@ -1611,31 +1623,45 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             ),
           ),
           const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: onSurface.withOpacity(0.12)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  LucideIcons.mapPin,
-                  size: 12,
-                  color: onSurface.withOpacity(0.6),
+          // Location, then the project's status beside it (off the picture).
+          Wrap(
+            spacing: 10,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
                 ),
-                const SizedBox(width: 6),
-                Text(
-                  locName,
-                  style: GoogleFonts.inter(
-                    color: onSurface.withOpacity(0.9),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                  ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: onSurface.withOpacity(0.12)),
                 ),
-              ],
-            ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      LucideIcons.mapPin,
+                      size: 12,
+                      color: onSurface.withOpacity(0.6),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      locName,
+                      style: GoogleFonts.inter(
+                        color: onSurface.withOpacity(0.9),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ProjectStatusBadge(
+                status: project?['status']?.toString() ?? 'ONGOING',
+              ),
+            ],
           ),
         ],
       ),
@@ -1681,7 +1707,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).padding.top + 20,
+            // Same height as every portal's project page (see heroActionsTop).
+            top: heroActionsTop(context),
             left: 20,
             right: 20,
             child: Row(
@@ -1720,28 +1747,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               ],
             ),
           ),
-          // Web parity: a solid-black status pill sits at the hero's lower-left.
-          // Title + location move BELOW the hero; no "Artistic Impression" here.
-          Positioned(
-            bottom: 20,
-            left: 20,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                (project?['status']?.toString().toUpperCase() ?? 'ONGOING'),
-                style: GoogleFonts.gelasio(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.5,
-                ),
-              ),
-            ),
-          ),
+          // Nothing written on the picture: the status pill sits beside the
+          // location below the title; no "Artistic Impression" here.
         ],
       ),
     );
@@ -1851,29 +1858,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
   Widget _buildOverviewSection(dynamic project) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // The walkthrough video and the 360° tour are for logged-in users only.
-    // Guests can reach this screen from a community page; neither card is
-    // shown to them.
-    final loggedIn = ref.watch(
-      authProvider.select((s) => s.status == AuthStatus.authenticated),
-    );
-    // Backend-driven media links (web parity): the promo cards below show only
-    // when the project actually carries that link.
-    final tour =
-        (project?['threeSixtyUrl'] ??
-                project?['virtualTourUrl'] ??
-                project?['virtualTour'])
-            ?.toString()
-            .trim() ??
-        '';
-    final walkthrough =
-        (project?['walkthroughUrl'] ??
-                project?['videoUrl'] ??
-                project?['walkthrough'] ??
-                project?['videoTour'])
-            ?.toString()
-            .trim() ??
-        '';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1897,11 +1881,32 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           ),
           linkColor: isDark ? Colors.white : const Color(0xFF155A4F),
         ),
-        const SizedBox(height: 32),
-        // Only when the project actually carries one. Clédor's `flyer` is
-        // null, and the card was still drawn with VIEW / DOWNLOAD buttons that
-        // had nothing to open.
-        if (project?['flyer']?.toString().trim().isNotEmpty ?? false)
+      ],
+    );
+  }
+
+  /// The project's downloadable / media assets — PROJECT FLYER, E-BROCHURE and
+  /// the WALKTHROUGH VIDEO. Shown BELOW the Amenities section (not in Overview),
+  /// and only for the links the backend actually carries. The standalone 360°
+  /// tour card was removed; the 360° view still lives in the hero thumbnails.
+  Widget _buildMediaResourcesSection(dynamic project) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasFlyer = project?['flyer']?.toString().trim().isNotEmpty ?? false;
+    final hasBrochure =
+        project?['brochure']?.toString().trim().isNotEmpty ?? false;
+    final walkthrough = _walkthroughUrl(project);
+    // The walkthrough video is for logged-in users only.
+    final loggedIn = ref.watch(
+      authProvider.select((s) => s.status == AuthStatus.authenticated),
+    );
+    final hasWalkthrough = loggedIn && walkthrough.isNotEmpty;
+    if (!hasFlyer && !hasBrochure && !hasWalkthrough) {
+      return const SizedBox.shrink();
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (hasFlyer)
           _MultimediaAssetCard(
             title: 'PROJECT FLYER',
             subtitle: 'HIGH RES • PDF',
@@ -1910,10 +1915,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             onDownload: () =>
                 _downloadAsset(project?['flyer']?.toString(), 'PROJECT FLYER'),
           ),
-        // Web parity: E-BROCHURE shows only when the project actually has a
-        // brochure (Cledor Mazgaon has one; Cledor Mumbai does not).
-        if (project?['brochure']?.toString().trim().isNotEmpty ?? false) ...[
-          const SizedBox(height: 12),
+        if (hasBrochure) ...[
+          if (hasFlyer) const SizedBox(height: 12),
           _MultimediaAssetCard(
             title: 'E-BROCHURE',
             subtitle: 'FULL SHOWCASE • PDF',
@@ -1923,11 +1926,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 _downloadAsset(project?['brochure']?.toString(), 'E-BROCHURE'),
           ),
         ],
-        // Web parity: the 360° VIRTUAL TOUR (web pink) and WALKTHROUGH VIDEO
-        // (web blue) promo cards — here in the app's own colours, and each
-        // shown only when the backend carries that link (Clédor carries both).
-        if (loggedIn && walkthrough.isNotEmpty) ...[
-          const SizedBox(height: 32),
+        if (hasWalkthrough) ...[
+          if (hasFlyer || hasBrochure) const SizedBox(height: 16),
           _VirtualTourCard(
             isDark: isDark,
             title: 'WALKTHROUGH VIDEO',
@@ -1937,19 +1937,31 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             onTap: () => _launchExternal(walkthrough),
           ),
         ],
-        if (loggedIn && tour.isNotEmpty) ...[
-          SizedBox(height: walkthrough.isNotEmpty ? 16 : 32),
-          _VirtualTourCard(
-            isDark: isDark,
-            title: '360° VIRTUAL TOUR',
-            subtitle: 'INTERACTIVE VR EXPERIENCE',
-            cta: 'EXPLORE 360°',
-            icon: LucideIcons.orbit,
-            onTap: () => _launchExternal(tour),
-          ),
-        ],
       ],
     );
+  }
+
+  /// Whether the project carries any media asset worth a section below Amenities.
+  bool _hasMediaResources(dynamic project) {
+    final hasFlyer = project?['flyer']?.toString().trim().isNotEmpty ?? false;
+    final hasBrochure =
+        project?['brochure']?.toString().trim().isNotEmpty ?? false;
+    final loggedIn = ref.watch(
+      authProvider.select((s) => s.status == AuthStatus.authenticated),
+    );
+    final hasWalkthrough = loggedIn && _walkthroughUrl(project).isNotEmpty;
+    return hasFlyer || hasBrochure || hasWalkthrough;
+  }
+
+  /// Backend walkthrough-video link (web parity), trimmed; '' when absent.
+  String _walkthroughUrl(dynamic project) {
+    return (project?['walkthroughUrl'] ??
+                project?['videoUrl'] ??
+                project?['walkthrough'] ??
+                project?['videoTour'])
+            ?.toString()
+            .trim() ??
+        '';
   }
 
   Widget _buildConstructionSection(dynamic project) {

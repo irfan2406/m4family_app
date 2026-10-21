@@ -19,6 +19,9 @@ import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/hero_actions_top.dart';
+import 'package:m4_mobile/presentation/widgets/youtube_embed.dart';
+import 'package:m4_mobile/presentation/widgets/project_status_badge.dart';
 import 'package:m4_mobile/presentation/widgets/article_text.dart';
 import 'package:m4_mobile/presentation/widgets/gallery_prefetcher.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
@@ -216,6 +219,8 @@ class _InvestorProjectDetailScreenState
       await SupportHandlers.launchEmail(url.replaceFirst('mailto:', ''));
       return;
     }
+    // A YouTube walkthrough or tour plays inside the app.
+    if (openYouTubeInApp(context, url)) return;
     // An external link is launched as-is, with a scheme added when the admin
     // omitted one. Only a site-relative path falls through to resolveUrl —
     // otherwise `youtube.com/watch?...` had the API host prepended and 404'd.
@@ -984,6 +989,10 @@ class _InvestorProjectDetailScreenState
             _buildOverviewSection(project, isDark),
             const SizedBox(height: 32),
             _buildAmenitiesSection(project, isDark),
+            // Media cards (FLYER / BROCHURE / WALKTHROUGH / DOCUMENTS) now sit
+            // BELOW Amenities, not under the Overview text.
+            const SizedBox(height: 32),
+            _buildMediaResourcesSection(project, isDark),
             const SizedBox(height: 32),
             _buildPlansSection(project, isDark),
             const SizedBox(height: 32),
@@ -1072,29 +1081,11 @@ class _InvestorProjectDetailScreenState
               ),
             ),
           ),
-          // ONGOING status badge — bottom-left, over the image (web parity).
+          // Nothing written on the picture: the status pill sits beside the
+          // location below the title.
           Positioned(
-            bottom: 16,
-            left: 24,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                (project['status']?.toString().toUpperCase() ?? 'ONGOING'),
-                style: GoogleFonts.inter(
-                  color: const Color(0xFFF4EFE3),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 6,
+            // Same height as every portal's project page (see heroActionsTop).
+            top: heroActionsTop(context),
             left: 16,
             right: 16,
             child: Row(
@@ -1163,40 +1154,56 @@ class _InvestorProjectDetailScreenState
             ),
           ),
           const SizedBox(height: 12),
+          // Location, then the project's status beside it (off the picture).
           Align(
             alignment: Alignment.centerLeft,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.06)
-                    : const Color(0xFFF4EFE3),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                      .withValues(alpha: 0.12),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    LucideIcons.mapPin,
-                    color: isDark ? Colors.white : const Color(0xFF0C312B),
-                    size: 13,
+            child: Wrap(
+              spacing: 10,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
                   ),
-                  const SizedBox(width: 6),
-                  Text(
-                    location,
-                    style: GoogleFonts.inter(
-                      color: isDark ? Colors.white : const Color(0xFF155A4F),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.3,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.06)
+                        : const Color(0xFFF4EFE3),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: (isDark ? Colors.white : const Color(0xFF0C312B))
+                          .withValues(alpha: 0.12),
                     ),
                   ),
-                ],
-              ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        LucideIcons.mapPin,
+                        color: isDark ? Colors.white : const Color(0xFF0C312B),
+                        size: 13,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        location,
+                        style: GoogleFonts.inter(
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF155A4F),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ProjectStatusBadge(
+                  status: project['status']?.toString() ?? 'ONGOING',
+                ),
+              ],
             ),
           ),
         ],
@@ -1286,28 +1293,8 @@ class _InvestorProjectDetailScreenState
   }
 
   Widget _buildOverviewSection(Map<String, dynamic> project, bool isDark) {
-    final flyer = project['flyer']?.toString();
-    final brochure = project['brochure']?.toString();
     final description = project['description']?.toString();
     final startingPrice = project['startingPrice']?.toString();
-    // Web parity: the overview block always shows a WALKTHROUGH card. Pull the
-    // best-available video/tour link; _openUrl gracefully toasts if absent.
-    final walkthrough =
-        (project['walkthroughUrl'] ??
-                project['videoUrl'] ??
-                project['virtualTour'] ??
-                project['walkthrough'] ??
-                project['videoTour'])
-            ?.toString();
-    // Web parity: 360° VIRTUAL TOUR promo card, shown only when the backend
-    // carries a tour link.
-    final tour =
-        (project['threeSixtyUrl'] ??
-                project['virtualTourUrl'] ??
-                project['virtualTour'])
-            ?.toString()
-            .trim() ??
-        '';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -1366,8 +1353,39 @@ class _InvestorProjectDetailScreenState
               ],
             ),
           ],
-          if (flyer != null && flyer.isNotEmpty) ...[
-            const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  /// The project's media / downloadable assets — PROJECT FLYER, PROJECT
+  /// BROCHURE, the WALKTHROUGH card and any DOCUMENTS. Shown BELOW the Amenities
+  /// section (not under the Overview text). The standalone 360° tour card was
+  /// removed; the 360° view still lives in the hero thumbnails.
+  Widget _buildMediaResourcesSection(
+    Map<String, dynamic> project,
+    bool isDark,
+  ) {
+    final flyer = project['flyer']?.toString();
+    final brochure = project['brochure']?.toString();
+    // Web parity: the walkthrough card is always shown; _openUrl toasts if the
+    // link is absent.
+    final walkthrough =
+        (project['walkthroughUrl'] ??
+                project['videoUrl'] ??
+                project['virtualTour'] ??
+                project['walkthrough'] ??
+                project['videoTour'])
+            ?.toString();
+    final hasFlyer = flyer != null && flyer.isNotEmpty;
+    final hasBrochure = brochure != null && brochure.isNotEmpty;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (hasFlyer)
             _AssetCard(
               title: 'PROJECT FLYER',
               subtitle: 'HIGH RES • PDF',
@@ -1376,9 +1394,8 @@ class _InvestorProjectDetailScreenState
               onView: () => _openUrl(flyer),
               onDownload: () => _openUrl(flyer),
             ),
-          ],
-          if (brochure != null && brochure.isNotEmpty) ...[
-            const SizedBox(height: 16),
+          if (hasBrochure) ...[
+            if (hasFlyer) const SizedBox(height: 16),
             _AssetCard(
               title: 'PROJECT BROCHURE',
               subtitle: 'SHOWCASE • PDF',
@@ -1388,18 +1405,12 @@ class _InvestorProjectDetailScreenState
               onDownload: () => _openUrl(brochure),
             ),
           ],
-          // Web parity: WALKTHROUGH card below the flyer, single WATCH STORY CTA.
-          const SizedBox(height: 16),
+          // WALKTHROUGH card, single WATCH STORY CTA (always shown).
+          if (hasFlyer || hasBrochure) const SizedBox(height: 16),
           _WalkthroughCard(
             isDark: isDark,
             onWatch: () => _openUrl(walkthrough),
           ),
-          // Web parity: 360° VIRTUAL TOUR card (web pink) — app colours, only
-          // when the backend carries a tour link.
-          if (tour.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            _VirtualTourCard(isDark: isDark, onExplore: () => _openUrl(tour)),
-          ],
           ..._buildDocuments(project, isDark),
         ],
       ),
@@ -3267,109 +3278,6 @@ class _WalkthroughCard extends StatelessWidget {
               ),
               child: Text(
                 'WATCH STORY',
-                style: GoogleFonts.inter(
-                  fontSize: 7.5,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? const Color(0xFF0C312B)
-                      : const Color(0xFFF4EFE3),
-                  letterSpacing: 1.0,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Web parity: the "360° VIRTUAL TOUR" promo card (web pink) — same chrome as
-/// [_WalkthroughCard], in the app's own colours, with a single EXPLORE 360° CTA.
-class _VirtualTourCard extends StatelessWidget {
-  final bool isDark;
-  final VoidCallback onExplore;
-  const _VirtualTourCard({required this.isDark, required this.onExplore});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.03)
-            : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : Colors.black.withValues(alpha: 0.06),
-        ),
-        boxShadow: isDark
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                  .withValues(alpha: 0.06),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(
-              LucideIcons.orbit,
-              color: isDark ? Colors.white : const Color(0xFF0C312B),
-              size: 18,
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '360° VIRTUAL TOUR',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : const Color(0xFF155A4F),
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'INTERACTIVE VR EXPERIENCE',
-                  style: GoogleFonts.inter(
-                    fontSize: 9.5,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white60 : const Color(0xFF155A4F),
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: onExplore,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.white : const Color(0xFF0C312B),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                'EXPLORE 360°',
                 style: GoogleFonts.inter(
                   fontSize: 7.5,
                   fontWeight: FontWeight.w600,
