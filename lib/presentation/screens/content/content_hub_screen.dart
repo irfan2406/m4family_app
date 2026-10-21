@@ -5,6 +5,7 @@ import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
+import 'package:m4_mobile/presentation/widgets/content_hub_card.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -367,152 +368,14 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
   }
 
   Widget _buildContentCard(dynamic item, int index) {
-    final apiClient = ref.read(apiClientProvider);
-    final String? rawImage =
-        (item['image'] != null && item['image'].toString().isNotEmpty)
-        ? item['image']
-        : (item['thumbnail'] != null && item['thumbnail'].toString().isNotEmpty)
-        ? item['thumbnail']
-        : item['coverImage'];
-    final imageUrl = apiClient.resolveUrl(rawImage);
-    final date = DateTime.tryParse(item['createdAt'] ?? '') ?? DateTime.now();
-    final formattedDate = DateFormat('MM/dd/yyyy').format(date);
-    final scheme = Theme.of(context).colorScheme;
-
-    return GestureDetector(
+    // Every CONTENT HUB list (Media, Highlights, Events, Blog) uses the shared
+    // YouTube-style card: a 16:9 picture with all the text in a thin strip
+    // below it — identical in every portal.
+    return ContentHubCard(
+      item: item,
+      typeLabel: widget.type,
+      placeholderIcon: _getIcon(),
       onTap: () => _openDetail(item),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-          color: scheme.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: scheme.onSurface.withOpacity(0.05)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            // 🖼️ Cover image — 16:9, the ratio every card image uses.
-            Container(
-              width: 144,
-              height: 81,
-              margin: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: scheme.onSurface.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(16),
-                image: imageUrl.isNotEmpty
-                    ? DecorationImage(
-                        image: NetworkImage(imageUrl),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
-              ),
-              child: imageUrl.isEmpty
-                  ? Center(
-                      child: Icon(
-                        _getIcon(),
-                        color: scheme.onSurface.withOpacity(0.1),
-                        size: 30,
-                      ),
-                    )
-                  : null,
-            ),
-
-            // 📄 CONTENT INFO
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 12, 16, 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            // Web parity: bg-primary/10 + text-primary (dark).
-                            color: scheme.onSurface.withOpacity(0.06),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            item['type'].toString().toUpperCase(),
-                            style: GoogleFonts.inter(
-                              fontSize: 7,
-                              fontWeight: FontWeight.w600,
-                              color: scheme.onSurface.withOpacity(0.6),
-                              letterSpacing: 1,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          formattedDate,
-                          style: GoogleFonts.inter(
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
-                            color: scheme.onSurface.withOpacity(0.62),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      item['title'].toString().toUpperCase(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: scheme.onSurface,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      item['description'] ?? '',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        color: scheme.onSurface.withOpacity(0.68),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'READ ARTICLE',
-                          style: GoogleFonts.inter(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: scheme.onSurface,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                        Icon(
-                          LucideIcons.arrowRight,
-                          size: 14,
-                          color: scheme.onSurface,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     ).animate().fadeIn(delay: (index * 100).ms).slideX(begin: 0.1);
   }
 }

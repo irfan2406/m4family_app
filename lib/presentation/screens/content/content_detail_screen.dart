@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:m4_mobile/presentation/widgets/youtube_embed.dart';
+import 'package:m4_mobile/presentation/widgets/content_hub_card.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -248,10 +250,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         ? widget.content['thumbnail']
         : widget.content['coverImage'];
     final imageUrl = apiClient.resolveUrl(rawImage);
-    final date =
-        DateTime.tryParse(widget.content['createdAt'] ?? '') ?? DateTime.now();
-    final formattedDate = DateFormat('MM/dd/yyyy').format(date);
+    // Same "21/10/26" date as the post's card in the list.
+    final formattedDate = contentPostDate(widget.content['createdAt']);
     final hasVideo = _playableVideo(widget.content['videoUrl']);
+    // A YouTube link (e.g. a highlight's site update) plays right here in
+    // YouTube's embedded player, as on the web — not in the YouTube app.
+    final youTubeId = youTubeVideoId(widget.content['videoUrl']?.toString());
 
     return Scaffold(
       backgroundColor: scheme.surface,
@@ -310,7 +314,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         color: Colors.black,
                         child: AspectRatio(
                           aspectRatio: 16 / 9,
-                          child: hasVideo
+                          child: youTubeId != null
+                              ? YouTubeEmbed(videoId: youTubeId)
+                              : hasVideo
                               ? (_isVideoInitialized &&
                                         _chewieController != null
                                     ? Chewie(controller: _chewieController!)

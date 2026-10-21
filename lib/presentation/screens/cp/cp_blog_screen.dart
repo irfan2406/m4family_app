@@ -4,6 +4,7 @@ import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
+import 'package:m4_mobile/presentation/widgets/content_hub_card.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
@@ -225,174 +226,23 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final item = _items[index];
-                  return _BlogCard(item: item);
+                  // The shared Content Hub card — same as Media, Highlights,
+                  // Events and every other portal's Blog.
+                  return ContentHubCard(
+                    item: item,
+                    typeLabel: 'blog',
+                    placeholderIcon: LucideIcons.fileText,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ContentDetailScreen(content: item),
+                      ),
+                    ),
+                  );
                 }, childCount: _items.length),
               ),
             ),
         ],
-      ),
-    );
-  }
-}
-
-class _BlogCard extends ConsumerWidget {
-  final dynamic item;
-  const _BlogCard({required this.item});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final scheme = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isLight = !isDark;
-    final api = ref.read(apiClientProvider);
-
-    final imageUrl = api.resolveUrl(
-      item['image'] ?? item['thumbnail'] ?? item['coverImage'],
-    );
-    final date = DateTime.tryParse(item['createdAt'] ?? '') ?? DateTime.now();
-    final shortDate = DateFormat('M/d/yyyy').format(date);
-
-    // Web parity: a compact horizontal card — small square cover on the left,
-    // BLOG badge + title + READ ARTICLE on the right, date top-right. Tapping
-    // anywhere opens the article (READ MORE / share were dead `() {}` before).
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: scheme.onSurface.withOpacity(0.05)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ContentDetailScreen(content: item),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: SizedBox(
-                    // 16:9, the ratio every card image uses.
-                    width: 120,
-                    height: 67.5,
-                    child: CachedNetworkImage(
-                      fadeInDuration: Duration.zero,
-                      fadeOutDuration: Duration.zero,
-                      memCacheWidth: 1080,
-                      imageUrl: imageUrl,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) =>
-                          Container(color: scheme.surfaceContainerHighest),
-                      errorWidget: (_, __, ___) => Container(
-                        color: scheme.surfaceContainerHighest,
-                        child: const Icon(
-                          LucideIcons.image,
-                          color: Colors.grey,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: scheme.onSurface.withOpacity(0.06),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              (item['type'] ?? 'BLOG').toString().toUpperCase(),
-                              style: GoogleFonts.inter(
-                                fontSize: 8,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1.2,
-                                color: scheme.onSurface.withOpacity(0.7),
-                              ),
-                            ),
-                          ),
-                          const Spacer(),
-                          Text(
-                            shortDate,
-                            style: GoogleFonts.inter(
-                              fontSize: 9,
-                              fontWeight: FontWeight.w700,
-                              color: scheme.onSurface.withOpacity(0.72),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        (item['title'] ?? '').toString().toUpperCase(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          height: 1.15,
-                          letterSpacing: -0.3,
-                          color: isLight
-                              ? const Color(0xFF0C312B)
-                              : Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Text(
-                            'READ ARTICLE',
-                            style: GoogleFonts.inter(
-                              fontSize: 9,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1,
-                              color: isLight
-                                  ? const Color(0xFF0C312B)
-                                  : scheme.primary,
-                            ),
-                          ),
-                          const Spacer(),
-                          Icon(
-                            LucideIcons.arrowRight,
-                            size: 14,
-                            color: isLight
-                                ? const Color(0xFF0C312B)
-                                : scheme.primary,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

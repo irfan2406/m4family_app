@@ -74,6 +74,10 @@ dependencies:
   intl: ^0.19.0
   file_picker: ^10.3.10
   webview_flutter: ^4.13.1
+  # Platform parts of webview_flutter, used directly by the in-app YouTube
+  # player (Android fullscreen, iOS inline playback).
+  webview_flutter_android: ^4.13.0
+  webview_flutter_wkwebview: ^3.26.0
   flutter_svg: ^2.0.10
   dotted_border: ^2.1.0
   video_player: ^2.11.1
