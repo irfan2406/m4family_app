@@ -7,11 +7,13 @@ import 'package:m4_mobile/presentation/screens/investor/investor_home_screen.dar
 import 'package:m4_mobile/presentation/screens/investor/investor_profile_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
+import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
 import 'package:m4_mobile/presentation/widgets/investor_bottom_nav.dart';
 import 'package:m4_mobile/presentation/widgets/investor_sidebar_menu.dart';
 
 /// Investor shell: web `InvestorBottomNav` + `InvestorSidebar` (drawer).
-/// Tabs: 0 Home, 1 Projects, 2 Support, 3 Profile.
+/// Tabs: 0 Home, 1 Projects, 2 Support, 3 Profile, 4 Who We Are (shown
+/// mid-bar, see [InvestorBottomNav.tabOrder]).
 class InvestorMainShell extends ConsumerStatefulWidget {
   const InvestorMainShell({super.key});
 
@@ -40,6 +42,11 @@ class _InvestorMainShellState extends ConsumerState<InvestorMainShell> {
       showcase(const ProjectListScreen()),
       const SupportScreen(),
       const InvestorProfileScreen(),
+      AboutScreen(
+        embedded: true,
+        shellIndexProvider: investorNavigationIndexProvider,
+        shellTabIndex: InvestorBottomNav.whoWeAreTab,
+      ),
     ];
 
     // Nav + scaffold follow the active tab's surface.
@@ -66,6 +73,7 @@ class _InvestorMainShellState extends ConsumerState<InvestorMainShell> {
       body: NavSwipe(
         index: idx,
         count: screens.length,
+        order: InvestorBottomNav.tabOrder,
         onIndexChanged: (i) =>
             ref.read(investorNavigationIndexProvider.notifier).state = i,
         child: IndexedStack(index: idx, children: screens),

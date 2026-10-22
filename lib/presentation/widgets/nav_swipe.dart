@@ -19,12 +19,19 @@ class NavSwipe extends StatelessWidget {
     required this.count,
     required this.onIndexChanged,
     required this.child,
+    this.order,
   });
 
   final int index;
   final int count;
   final ValueChanged<int> onIndexChanged;
   final Widget child;
+
+  /// The tabs in the order the bottom bar shows them, when that differs from
+  /// index order (WHO WE ARE sits mid-bar but is the shell's last tab). A
+  /// fling then moves to the neighbouring icon on the bar. A tab that is not
+  /// on the bar (opened from the menu) keeps the plain index ± 1 behaviour.
+  final List<int>? order;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +41,16 @@ class NavSwipe extends StatelessWidget {
         final v = details.primaryVelocity ?? 0;
         if (v.abs() < M4Nav.swipeVelocity) return;
         // Swipe left (negative velocity) advances a tab; right goes back.
-        final next = v < 0 ? index + 1 : index - 1;
+        final step = v < 0 ? 1 : -1;
+        final barOrder = order;
+        final pos = barOrder?.indexOf(index) ?? -1;
+        if (barOrder != null && pos >= 0) {
+          final nextPos = pos + step;
+          if (nextPos < 0 || nextPos >= barOrder.length) return;
+          onIndexChanged(barOrder[nextPos]);
+          return;
+        }
+        final next = index + step;
         if (next < 0 || next >= count || next == index) return;
         onIndexChanged(next);
       },

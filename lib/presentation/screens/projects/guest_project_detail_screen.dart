@@ -1,6 +1,8 @@
+import 'package:m4_mobile/presentation/providers/amenity_catalog.dart';
 import 'package:m4_mobile/presentation/widgets/hero_actions_top.dart';
 import 'package:m4_mobile/presentation/widgets/youtube_embed.dart';
 import 'package:m4_mobile/presentation/widgets/project_status_badge.dart';
+import 'package:m4_mobile/presentation/widgets/construction_updates.dart';
 import 'package:m4_mobile/presentation/widgets/article_text.dart';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:dio/dio.dart';
@@ -150,6 +152,7 @@ class _GuestProjectDetailScreenState
             }
             _isLoading = false;
           });
+          AmenityCatalog.remember(_fullProject?['amenities'] as List?);
           // Download AND decode the amenity icons now, so the Amenities grid
           // draws them all in its first frame instead of popping them in.
           precacheAmenityIcons(
@@ -1814,13 +1817,17 @@ class _GuestProjectDetailScreenState
             showFullProgress: _showFullProgress,
             onToggleReadMore: () =>
                 setState(() => _showFullProgress = !_showFullProgress),
-            onPhaseTap: (url) {
-              // Open the full-page viewer only for a real uploaded photo; the
+            onOpenPhotos: (urls) {
+              // Open the full-page viewer only for real uploaded photos; the
               // bundled construction fallback is not zoomable.
-              if (url.trim().isEmpty || url.startsWith('assets/')) {
+              final real = [
+                for (final u in urls)
+                  if (u.trim().isNotEmpty && !u.startsWith('assets/')) u,
+              ];
+              if (real.isEmpty) {
                 _launchAction('Image coming soon');
               } else {
-                _showMediaLightbox([url], 'IMAGE');
+                _showMediaLightbox(real, 'IMAGE');
               }
             },
             projectName: project?['title'] ?? 'PROJECT',
@@ -1872,8 +1879,15 @@ class _GuestProjectDetailScreenState
   }
 
   Widget _buildAmenities(dynamic project) {
-    final amenitiesRaw = project?['amenities'] as List? ?? [];
+    // The list's copy of a project carries amenity ids only; the catalogue
+    // turns them into the real amenities (name + icon) from the first frame.
+    final listed = project?['amenities'] as List?;
+    final amenitiesRaw = AmenityCatalog.resolve(listed);
     if (amenitiesRaw.isEmpty) {
+      // Still only the list's amenity ids (the details are on their way)
+      // and the catalogue cannot name them: stay quiet rather than flash
+      // "Coming soon" or stand-in glyphs.
+      if (AmenityCatalog.hasUnresolved(listed)) return const SizedBox.shrink();
       return const _EmptyTabContent(message: 'Coming soon');
     }
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -2944,7 +2958,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
   final List<dynamic> phases;
   final bool showFullProgress;
   final VoidCallback onToggleReadMore;
-  final Function(String) onPhaseTap;
+  /// Opens these photos (full URLs) in the viewer — a month's progress photos.
+  final void Function(List<String> urls) onOpenPhotos;
   final String projectName;
 
   /// Shown when a phase carries no photo of its own — the catalog returns
@@ -2958,7 +2973,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
     required this.phases,
     required this.showFullProgress,
     required this.onToggleReadMore,
-    required this.onPhaseTap,
+    required this.onOpenPhotos,
     required this.projectName,
     this.fallbackImage = '',
   });
@@ -3103,339 +3118,22 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             ],
           ),
           if (phases.isNotEmpty) ...[
-            const SizedBox(height: 64),
-            // Timeline Slider
-            Row(
-              children: [
-                Text(
-                  '2026',
-                  style: GoogleFonts.gelasio(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : const Color(0xFF0C312B),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Stack(
-                    alignment: Alignment.centerLeft,
-                    children: [
-                      Container(
-                        height: 1,
-                        color: isDark
-                            ? Colors.white10
-                            : const Color(0xFF163A2C).withValues(alpha: 0.1),
-                      ),
-                      Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.black
-                              : const Color(0xFFF4EFE3),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.white
-                                : const Color(0xFF0C312B),
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-            SizedBox(
-              // Bigger image (220) + footer (~125) now the card fills the box.
-              height: 345,
-              child: PageView.builder(
-                // One card at a time: the card fills the width and snaps, so the
-                // next phase is fully off-screen until you swipe (it used to be
-                // a 240-wide list, which left the next image peeking).
-                controller: PageController(viewportFraction: 1.0),
-                physics: const BouncingScrollPhysics(),
-                padEnds: false,
-                itemCount: phases.length,
-                itemBuilder: (context, index) {
-                  final phase = phases[index];
-                  // Phase images may be plain strings or {url, caption} objects
-                  // (the backend's current shape) — mediaUrlOf handles both.
-                  final rawPhaseImg = firstMediaUrl(phase['images']).isNotEmpty
-                      ? firstMediaUrl(phase['images'])
-                      : mediaUrlOf(phase['image']);
-                  var imageUrl = apiClient.resolveUrl(rawPhaseImg);
-                  // No phase photo uploaded: show the construction fallback
-                  // image rather than an empty grey placeholder.
-                  if (imageUrl.trim().isEmpty && fallbackImage.isNotEmpty) {
-                    imageUrl = fallbackImage;
-                  }
-                  final isAssetImg = imageUrl.startsWith('assets/');
-                  final status =
-                      phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
-
-                  return Container(
-                    // Near box-width (was margin 24): card fills the construction
-                    // box, matching the reference. Small margin keeps shadow room.
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.03)
-                          // Theme surface — M4Theme.lightCard, the warm cream
-                          // the rest of the app's cards use. It was a hardcoded
-                          // Colors.white, which the theme rules out ("warm
-                          // cream card (never white)") and which read as a
-                          // stark white block on the cream page.
-                          : Theme.of(context).colorScheme.surface,
-                      // Match the CP phase card: 24 radius + soft shadow + a
-                      // hairline border (subtle in dark so it doesn't show as a
-                      // bright edge behind the image).
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.08)
-                            : Colors.black.withValues(alpha: 0.10),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(
-                            alpha: isDark ? 0.35 : 0.07,
-                          ),
-                          blurRadius: 14,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    // Clip the image + footer to the card's rounded corners so
-                    // nothing peeks behind the image's top corners.
-                    clipBehavior: Clip.antiAlias,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _ScaleButton(
-                          // Backend image only — open the phase's own image,
-                          // with no bundled fallback.
-                          onTap: () => onPhaseTap(imageUrl),
-                          child: Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(24),
-                                ),
-                                // 16:9 thumbnail — the ratio every card image
-                                // uses.
-                                child: AspectRatio(
-                                  aspectRatio: 16 / 9,
-                                  child: phase['_fallback'] == true
-                                      // Web parity: no backend phases → the card
-                                      // reads "NO PHASES RECORDED", not a dummy
-                                      // project photo.
-                                      ? Container(
-                                          width: double.infinity,
-                                          alignment: Alignment.center,
-                                          color: isDark
-                                              ? const Color(0xFF141B3A)
-                                              : const Color(0xFFF4EFE3),
-                                          child: Text(
-                                            'NO PHASES RECORDED',
-                                            style: GoogleFonts.inter(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w700,
-                                              letterSpacing: 1.5,
-                                              color:
-                                                  (isDark
-                                                          ? Colors.white
-                                                          : const Color(
-                                                              0xFF0C312B,
-                                                            ))
-                                                      .withValues(alpha: 0.35),
-                                            ),
-                                          ),
-                                        )
-                                      : Stack(
-                                          fit: StackFit.expand,
-                                          children: [
-                                            // Dark backdrop so a transparent /
-                                            // white uploaded image still shows.
-                                            Container(
-                                              color: const Color(0xFF0C312B),
-                                            ),
-                                            isAssetImg
-                                                // PNG/SVG (logos) -> contain,
-                                                // JPEG (photos) -> cover.
-                                                ? Image.asset(
-                                                    imageUrl,
-                                                    width: double.infinity,
-                                                    fit: fitForMediaUrl(imageUrl),
-                                                  )
-                                                : CachedNetworkImage(
-                                                    fadeInDuration: Duration.zero,
-                                                    fadeOutDuration: Duration.zero,
-                                                    memCacheWidth: 1080,
-                                                    imageUrl: imageUrl,
-                                                    width: double.infinity,
-                                                    fit: fitForMediaUrl(imageUrl),
-                                                    placeholder: (c, u) =>
-                                                        const SizedBox.shrink(),
-                                                    errorWidget: (c, e, s) =>
-                                                        const SizedBox.shrink(),
-                                                  ),
-                                          ],
-                                        ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 16,
-                                left: 16,
-                                child: Builder(
-                                  builder: (context) {
-                                    final done = status == 'COMPLETED';
-                                    final active = status == 'IN PROGRESS';
-                                    // Web parity: green=done, blue=active,
-                                    // light pill w/ dark text = upcoming.
-                                    final badgeBg = done
-                                        ? const Color(0xFF163A2C)
-                                        : (active
-                                              ? M4Theme.premiumBlue
-                                              : Colors.white);
-                                    final badgeTxt = (done || active)
-                                        ? Colors.white
-                                        : const Color(0xFF141B3A);
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: badgeBg,
-                                        borderRadius: BorderRadius.circular(6),
-                                        border: (!done && !active)
-                                            ? Border.all(
-                                                color: Colors.black.withValues(
-                                                  alpha: 0.08,
-                                                ),
-                                              )
-                                            : null,
-                                      ),
-                                      child: Text(
-                                        status,
-                                        style: GoogleFonts.inter(
-                                          fontSize: 8,
-                                          fontWeight: FontWeight.w600,
-                                          color: badgeTxt,
-                                          letterSpacing: 1,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                projectName.toUpperCase(),
-                                style: GoogleFonts.inter(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: isDark
-                                      ? Colors.white
-                                      : const Color(0xFF141B3A),
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                children: [
-                                  // Circular progress ring around the percent —
-                                  // solid black with ROUNDED stroke caps (the
-                                  // old one was a dashed ring), bold number.
-                                  SizedBox(
-                                    width: 46,
-                                    height: 46,
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        SizedBox(
-                                          width: 46,
-                                          height: 46,
-                                          child: CircularProgressIndicator(
-                                            value:
-                                                ((phase['progressPercent'] ??
-                                                            phase['progress'] ??
-                                                            0)
-                                                        as num)
-                                                    .toDouble() /
-                                                100,
-                                            strokeWidth: 3,
-                                            strokeCap: StrokeCap.round,
-                                            backgroundColor:
-                                                (isDark
-                                                        ? Colors.white
-                                                        : const Color(
-                                                            0xFF0C312B,
-                                                          ))
-                                                    .withValues(alpha: 0.12),
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                                  isDark
-                                                      ? Colors.white
-                                                      : const Color(0xFF0C312B),
-                                                ),
-                                          ),
-                                        ),
-                                        Text(
-                                          '${phase['progressPercent'] ?? phase['progress'] ?? 0}%',
-                                          style: GoogleFonts.inter(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w600,
-                                            color: isDark
-                                                ? Colors.white
-                                                : const Color(0xFF0C312B),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      (phase['name'] ??
-                                              phase['phaseName'] ??
-                                              'PHASE')
-                                          .toString()
-                                          .toUpperCase(),
-                                      style: GoogleFonts.inter(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w600,
-                                        color: isDark
-                                            ? Colors.white.withValues(
-                                                alpha: 0.85,
-                                              )
-                                            : const Color(
-                                                0xFF0C312B,
-                                              ).withValues(alpha: 0.85),
-                                        letterSpacing: 1.2,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+            const SizedBox(height: 48),
+            // Month-by-month updates per phase, under a year rail — shared by
+            // every portal.
+            ConstructionUpdates(
+              projectTitle: projectName,
+              phases: phases
+                  .whereType<Map>()
+                  .map((m) => Map<String, dynamic>.from(m))
+                  .toList(),
+              resolveUrl: apiClient.resolveUrl,
+              onOpenGallery: (raws) => onOpenPhotos([
+                for (final r in raws) apiClient.resolveUrl(r),
+              ]),
+              fallbackAsset: fallbackImage.isNotEmpty
+                  ? fallbackImage
+                  : 'assets/cledor_phase_demolition.jpg',
             ),
             const SizedBox(height: 64),
             // Phase Tracking List

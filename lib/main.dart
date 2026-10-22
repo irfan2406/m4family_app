@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/amenity_catalog.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/app_toast.dart';
 import 'package:go_router/go_router.dart';
@@ -211,7 +212,13 @@ class M4FamilyApp extends ConsumerWidget {
           data: media.copyWith(textScaler: TextScaler.linear(scale)),
           // Keeps admin edits flowing in while the app is open (see
           // LiveSyncScope): projects, config, content and communities.
-          child: LiveSyncScope(child: child ?? const SizedBox.shrink()),
+          child: LiveSyncScope(
+            // Amenity catalogue + icons, loaded once at start so every
+            // project's Amenities grid shows its real icons immediately.
+            child: AmenityCatalogScope(
+              child: child ?? const SizedBox.shrink(),
+            ),
+          ),
         );
       },
     );

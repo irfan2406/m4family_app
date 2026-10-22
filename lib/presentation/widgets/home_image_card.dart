@@ -141,10 +141,10 @@ class HomeImageCard extends StatelessWidget {
           ),
           Container(
             height: panelHeight,
-            // Slightly translucent cream so the name strip reads a touch softer
-            // against the page behind it (same in every portal — one shared
-            // card). The dark-green title/caption stay legible.
-            color: _cream.withValues(alpha: 0.9),
+            // Translucent cream so the name strip reads clearly softer against
+            // the page behind it (same in every portal — one shared card). The
+            // dark-green title/caption stay legible.
+            color: _cream.withValues(alpha: 0.8),
             padding: const EdgeInsets.only(left: 18, right: 9),
             child: Row(
               children: [

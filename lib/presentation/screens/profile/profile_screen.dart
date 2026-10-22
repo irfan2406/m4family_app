@@ -49,6 +49,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         const SizedBox(height: 12),
                         _buildProfileCard(user, isDark),
                         const SizedBox(height: 32),
+                        // Family section (customer portal only), mirroring the
+                        // investor profile: a single "My Family" card above
+                        // Property Services.
+                        _SectionTitle(title: 'FAMILY', isDark: isDark),
+                        const SizedBox(height: 16),
+                        _buildFamily(context, isDark),
+                        const SizedBox(height: 32),
                         _SectionTitle(
                           title: 'PROPERTY SERVICES',
                           isDark: isDark,
@@ -318,6 +325,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  // Family: a single "My Family" card → the shared family members screen.
+  // Customer portal only (parity with the investor profile's FAMILY section).
+  Widget _buildFamily(BuildContext context, bool isDark) {
+    return _SupportTile(
+      label: 'MY FAMILY',
+      subtitle: 'MANAGE YOUR FAMILY DETAILS',
+      icon: LucideIcons.users,
+      isDark: isDark,
+      onTap: () => context.push('/profile/family'),
     );
   }
 

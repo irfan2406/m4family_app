@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/m4_filter_dropdown.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 
@@ -37,6 +38,15 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
     'Completed',
     'Cancelled',
   ];
+
+  /// Each status's dot in the filter menu.
+  static const _statusColors = <String, Color>{
+    'All': Color(0xFF0C312B),
+    'Pending': Color(0xFFC9932E),
+    'In Progress': Color(0xFF3E7CB1),
+    'Completed': Color(0xFF2E7D32),
+    'Cancelled': Color(0xFFC65B46),
+  };
 
   @override
   void initState() {
@@ -129,7 +139,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 96),
                         children: [
                           const SizedBox(height: 12),
-                          _buildStatBar(scheme, fmt),
+                          _buildStatBar(scheme),
                           const SizedBox(height: 24),
                           _buildSearchAndFilter(scheme),
                           const SizedBox(height: 24),
@@ -210,13 +220,13 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
     );
   }
 
-  Widget _buildStatBar(ColorScheme scheme, NumberFormat fmt) {
+  Widget _buildStatBar(ColorScheme scheme) {
     final s = _summary ?? {};
-    // All four fit the viewport, so no sideways scrolling to reach VISITS.
+    // Three cards (Commission removed): BOOKINGS / SETTLED / VISITS, all fit
+    // the viewport with no sideways scrolling.
     return Row(
       children: [
-        // Web parity: Briefcase/Award/Wallet/Calendar with blue / purple /
-        // emerald / amber tints.
+        // Web parity: Briefcase/Wallet/Calendar icons with the app's tints.
         Expanded(
           child: _statBox(
             LucideIcons.briefcase,
@@ -229,20 +239,11 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
         const SizedBox(width: 8),
         Expanded(
           child: _statBox(
-            LucideIcons.award,
-            'COMMISSION',
-            fmt.format((s['totalCommission'] ?? 0) as num),
-            // Web parity: Commission uses text-primary (dark), not purple.
-            scheme.onSurface,
-            scheme,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _statBox(
             LucideIcons.wallet,
             'SETTLED',
-            fmt.format(1000),
+            // Count of settled prospects (not an amount): trackers that reached
+            // the COMPLETED status.
+            '${_settledCount()}',
             const Color(0xFF163A2C),
             scheme,
           ),
@@ -259,6 +260,33 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
         ),
       ],
     );
+  }
+
+  /// How many prospects are settled — a COUNT, not a rupee amount. Prefers a
+  /// count the backend summary carries; otherwise counts the loaded trackers
+  /// that reached the COMPLETED status (what the SETTLED lifecycle chip marks).
+  int _settledCount() {
+    final s = _summary ?? {};
+    for (final k in const [
+      'settled',
+      'completed',
+      'completedTrackers',
+      'totalCompleted',
+      'settledCount',
+      'completedCount',
+    ]) {
+      final v = s[k];
+      if (v is num) return v.toInt();
+      if (v is String) {
+        final n = int.tryParse(v.trim());
+        if (n != null) return n;
+      }
+    }
+    return _trackers
+        .where(
+          (t) => (t['status'] ?? '').toString().toUpperCase() == 'COMPLETED',
+        )
+        .length;
   }
 
   Widget _statBox(
@@ -367,43 +395,22 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
           ),
         ),
         const SizedBox(width: 12),
-        Container(
-          height: 48,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: scheme.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: scheme.outlineVariant.withValues(alpha: 0.3),
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: _statusFilter,
-              icon: const Padding(
-                padding: EdgeInsets.only(left: 8),
-                child: Icon(LucideIcons.chevronDown, size: 14),
+        // Status filter — the app's shared filter dropdown: a pill with the
+        // status's colour dot, opening a cream menu card.
+        M4FilterDropdown<String>(
+          value: _statusFilter,
+          options: [
+            for (final st in _statuses)
+              M4FilterOption(
+                value: st,
+                label: st,
+                color: _statusColors[st] ?? const Color(0xFF0C312B),
               ),
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: scheme.onSurface,
-                letterSpacing: 1,
-              ),
-              items: _statuses
-                  .map(
-                    (s) => DropdownMenuItem(
-                      value: s,
-                      child: Text(s.toUpperCase()),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (v) {
-                setState(() => _statusFilter = v ?? 'All');
-                _load();
-              },
-            ),
-          ),
+          ],
+          onChanged: (v) {
+            setState(() => _statusFilter = v);
+            _load();
+          },
         ),
       ],
     );

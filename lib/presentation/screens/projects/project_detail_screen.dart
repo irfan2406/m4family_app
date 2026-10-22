@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:m4_mobile/presentation/providers/amenity_catalog.dart';
 import 'package:m4_mobile/presentation/widgets/hero_actions_top.dart';
 import 'package:m4_mobile/presentation/widgets/youtube_embed.dart';
 import 'package:m4_mobile/presentation/widgets/project_status_badge.dart';
+import 'package:m4_mobile/presentation/widgets/construction_updates.dart';
 import 'package:m4_mobile/presentation/widgets/article_text.dart';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'package:dio/dio.dart';
@@ -121,6 +123,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           }
           _isLoading = false;
         });
+        AmenityCatalog.remember(_fullProject?['amenities'] as List?);
         // Download AND decode the amenity icons now, so the Amenities grid
         // draws them all in its first frame instead of popping them in.
         precacheAmenityIcons(
@@ -1987,7 +1990,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           }(),
           projectTitle: project?['title']?.toString() ?? 'PROJECT',
           phases: _progressPhases,
-          onPhaseTap: (img) => _showMediaLightbox(img, 'IMAGE'),
+          onOpenPhotos: (urls) => _showMediaLightbox(urls, 'IMAGE'),
           showFullDesc: _showFullProgressDesc,
           onToggle: () =>
               setState(() => _showFullProgressDesc = !_showFullProgressDesc),
@@ -2297,8 +2300,15 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
   }
 
   Widget _buildAmenities(dynamic project) {
-    final amenitiesRaw = project?['amenities'] as List? ?? [];
+    // The list's copy of a project carries amenity ids only; the catalogue
+    // turns them into the real amenities (name + icon) from the first frame.
+    final listed = project?['amenities'] as List?;
+    final amenitiesRaw = AmenityCatalog.resolve(listed);
     if (amenitiesRaw.isEmpty) {
+      // Still only the list's amenity ids (the details are on their way)
+      // and the catalogue cannot name them: stay quiet rather than flash
+      // "Coming soon" or stand-in glyphs.
+      if (AmenityCatalog.hasUnresolved(listed)) return const SizedBox.shrink();
       return const _EmptyTabContent(message: 'Coming soon');
     }
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -2412,7 +2422,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             estimatedCompletion: estimatedCompletion,
             projectTitle: project?['title']?.toString() ?? 'PROJECT',
             phases: _progressPhases,
-            onPhaseTap: (url) => _showMediaLightbox(url, 'IMAGE'),
+            onOpenPhotos: (urls) => _showMediaLightbox(urls, 'IMAGE'),
             showFullDesc: _showFullProgressDesc,
             onToggle: () =>
                 setState(() => _showFullProgressDesc = !_showFullProgressDesc),
@@ -4312,7 +4322,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
   final String estimatedCompletion;
   final String projectTitle;
   final List<dynamic> phases;
-  final Function(String) onPhaseTap;
+  /// Opens these photos (full URLs) in the viewer — a month's progress photos.
+  final void Function(List<String> urls) onOpenPhotos;
   final bool showFullDesc;
   final VoidCallback onToggle;
 
@@ -4321,7 +4332,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
     required this.estimatedCompletion,
     required this.projectTitle,
     required this.phases,
-    required this.onPhaseTap,
+    required this.onOpenPhotos,
     required this.showFullDesc,
     required this.onToggle,
   });
@@ -4460,295 +4471,18 @@ class _ConstructionDashboardCard extends ConsumerWidget {
           // as OCEAN VIEW) the year rail and the 345-tall empty carousel left a
           // large blank gap; PHASE TRACKING below then says NO PHASES RECORDED.
           if (phases.isNotEmpty) ...[
-            // Web parity: timeline node (year + line + dot) above the phase cards.
-            Builder(
-              builder: (context) {
-                // Web parity: the timeline node year is 2026.
-                const year = '2026';
-                return Row(
-                  children: [
-                    Text(
-                      year,
-                      style: GoogleFonts.gelasio(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: isDark ? Colors.white : const Color(0xFF0C312B),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Container(
-                      width: 12,
-                      height: 12,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: isDark
-                            ? const Color(0xFF141B3A)
-                            : const Color(0xFFF4EFE3),
-                        border: Border.all(
-                          color: isDark ? Colors.white : const Color(0xFF0C312B),
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        height: 1,
-                        color: (isDark ? Colors.white : const Color(0xFF0C312B))
-                            .withOpacity(0.2),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            // Construction Dashboard Cards
-            SizedBox(
-              // Same as the guest portal: 220 image + ~125 footer.
-              height: 345,
-              child: PageView.builder(
-                controller: PageController(viewportFraction: 1.0),
-                physics: const BouncingScrollPhysics(),
-                padEnds: false,
-                itemCount: phases.length,
-                itemBuilder: (context, index) {
-                  final phase = phases[index];
-                  // Phase images may be plain strings or {url, caption} objects
-                  // (the backend's current shape) — mediaUrlOf handles both.
-                  final rawPhaseImg = firstMediaUrl(phase['images']).isNotEmpty
-                      ? firstMediaUrl(phase['images'])
-                      : mediaUrlOf(phase['image']);
-                  final resolved = apiClient.resolveUrl(rawPhaseImg);
-                  // Web parity: a phase with no uploaded photo still shows a
-                  // construction image rather than a blank grey tile.
-                  const constructionFallback =
-                      'assets/cledor_phase_demolition.jpg';
-                  final imageUrl = resolved.trim().isEmpty
-                      ? constructionFallback
-                      : resolved;
-                  final isAssetImg = imageUrl.startsWith('assets/');
-                  return Container(
-                    // Match the guest portal phase card: full width + shadow
-                    // (was a fixed 260-wide horizontal card).
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withOpacity(0.03)
-                          // Theme surface — M4Theme.lightCard, the warm cream the
-                          // rest of the app's cards use. A hardcoded white read
-                          // as a stark block on the cream page, and the theme
-                          // rules it out ("warm cream card (never white)").
-                          : Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(24),
-                      // Subtle in dark so the border doesn't show as a bright edge
-                      // behind the image.
-                      border: Border.all(
-                        color: isDark
-                            ? Colors.white.withOpacity(0.08)
-                            : Colors.black.withOpacity(0.10),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(isDark ? 0.35 : 0.07),
-                          blurRadius: 14,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _ScaleButton(
-                          // Only open the lightbox for a real uploaded photo; the
-                          // bundled construction fallback is not zoomable.
-                          onTap: () => isAssetImg ? null : onPhaseTap(imageUrl),
-                          child: Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(24),
-                                ),
-                                // 16:9 thumbnail — the ratio every card image
-                                // uses, the guest portal phase card included.
-                                child: AspectRatio(
-                                  aspectRatio: 16 / 9,
-                                  child: Stack(
-                                    fit: StackFit.expand,
-                                    children: [
-                                      // Dark backdrop so an uploaded image with a
-                                      // transparent/white background still shows.
-                                      Container(color: const Color(0xFF0C312B)),
-                                      isAssetImg
-                                          ? Image.asset(
-                                              imageUrl,
-                                              width: double.infinity,
-                                              // PNG/SVG (logos) -> contain (full),
-                                              // JPEG (photos) -> cover (fill).
-                                              fit: fitForMediaUrl(imageUrl),
-                                            )
-                                          : CachedNetworkImage(
-                                              imageUrl: imageUrl,
-                                              width: double.infinity,
-                                              fit: fitForMediaUrl(imageUrl),
-                                              memCacheWidth: 600,
-                                              fadeInDuration: Duration.zero,
-                                              placeholder: (context, url) =>
-                                                  const SizedBox.shrink(),
-                                              errorWidget: (context, url, error) =>
-                                                  const SizedBox.shrink(),
-                                            ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              // Status badge (web parity): completed=green,
-                              // in-progress=solid, else=muted.
-                              Positioned(
-                                top: 14,
-                                left: 14,
-                                child: Builder(
-                                  builder: (_) {
-                                    final status =
-                                        (phase['status']?.toString() ??
-                                        'Upcoming');
-                                    final s = status.toLowerCase();
-                                    final bg = s == 'completed'
-                                        ? const Color(0xFF163A2C)
-                                        : s == 'in progress'
-                                        ? (isDark
-                                              ? Colors.white
-                                              : const Color(0xFF0C312B))
-                                        : (isDark
-                                              ? Colors.white24
-                                              : const Color(
-                                                  0xFF163A2C,
-                                                ).withOpacity(0.12));
-                                    final fg = s == 'completed'
-                                        ? Colors.white
-                                        : s == 'in progress'
-                                        ? (isDark ? Colors.black : Colors.white)
-                                        : (isDark
-                                              ? Colors.white70
-                                              : const Color(0xFF0C312B));
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 5,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: bg,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Text(
-                                        status.toUpperCase(),
-                                        style: GoogleFonts.inter(
-                                          fontSize: 8,
-                                          fontWeight: FontWeight.w600,
-                                          color: fg,
-                                          letterSpacing: 1,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Web parity: project title first (e.g. CLÉDOR).
-                              Text(
-                                projectTitle.toUpperCase(),
-                                style: GoogleFonts.inter(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: isDark
-                                      ? Colors.white
-                                      : const Color(0xFF141B3A),
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                              const SizedBox(height: 14),
-                              Row(
-                                children: [
-                                  // Ring with % centered.
-                                  Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      // Simple solid arc progress ring.
-                                      SizedBox(
-                                        width: 46,
-                                        height: 46,
-                                        child: CircularProgressIndicator(
-                                          value:
-                                              (phase['progressPercent'] ??
-                                                      phase['progress'] ??
-                                                      0)
-                                                  .toDouble() /
-                                              100,
-                                          strokeWidth: 3,
-                                          backgroundColor:
-                                              (isDark
-                                                      ? Colors.white
-                                                      : const Color(0xFF0C312B))
-                                                  .withOpacity(0.12),
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                isDark
-                                                    ? Colors.white
-                                                    : const Color(0xFF0C312B),
-                                              ),
-                                        ),
-                                      ),
-                                      Text(
-                                        '${phase['progressPercent'] ?? phase['progress'] ?? 0}%',
-                                        style: GoogleFonts.inter(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w600,
-                                          color: isDark
-                                              ? Colors.white
-                                              : const Color(0xFF0C312B),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(width: 14),
-                                  // Phase name (e.g. FOUNDATION).
-                                  Expanded(
-                                    child: Text(
-                                      (phase['name'] ??
-                                              phase['phaseName'] ??
-                                              'PHASE')
-                                          .toString()
-                                          .toUpperCase(),
-                                      style: GoogleFonts.gelasio(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w700,
-                                        color:
-                                            (isDark
-                                                    ? Colors.white
-                                                    : const Color(0xFF0C312B))
-                                                .withOpacity(0.8),
-                                        letterSpacing: 2,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+            // Month-by-month updates per phase, under a year rail — shared by
+            // every portal.
+            ConstructionUpdates(
+              projectTitle: projectTitle,
+              phases: phases
+                  .whereType<Map>()
+                  .map((m) => Map<String, dynamic>.from(m))
+                  .toList(),
+              resolveUrl: apiClient.resolveUrl,
+              onOpenGallery: (raws) => onOpenPhotos([
+                for (final r in raws) apiClient.resolveUrl(r),
+              ]),
             ),
             const SizedBox(height: 32),
           ],

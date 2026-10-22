@@ -1,6 +1,8 @@
+import 'package:m4_mobile/presentation/providers/amenity_catalog.dart';
 import 'package:m4_mobile/presentation/widgets/hero_actions_top.dart';
 import 'package:m4_mobile/presentation/widgets/youtube_embed.dart';
 import 'package:m4_mobile/presentation/widgets/project_status_badge.dart';
+import 'package:m4_mobile/presentation/widgets/construction_updates.dart';
 import 'package:m4_mobile/presentation/widgets/article_text.dart';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
 import 'dart:convert';
@@ -206,6 +208,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             'progressPercent': pct,
             'phaseOrder': 1,
             'images': imgs,
+            'undated': true,
           },
           {
             'phaseName': 'Structure & Handover',
@@ -213,6 +216,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             'progressPercent': done ? 100 : 0,
             'phaseOrder': 2,
             'images': imgs,
+            'undated': true,
           },
         ];
       }
@@ -222,6 +226,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     if (mounted) {
       setState(() => _loading = false);
       final amenities = _project?['amenities'];
+      AmenityCatalog.remember(amenities is List ? amenities : null);
       // Download AND decode the amenity icons now, so the Amenities grid
       // draws them all in its first frame instead of popping them in.
       precacheAmenityIcons(
@@ -1253,9 +1258,17 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                               _progressCard(p, overallPct, scheme),
                               if (_progress.isNotEmpty) ...[
                                 const SizedBox(height: 20),
-                                _progressYearHeader(scheme),
-                                const SizedBox(height: 16),
-                                _progressTimeline(scheme),
+                                // Month-by-month updates per phase, under a
+                                // year rail — shared by every portal.
+                                ConstructionUpdates(
+                                  projectTitle: (p['title'] ?? '').toString(),
+                                  phases: _progress
+                                      .whereType<Map>()
+                                      .map((m) => Map<String, dynamic>.from(m))
+                                      .toList(),
+                                  resolveUrl: ref.read(apiClientProvider).resolveUrl,
+                                  onOpenGallery: _openGallery,
+                                ),
                                 const SizedBox(height: 24),
                                 _phaseTrackingSection(scheme),
                               ],
@@ -1882,7 +1895,15 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Widget _amenitiesGrid(Map<String, dynamic> p, ColorScheme scheme) {
     final am = p['amenities'];
-    final rawList = am is List ? am : <dynamic>[];
+    // The list's copy of a project carries amenity ids only; the catalogue
+    // turns them into the real amenities (name + icon) from the first frame.
+    final rawList = am is List ? AmenityCatalog.resolve(am) : <dynamic>[];
+    // Still only the list's amenity ids (the details are on their way)
+    // and the catalogue cannot name them: stay quiet rather than flash
+    // "Coming soon" or stand-in glyphs.
+    if (rawList.isEmpty && am is List && AmenityCatalog.hasUnresolved(am)) {
+      return const SizedBox.shrink();
+    }
     // Drop blank entries. The data carried empty amenity slots which rendered as
     // invisible grid cells — that's what left the big empty band under "Lobby".
     final list = rawList.where((e) {
@@ -2080,303 +2101,6 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               fontWeight: FontWeight.w700,
               color: isLight ? const Color(0xFF0C312B) : scheme.onSurface,
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _progressTimeline(ColorScheme scheme) {
-    final isLight = scheme.brightness == Brightness.light;
-    // M4 deep green, not black, on the light surfaces.
-    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
-    final phases =
-        _progress
-            .whereType<Map>()
-            .map((m) => Map<String, dynamic>.from(m))
-            .toList()
-          ..sort(
-            (a, b) => ((a['phaseOrder'] ?? 0) as num).toInt().compareTo(
-              ((b['phaseOrder'] ?? 0) as num).toInt(),
-            ),
-          );
-
-    if (phases.isEmpty) return const SizedBox.shrink();
-
-    // Phase cards swipe HORIZONTALLY, exactly ONE at a time: each card fills
-    // the full width and snaps, so the next card is fully off-screen until you
-    // actually swipe (no peeking card at the right edge), and never stacks
-    // below the first.
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Image is a fixed 220 (same as the guest portal phase card); the
-        // footer (padding + title + 42px ring row) needs ~106 (98 overflowed
-        // by 1px, so this keeps a small safety margin).
-        const cardH = 220.0 + 106;
-        return SizedBox(
-          height: cardH,
-          child: PageView.builder(
-            physics: const BouncingScrollPhysics(),
-            itemCount: phases.length,
-            itemBuilder: (context, i) =>
-                _phaseCard(phases[i], scheme, isLight, accent),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _phaseCard(
-    Map<String, dynamic> ph,
-    ColorScheme scheme,
-    bool isLight,
-    Color accent,
-  ) {
-    final rawImg = (ph['images'] is List && (ph['images'] as List).isNotEmpty)
-        ? _stringUrl((ph['images'] as List).first)
-        : _stringUrl(ph['image']);
-    // Web parity: a phase with no uploaded photo still shows a construction
-    // image rather than a blank tile.
-    final img = (rawImg == null || rawImg.trim().isEmpty)
-        ? 'assets/cledor_phase_demolition.jpg'
-        : rawImg;
-    final status = (ph['status'] ?? 'In Progress').toString();
-    final name = (ph['name'] ?? ph['phaseName'] ?? 'Phase').toString();
-    final pct = (ph['progressPercent'] is num)
-        ? (ph['progressPercent'] as num).toInt().clamp(0, 100)
-        : 0;
-
-    Color badgeBg;
-    Color badgeFg;
-    if (status == 'Completed') {
-      badgeBg = Colors.green;
-      badgeFg = Colors.white;
-    } else if (status == 'In Progress') {
-      badgeBg = accent;
-      badgeFg = isLight ? Colors.white : scheme.onPrimary;
-    } else {
-      badgeBg = scheme.surfaceContainerHighest;
-      badgeFg = scheme.onSurfaceVariant;
-    }
-
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: isLight
-              ? Colors.black.withValues(alpha: 0.06)
-              : Colors.white.withValues(alpha: 0.08),
-        ),
-        // The card takes the theme's own surface — M4Theme.lightCard, the
-        // warm cream the rest of the app's cards use. It was a hardcoded
-        // Colors.white, which the theme explicitly rules out ("warm cream
-        // card (never white)") and which read as a stark white block on the
-        // cream page.
-        color: isLight ? scheme.surface : Colors.white.withValues(alpha: 0.03),
-        // Softer than before — this card is now nested inside the single
-        // shadowed construction box, so a heavy shadow double-stacked.
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isLight ? 0.07 : 0.35),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // 16:9 thumbnail — the ratio every card image uses, the guest portal
-          // phase card included.
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                // Dark backdrop so an uploaded image with a transparent/white
-                // background still shows.
-                Container(color: const Color(0xFF0C312B)),
-                // PNG/SVG (logos) -> contain (full), JPEG (photos) -> cover.
-                _projectImage(img, fit: fitForMediaUrl(img)),
-                Positioned.fill(
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {
-                        final urls = _stringList(ph['images']);
-                        // The bundled construction fallback is not zoomable —
-                        // only open the gallery for real uploaded photos.
-                        if (urls.isNotEmpty) {
-                          _openGallery(urls);
-                        } else if (!img.startsWith('assets/') && img.isNotEmpty) {
-                          _openGallery([img]);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              backgroundColor: Color(0xFFC65B46),
-                              content: Text('No progress images available'),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 12,
-                  left: 12,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: badgeBg,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      status.toUpperCase(),
-                      style: GoogleFonts.inter(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1,
-                        color: badgeFg,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned.fill(
-                  child: IgnorePointer(
-                    ignoring: true,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black.withValues(alpha: 0.55),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Web parity: the project title is the card's heading;
-                // the phase name sits next to the small progress ring.
-                Text(
-                  (_project?['title'] ?? '').toString().toUpperCase(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 46,
-                      height: 46,
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: CircularProgressIndicator(
-                              value: pct / 100.0,
-                              strokeWidth: 3,
-                              color: accent,
-                              backgroundColor: scheme.onSurface.withValues(
-                                alpha: 0.12,
-                              ),
-                            ),
-                          ),
-                          Positioned.fill(
-                            child: Center(
-                              child: Text(
-                                '$pct%',
-                                style: GoogleFonts.inter(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                  color: scheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        name.toUpperCase(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                          color: scheme.onSurfaceVariant,
-                          letterSpacing: 0.6,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // "2026" year label + horizontal timeline rail with a dot marker, above the
-  // phase preview cards. Web hardcodes this year label verbatim, so this
-  // mirrors that rather than deriving it from data.
-  Widget _progressYearHeader(ColorScheme scheme) {
-    final isLight = scheme.brightness == Brightness.light;
-    // M4 deep green, not black, on the light surfaces.
-    final accent = isLight ? const Color(0xFF0C312B) : scheme.primary;
-    return Row(
-      children: [
-        Text(
-          '2026',
-          style: GoogleFonts.gelasio(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: accent,
-          ),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Stack(
-            alignment: Alignment.centerLeft,
-            children: [
-              Container(
-                height: 1,
-                color: scheme.outlineVariant.withValues(alpha: 0.4),
-              ),
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: scheme.surface,
-                  border: Border.all(color: accent, width: 2),
-                ),
-              ),
-            ],
           ),
         ),
       ],

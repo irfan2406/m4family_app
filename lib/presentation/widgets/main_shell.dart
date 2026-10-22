@@ -14,6 +14,7 @@ import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:m4_mobile/presentation/widgets/sidebar_menu.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/screens/content/content_hub_screen.dart';
+import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final navigationProvider = StateProvider<int>((ref) => 0);
@@ -21,8 +22,8 @@ final previousNavigationProvider = StateProvider<int>((ref) => 0);
 
 /// Where the system back button lands from tab [current].
 ///
-/// Tabs 0-3 are the bottom bar, and back from those goes Home as it always
-/// has. Tabs 4 and up are opened from the sidebar or a profile tile, so they
+/// Tabs 0-3 and WHO WE ARE ([NavigationPill.whoWeAreTab]) are the bottom
+/// bar, and back from those goes Home as it always has. Tabs 4 and up are opened from the sidebar or a profile tile, so they
 /// return to whatever opened them — [previous], recorded by the opener — and
 /// only fall back to Home when that is missing or nonsensical. Sending those
 /// to Home unconditionally is what made MY CUSTOM VIEWS, opened from the
@@ -34,6 +35,7 @@ int backTargetIndex({
 }) {
   if (current == 0) return 0;
   if (current >= 4 &&
+      current != NavigationPill.whoWeAreTab &&
       previous != current &&
       previous >= 0 &&
       previous < tabCount) {
@@ -55,7 +57,7 @@ class MainShell extends ConsumerStatefulWidget {
 class _MainShellState extends ConsumerState<MainShell> {
   bool _isDrawerOpen = false;
 
-  final List<Widget> _screens = [
+  late final List<Widget> _screens = [
     const DashboardScreen(), // 0: Home
     const ProjectListScreen(), // 1: Compass (Projects)
     const SupportScreen(), // 2: MessageSquare (Support)
@@ -69,6 +71,12 @@ class _MainShellState extends ConsumerState<MainShell> {
       builder: (context, ref, _) =>
           ContentHubScreen(type: ref.watch(contentHubTypeProvider)),
     ), // 9: Content Hub
+    // 10: Who We Are — on the bottom bar, mid-bar (NavigationPill.tabOrder).
+    AboutScreen(
+      embedded: true,
+      shellIndexProvider: navigationProvider,
+      shellTabIndex: NavigationPill.whoWeAreTab,
+    ),
   ];
 
   @override
@@ -116,6 +124,7 @@ class _MainShellState extends ConsumerState<MainShell> {
               child: NavSwipe(
                 index: currentIndex,
                 count: _screens.length,
+                order: NavigationPill.tabOrder,
                 onIndexChanged: (i) =>
                     ref.read(navigationProvider.notifier).state = i,
                 child: IndexedStack(

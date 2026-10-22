@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/presentation/providers/amenity_catalog.dart';
 import 'package:m4_mobile/core/utils/external_link.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +23,7 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/hero_actions_top.dart';
 import 'package:m4_mobile/presentation/widgets/youtube_embed.dart';
 import 'package:m4_mobile/presentation/widgets/project_status_badge.dart';
+import 'package:m4_mobile/presentation/widgets/construction_updates.dart';
 import 'package:m4_mobile/presentation/widgets/article_text.dart';
 import 'package:m4_mobile/presentation/widgets/gallery_prefetcher.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
@@ -154,6 +156,7 @@ class _InvestorProjectDetailScreenState
         _isLoading = false;
         _hasError = _project == null;
       });
+      AmenityCatalog.remember(_project?['amenities'] as List?);
       // Download AND decode the amenity icons now, so the Amenities grid
       // draws them all in its first frame instead of popping them in.
       precacheAmenityIcons(
@@ -1598,7 +1601,14 @@ class _InvestorProjectDetailScreenState
   }
 
   Widget _buildAmenitiesSection(Map<String, dynamic> project, bool isDark) {
-    final amenities = project['amenities'] as List? ?? [];
+    // The list's copy of a project carries amenity ids only; the catalogue
+    // turns them into the real amenities (name + icon) from the first frame.
+    final listed = project['amenities'] as List?;
+    final amenities = AmenityCatalog.resolve(listed);
+    // Still only the list's amenity ids (the details are on their way)
+    // and the catalogue cannot name them: stay quiet rather than flash
+    // "Coming soon" or stand-in glyphs.
+    final pending = amenities.isEmpty && AmenityCatalog.hasUnresolved(listed);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -1606,7 +1616,9 @@ class _InvestorProjectDetailScreenState
         children: [
           _sectionHeader('Amenities', isDark),
           const SizedBox(height: 24),
-          if (amenities.isEmpty)
+          if (pending)
+            const SizedBox.shrink()
+          else if (amenities.isEmpty)
             Center(
               child: Text(
                 'COMING SOON',
@@ -1855,70 +1867,17 @@ class _InvestorProjectDetailScreenState
                 ),
                 if (_progressPhases.isNotEmpty) ...[
                   const SizedBox(height: 32),
-                  // Web parity: "2026" year label + a timeline rail with a dot
-                  // marker, above the phase preview cards.
-                  Row(
-                    children: [
-                      Text(
-                        '2026',
-                        style: GoogleFonts.gelasio(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: isDark
-                              ? Colors.white
-                              : const Color(0xFF0C312B),
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Stack(
-                          alignment: Alignment.centerLeft,
-                          children: [
-                            Container(
-                              height: 1,
-                              color:
-                                  (isDark
-                                          ? Colors.white
-                                          : const Color(0xFF0C312B))
-                                      .withValues(alpha: 0.25),
-                            ),
-                            Container(
-                              width: 12,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: isDark
-                                    ? const Color(0xFF0B1026)
-                                    : const Color(0xFFF4EFE3),
-                                border: Border.all(
-                                  color: isDark
-                                      ? Colors.white
-                                      : const Color(0xFF0C312B),
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  // Month-by-month updates per phase, under a year rail —
+                  // shared by every portal.
+                  ConstructionUpdates(
+                    projectTitle: (project['title'] ?? '').toString(),
+                    phases: _progressPhases
+                        .whereType<Map>()
+                        .map((m) => Map<String, dynamic>.from(m))
+                        .toList(),
+                    resolveUrl: ref.read(apiClientProvider).resolveUrl,
+                    onOpenGallery: _openGallery,
                   ),
-                  const SizedBox(height: 20),
-                  // Web parity (matches CP): full-width phase cards — a large
-                  // image, the project title, then a small progress ring beside
-                  // the phase name (was a small horizontal-scroll card).
-                  for (
-                    int index = 0;
-                    index < _progressPhases.length;
-                    index++
-                  ) ...[
-                    if (index > 0) const SizedBox(height: 16),
-                    _buildPhaseImageCard(
-                      _progressPhases[index],
-                      project,
-                      isDark,
-                    ),
-                  ],
                   // Web parity: PHASE TRACKING lives inside the same construction
                   // card, right below the phase preview (not a separate section).
                   const SizedBox(height: 28),
@@ -1933,213 +1892,6 @@ class _InvestorProjectDetailScreenState
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  // Web parity (matches CP): a full-width phase preview card — a large image
-  // with a status badge + gradient, then the project title and a small progress
-  // ring beside the phase name.
-  Widget _buildPhaseImageCard(
-    dynamic phase,
-    Map<String, dynamic> project,
-    bool isDark,
-  ) {
-    final apiClient = ref.read(apiClientProvider);
-    // Phase images may be plain strings or {url, caption} objects (the
-    // backend's current shape) — mediaUrlOf/firstMediaUrl handle both.
-    final rawPhaseImg = firstMediaUrl(phase['images']).isNotEmpty
-        ? firstMediaUrl(phase['images'])
-        : mediaUrlOf(phase['image']);
-    final resolvedPhase = apiClient.resolveUrl(rawPhaseImg);
-    // Web parity: a phase with no uploaded photo still shows a construction
-    // image rather than a blank tile.
-    const constructionFallback = 'assets/cledor_phase_demolition.jpg';
-    final imageUrl = resolvedPhase.trim().isEmpty
-        ? constructionFallback
-        : resolvedPhase;
-    final isAssetImg = imageUrl.startsWith('assets/');
-    final status = phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
-    final pctRaw = phase['progressPercent'] ?? phase['progress'] ?? 0;
-    final pct = (pctRaw is num)
-        ? pctRaw.toInt().clamp(0, 100)
-        : (int.tryParse('$pctRaw') ?? 0).clamp(0, 100);
-    final phaseName = (phase['name'] ?? phase['phaseName'] ?? 'PHASE')
-        .toString();
-    final fg = isDark ? Colors.white : const Color(0xFF0C312B);
-
-    return GestureDetector(
-      onTap: () {
-        // Only open the gallery for a real uploaded photo; the bundled
-        // construction fallback is not zoomable.
-        if (!isAssetImg && imageUrl.isNotEmpty) {
-          _openGallery([rawPhaseImg]);
-        }
-      },
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.03)
-              : const Color(0xFFF4EFE3),
-          borderRadius: BorderRadius.circular(24),
-          // Same card frame as the guest portal phase card (subtle in dark so
-          // it doesn't show as a bright edge behind the image).
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.08)
-                : Colors.black.withValues(alpha: 0.10),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.07),
-              blurRadius: 14,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 16:9 thumbnail — the ratio every card image uses, the guest
-            // portal phase card included.
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Dark backdrop so an uploaded image with a transparent/white
-                  // background still shows.
-                  Container(color: const Color(0xFF0C312B)),
-                  isAssetImg
-                      // PNG/SVG (logos) -> contain (full), JPEG (photos) -> cover.
-                      ? Image.asset(imageUrl, fit: fitForMediaUrl(imageUrl))
-                      : CachedNetworkImage(
-                          fadeInDuration: Duration.zero,
-                          fadeOutDuration: Duration.zero,
-                          memCacheWidth: 1080,
-                          imageUrl: imageUrl,
-                          fit: fitForMediaUrl(imageUrl),
-                          placeholder: (c, u) =>
-                              const SizedBox.shrink(),
-                          errorWidget: (c, u, e) =>
-                              const SizedBox.shrink(),
-                        ),
-                  Positioned.fill(
-                    child: IgnorePointer(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black.withValues(alpha: 0.5),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 12,
-                    left: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: status == 'COMPLETED'
-                            ? Colors.green
-                            : (status == 'IN PROGRESS'
-                                  ? Colors.black87
-                                  : Colors.black54),
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        status,
-                        style: GoogleFonts.inter(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFFF4EFE3),
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    (project['title'] ?? '').toString().toUpperCase(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: fg,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 46,
-                        height: 46,
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: CircularProgressIndicator(
-                                value: pct / 100.0,
-                                strokeWidth: 3,
-                                color: fg,
-                                backgroundColor: fg.withValues(alpha: 0.12),
-                              ),
-                            ),
-                            Positioned.fill(
-                              child: Center(
-                                child: Text(
-                                  '$pct%',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    color: fg,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Text(
-                          phaseName.toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: fg.withValues(alpha: 0.75),
-                            letterSpacing: 0.8,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

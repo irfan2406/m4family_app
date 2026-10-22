@@ -17,6 +17,7 @@ import 'package:m4_mobile/presentation/widgets/portal_bottom_nav.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
+import 'package:go_router/go_router.dart';
 
 /// A toast that sits ABOVE an open dialog.
 ///
@@ -76,12 +77,25 @@ void _showTopToast(
 const Color _kIconGreen = Color(0xFF155A4F);
 
 class AboutScreen extends ConsumerStatefulWidget {
-  /// True when this is a tab inside [GuestMainShell], which already owns the
-  /// menu. A nested drawer of our own would open underneath the shell's
-  /// floating nav pill instead of over it.
+  /// True when this is a tab inside a portal shell (guest, customer, CP or
+  /// investor), which already owns the menu. A nested drawer of our own would
+  /// open underneath the shell's floating nav pill instead of over it.
   final bool embedded;
 
-  const AboutScreen({super.key, this.embedded = false});
+  /// The tab index provider of the shell this tab lives in. Null means the
+  /// guest shell (its original home). Its back button returns to that shell's
+  /// Home, and opening the tab re-reads the content.
+  final StateProvider<int>? shellIndexProvider;
+
+  /// This screen's own tab index within that shell.
+  final int shellTabIndex;
+
+  const AboutScreen({
+    super.key,
+    this.embedded = false,
+    this.shellIndexProvider,
+    this.shellTabIndex = 2,
+  });
 
   @override
   ConsumerState<AboutScreen> createState() => _AboutScreenState();
@@ -223,12 +237,16 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // As the guest shell's About tab (index 2 of an IndexedStack) this screen
-    // stays mounted, so initState runs once: re-read each time the tab opens.
+    // As a shell's WHO WE ARE tab (in an IndexedStack) this screen stays
+    // mounted, so initState runs once: re-read each time the tab opens.
     if (widget.embedded) {
-      ref.listen<int>(guestNavigationProvider, (previous, next) {
-        if (next == 2 && previous != 2) _fetchAboutContent();
-      });
+      final tab = widget.shellTabIndex;
+      ref.listen<int>(
+        widget.shellIndexProvider ?? guestNavigationProvider,
+        (previous, next) {
+          if (next == tab && previous != tab) _fetchAboutContent();
+        },
+      );
     }
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -239,7 +257,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       // canPop() alone is not the test: inside the guest shell the navigator
       // can still pop, so this drew a second pill over the shell's own.
       bottomNavigationBar: (!widget.embedded && Navigator.of(context).canPop())
-          ? const PortalBottomNav()
+          ? const PortalBottomNav(whoWeAre: true)
           : null,
       appBar: AppBar(
         centerTitle: true,
@@ -268,7 +286,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             padding: const EdgeInsets.only(left: 12),
             child: InkWell(
               onTap: () {
-                if (Navigator.of(context).canPop()) {
+                final shellIndex = widget.shellIndexProvider;
+                if (widget.embedded && shellIndex != null) {
+                  // A tab of the customer / CP / investor shell: back to that
+                  // portal's Home tab.
+                  ref.read(shellIndex.notifier).state = 0;
+                } else if (Navigator.of(context).canPop()) {
                   Navigator.pop(context);
                 } else {
                   ref.read(guestNavigationProvider.notifier).state = 0;
@@ -1424,14 +1447,31 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         final authState = ref.read(authProvider);
-                        if (authState.status == AuthStatus.authenticated) {
+                        final role =
+                            authState.user?['role']?.toString().toLowerCase() ??
+                            '';
+                        if (authState.status == AuthStatus.authenticated &&
+                            (role == 'cp' || role == 'investor')) {
+                          // CP and investor have their own Custom Views page;
+                          // the customer shell's tab 6 is not theirs.
+                          context.push(
+                            role == 'cp'
+                                ? '/cp/custom-views'
+                                : '/investor/custom-views',
+                          );
+                        } else if (authState.status ==
+                            AuthStatus.authenticated) {
                           // Update navigation state to Custom Views (index 6)
                           ref.read(navigationProvider.notifier).state = 6;
 
                           // If this screen was pushed onto the navigator stack,
                           // we need to pop back to the shell to see the tab switch.
-                          while (Navigator.of(context).canPop()) {
-                            Navigator.of(context).pop();
+                          // As the shell's own tab there is nothing to pop —
+                          // popping would close the shell itself.
+                          if (!widget.embedded) {
+                            while (Navigator.of(context).canPop()) {
+                              Navigator.of(context).pop();
+                            }
                           }
                         } else {
                           _showCustomEnquiryForm(context);

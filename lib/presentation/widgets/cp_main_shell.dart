@@ -8,6 +8,7 @@ import 'package:m4_mobile/presentation/screens/cp/cp_profile_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_tracker_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
+import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 
@@ -35,13 +36,19 @@ class _CpMainShellState extends ConsumerState<CpMainShell> {
     Widget showcase(Widget child) =>
         Theme(data: M4Theme.darkTheme, child: child);
 
-    // 5 tabs matching web AppShell CP bar: Home, Tracker, Projects, Support, Profile.
+    // Web AppShell CP bar: Home, Tracker, Projects, Support, Profile — plus
+    // Who We Are (tab 5), shown after Projects (see CpBottomNav.tabOrder).
     final screens = [
       showcase(const CpHomeScreen()),
       const CpTrackerScreen(embeddedInShell: true),
       showcase(const ProjectListScreen(cpCatalogMode: true)),
       const SupportScreen(),
       const CpProfileScreen(),
+      AboutScreen(
+        embedded: true,
+        shellIndexProvider: cpNavigationIndexProvider,
+        shellTabIndex: CpBottomNav.whoWeAreTab,
+      ),
     ];
 
     // Nav + scaffold follow the active tab's surface.
@@ -62,6 +69,7 @@ class _CpMainShellState extends ConsumerState<CpMainShell> {
       body: NavSwipe(
         index: idx,
         count: screens.length,
+        order: CpBottomNav.tabOrder,
         onIndexChanged: (i) =>
             ref.read(cpNavigationIndexProvider.notifier).state = i,
         child: IndexedStack(index: idx, children: screens),

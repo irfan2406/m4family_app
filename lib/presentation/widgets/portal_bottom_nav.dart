@@ -23,11 +23,19 @@ import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 /// This picks the nav — and the shell index it drives — from the account's
 /// role, so a pushed screen keeps the portal it was opened from.
 class PortalBottomNav extends ConsumerWidget {
-  const PortalBottomNav({super.key, this.currentIndex = -1});
+  const PortalBottomNav({
+    super.key,
+    this.currentIndex = -1,
+    this.whoWeAre = false,
+  });
 
   /// -1 leaves every tab unselected, which is what a pushed screen wants: it
   /// is not one of the shell's tabs.
   final int currentIndex;
+
+  /// The screen is WHO WE ARE opened from the menu: light up the portal's own
+  /// WHO WE ARE tab, which every portal's bar carries.
+  final bool whoWeAre;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -50,7 +58,8 @@ class PortalBottomNav extends ConsumerWidget {
     if (!signedIn) {
       return M4BottomNav(
         icons: guestNavIcons,
-        currentIndex: currentIndex,
+        // The guest bar's WHO WE ARE is its tab 2.
+        currentIndex: whoWeAre ? 2 : currentIndex,
         onTap: (i) => goToTab(guestNavigationProvider, i),
       );
     }
@@ -58,17 +67,17 @@ class PortalBottomNav extends ConsumerWidget {
     switch (role) {
       case 'cp':
         return CpBottomNav(
-          currentIndex: currentIndex,
+          currentIndex: whoWeAre ? CpBottomNav.whoWeAreTab : currentIndex,
           onTap: (i) => goToTab(cpNavigationIndexProvider, i),
         );
       case 'investor':
         return InvestorBottomNav(
-          currentIndex: currentIndex,
+          currentIndex: whoWeAre ? InvestorBottomNav.whoWeAreTab : currentIndex,
           onTap: (i) => goToTab(investorNavigationIndexProvider, i),
         );
       default:
         return NavigationPill(
-          currentIndex: currentIndex,
+          currentIndex: whoWeAre ? NavigationPill.whoWeAreTab : currentIndex,
           onTap: (i) => goToTab(navigationProvider, i),
         );
     }
