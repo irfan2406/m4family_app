@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/core/services/push_notifications.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:go_router/go_router.dart';
 
@@ -45,7 +46,10 @@ class _DeactivateAccountScreenState
 
     try {
       final apiClient = ref.read(apiClientProvider);
-      final response = await apiClient.dio.delete('/auth/me');
+      final response = await PushNotifications.deleteAccount(
+        apiClient,
+        () => apiClient.dio.delete('/auth/me'),
+      );
 
       if (response.data['status'] == true) {
         // Clear auth state and logout

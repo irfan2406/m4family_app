@@ -183,10 +183,10 @@ class _InvestorDocumentsScreenState
             _buildHeader(isDark, textPrimary),
             Expanded(
               child: _loading
-                  ? const Center(
+                  ? Center(
                       child: CircularProgressIndicator.adaptive(
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          M4Theme.premiumBlue,
+                          M4Theme.loaderGreen(context),
                         ),
                       ),
                     )
@@ -329,7 +329,7 @@ class _InvestorDocumentsScreenState
     }
     final docs = _filteredDocs;
     return RefreshIndicator.adaptive(
-      color: M4Theme.premiumBlue,
+      color: M4Theme.loaderGreen(context),
       onRefresh: _fetchDocuments,
       child: docs.isEmpty
           ? ListView(

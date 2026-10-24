@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
+import 'package:m4_mobile/core/services/push_notifications.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -561,7 +562,8 @@ class _CpProfileSettingsScreenState
     if (go != true || !mounted) return;
     setState(() => _deleteBusy = true);
     try {
-      final res = await ref.read(apiClientProvider).deleteMe();
+      final api = ref.read(apiClientProvider);
+      final res = await PushNotifications.deleteAccount(api, api.deleteMe);
       if (!mounted) return;
       final ok = res.data is Map && (res.data as Map)['status'] == true;
       if (ok) {

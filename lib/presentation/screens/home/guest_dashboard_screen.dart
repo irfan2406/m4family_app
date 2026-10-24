@@ -471,7 +471,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 child: CircularProgressIndicator.adaptive(
                   // Brand green (was M4 gold, which read as a yellow spinner).
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    Theme.of(context).colorScheme.onSurface,
+                    M4Theme.loaderGreen(context),
                   ),
                   strokeWidth: 2.5,
                 ),

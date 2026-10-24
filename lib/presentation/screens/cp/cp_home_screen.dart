@@ -314,9 +314,11 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     if (_loading) {
       return Material(
         color: Theme.of(context).scaffoldBackgroundColor,
-        child: const Center(
+        child: Center(
           child: CircularProgressIndicator.adaptive(
-            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              M4Theme.loaderGreen(context),
+            ),
           ),
         ),
       );

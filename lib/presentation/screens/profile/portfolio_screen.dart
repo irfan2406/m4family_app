@@ -169,9 +169,11 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   // ─── Body states ─────────────────────────────────────────────────────────────
   Widget _buildBody(bool isDark) {
     if (_isLoading) {
-      return const Center(
+      return Center(
         child: CircularProgressIndicator.adaptive(
-          valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+          valueColor: AlwaysStoppedAnimation<Color>(
+            M4Theme.loaderGreen(context),
+          ),
         ),
       );
     }
@@ -180,7 +182,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
     }
 
     return RefreshIndicator.adaptive(
-      color: M4Theme.premiumBlue,
+      color: M4Theme.loaderGreen(context),
       onRefresh: _fetchPortfolio,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(

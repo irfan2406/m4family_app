@@ -137,10 +137,10 @@ class _InvestorTaxReportDetailScreenState
             _header(textPrimary, muted, isDark),
             Expanded(
               child: _loading && _report == null
-                  ? const Center(
+                  ? Center(
                       child: CircularProgressIndicator.adaptive(
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          M4Theme.premiumBlue,
+                          M4Theme.loaderGreen(context),
                         ),
                       ),
                     )
@@ -247,7 +247,7 @@ class _InvestorTaxReportDetailScreenState
     const red = Color(0xFFC65B46);
 
     return RefreshIndicator.adaptive(
-      color: M4Theme.premiumBlue,
+      color: M4Theme.loaderGreen(context),
       onRefresh: _load,
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),

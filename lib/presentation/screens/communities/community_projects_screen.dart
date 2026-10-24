@@ -118,9 +118,11 @@ class _CommunityProjectsListScreenState
     return Scaffold(
       backgroundColor: bg,
       body: _loading
-          ? const Center(
+          ? Center(
               child: CircularProgressIndicator.adaptive(
-                valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  M4Theme.loaderGreen(context),
+                ),
               ),
             )
           : _error != null

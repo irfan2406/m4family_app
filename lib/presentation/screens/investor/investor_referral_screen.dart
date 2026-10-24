@@ -966,76 +966,81 @@ class _InvestorReferralScreenState
                               ),
                             ),
                           ),
-                          data: (projects) => Container(
-                            height: 56,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: _inputBox(isDark, textPrimary),
-                            // The menu's selected row is painted with
-                            // Theme.focusColor by the framework itself, so the
-                            // harsh default grey can only be replaced here —
-                            // DropdownButton.focusColor never reaches it.
-                            child: Theme(
-                              data: Theme.of(ctx).copyWith(
-                                focusColor: textPrimary.withValues(alpha: 0.06),
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  isExpanded: true,
-                                  value: selectedProjectId,
-                                  // Matches the 16-radius input boxes around it;
-                                  // the popup used to have square corners.
-                                  borderRadius: BorderRadius.circular(16),
-                                  // 8 is the default and drops a heavy shadow
-                                  // across the form underneath.
-                                  elevation: 3,
-                                  // So a longer project list cannot cover the
-                                  // whole sheet.
-                                  menuMaxHeight: 280,
-                                  hint: Text(
-                                    'SELECT PROJECT',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500,
-                                      color: textPrimary.withValues(
-                                        alpha: 0.72,
-                                      ),
-                                    ),
+                          // Opens just below the field (the stock dropdown
+                          // opened on top of it, hiding the label and field).
+                          data: (projects) {
+                            final options = [
+                              for (final p in projects)
+                                if ((p['_id']?.toString() ?? '').isNotEmpty)
+                                  MapEntry(
+                                    p['_id'].toString(),
+                                    (p['title'] ?? p['name'] ?? 'PROJECT')
+                                        .toString()
+                                        .toUpperCase(),
                                   ),
-                                  dropdownColor: isDark
-                                      ? const Color(0xFF141B3A)
-                                      : const Color(0xFFF4EFE3),
-                                  icon: Icon(
-                                    LucideIcons.chevronDown,
-                                    size: 16,
-                                    color: textPrimary.withValues(alpha: 0.3),
+                            ];
+                            String? selectedTitle;
+                            for (final o in options) {
+                              if (o.key == selectedProjectId) {
+                                selectedTitle = o.value;
+                              }
+                            }
+                            return Builder(
+                              builder: (fieldContext) => GestureDetector(
+                                onTap: () async {
+                                  final picked = await _openProjectMenu(
+                                    fieldContext,
+                                    options,
+                                    selectedProjectId,
+                                    isDark,
+                                    textPrimary,
+                                  );
+                                  if (picked != null && ctx.mounted) {
+                                    setModalState(
+                                      () => selectedProjectId = picked,
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  height: 56,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
                                   ),
-                                  items: [
-                                    for (final p in projects)
-                                      if ((p['_id']?.toString() ?? '')
-                                          .isNotEmpty)
-                                        DropdownMenuItem(
-                                          value: p['_id'].toString(),
-                                          child: Text(
-                                            (p['title'] ??
-                                                    p['name'] ??
-                                                    'PROJECT')
-                                                .toString()
-                                                .toUpperCase(),
-                                            style: GoogleFonts.inter(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w500,
-                                              color: textPrimary,
-                                            ),
+                                  decoration: _inputBox(isDark, textPrimary),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          selectedTitle ?? 'SELECT PROJECT',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.inter(
+                                            fontSize: 11,
+                                            fontWeight: selectedTitle == null
+                                                ? FontWeight.w500
+                                                : FontWeight.w600,
+                                            letterSpacing: 0.6,
+                                            color: selectedTitle == null
+                                                ? textPrimary.withValues(
+                                                    alpha: 0.72,
+                                                  )
+                                                : textPrimary,
                                           ),
                                         ),
-                                  ],
-                                  onChanged: (v) => setModalState(
-                                    () => selectedProjectId = v,
+                                      ),
+                                      Icon(
+                                        LucideIcons.chevronDown,
+                                        size: 16,
+                                        color: textPrimary.withValues(
+                                          alpha: 0.3,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         );
                       },
                     ),
@@ -1185,6 +1190,91 @@ class _InvestorReferralScreenState
         letterSpacing: 1.5,
         color: textPrimary.withValues(alpha: 0.72),
       ),
+    );
+  }
+
+  /// The New Referral project menu: opens just below the field, exactly as
+  /// wide as it, with the chosen project ticked — same style as the
+  /// configuration menu on the project pages.
+  Future<String?> _openProjectMenu(
+    BuildContext fieldContext,
+    List<MapEntry<String, String>> options,
+    String? selectedId,
+    bool isDark,
+    Color textPrimary,
+  ) {
+    final box = fieldContext.findRenderObject() as RenderBox?;
+    final overlay =
+        Navigator.of(fieldContext).overlay?.context.findRenderObject()
+            as RenderBox?;
+    if (box == null || overlay == null) return Future.value();
+    final topLeft = box.localToGlobal(
+      Offset(0, box.size.height + 6),
+      ancestor: overlay,
+    );
+    final position = RelativeRect.fromRect(
+      Rect.fromLTWH(topLeft.dx, topLeft.dy, box.size.width, 0),
+      Offset.zero & overlay.size,
+    );
+    return showMenu<String>(
+      context: fieldContext,
+      position: position,
+      color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+      surfaceTintColor: Colors.transparent,
+      elevation: 12,
+      shadowColor: Colors.black.withValues(alpha: 0.25),
+      // A long project list scrolls instead of covering the whole sheet.
+      constraints: BoxConstraints(
+        minWidth: box.size.width,
+        maxWidth: box.size.width,
+        maxHeight: 280,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: textPrimary.withValues(alpha: 0.12)),
+      ),
+      menuPadding: const EdgeInsets.symmetric(vertical: 6),
+      items: [
+        for (final o in options)
+          PopupMenuItem<String>(
+            value: o.key,
+            height: 48,
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Container(
+              height: 42,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: o.key == selectedId
+                    ? textPrimary.withValues(alpha: 0.08)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      o.value,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: o.key == selectedId
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                        letterSpacing: 0.6,
+                        color: textPrimary.withValues(
+                          alpha: o.key == selectedId ? 1 : 0.8,
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (o.key == selectedId)
+                    Icon(LucideIcons.check, size: 16, color: textPrimary),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 

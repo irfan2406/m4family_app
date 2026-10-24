@@ -1217,9 +1217,11 @@ class _GuestProjectDetailScreenState
     if (_isLoading && project == null) {
       return Scaffold(
         backgroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
-        body: const Center(
+        body: Center(
           child: CircularProgressIndicator.adaptive(
-            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              M4Theme.loaderGreen(context),
+            ),
           ),
         ),
       );

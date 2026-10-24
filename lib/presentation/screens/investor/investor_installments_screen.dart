@@ -272,10 +272,10 @@ class _InvestorInstallmentsScreenState
             // ─── Body ───────────────────────────────────
             Expanded(
               child: _loading
-                  ? const Center(
+                  ? Center(
                       child: CircularProgressIndicator.adaptive(
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          M4Theme.premiumBlue,
+                          M4Theme.loaderGreen(context),
                         ),
                       ),
                     )
@@ -283,7 +283,7 @@ class _InvestorInstallmentsScreenState
                   ? _buildError(isDark, textPrimary, muted)
                   : RefreshIndicator.adaptive(
                       onRefresh: _fetchInstallments,
-                      color: M4Theme.premiumBlue,
+                      color: M4Theme.loaderGreen(context),
                       child: CustomScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
                         slivers: [

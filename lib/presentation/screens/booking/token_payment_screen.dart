@@ -637,12 +637,12 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                   ),
                   const SizedBox(height: 16),
                   if (_isLoadingUnits)
-                    const SizedBox(
+                    SizedBox(
                       height: 56,
                       child: Center(
                         child: CircularProgressIndicator.adaptive(
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            M4Theme.premiumBlue,
+                            M4Theme.loaderGreen(context),
                           ),
                         ),
                       ),
@@ -950,12 +950,12 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 if (_isUploading)
-                                  const SizedBox(
+                                  SizedBox(
                                     width: 32,
                                     height: 32,
                                     child: CircularProgressIndicator.adaptive(
                                       valueColor: AlwaysStoppedAnimation<Color>(
-                                        M4Theme.premiumBlue,
+                                        M4Theme.loaderGreen(context),
                                       ),
                                       strokeWidth: 3,
                                     ),

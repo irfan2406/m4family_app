@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "693947989069",
+    "project_id": "m4core",
+    "storage_bucket": "m4core.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:693947989069:android:e631b16232873ef3873004",
+        "android_client_info": {
+          "package_name": "com.m4.core.aspire"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpe9nsdaVLj67oZg62r5_VTG9c8iidsMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:693947989069:android:c0919d25574aaab0873004",
+        "android_client_info": {
+          "package_name": "com.m4.family.aspire"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpe9nsdaVLj67oZg62r5_VTG9c8iidsMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:693947989069:android:9a2649c03452a21c873004",
+        "android_client_info": {
+          "package_name": "com.m4family.m4_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpe9nsdaVLj67oZg62r5_VTG9c8iidsMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

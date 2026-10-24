@@ -129,13 +129,15 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
         ),
       ),
       body: _loading
-          ? const Center(
+          ? Center(
               child: CircularProgressIndicator.adaptive(
-                valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  M4Theme.loaderGreen(context),
+                ),
               ),
             )
           : RefreshIndicator.adaptive(
-              color: M4Theme.premiumBlue,
+              color: M4Theme.loaderGreen(context),
               onRefresh: _load,
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),

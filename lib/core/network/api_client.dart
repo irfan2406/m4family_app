@@ -462,6 +462,34 @@ class ApiClient {
     return dio.patch('/api/notifications/mark-all-read');
   }
 
+  // Push devices (FCM). [authToken] signs a call explicitly — logout uses it
+  // because the stored token is being cleared at the same time.
+  Future<Response> registerDevice({
+    required String token,
+    required String platform,
+    required String appVersion,
+  }) async {
+    return dio.post(
+      '/api/devices',
+      data: {'token': token, 'platform': platform, 'appVersion': appVersion},
+    );
+  }
+
+  Future<Response> unregisterDevice(String token, {String? authToken}) async {
+    return dio.delete(
+      '/api/devices',
+      data: {'token': token},
+      options: authToken == null
+          ? null
+          : Options(headers: {'Authorization': 'Bearer $authToken'}),
+    );
+  }
+
+  /// Backend self-test: sends a pop-up to this user's registered phones.
+  Future<Response> sendTestPush() async {
+    return dio.post('/api/devices/test');
+  }
+
   // System Logs
   Future<Response> getLogs() async {
     return dio.get('/api/logs');

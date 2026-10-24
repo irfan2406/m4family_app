@@ -189,15 +189,17 @@ class _InvestorPaymentsScreenState
         ),
       ),
       body: _loading
-          ? const Center(
+          ? Center(
               child: CircularProgressIndicator.adaptive(
-                valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  M4Theme.loaderGreen(context),
+                ),
               ),
             )
           : _error
           ? _buildError(textPrimary, muted)
           : RefreshIndicator.adaptive(
-              color: M4Theme.premiumBlue,
+              color: M4Theme.loaderGreen(context),
               onRefresh: _load,
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),

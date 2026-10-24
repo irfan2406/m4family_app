@@ -104,9 +104,11 @@ class _CpEliteInvestorConnectScreenState
         ),
       ),
       body: _loading
-          ? const Center(
+          ? Center(
               child: CircularProgressIndicator.adaptive(
-                valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  M4Theme.loaderGreen(context),
+                ),
               ),
             )
           : RefreshIndicator.adaptive(

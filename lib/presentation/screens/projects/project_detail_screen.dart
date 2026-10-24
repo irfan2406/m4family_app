@@ -1490,11 +1490,13 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_isLoading && project == null) {
-      return const Scaffold(
+      return Scaffold(
         backgroundColor: Color(0xFF0C312B),
         body: Center(
           child: CircularProgressIndicator.adaptive(
-            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              M4Theme.loaderGreen(context),
+            ),
           ),
         ),
       );

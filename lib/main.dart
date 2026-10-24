@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/services/push_notifications.dart';
 import 'package:m4_mobile/presentation/providers/amenity_catalog.dart';
 import 'package:m4_mobile/presentation/widgets/photo_prewarm_scope.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
@@ -124,6 +127,7 @@ import 'package:m4_mobile/presentation/screens/selection_logs/selection_logs_scr
 import 'package:m4_mobile/presentation/screens/custom_views/my_custom_views_screen.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:m4_mobile/presentation/widgets/live_sync_scope.dart';
+import 'package:m4_mobile/presentation/widgets/push_notifications_scope.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -162,6 +166,10 @@ void main() async {
   // whose ApiClient calls dotenv.get() — loading it lazily would throw. It is
   // a small bundled asset (~ms), so it is not what delayed the splash.
   await dotenv.load(fileName: ".env");
+
+  // Firebase (push notifications) starts in the background — not awaited, so
+  // it never delays the first frame.
+  unawaited(PushNotifications.start());
 
   // No theme preference to read: the app is light-only, so nothing has to be
   // restored from storage before the first frame.
@@ -220,7 +228,12 @@ class M4FamilyApp extends ConsumerWidget {
               // Project photos downloaded from app start, so property
               // cards show them at once instead of after 5–15 s.
               child: PhotoPrewarmScope(
-                child: child ?? const SizedBox.shrink(),
+                // Phone pop-ups: registers this phone after sign-in and
+                // opens the right page when one is tapped.
+                child: PushNotificationsScope(
+                  router: _router,
+                  child: child ?? const SizedBox.shrink(),
+                ),
               ),
             ),
           ),

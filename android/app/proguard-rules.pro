@@ -57,3 +57,6 @@
     @androidx.annotation.Keep *;
 }
 -keep @androidx.annotation.Keep class * { *; }
+
+# ---- flutter_local_notifications (Gson-serialised notification details) ----
+-keep class com.dexterous.** { *; }

@@ -154,16 +154,16 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
             // ─── Body ───────────────────────────────────
             Expanded(
               child: _loading
-                  ? const Center(
+                  ? Center(
                       child: CircularProgressIndicator.adaptive(
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          M4Theme.premiumBlue,
+                          M4Theme.loaderGreen(context),
                         ),
                       ),
                     )
                   : RefreshIndicator.adaptive(
                       onRefresh: _fetchPlans,
-                      color: M4Theme.premiumBlue,
+                      color: M4Theme.loaderGreen(context),
                       child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.symmetric(

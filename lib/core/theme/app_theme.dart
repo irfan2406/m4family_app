@@ -33,6 +33,15 @@ class M4Theme {
   static const Color forestGreen = Color(0xFF163A2C);
   static const Color midGreen = Color(0xFF1C4535);
 
+  /// Loading spinners are brand green on every surface (they used to be
+  /// gold, which read as yellow): deep green on cream screens, and the light
+  /// tagline green on the deep-green showcase screens, where a deep-green
+  /// ring would be invisible.
+  static Color loaderGreen(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+      ? taglineAccent
+      : deepGreen;
+
   /// Coral / terracotta — destructive & the "EXIT APP" action.
   static const Color coral = Color(0xFFC65B46);
 

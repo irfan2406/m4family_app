@@ -249,10 +249,10 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             _buildHeader(isDark, textPrimary, muted, border),
             Expanded(
               child: _loading
-                  ? const Center(
+                  ? Center(
                       child: CircularProgressIndicator.adaptive(
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          M4Theme.premiumBlue,
+                          M4Theme.loaderGreen(context),
                         ),
                       ),
                     )

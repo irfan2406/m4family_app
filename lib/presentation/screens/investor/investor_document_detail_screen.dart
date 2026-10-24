@@ -156,11 +156,13 @@ class _InvestorDocumentDetailScreenState
 
   Widget _buildContent(bool isDark, Color bg) {
     if (_isLoading) {
-      return const SizedBox(
+      return SizedBox(
         height: 320,
         child: Center(
           child: CircularProgressIndicator.adaptive(
-            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              M4Theme.loaderGreen(context),
+            ),
           ),
         ),
       );

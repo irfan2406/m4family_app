@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/presentation/screens/support/schedule_visit_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/help_center_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_tickets_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/create_ticket_screen.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
@@ -226,6 +227,22 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               mainAxisSpacing: spacing,
               childAspectRatio: cellWidth / cellHeight,
               children: [
+                // Raise a support ticket (the create-ticket screen had no
+                // customer-facing entry before this).
+                _MatrixItem(
+                  icon: LucideIcons.ticket,
+                  title: 'Raise a Ticket',
+                  subtitle: 'Report an issue or query',
+                  color: scheme.onSurface,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CreateTicketScreen(),
+                      ),
+                    );
+                  },
+                ),
                 _MatrixItem(
                   icon: LucideIcons.messageCircle,
                   title: 'WhatsApp Support',

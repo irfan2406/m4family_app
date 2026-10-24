@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/core/services/push_notifications.dart';
 import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 /// Investor account deactivation — parity with the web
@@ -202,7 +203,10 @@ class _InvestorDeleteAccountScreenState
         return;
       }
 
-      final res = await apiClient.deleteMe();
+      final res = await PushNotifications.deleteAccount(
+        apiClient,
+        apiClient.deleteMe,
+      );
       if (!mounted) return;
       final ok = res.data is Map && (res.data as Map)['status'] == true;
       if (ok) {

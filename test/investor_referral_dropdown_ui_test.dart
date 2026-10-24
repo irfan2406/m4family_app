@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
@@ -11,17 +12,10 @@ import 'package:m4_mobile/presentation/screens/investor/investor_referral_screen
 
 /// Investor REFERRAL & REWARDS > NEW REFERRAL > SELECT PROJECT.
 ///
-/// The open menu looked nothing like the sheet holding it: square corners
-/// against 16-radius fields, a flat grey slab under the first row, and the
-/// default elevation 8 dropping a heavy shadow across the form beneath.
-///
-/// The grey row is the part worth pinning down. On a touch device the framework
-/// paints the selected item with `Theme.of(context).focusColor` directly
-/// (material/dropdown.dart:238) and never consults `DropdownButton.focusColor`,
-/// which only reaches the closed button (dropdown.dart:1768) — so the property
-/// is not the fix and setting it would look right while changing nothing. The
-/// theme has to be overridden for this subtree instead, which is what these
-/// assert.
+/// The stock DropdownButton opened its menu ON TOP of the field, hiding the
+/// SELECT PROJECT label and the field itself. The menu now opens just below
+/// the field, exactly as wide as it, with the chosen project ticked — the same
+/// menu the project pages use for PREFERRED CONFIGURATION.
 class _FakeApiClient extends ApiClient {
   _FakeApiClient() : super(baseUrl: 'http://localhost');
 
@@ -91,42 +85,65 @@ void main() {
     expect(find.text('REFER & EARN REWARDS'), findsOneWidget);
   }
 
-  testWidgets('the project menu is styled like the sheet around it', (
+  Finder menuItem(String title) => find.descendant(
+    of: find.byType(PopupMenuItem<String>),
+    matching: find.text(title),
+  );
+
+  testWidgets('the menu opens below the field, as wide as it', (
     tester,
   ) async {
     await openReferralForm(tester);
-
-    final dropdown = tester.widget<DropdownButton<String>>(
-      find.byType(DropdownButton<String>),
+    final field = find.text('SELECT PROJECT').last;
+    final fieldBox = tester.getRect(
+      find.ancestor(of: field, matching: find.byType(Container)).first,
     );
-    // Square corners against 16-radius input boxes.
-    expect(dropdown.borderRadius, BorderRadius.circular(16));
-    // Default 8 threw a heavy shadow over the fields below.
-    expect(dropdown.elevation, 3);
-    // A longer project list used to be free to cover the whole form.
-    expect(dropdown.menuMaxHeight, 280);
+
+    await tester.tap(field);
+    await tester.pumpAndSettle();
+
+    for (final t in ['SKAI', 'OCEAN VIEW', 'CLÉDOR']) {
+      expect(menuItem(t), findsOneWidget, reason: '$t is offered');
+    }
+    // The field and its label stay visible: the menu starts below the field.
+    final first = tester.getRect(find.byType(PopupMenuItem<String>).first);
+    expect(first.top, greaterThanOrEqualTo(fieldBox.bottom));
+    // Same width as the field (within the item's own inset).
+    final menu = tester.getRect(
+      find.ancestor(
+        of: find.byType(PopupMenuItem<String>).first,
+        matching: find.byType(Material),
+      ).first,
+    );
+    expect(menu.width, closeTo(fieldBox.width, 1));
+    expect(tester.takeException(), isNull);
   });
 
-  testWidgets('the selected row is tinted, not slabbed in default grey', (
+  testWidgets('picking a project fills the field and ticks it', (
     tester,
   ) async {
     await openReferralForm(tester);
+    await tester.tap(find.text('SELECT PROJECT').last);
+    await tester.pumpAndSettle();
+    await tester.tap(menuItem('OCEAN VIEW'));
+    await tester.pumpAndSettle();
 
-    // The framework reads this off the ambient theme, so the override has to be
-    // an ancestor of the button for the menu to pick it up.
-    final theme = tester.widget<Theme>(
-      find
-          .ancestor(
-            of: find.byType(DropdownButton<String>),
-            matching: find.byType(Theme),
-          )
-          .first,
+    // Closed menu; the field now shows the choice.
+    expect(find.byType(PopupMenuItem<String>), findsNothing);
+    expect(find.text('OCEAN VIEW'), findsOneWidget);
+
+    // Re-opened: the chosen project carries the tick.
+    await tester.tap(find.text('OCEAN VIEW'));
+    await tester.pumpAndSettle();
+    final ticked = find.ancestor(
+      of: find.byIcon(LucideIcons.check),
+      matching: find.byType(PopupMenuItem<String>),
     );
-    // The ink the input boxes are filled with — not Material's default grey.
+    expect(ticked, findsOneWidget);
     expect(
-      theme.data.focusColor,
-      const Color(0xFF0C312B).withValues(alpha: 0.06),
+      find.descendant(of: ticked, matching: find.text('OCEAN VIEW')),
+      findsOneWidget,
     );
-    expect(theme.data.focusColor, isNot(ThemeData().focusColor));
+    expect(tester.takeException(), isNull);
   });
 }

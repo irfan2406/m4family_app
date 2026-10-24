@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/core/services/push_notifications.dart';
 import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -484,7 +485,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
     // A fresh AuthState() defaults bootstrapped=false, which would trap
     // post-logout navigation on the cold-start SplashScreen.
     state = AuthState(status: AuthStatus.initial, bootstrapped: true);
-    unawaited(_storage.delete(key: 'jwt_token'));
+    unawaited(_forgetSession());
+  }
+
+  /// Clears the stored token and removes this phone from push notifications.
+  /// The token is read first so the removal call stays signed even though the
+  /// stored copy is deleted alongside it.
+  Future<void> _forgetSession() async {
+    final jwt = await _storage.read(key: 'jwt_token');
+    final cleared = _storage.delete(key: 'jwt_token');
+    if (jwt != null) {
+      await PushNotifications.unregister(_apiClient, authToken: jwt);
+    }
+    await cleared;
   }
 
   void reset() {

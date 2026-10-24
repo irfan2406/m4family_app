@@ -188,7 +188,7 @@ class _InvestorSecurityScreenState
         ),
       ),
       body: RefreshIndicator.adaptive(
-        color: M4Theme.premiumBlue,
+        color: M4Theme.loaderGreen(context),
         onRefresh: _fetchHistory,
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -425,11 +425,13 @@ class _InvestorSecurityScreenState
     Color border,
   ) {
     if (_loading) {
-      return const Padding(
+      return Padding(
         padding: EdgeInsets.symmetric(vertical: 48),
         child: Center(
           child: CircularProgressIndicator.adaptive(
-            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              M4Theme.loaderGreen(context),
+            ),
           ),
         ),
       );

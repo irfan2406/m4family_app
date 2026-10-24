@@ -299,9 +299,11 @@ class _InvestorProfileDetailsScreenState
     if (_loading) {
       return Scaffold(
         backgroundColor: bg,
-        body: const Center(
+        body: Center(
           child: CircularProgressIndicator.adaptive(
-            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              M4Theme.loaderGreen(context),
+            ),
           ),
         ),
       );

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/data/models/notification_model.dart';
 import 'package:m4_mobile/presentation/providers/notification_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -232,8 +233,9 @@ class _NotificationListScreenState extends ConsumerState<NotificationListScreen>
               child: state.isLoading && state.notifications.isEmpty
                   ? Center(
                       child: CircularProgressIndicator.adaptive(
+                        // Brand green in every portal (CP's was gold).
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          isCp ? purple : scheme.primary,
+                          M4Theme.loaderGreen(context),
                         ),
                       ),
                     )

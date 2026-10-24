@@ -464,12 +464,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 34,
                 height: 34,
                 child: CircularProgressIndicator.adaptive(
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    M4Theme.premiumBlue,
+                    M4Theme.loaderGreen(context),
                   ),
                   strokeWidth: 2.5,
                 ),

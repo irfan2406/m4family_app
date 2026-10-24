@@ -110,10 +110,10 @@ class _InvestorReferralActiveScreenState
             _buildHeader(textPrimary, muted, border),
             Expanded(
               child: _loading
-                  ? const Center(
+                  ? Center(
                       child: CircularProgressIndicator.adaptive(
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          M4Theme.premiumBlue,
+                          M4Theme.loaderGreen(context),
                         ),
                         strokeWidth: 2,
                       ),
@@ -183,7 +183,7 @@ class _InvestorReferralActiveScreenState
 
     return RefreshIndicator.adaptive(
       onRefresh: _load,
-      color: M4Theme.premiumBlue,
+      color: M4Theme.loaderGreen(context),
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(24, 8, 24, 100),
@@ -373,7 +373,7 @@ class _InvestorReferralActiveScreenState
   Widget _buildEmpty(Color muted) {
     return RefreshIndicator.adaptive(
       onRefresh: _load,
-      color: M4Theme.premiumBlue,
+      color: M4Theme.loaderGreen(context),
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         children: [

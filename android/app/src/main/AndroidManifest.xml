@@ -10,6 +10,8 @@
          does, hence the cap. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28"/>
+    <!-- Android 13+: needed to show push pop-ups (asked for after sign-in). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:label="M4 Family"
         android:name="${applicationName}"
@@ -50,6 +52,15 @@
         <meta-data
             android:name="io.flutter.embedding.android.EnableImpeller"
             android:value="false" />
+        <!-- Push pop-ups shown by Firebase while the app is closed: the
+             "m4_default" channel (created in PushNotifications) and the white
+             M4 status-bar icon. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="m4_default" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_m4" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

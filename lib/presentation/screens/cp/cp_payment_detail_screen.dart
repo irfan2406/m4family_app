@@ -137,10 +137,10 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             _header(textPrimary, muted, isDark),
             Expanded(
               child: _loading && _commission == null
-                  ? const Center(
+                  ? Center(
                       child: CircularProgressIndicator.adaptive(
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          M4Theme.premiumBlue,
+                          M4Theme.loaderGreen(context),
                         ),
                       ),
                     )

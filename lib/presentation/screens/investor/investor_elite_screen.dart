@@ -157,10 +157,10 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
             _buildHeader(textPrimary),
             Expanded(
               child: _loading
-                  ? const Center(
+                  ? Center(
                       child: CircularProgressIndicator.adaptive(
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          M4Theme.premiumBlue,
+                          M4Theme.loaderGreen(context),
                         ),
                         strokeWidth: 2,
                       ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -100,6 +102,96 @@ void precacheYouTubeStill(BuildContext context, String? url) {
   );
 }
 
+/// The page the player is served from. YouTube refuses to play an embed that
+/// names no origin (its "Error 153"), so the player is hosted on the brand's
+/// own site rather than an anonymous local page.
+const _youTubeOrigin = 'https://m4group.in';
+
+/// The player page. The embedded player is written straight into the page,
+/// so YouTube starts loading it — and, with autoplay, playing — the moment
+/// the page opens. (Creating it through YouTube's IFrame API instead waited
+/// on two scripts downloaded one after the other before the player even
+/// began to load.) The API is still attached, alongside, only to report
+/// "ready" / "playing" (which lift the still) and to nudge playback.
+String youTubePlayerPage(String id, {required bool autoplay}) {
+  final ap = autoplay ? 1 : 0;
+  final src =
+      'https://www.youtube.com/embed/$id?enablejsapi=1&playsinline=1&rel=0'
+      '&modestbranding=1&autoplay=$ap'
+      '&origin=${Uri.encodeComponent(_youTubeOrigin)}';
+  return '''
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="preconnect" href="https://www.youtube.com">
+<link rel="preconnect" href="https://i.ytimg.com">
+<link rel="preconnect" href="https://www.google.com">
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
+  iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+</style>
+</head>
+<body>
+<iframe id="player" src="$src"
+  allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+  allowfullscreen></iframe>
+<script>
+  function tell(m) { try { M4Player.postMessage(m); } catch (e) {} }
+  function onYouTubeIframeAPIReady() {
+    new YT.Player('player', {
+      events: {
+        onReady: function (e) {
+          if ($ap) { e.target.playVideo(); }
+          tell('ready');
+          // Already playing by the time the API connected.
+          if (e.target.getPlayerState && e.target.getPlayerState() === 1) {
+            tell('playing');
+          }
+        },
+        onStateChange: function (e) { if (e.data === 1) tell('playing'); },
+        onError: function () { tell('error'); }
+      }
+    });
+  }
+</script>
+<script src="https://www.youtube.com/iframe_api" async></script>
+</body>
+</html>
+''';
+}
+
+/// Warms the in-app player once per app session, as soon as a list shows a
+/// YouTube post: starts the browser engine (its first start is the biggest
+/// part of a first video's delay) and fetches YouTube's player for that video
+/// — without playing it — so opening the post then plays almost at once.
+/// The warm-up page is let go as soon as a real player opens.
+void warmUpYouTubePlayer(String? url) {
+  final videoId = youTubeVideoId(url);
+  if (videoId == null || _warmedUp) return;
+  _warmedUp = true;
+  // After the current frame, never inside a build.
+  scheduleMicrotask(() {
+    try {
+      _warmController = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..loadHtmlString(
+          youTubePlayerPage(videoId, autoplay: false),
+          baseUrl: _youTubeOrigin,
+        );
+    } catch (_) {
+      // No web view on this platform (tests): nothing to warm.
+    }
+  });
+}
+
+bool _warmedUp = false;
+
+/// Holds the warm-up page until a real player opens (see [YouTubeEmbed]).
+/// Never read: it only keeps the page alive while it loads.
+// ignore: unused_element
+WebViewController? _warmController;
+
 /// YouTube's own still for a video — a stand-in when an item carries no
 /// uploaded picture of its own.
 String youTubeThumbnailUrl(String videoId) =>
@@ -131,10 +223,7 @@ class YouTubeEmbed extends StatefulWidget {
 }
 
 class _YouTubeEmbedState extends State<YouTubeEmbed> {
-  /// The page the player is served from. YouTube refuses to play an embed
-  /// that names no origin (its "Error 153"), so the player is hosted on the
-  /// brand's own site rather than an anonymous local page.
-  static const _origin = 'https://m4group.in';
+  static const _origin = _youTubeOrigin;
 
   late final WebViewController _controller;
 
@@ -153,6 +242,8 @@ class _YouTubeEmbedState extends State<YouTubeEmbed> {
   @override
   void initState() {
     super.initState();
+    // The engine and YouTube's files are warm by now; drop the hidden page.
+    _warmController = null;
     // iOS: play inside the box, as on the web, instead of jumping straight
     // into the system player — and start without waiting for a second tap.
     final PlatformWebViewControllerCreationParams params =
@@ -209,52 +300,7 @@ class _YouTubeEmbedState extends State<YouTubeEmbed> {
     super.dispose();
   }
 
-  String _playerPage(String id) {
-    // YouTube's IFrame Player API: the same embedded player, plus a "ready"
-    // signal (to lift the still) and a play call (to start by itself).
-    final autoplay = widget.autoplay ? 1 : 0;
-    return '''
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="preconnect" href="https://www.youtube.com">
-<link rel="preconnect" href="https://i.ytimg.com">
-<link rel="preconnect" href="https://www.google.com">
-<style>
-  html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
-  #player, iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-</style>
-</head>
-<body>
-<div id="player"></div>
-<script>
-  function tell(m) { try { M4Player.postMessage(m); } catch (e) {} }
-  function onYouTubeIframeAPIReady() {
-    new YT.Player('player', {
-      videoId: '$id',
-      width: '100%',
-      height: '100%',
-      playerVars: {
-        playsinline: 1, rel: 0, modestbranding: 1, autoplay: $autoplay,
-        origin: '$_origin'
-      },
-      events: {
-        onReady: function (e) {
-          if ($autoplay) { e.target.playVideo(); }
-          tell('ready');
-        },
-        onStateChange: function (e) { if (e.data === 1) tell('playing'); },
-        onError: function () { tell('error'); }
-      }
-    });
-  }
-</script>
-<script src="https://www.youtube.com/iframe_api" async></script>
-</body>
-</html>
-''';
-  }
+  String _playerPage(String id) => youTubePlayerPage(id, autoplay: widget.autoplay);
 
   /// The player itself runs in a frame inside the page and loads freely. A
   /// link that would replace the page — "Watch on YouTube", the channel, the

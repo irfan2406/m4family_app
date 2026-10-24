@@ -118,7 +118,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           // Web parity: "Personalisation Suite" title + "Portfolio Dashboard"
           // subtitle with a paint-bucket icon.
           Text(
-            'PORTFOLIO SUITE',
+            'CUSTOM VIEWS',
             style: GoogleFonts.inter(
               fontSize: 14,
               fontWeight: FontWeight.w600,

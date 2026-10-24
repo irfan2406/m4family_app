@@ -147,9 +147,11 @@ class _BookingConfirmationScreenState
         backgroundColor: isDark
             ? const Color(0xFF141B3A)
             : const Color(0xFFD4CFBC),
-        body: const Center(
+        body: Center(
           child: CircularProgressIndicator.adaptive(
-            valueColor: AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              M4Theme.loaderGreen(context),
+            ),
           ),
         ),
       );

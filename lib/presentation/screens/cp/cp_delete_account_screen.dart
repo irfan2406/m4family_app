@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/core/services/push_notifications.dart';
 import 'package:m4_mobile/presentation/widgets/ios/ios_dialogs.dart';
 
 /// CP account deletion — parity with the web `delete-account` flow.
@@ -180,7 +181,8 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
 
     setState(() => _submitting = true);
     try {
-      final res = await ref.read(apiClientProvider).deleteMe();
+      final api = ref.read(apiClientProvider);
+      final res = await PushNotifications.deleteAccount(api, api.deleteMe);
       if (!mounted) return;
       final ok = res.data is Map && (res.data as Map)['status'] == true;
       if (ok) {

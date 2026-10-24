@@ -987,10 +987,10 @@ class ProjectListScreen extends ConsumerWidget {
                                   );
                                 },
                               ),
-                        loading: () => const Center(
+                        loading: () => Center(
                           child: CircularProgressIndicator.adaptive(
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              M4Theme.premiumBlue,
+                              M4Theme.loaderGreen(context),
                             ),
                           ),
                         ),

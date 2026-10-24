@@ -73,6 +73,8 @@ class ContentHubCard extends ConsumerWidget {
     // A post with a YouTube video opens straight into the player: fetch the
     // video's still now, so the player shows it instantly.
     precacheYouTubeStill(context, item['videoUrl']?.toString());
+    // ...and warm the in-app player, so the video starts almost at once.
+    warmUpYouTubePlayer(item['videoUrl']?.toString());
     final formattedDate = contentPostDate(item['createdAt']);
     final description = (item['description'] ?? '').toString().trim();
     final type = (_has(item['type']) ? item['type'] : typeLabel)
