@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/image_loading_shimmer.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -97,7 +98,7 @@ class M4Image extends ConsumerWidget {
       maxHeightDiskCache: 1600,
       fadeInDuration: Duration.zero,
       placeholder: (context, url) =>
-          placeholder ?? Container(color: Colors.black12),
+          placeholder ?? const ImageLoadingShimmer(),
       errorWidget: (context, url, error) => errorWidget ?? _buildFallback(),
     );
   }

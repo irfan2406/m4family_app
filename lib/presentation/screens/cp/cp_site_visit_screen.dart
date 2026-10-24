@@ -2,9 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m4_mobile/core/utils/ist_time.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -220,12 +222,46 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
     try {
       final apiClient = ref.read(apiClientProvider);
 
+      // Registration → visit = ONE lead: the CP registration flow already
+      // POSTed this customer as a lead, so PATCH that lead (interest /
+      // schedule / notes) instead of leaving it untouched. A failed patch
+      // never blocks the visit below.
+      final leadId = GoRouterState.of(context).uri.queryParameters['leadId'];
+      String? leadErr;
+      if (leadId != null && leadId.isNotEmpty) {
+        // `_scheduledAt` is device-local; the server expects India time.
+        try {
+          final pres = await apiClient.updateLead(leadId, {
+            // Server enum: Site Visit | Video Call (same values as _visitType).
+            'interest': _visitType,
+            'visitDate': istDate(_scheduledAt!),
+            'visitTime': istTime(_scheduledAt!),
+            if (_notesController.text.trim().isNotEmpty)
+              'notes': _notesController.text.trim(),
+          });
+          final pok = pres.data is Map &&
+              (pres.data as Map)['status'] == true;
+          if (!pok) {
+            leadErr = pres.data is Map
+                ? (pres.data as Map)['message']?.toString()
+                : null;
+          }
+        } catch (e) {
+          leadErr = e is DioException && e.response?.data is Map
+              ? (e.response!.data as Map)['message']?.toString()
+              : null;
+          leadErr ??= 'Could not update the registration lead';
+        }
+      }
+
       // Web parity: `POST /api/cp/visits` with the web's exact payload shape.
       final res = await apiClient.createCpVisit({
         'projectId': _selectedProjectId,
         'employeeId': _employeeId,
         'employeeName': _otherEmployeeName,
-        'visitDate': _scheduledAt!.toIso8601String(),
+        // India time WITH its offset: a bare toIso8601String() carries none,
+        // so a UTC server stored the visit 5½ hours off.
+        'visitDate': istIsoTimestamp(_scheduledAt!),
         'clientName': _nameController.text.trim(),
         'clientPhone': _phoneController.text.trim(),
         'clientEmail': _emailController.text.trim(),
@@ -236,7 +272,12 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
       if (!mounted) return;
       final ok = res.data is Map && (res.data as Map)['status'] == true;
       if (ok) {
-        _showMessage('Visit scheduled successfully!', success: true);
+        _showMessage(
+          leadErr == null
+              ? 'Visit scheduled successfully!'
+              : 'Visit scheduled, but the lead update failed: $leadErr',
+          success: leadErr == null,
+        );
         Navigator.pop(context);
       } else {
         final msg = res.data is Map

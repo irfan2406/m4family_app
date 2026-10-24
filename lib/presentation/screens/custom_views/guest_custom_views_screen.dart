@@ -154,7 +154,7 @@ class _GuestCustomViewsScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'INTERACTIVE LIVING',
+                    'CUSTOM VIEWS',
                     style: GoogleFonts.inter(
                       color: isDark ? Colors.white : const Color(0xFF155A4F),
                       fontWeight: FontWeight.w600,

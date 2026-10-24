@@ -166,12 +166,12 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
       final list = (data is Map ? (data['data'] ?? data) : data);
       if (list is List && list.isNotEmpty) {
         final existing = list[0] as Map;
-        final project = existing['project'];
-        final projectId = project is Map ? project['_id'] : project;
+        final projectId = customViewsProjectIdOf(existing['project']);
         if (projectId == null) return;
+        // The user may have picked a project while this loaded: theirs wins.
+        if (!mounted || ref.read(customViewsProjectProvider) != null) return;
 
-        ref.read(customViewsProjectProvider.notifier).state = projectId
-            .toString();
+        selectCustomViewsProject(ref, projectId);
         if (existing['unitType'] != null) {
           ref.read(customViewsUnitProvider.notifier).state =
               existing['unitType'].toString();
@@ -359,108 +359,6 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                 ),
                               ),
                             ),
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 16,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'PERSONALISE',
-                                      style: GoogleFonts.gelasio(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.w400,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurface,
-                                        letterSpacing: 6,
-                                        shadows: [
-                                          Shadow(
-                                            color:
-                                                Theme.of(context).brightness ==
-                                                    Brightness.light
-                                                ? Colors.white.withOpacity(0.5)
-                                                : const Color(
-                                                    0xFF0C312B,
-                                                  ).withOpacity(0.5),
-                                            offset: const Offset(0, 1),
-                                            blurRadius: 4,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    // Admin Panel page title
-                                    // (customization_hero_title); a longer
-                                    // title is set smaller so it fits the
-                                    // banner.
-                                    Text(
-                                      page.title.isNotEmpty
-                                          ? page.title.toUpperCase()
-                                          : 'YOUR LEGACY',
-                                      textAlign: TextAlign.center,
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.gelasio(
-                                        fontSize: page.title.length > 16
-                                            ? 20
-                                            : 28,
-                                        fontWeight: FontWeight.w700,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurface,
-                                        shadows: [
-                                          Shadow(
-                                            color:
-                                                Theme.of(context).brightness ==
-                                                    Brightness.light
-                                                ? Colors.white.withOpacity(0.5)
-                                                : const Color(
-                                                    0xFF0C312B,
-                                                  ).withOpacity(0.5),
-                                            offset: const Offset(0, 1),
-                                            blurRadius: 4,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    // Admin Panel subtitle
-                                    // (customization_hero_subtitle), under title.
-                                    if (page.subtitle.isNotEmpty) ...[
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        page.subtitle,
-                                        textAlign: TextAlign.center,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.inter(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 1,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface
-                                              .withValues(alpha: 0.8),
-                                        ),
-                                      ),
-                                    ],
-                                    const SizedBox(height: 8),
-                                    Container(
-                                      width: 40,
-                                      height: 2,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
                           ],
                         ),
                       ),
@@ -632,6 +530,27 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                       ],
                                       GestureDetector(
                                         onTap: () {
+                                          // Rooms and finishes are per
+                                          // project: nothing to choose from
+                                          // until one is picked.
+                                          if (activeStep == 0 &&
+                                              (ref
+                                                      .read(
+                                                        customViewsProjectProvider,
+                                                      )
+                                                      ?.isEmpty ??
+                                                  true)) {
+                                            ScaffoldMessenger.of(context)
+                                              ..hideCurrentSnackBar()
+                                              ..showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    'Please select a project first',
+                                                  ),
+                                                ),
+                                              );
+                                            return;
+                                          }
                                           if (activeStep < 3) {
                                             ref
                                                     .read(
@@ -986,9 +905,10 @@ class _ProjectSelectionStep extends ConsumerWidget {
               final isSelected = selectedProject == p['_id'];
               final isDark = Theme.of(context).brightness == Brightness.dark;
               return GestureDetector(
+                // A different project clears the previous one's rooms and
+                // finishes — they must never carry into this project's flat.
                 onTap: () =>
-                    ref.read(customViewsProjectProvider.notifier).state =
-                        p['_id'],
+                    selectCustomViewsProject(ref, p['_id']?.toString()),
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.symmetric(
@@ -1283,6 +1203,26 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
 }
 
 // Web parity: unique space names from the fetched config (categories[].spaces[].name).
+/// Shown on the Space / Materials steps while the chosen project's own
+/// rooms and finishes load.
+class _ConfigLoading extends StatelessWidget {
+  const _ConfigLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 80),
+      child: Center(
+        child: CircularProgressIndicator.adaptive(
+          valueColor: AlwaysStoppedAnimation<Color>(
+            Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 List<String> configSpaceNames(Map<String, dynamic>? config) {
   if (config == null) return [];
   final set = <String>{};
@@ -1304,15 +1244,24 @@ class _SpaceSelectionStep extends ConsumerWidget {
     final selections = ref.watch(customViewsSelectionsProvider);
     final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final config = ref.watch(currentCustomViewsConfigProvider);
+    // This project's rooms are still on their way: wait for them rather than
+    // flash the built-in rooms (or another project's) in the meantime.
+    if (ref.watch(customViewsConfigLoadingProvider)) {
+      return const _ConfigLoading();
+    }
 
-    // Web reference: always present the 4 standard rooms as a 2x2 grid,
-    // multi-select with a checkmark badge on each selected card.
-    const spaces = [
+    // Web parity: the loaded config's rooms replace the built-in four; the
+    // standard rooms stay only as the fallback when no config is loaded.
+    // Multi-select with a checkmark badge on each selected card.
+    final configSpaces = configSpaceNames(config);
+    const fallbackSpaces = [
       'Master Bedroom',
       'Living Hall',
       'Kitchen Space',
       'Guest Suite',
     ];
+    final spaces = configSpaces.isNotEmpty ? configSpaces : fallbackSpaces;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1521,7 +1470,10 @@ class _MaterialsSelectionStep extends ConsumerWidget {
     final optionsAsync = ref.watch(customizationOptionsProvider);
     final selections = ref.watch(customViewsSelectionsProvider);
     final scheme = Theme.of(context).colorScheme;
-    final config = ref.watch(customViewsConfigProvider).valueOrNull;
+    final config = ref.watch(currentCustomViewsConfigProvider);
+    if (ref.watch(customViewsConfigLoadingProvider)) {
+      return const _ConfigLoading();
+    }
     final genericCats = optionsAsync.asData?.value ?? [];
 
     // Room tabs mirror the rooms selected on the SELECT SPACE step.
@@ -2017,7 +1969,7 @@ class _FinaliseStep extends ConsumerWidget {
     final unitNumber = ref.watch(customViewsUnitNumberProvider);
     final block = ref.watch(customViewsBlockProvider);
     final wing = ref.watch(customViewsWingProvider);
-    final config = ref.watch(customViewsConfigProvider).valueOrNull;
+    final config = ref.watch(currentCustomViewsConfigProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

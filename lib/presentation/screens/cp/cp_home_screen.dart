@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/presentation/widgets/image_loading_shimmer.dart';
 import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
@@ -507,13 +508,17 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                     color: Colors.white.withValues(alpha: 0.1),
                                   ),
                                 ),
-                                child: Text(
-                                  label,
-                                  style: GoogleFonts.gelasio(
-                                    color: Colors.white,
-                                    fontSize: 7,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 1.5,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    label,
+                                    maxLines: 1,
+                                    style: GoogleFonts.gelasio(
+                                      color: Colors.white,
+                                      fontSize: 7,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.5,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -684,7 +689,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
       width: width,
       height: height,
       fit: effFit,
-      placeholder: (context, u) => Container(color: Colors.black12),
+      placeholder: (context, u) => const ImageLoadingShimmer(),
       errorWidget: (context, u, e) => errorBox(),
     );
   }
@@ -1111,54 +1116,72 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       ),
                     ),
                   ),
+                  // The text sits between the corner badge (top 24, ~24 tall) and the
+                  // photo's bottom. The subtitle may take two lines; if the block is
+                  // still too tall (small phone, large text) it scales down a little
+                  // rather than being cut off or running into the badge.
                   Positioned(
+                    top: 56,
                     bottom: 24,
                     left: 24,
                     right: 24,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'FEATURED PROPERTY',
-                          style: GoogleFonts.gelasio(
-                            color: const Color(0xFFF4EFE3),
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.8,
+                    child: LayoutBuilder(
+                      builder: (context, box) => Align(
+                        alignment: Alignment.bottomLeft,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.bottomLeft,
+                          child: SizedBox(
+                            width: box.maxWidth,
+                            child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'FEATURED PROPERTY',
+                                  style: GoogleFonts.gelasio(
+                                    color: const Color(0xFFF4EFE3),
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 1.8,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                // Web renders this in Montserrat (globals.css forces
+                                // montserrat !important over the font-serif class), light
+                                // weight, text-4xl, tracking-tight.
+                                Text(
+                                  (project['title'] ?? '').toString(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.gelasio(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    fontSize: 34,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                // Hardcoded subtitle to match web SharedHomePage.
+                                Text(
+                                  'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.'
+                                      .toUpperCase(),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white.withValues(alpha: 0.8),
+                                    fontSize: 10,
+                                    height: 1.5,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        // Web renders this in Montserrat (globals.css forces
-                        // montserrat !important over the font-serif class), light
-                        // weight, text-4xl, tracking-tight.
-                        Text(
-                          (project['title'] ?? '').toString(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.gelasio(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            fontSize: 34,
-                            fontWeight: FontWeight.w500,
-                            height: 1,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        // Hardcoded subtitle to match web SharedHomePage.
-                        Text(
-                          'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.'
-                              .toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
-                            color: Colors.white.withValues(alpha: 0.8),
-                            fontSize: 10,
-                            height: 1.5,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ],

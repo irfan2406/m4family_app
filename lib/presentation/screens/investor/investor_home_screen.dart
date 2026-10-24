@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show compute;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/widgets/image_loading_shimmer.dart';
 import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -245,7 +246,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       height: height,
       fit: effFit,
       alignment: alignment,
-      placeholder: (c, u) => Container(color: Colors.black12),
+      placeholder: (c, u) => const ImageLoadingShimmer(),
       errorWidget: (c, u, e) => errorBox(),
     );
   }
@@ -652,13 +653,17 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                       color: Colors.white.withValues(alpha: 0.1),
                                     ),
                                   ),
-                                  child: Text(
-                                    label,
-                                    style: GoogleFonts.gelasio(
-                                      color: const Color(0xFFF4EFE3),
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 1.5,
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      label,
+                                      maxLines: 1,
+                                      style: GoogleFonts.gelasio(
+                                        color: const Color(0xFFF4EFE3),
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 1.5,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -1203,69 +1208,87 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       ),
                     ),
                   ),
+                  // The text sits between the corner badge (top 24, ~24 tall) and the
+                  // photo's bottom. The subtitle may take two lines; if the block is
+                  // still too tall (small phone, large text) it scales down a little
+                  // rather than being cut off or running into the badge.
                   Positioned(
+                    top: 56,
                     bottom: 24,
                     left: 24,
                     right: 24,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'FEATURED PROPERTY',
-                          style: GoogleFonts.gelasio(
-                            color: const Color(0xFFF4EFE3),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 2.5,
+                    child: LayoutBuilder(
+                      builder: (context, box) => Align(
+                        alignment: Alignment.bottomLeft,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.bottomLeft,
+                          child: SizedBox(
+                            width: box.maxWidth,
+                            child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'FEATURED PROPERTY',
+                                  style: GoogleFonts.gelasio(
+                                    color: const Color(0xFFF4EFE3),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 2.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  (project['title'] ?? '').toString(),
+                                  // Lighter serif: DM Serif Display ships only weight
+                                  // 400, so fontWeight can't thin it. Playfair Display
+                                  // at w400 reads noticeably less bold.
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.gelasio(
+                                    // White on the photo: the title sat in black over a dark night render
+                                    // and was unreadable. A soft shadow keeps it legible on light images too.
+                                    color: Colors.white,
+                                    shadows: [
+                                      Shadow(
+                                        color: const Color(
+                                          0xFF0C312B,
+                                        ).withValues(alpha: 0.45),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                    fontSize: 34,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1,
+                                    letterSpacing: -1,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  ((project['description'] ?? '')
+                                              .toString()
+                                              .trim()
+                                              .isNotEmpty
+                                          ? project['description'].toString()
+                                          : 'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.')
+                                      .toUpperCase(),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white.withValues(alpha: 0.8),
+                                    fontSize: 11,
+                                    height: 1.6,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          (project['title'] ?? '').toString(),
-                          // Lighter serif: DM Serif Display ships only weight
-                          // 400, so fontWeight can't thin it. Playfair Display
-                          // at w400 reads noticeably less bold.
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.gelasio(
-                            // White on the photo: the title sat in black over a dark night render
-                            // and was unreadable. A soft shadow keeps it legible on light images too.
-                            color: Colors.white,
-                            shadows: [
-                              Shadow(
-                                color: const Color(
-                                  0xFF0C312B,
-                                ).withValues(alpha: 0.45),
-                                blurRadius: 12,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                            fontSize: 34,
-                            fontWeight: FontWeight.w600,
-                            height: 1,
-                            letterSpacing: -1,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          ((project['description'] ?? '')
-                                      .toString()
-                                      .trim()
-                                      .isNotEmpty
-                                  ? project['description'].toString()
-                                  : 'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.')
-                              .toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
-                            color: Colors.white.withValues(alpha: 0.8),
-                            fontSize: 11,
-                            height: 1.6,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ],

@@ -21,9 +21,12 @@ class InvestorReferralActiveScreen extends ConsumerStatefulWidget {
 class _InvestorReferralActiveScreenState
     extends ConsumerState<InvestorReferralActiveScreen> {
   // Statuses considered closed/credited (excluded from the active list).
+  // REWARDED is the terminal state once the admin assigns points; CREDITED
+  // is its legacy name.
   static const _closedStatuses = [
     'CLOSED',
     'CREDITED',
+    'REWARDED',
     'BOOKING_DONE',
     'Booked',
   ];
@@ -66,6 +69,13 @@ class _InvestorReferralActiveScreenState
       (r['referralName'] ?? r['clientName'] ?? 'Referral').toString();
 
   String _status(dynamic r) => (r['status'] ?? 'NEW').toString();
+
+  // Referral points are assigned by the admin only, so a referral has
+  // actually paid out only once it reached REWARDED (or the legacy CREDITED).
+  bool _isRewarded(dynamic r) {
+    final s = _status(r);
+    return s == 'REWARDED' || s == 'CREDITED';
+  }
 
   String _project(dynamic r) {
     final pid = r['projectId'];
@@ -215,6 +225,10 @@ class _InvestorReferralActiveScreenState
     final status = _status(r);
     final code = _code(r);
     final phone = _phone(r);
+    // Points land only after the admin credits them: REWARDED/CREDITED paid
+    // out, any other closed status is still waiting on the admin.
+    final rewarded = _isRewarded(r);
+    final rewardPending = !rewarded && _closedStatuses.contains(status);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -268,7 +282,7 @@ class _InvestorReferralActiveScreenState
                 ),
               ),
               const SizedBox(width: 12),
-              _buildStatusBadge(status, border, muted),
+              _buildStatusBadge(status, rewarded, rewardPending, border, muted),
             ],
           ),
           const SizedBox(height: 16),
@@ -312,21 +326,44 @@ class _InvestorReferralActiveScreenState
     );
   }
 
-  Widget _buildStatusBadge(String status, Color border, Color muted) {
+  Widget _buildStatusBadge(
+    String status,
+    bool rewarded,
+    bool rewardPending,
+    Color border,
+    Color muted,
+  ) {
+    // Green once the admin has rewarded the referral, muted while a closed
+    // referral still awaits points, blue for open pipeline statuses.
+    final ink = rewarded
+        ? const Color(0xFF163A2C)
+        : rewardPending
+        ? muted
+        : M4Theme.premiumBlue;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: M4Theme.premiumBlue.withValues(alpha: 0.06),
+        color: rewarded
+            ? const Color(0xFF163A2C).withValues(alpha: 0.06)
+            : M4Theme.premiumBlue.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: border),
+        border: Border.all(
+          color: rewarded
+              ? const Color(0xFF163A2C).withValues(alpha: 0.2)
+              : border,
+        ),
       ),
       child: Text(
-        status.toUpperCase(),
+        rewarded
+            ? 'REWARDED'
+            : rewardPending
+            ? 'REWARD PENDING'
+            : status.toUpperCase(),
         style: GoogleFonts.inter(
           fontSize: 10,
           fontWeight: FontWeight.w600,
           letterSpacing: 1,
-          color: M4Theme.premiumBlue,
+          color: ink,
         ),
       ),
     );

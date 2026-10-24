@@ -154,20 +154,28 @@ void main() {
       user: const {'fullName': 'Asha Rao', 'phone': '', 'email': ''},
     );
 
-    expect(find.text('BOOK A SITE VISIT'), findsOneWidget);
+    // Every check is scoped to the sheet (a centred Dialog): the page's own
+    // REGISTER YOUR INTEREST form behind it has its own 'FULL NAME *' and
+    // 'PREFERRED CONFIGURATION *'.
+    final sheet = find.byType(Dialog);
+    expect(sheet, findsOneWidget);
+    Finder inSheet(String text) =>
+        find.descendant(of: sheet, matching: find.text(text));
+
+    expect(inSheet('BOOK A SITE VISIT'), findsOneWidget);
     // Placeholders inside the boxes, worded and ordered as the guest sheet
     // words them — no caps labels stacked above the fields.
-    expect(find.text('Enter Full Name'), findsOneWidget);
-    expect(find.text('Enter Email Address (Optional)'), findsOneWidget);
-    expect(find.text('Enter Mobile Number'), findsOneWidget);
+    expect(inSheet('Enter Full Name'), findsOneWidget);
+    expect(inSheet('Enter Email Address (Optional)'), findsOneWidget);
+    expect(inSheet('Enter Mobile Number'), findsOneWidget);
     // ...and no caps label above a box, which is what this sheet used to draw.
-    expect(find.text('FULL NAME *'), findsNothing);
-    expect(find.text('PHONE NUMBER *'), findsNothing);
+    expect(inSheet('FULL NAME *'), findsNothing);
+    expect(inSheet('PHONE NUMBER *'), findsNothing);
     // The rest of the sheet is untouched.
-    expect(find.text('PREFERRED CONFIGURATION *'), findsOneWidget);
-    expect(find.text('VISIT TYPE'), findsOneWidget);
-    expect(find.text('SCHEDULE'), findsOneWidget);
-    expect(find.text('ADDITIONAL NOTES'), findsOneWidget);
+    expect(inSheet('PREFERRED CONFIGURATION *'), findsOneWidget);
+    expect(inSheet('VISIT TYPE'), findsOneWidget);
+    expect(inSheet('SCHEDULE'), findsOneWidget);
+    expect(inSheet('ADDITIONAL NOTES'), findsOneWidget);
   });
 
   testWidgets('the fields open empty so the placeholders are readable', (

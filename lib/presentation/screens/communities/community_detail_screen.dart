@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/presentation/widgets/image_loading_shimmer.dart';
 import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/presentation/widgets/image_overlay_label.dart';
 import 'package:m4_mobile/presentation/widgets/m4_map_view.dart';
@@ -60,7 +61,7 @@ Widget _communityProjectImage(String url, {BoxFit fit = BoxFit.cover}) {
     memCacheWidth: 1080,
     imageUrl: url,
     fit: fit,
-    placeholder: (context, u) => Container(color: Colors.black12),
+    placeholder: (context, u) => const ImageLoadingShimmer(),
     errorWidget: (context, u, e) => fallback(),
   );
 }
@@ -382,7 +383,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                       imageUrl: heroImageUrl,
                       fit: BoxFit.cover,
                       placeholder: (context, url) =>
-                          Container(color: Colors.black12),
+                          const ImageLoadingShimmer(),
                       errorWidget: (context, url, error) => Container(
                         color: const Color(0xFF141B3A),
                         child: const Center(
@@ -1141,7 +1142,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                       ),
                       fit: fit,
                       placeholder: (context, url) =>
-                          Container(color: Colors.black12),
+                          const ImageLoadingShimmer(),
                       errorWidget: (context, url, error) => Container(
                         color: const Color(0xFF141B3A),
                         child: const Center(

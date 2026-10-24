@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/presentation/widgets/image_loading_shimmer.dart';
 import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
@@ -624,9 +625,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       fit: BoxFit.cover,
                                       width: double.infinity,
                                       height: double.infinity,
-                                      placeholder: Container(
-                                        color: Colors.black12,
-                                      ),
+                                      placeholder: const ImageLoadingShimmer(),
                                       errorWidget: Container(
                                         color: Colors.white10,
                                         child: const Center(
@@ -660,13 +659,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       color: Colors.white.withOpacity(0.1),
                                     ),
                                   ),
-                                  child: Text(
-                                    label,
-                                    style: GoogleFonts.gelasio(
-                                      color: Colors.white,
-                                      fontSize: 7,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 1.5,
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      label,
+                                      maxLines: 1,
+                                      style: GoogleFonts.gelasio(
+                                        color: Colors.white,
+                                        fontSize: 7,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 1.5,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -1059,9 +1062,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                               imageUrl: imageUrl,
                                               fit: BoxFit.cover,
                                               width: double.infinity,
-                                              placeholder: Container(
-                                                color: Colors.black12,
-                                              ),
+                                              placeholder: const ImageLoadingShimmer(),
                                               errorWidget: Container(
                                                 width: double.infinity,
                                                 color: Colors.white.withOpacity(
@@ -1638,7 +1639,7 @@ class _ProjectCard extends StatelessWidget {
           height: double.infinity,
           width: double.infinity,
           fit: fit,
-          placeholder: Container(color: Colors.black12),
+          placeholder: const ImageLoadingShimmer(),
           errorWidget: Container(color: Colors.white10),
         ),
         title: title,
@@ -2488,7 +2489,7 @@ class _MediaCard extends StatelessWidget {
           height: double.infinity,
           width: double.infinity,
           fit: fit,
-          placeholder: Container(color: Colors.black12),
+          placeholder: const ImageLoadingShimmer(),
           errorWidget: Container(color: Colors.white10),
         ),
         title: title,
@@ -2570,7 +2571,7 @@ class _CommunityCard extends StatelessWidget {
           height: double.infinity,
           width: double.infinity,
           fit: fit,
-          placeholder: Container(color: Colors.black12),
+          placeholder: const ImageLoadingShimmer(),
           errorWidget: Container(color: Colors.white10),
         ),
         title: title,

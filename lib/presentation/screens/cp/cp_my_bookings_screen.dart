@@ -479,16 +479,22 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                       ),
                     ),
                     const SizedBox(width: 10),
+                    // Shrinks to fit instead of cutting off: at 9px with
+                    // wide tracking the heading needs ~235dp, more than this
+                    // row has on 320–360dp phones.
                     Expanded(
-                      child: Text(
-                        'MILESTONE PAYMENT PROGRESSION',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.gelasio(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 2.0,
-                          color: muted.withValues(alpha: 0.85),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'MILESTONE PAYMENT PROGRESSION',
+                          maxLines: 1,
+                          style: GoogleFonts.gelasio(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 2.0,
+                            color: muted.withValues(alpha: 0.85),
+                          ),
                         ),
                       ),
                     ),

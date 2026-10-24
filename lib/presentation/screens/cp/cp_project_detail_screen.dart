@@ -1,3 +1,4 @@
+import 'package:m4_mobile/core/utils/ist_time.dart';
 import 'package:m4_mobile/presentation/providers/amenity_catalog.dart';
 import 'package:m4_mobile/presentation/widgets/hero_actions_top.dart';
 import 'package:m4_mobile/presentation/widgets/youtube_embed.dart';
@@ -39,7 +40,7 @@ import 'package:url_launcher/url_launcher.dart';
 ///
 /// Notes:
 /// - Uses catalog endpoints for project data (same as web).
-/// - CP actions: Video Call opens a CP lead sheet; Site Visit routes to `/cp/booking/site-visit?projectId=...`.
+/// - CP actions: Video Call opens a CP lead sheet; Site Visit routes to `/cp/booking/site-visit?projectId=...` (with `leadId` when the registration form already created the lead).
 class CpProjectDetailScreen extends ConsumerStatefulWidget {
   final String projectId;
   final Map<String, dynamic>? projectData;
@@ -103,6 +104,15 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   /// Resolved project ObjectId for the registration payload — null when we only
   /// have a slug (the API rejects a non-ObjectId here).
   String? _regProjectId;
+
+  /// `_id` of the lead the registration form just created. The follow-up Site
+  /// Visit PATCHes THIS lead instead of leaving it untouched.
+  String? _registeredLeadId;
+
+  /// Digits of the phone number that registration was for: a Video Call booked
+  /// for the SAME customer updates [_registeredLeadId] rather than creating a
+  /// second lead for them.
+  String? _registeredPhoneDigits;
   final _regEmployeeEntered = TextEditingController();
   final _regClientName = TextEditingController();
   final _regClientPhone = TextEditingController();
@@ -659,6 +669,17 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       if (!mounted) return;
       final ok = res.data is Map ? (res.data as Map)['status'] == true : false;
       if (ok) {
+        // Keep the created lead's id so the follow-up Site Visit PATCHes THIS
+        // lead (registration → visit = one lead) instead of leaving the
+        // registration lead untouched. Response shape varies, so parse
+        // defensively.
+        final body = res.data is Map ? res.data as Map : null;
+        final data = body?['data'];
+        final lead = body?['lead'];
+        _registeredLeadId = (data is Map ? data['_id'] : null)?.toString() ??
+            body?['_id']?.toString() ??
+            (lead is Map ? lead['_id'] : null)?.toString();
+        _registeredPhoneDigits = _phoneDigits(_regClientPhone.text);
         _regToast('Registration submitted', success: true);
         _regEmployeeEntered.clear();
         _regClientName.clear();
@@ -806,6 +827,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     }
   }
 
+  /// The last 10 digits of a phone number, so "+91 98765 43210" and
+  /// "9876543210" match as the same customer.
+  static String _phoneDigits(String raw) {
+    final digits = raw.replaceAll(RegExp(r'\D'), '');
+    return digits.length > 10 ? digits.substring(digits.length - 10) : digits;
+  }
+
   Future<void> _submitVideoCallLead() async {
     final p = _project ?? widget.projectData;
     if (p == null) return;
@@ -868,7 +896,25 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     setState(() => _leadSubmitting = true);
     try {
       final api = ref.read(apiClientProvider);
-      final res = await api.submitLead({
+      // Registration → visit = ONE lead (PDF p9): a video call for the
+      // customer just registered updates that registration's lead (interest,
+      // date, time and notes, in India time) instead of creating a second
+      // lead for the same person. A different customer gets their own lead.
+      final leadId = _registeredLeadId;
+      final sameCustomer =
+          leadId != null &&
+          leadId.isNotEmpty &&
+          _registeredPhoneDigits != null &&
+          _registeredPhoneDigits!.isNotEmpty &&
+          _phoneDigits(_clientPhone.text) == _registeredPhoneDigits;
+      final res = sameCustomer
+          ? await api.updateLead(leadId, {
+              'interest': _visitType,
+              'visitDate': istDate(_videoCallDt!),
+              'visitTime': istTime(_videoCallDt!),
+              'notes': 'Video call booking • $notesStaff',
+            })
+          : await api.submitLead({
         'name': _clientName.text.trim(),
         'phone': _clientPhone.text.trim(),
         'email': _clientEmail.text.trim(),
@@ -883,8 +929,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         'message':
             'CP video call • Employee: $employeeName • ${(p['title'] ?? '').toString()}',
         'notes': 'Video call booking • $notesStaff',
-        'visitDate': _videoCallDt!.toIso8601String(),
-        'visitTime': DateFormat.jm().format(_videoCallDt!.toLocal()),
+        // India time, the same fields the registration PATCH uses.
+        'visitDate': istDate(_videoCallDt!),
+        'visitTime': istTime(_videoCallDt!),
         if (sourceId != null && sourceId.length == 24) 'sourceId': sourceId,
         if (hasPick && (_employeeId?.length ?? 0) == 24)
           'assignedTo': _employeeId,
@@ -1191,7 +1238,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                 LucideIcons.eye,
                                 scheme,
                                 onTap: () => context.push(
-                                  '/cp/booking/site-visit?projectId=${widget.projectId}',
+                                  '/cp/booking/site-visit?projectId=${widget.projectId}'
+                                  '${_registeredLeadId != null ? '&leadId=$_registeredLeadId' : ''}',
                                 ),
                               ),
                             ),
@@ -1485,27 +1533,38 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         children: [
           Icon(icon, size: 20, color: scheme.onSurface.withValues(alpha: 0.25)),
           const SizedBox(height: 10),
-          Text(
-            label.toUpperCase(),
-            textAlign: TextAlign.center,
-            style: GoogleFonts.gelasio(
-              fontSize: 8,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.5,
-              color: scheme.onSurfaceVariant,
+          // Scale-to-fit, never clip: the card is ~65dp wide at 320dp, too
+          // narrow for "COMPLETION" at a fixed 8px + tracking.
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label.toUpperCase(),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              style: GoogleFonts.gelasio(
+                fontSize: 8,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.5,
+                color: scheme.onSurfaceVariant,
+              ),
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            value,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.inter(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: scheme.onSurface,
-              height: 1.1,
+          // Same as the label (and every other portal's card): shrink to fit
+          // on one line. With two wrapping lines "Connect Now" broke
+          // mid-word ("Connec / t No…") on a small phone with larger text.
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              value,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: scheme.onSurface,
+                height: 1.1,
+              ),
             ),
           ),
         ],
@@ -2547,7 +2606,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           Expanded(
             child: FilledButton(
               onPressed: () => context.push(
-                '/cp/booking/site-visit?projectId=${widget.projectId}',
+                '/cp/booking/site-visit?projectId=${widget.projectId}'
+                '${_registeredLeadId != null ? '&leadId=$_registeredLeadId' : ''}',
               ),
               style: FilledButton.styleFrom(
                 backgroundColor: accent,

@@ -19,6 +19,7 @@ import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/media_url.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
+import 'package:m4_mobile/presentation/widgets/project_registration_form.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/hero_actions_top.dart';
 import 'package:m4_mobile/presentation/widgets/youtube_embed.dart';
@@ -1001,6 +1002,10 @@ class _InvestorProjectDetailScreenState
             const SizedBox(height: 32),
             _buildConstructionSection(project, isDark),
             const SizedBox(height: 32),
+            // Registration form directly below Construction Progress
+            // (spec: Construction → Registration → Location).
+            _buildRegistrationSection(project, isDark),
+            const SizedBox(height: 32),
             _buildPaymentPlansSection(isDark),
             const SizedBox(height: 32),
             _buildInvestSection(project, isDark),
@@ -1694,6 +1699,59 @@ class _InvestorProjectDetailScreenState
         ],
       ),
     );
+  }
+
+  // Inline registration form below Construction Progress (shared widget with
+  // its own post-submit confirmation echoing the entered details).
+  Widget _buildRegistrationSection(Map<String, dynamic> project, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionHeader('Registration', isDark),
+          const SizedBox(height: 24),
+          ProjectRegistrationForm(
+            onSubmit: (data) => _submitRegistrationLead(project, data),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _submitRegistrationLead(
+    Map<String, dynamic> project,
+    RegistrationFormData data,
+  ) async {
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final authUser = ref.read(authProvider).user;
+      final title = project['title']?.toString() ?? 'General';
+      String two(int v) => v.toString().padLeft(2, '0');
+      final dt = data.dateTime;
+      final res = await apiClient.submitLead({
+        'name': data.name,
+        'phone': data.phone,
+        if (data.email.isNotEmpty) 'email': data.email,
+        'interest': data.visitType == 'Video Call' ? 'Video Call' : 'Site Visit',
+        'configuration': data.configuration,
+        'source': 'online',
+        if (widget.projectId.length == 24) 'projectId': widget.projectId,
+        'project': title,
+        if (authUser != null && (authUser['id'] ?? authUser['_id']) != null)
+          'userId': (authUser['id'] ?? authUser['_id']).toString(),
+        'visitDate': '${dt.year}-${two(dt.month)}-${two(dt.day)}',
+        'visitTime':
+            '${dt.hour % 12 == 0 ? 12 : dt.hour % 12}:${two(dt.minute)} ${dt.hour < 12 ? 'AM' : 'PM'}',
+        if (data.notes.isNotEmpty) 'notes': data.notes,
+        'message': data.notes.isNotEmpty
+            ? '${data.visitType} request for project $title - Notes: ${data.notes}'
+            : '${data.visitType} request for project $title',
+      });
+      return res.data['status'] == true;
+    } catch (_) {
+      return false;
+    }
   }
 
   Widget _buildConstructionSection(Map<String, dynamic> project, bool isDark) {
@@ -2768,26 +2826,37 @@ class _ActionCard extends StatelessWidget {
             ),
             Column(
               children: [
-                Text(
-                  label.toUpperCase(),
-                  textAlign: TextAlign.center,
-                  // Was 8px / 38% — too small & faint. Larger + darker.
-                  style: GoogleFonts.gelasio(
-                    color: isDark ? Colors.white70 : const Color(0xFF155A4F),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.5,
+                // Scale-to-fit, never clip: the card is ~68dp wide at 320dp,
+                // far too narrow for "COMPLETION" at a fixed size.
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label.toUpperCase(),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    // Was 11px — the widest of the four cards; 9px matches the
+                    // other portals and fits after scaling.
+                    style: GoogleFonts.gelasio(
+                      color: isDark ? Colors.white70 : const Color(0xFF155A4F),
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.5,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  value,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    color: isDark ? Colors.white : const Color(0xFF155A4F),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -0.2,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    value,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    style: GoogleFonts.inter(
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.2,
+                    ),
                   ),
                 ),
               ],

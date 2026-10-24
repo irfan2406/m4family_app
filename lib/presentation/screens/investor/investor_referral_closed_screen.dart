@@ -11,7 +11,9 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart'
 /// the "Success Vault" — closed/credited referrals that converted into bookings.
 /// Shows referral name, project, converted badge, unit config, date closed and
 /// the reward (commission) points earned. Data: `/api/investor/referrals`
-/// filtered by status IN [CLOSED, CREDITED, BOOKING_DONE, Booked].
+/// filtered by status IN [CLOSED, CREDITED, REWARDED, BOOKING_DONE, Booked].
+/// Referral points are assigned by the admin only, so a referral stays here
+/// as "reward pending" until its status becomes REWARDED (or legacy CREDITED).
 class InvestorReferralClosedScreen extends ConsumerStatefulWidget {
   const InvestorReferralClosedScreen({super.key});
 
@@ -25,10 +27,13 @@ class _InvestorReferralClosedScreenState
   static const _gold = Color(0xFFC5A35B);
   static const _emerald = Color(0xFF163A2C);
 
-  // Statuses considered closed/credited (the only ones shown here).
+  // Statuses considered closed/credited (the only ones shown here). REWARDED
+  // is the terminal state once the admin assigns points; CREDITED is its
+  // legacy name.
   static const _closedStatuses = [
     'CLOSED',
     'CREDITED',
+    'REWARDED',
     'BOOKING_DONE',
     'Booked',
   ];
@@ -69,6 +74,13 @@ class _InvestorReferralClosedScreenState
 
   // ─── Derived data ──────────────────────────────────────────────
   String _status(dynamic r) => (r['status'] ?? 'CLOSED').toString();
+
+  // Referral points are assigned by the admin only, so a referral has
+  // actually paid out only once it reached REWARDED (or the legacy CREDITED).
+  bool _isRewarded(dynamic r) {
+    final s = _status(r);
+    return s == 'REWARDED' || s == 'CREDITED';
+  }
 
   String _name(dynamic r) =>
       (r['referralName'] ?? r['clientName'] ?? 'Referral').toString();
@@ -246,6 +258,9 @@ class _InvestorReferralClosedScreenState
     final unitConfig = _unitConfig(r);
     final points = _points(r);
     final date = _closedDate(r);
+    // Points are credited by the admin after closing, so only REWARDED
+    // (legacy CREDITED) counts as a verified, paid-out conversion.
+    final rewarded = _isRewarded(r);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -277,12 +292,16 @@ class _InvestorReferralClosedScreenState
                             ),
                           ),
                         ),
-                        const SizedBox(width: 6),
-                        const Icon(
-                          LucideIcons.badgeCheck,
-                          size: 16,
-                          color: _emerald,
-                        ),
+                        // The verified tick only once the admin has assigned
+                        // points — an unrewarded booking is not earned yet.
+                        if (rewarded) ...[
+                          const SizedBox(width: 6),
+                          const Icon(
+                            LucideIcons.badgeCheck,
+                            size: 16,
+                            color: _emerald,
+                          ),
+                        ],
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -299,7 +318,7 @@ class _InvestorReferralClosedScreenState
                 ),
               ),
               const SizedBox(width: 12),
-              _buildConvertedBadge(),
+              _buildConvertedBadge(rewarded, muted),
             ],
           ),
           const SizedBox(height: 16),
@@ -355,14 +374,27 @@ class _InvestorReferralClosedScreenState
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    '+${_formatNumber(points)} PTS',
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: _emerald,
-                    ),
-                  ),
+                  // Only rewarded referrals have earned points; a closed but
+                  // unrewarded booking shows a muted pending note so nothing
+                  // reads as credited before the admin assigns it.
+                  rewarded
+                      ? Text(
+                          '+${_formatNumber(points)} PTS',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: _emerald,
+                          ),
+                        )
+                      : Text(
+                          'REWARD PENDING',
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1,
+                            color: muted,
+                          ),
+                        ),
                 ],
               ),
             ],
@@ -390,21 +422,25 @@ class _InvestorReferralClosedScreenState
     );
   }
 
-  Widget _buildConvertedBadge() {
+  /// A referral only converts once the admin assigns points: REWARDED shows
+  /// the green "converted" badge, a closed-but-unrewarded referral shows a
+  /// muted "reward pending" badge instead.
+  Widget _buildConvertedBadge(bool rewarded, Color muted) {
+    final ink = rewarded ? _emerald : muted;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: _emerald.withValues(alpha: 0.1),
+        color: ink.withValues(alpha: rewarded ? 0.1 : 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _emerald.withValues(alpha: 0.2)),
+        border: Border.all(color: ink.withValues(alpha: 0.2)),
       ),
       child: Text(
-        'CONVERTED',
+        rewarded ? 'CONVERTED' : 'REWARD PENDING',
         style: GoogleFonts.inter(
           fontSize: 10,
           fontWeight: FontWeight.w600,
           letterSpacing: 1,
-          color: _emerald,
+          color: ink,
         ),
       ),
     );

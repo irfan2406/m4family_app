@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/widgets/image_loading_shimmer.dart';
 import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
@@ -1279,7 +1280,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       width: width,
       height: height,
       fit: effFit,
-      placeholder: (context, u) => Container(color: Colors.black12),
+      placeholder: (context, u) => const ImageLoadingShimmer(),
       errorWidget: (context, u, e) => errorBox(),
     );
   }

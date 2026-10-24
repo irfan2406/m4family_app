@@ -1,10 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
-// Provider for fetching Customization Options
+// Provider for fetching Customization Options — ALWAYS for the wizard's own
+// project (GET /api/catalog/customization-options?projectId=<id>). Without a
+// project the server returns every project's categories and materials mixed
+// together (a Clédor flat was offered SKAI's choices), so with no project
+// selected yet there is simply nothing to offer.
 final customizationOptionsProvider = FutureProvider<List<dynamic>>((ref) async {
+  final projectId = ref.watch(customViewsProjectProvider);
+  if (projectId == null || projectId.trim().isEmpty) return const [];
   final apiClient = ref.watch(apiClientProvider);
-  final response = await apiClient.getCustomizationOptions();
+  final response = await apiClient.getCustomizationOptions(
+    projectId: projectId,
+  );
   if (response.statusCode == 200 || response.statusCode == 201) {
     return response.data['data'] ?? [];
   } else {
@@ -159,13 +167,73 @@ final customViewsConfigProvider = FutureProvider<Map<String, dynamic>?>((
         data['status'] == true &&
         data['data'] != null &&
         data['data']['categories'] != null) {
-      return Map<String, dynamic>.from(data['data']);
+      return {
+        ...Map<String, dynamic>.from(data['data']),
+        // Which project + flat type this config belongs to, so a screen
+        // never shows it for another one while the new config loads.
+        kConfigForProject: projectId,
+        kConfigForUnit: unit,
+      };
     }
   } catch (_) {
     // Fall back to defaults on any error.
   }
   return null;
 });
+
+/// Keys [customViewsConfigProvider] adds to the config it returns.
+const kConfigForProject = '_forProject';
+const kConfigForUnit = '_forUnit';
+
+/// The project/unit config for the CURRENT project and flat type only.
+///
+/// While a new project's config loads, [customViewsConfigProvider]'s
+/// valueOrNull still holds the PREVIOUS project's config — that is how a
+/// Clédor flat briefly showed SKAI's rooms. This returns null instead.
+final currentCustomViewsConfigProvider = Provider<Map<String, dynamic>?>((
+  ref,
+) {
+  final config = ref.watch(customViewsConfigProvider).valueOrNull;
+  if (config == null) return null;
+  if (config[kConfigForProject] != ref.watch(customViewsProjectProvider) ||
+      config[kConfigForUnit] != ref.watch(customViewsUnitProvider)) {
+    return null;
+  }
+  return config;
+});
+
+/// True while the config for the current project/flat type is still loading,
+/// so screens show a spinner rather than the built-in fallback rooms.
+final customViewsConfigLoadingProvider = Provider<bool>((ref) {
+  final project = ref.watch(customViewsProjectProvider);
+  if (project == null || project.isEmpty) return false;
+  return ref.watch(customViewsConfigProvider).isLoading &&
+      ref.watch(currentCustomViewsConfigProvider) == null;
+});
+
+/// A project id from a record's `project` field, which the API sends either
+/// populated ({_id, title, …}) or as the bare id string.
+String? customViewsProjectIdOf(dynamic project) {
+  final id = (project is Map ? project['_id'] : project)?.toString().trim();
+  return (id == null || id.isEmpty) ? null : id;
+}
+
+/// Points the wizard at [projectId]. When that is a DIFFERENT project, the
+/// previous project's rooms, finishes, active room, block, wing and unit
+/// number are cleared — they belong to the old project and must never carry
+/// into another project's flat. Callers set the new project's values after.
+void selectCustomViewsProject(WidgetRef ref, String? projectId) {
+  final id = (projectId == null || projectId.trim().isEmpty)
+      ? null
+      : projectId.trim();
+  if (ref.read(customViewsProjectProvider) == id) return;
+  ref.read(customViewsProjectProvider.notifier).state = id;
+  ref.read(customViewsSelectionsProvider.notifier).state = {};
+  ref.read(customViewsActiveSpaceProvider.notifier).state = null;
+  ref.read(customViewsBlockProvider.notifier).state = null;
+  ref.read(customViewsWingProvider.notifier).state = null;
+  ref.read(customViewsUnitNumberProvider.notifier).state = null;
+}
 
 // State for Selected Project ID
 final customViewsProjectProvider = StateProvider<String?>((ref) => null);

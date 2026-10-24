@@ -1,3 +1,4 @@
+import 'package:m4_mobile/presentation/widgets/image_loading_shimmer.dart';
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'dart:convert';
 
@@ -70,7 +71,7 @@ Widget _projListImage(
     maxHeightDiskCache: 1600,
     imageUrl: url,
     fit: effFit,
-    placeholder: (context, u) => Container(color: Colors.black12),
+    placeholder: (context, u) => const ImageLoadingShimmer(),
     errorWidget: (context, u, e) => errorBox(),
   );
 }

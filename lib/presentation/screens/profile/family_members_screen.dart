@@ -234,6 +234,12 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
     final nameController = TextEditingController(
       text: existing?['name']?.toString() ?? '',
     );
+    final phoneController = TextEditingController(
+      text: existing?['phone']?.toString() ?? '',
+    );
+    final emailController = TextEditingController(
+      text: existing?['email']?.toString() ?? '',
+    );
     String relation = existing?['relation']?.toString() ?? '';
     String dob = existing?['dob']?.toString() ?? '';
 
@@ -264,13 +270,15 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
               } catch (_) {
                 initial = DateTime(2000);
               }
-              // The one M4 chooser, same as every booking sheet: starts on
-              // today and runs forward.
+              // A birthdate runs backward from today: cap the sheet at today
+              // (the sheet's maxDate-only mode spans 100 years back) so a DOB
+              // can never land in the future. Booking sheets cap the other
+              // way — this is the same chooser with the opposite bound.
               final now = DateTime.now();
               final picked = await showM4DateTimeSheet(
                 ctx,
                 initial: initial,
-                minDate: DateTime(now.year, now.month, now.day),
+                maxDate: DateTime(now.year, now.month, now.day),
               );
               if (picked != null) {
                 setDialogState(
@@ -416,6 +424,27 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 20),
+                      // Phone (optional) — the server already persists it on
+                      // each familyMembers entry (PATCH /api/auth/me).
+                      _DialogLabel(label: 'PHONE (OPTIONAL)', isDark: isDark),
+                      const SizedBox(height: 8),
+                      _DialogInput(
+                        controller: phoneController,
+                        hint: 'Enter Phone Number',
+                        isDark: isDark,
+                        keyboardType: TextInputType.phone,
+                      ),
+                      const SizedBox(height: 20),
+                      // Email (optional) — same server support as phone.
+                      _DialogLabel(label: 'EMAIL (OPTIONAL)', isDark: isDark),
+                      const SizedBox(height: 8),
+                      _DialogInput(
+                        controller: emailController,
+                        hint: 'Enter Email Address',
+                        isDark: isDark,
+                        keyboardType: TextInputType.emailAddress,
+                      ),
                       const SizedBox(height: 28),
                       // Buttons
                       Row(
@@ -450,11 +479,48 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                                         );
                                         return;
                                       }
+                                      // Optional phone / email: validated
+                                      // when typed; phone is normalized
+                                      // (spaces / dashes stripped).
+                                      final rawPhone =
+                                          phoneController.text.trim();
+                                      final phone = rawPhone.replaceAll(
+                                        RegExp(r'[\s-]'),
+                                        '',
+                                      );
+                                      if (rawPhone.isNotEmpty &&
+                                          !RegExp(r'^\+?\d{7,15}$').hasMatch(
+                                            phone,
+                                          )) {
+                                        _showToast(
+                                          'Enter a valid phone number',
+                                          isError: true,
+                                        );
+                                        return;
+                                      }
+                                      final rawEmail =
+                                          emailController.text.trim();
+                                      if (rawEmail.isNotEmpty &&
+                                          !RegExp(
+                                            r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+                                          ).hasMatch(rawEmail)) {
+                                        _showToast(
+                                          'Enter a valid email address',
+                                          isError: true,
+                                        );
+                                        return;
+                                      }
                                       FocusScope.of(ctx).unfocus();
-                                      final member = {
+                                      // dob / phone / email are omitted (not
+                                      // sent as '') when left empty — the
+                                      // array is replaced wholesale.
+                                      final member = <String, dynamic>{
                                         'name': name,
                                         'relation': relation.trim(),
-                                        'dob': dob,
+                                        if (dob.isNotEmpty) 'dob': dob,
+                                        if (rawPhone.isNotEmpty) 'phone': phone,
+                                        if (rawEmail.isNotEmpty)
+                                          'email': rawEmail,
                                       };
                                       List<Map<String, dynamic>> updated;
                                       if (isEdit && index != null) {
@@ -715,6 +781,8 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
     final String name = (member['name'] ?? '').toString();
     final String relation = (member['relation'] ?? '').toString();
     final String dob = (member['dob'] ?? '').toString();
+    final String phone = (member['phone'] ?? '').toString();
+    final String email = (member['email'] ?? '').toString();
 
     String dobDisplay = '';
     if (dob.isNotEmpty) {
@@ -850,6 +918,72 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                                       : const Color(0xFF0C312B))
                                   .withValues(alpha: 0.5),
                           letterSpacing: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                if (phone.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        LucideIcons.phone,
+                        size: 11,
+                        color:
+                            (isDark
+                                    ? const Color(0xFFF4EFE3)
+                                    : const Color(0xFF0C312B))
+                                .withValues(alpha: 0.45),
+                      ),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          phone.toUpperCase(),
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color:
+                                (isDark
+                                        ? const Color(0xFFF4EFE3)
+                                        : const Color(0xFF0C312B))
+                                    .withValues(alpha: 0.5),
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                if (email.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        LucideIcons.mail,
+                        size: 11,
+                        color:
+                            (isDark
+                                    ? const Color(0xFFF4EFE3)
+                                    : const Color(0xFF0C312B))
+                                .withValues(alpha: 0.45),
+                      ),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          email,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color:
+                                (isDark
+                                        ? const Color(0xFFF4EFE3)
+                                        : const Color(0xFF0C312B))
+                                    .withValues(alpha: 0.5),
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                     ],
@@ -1026,11 +1160,13 @@ class _DialogInput extends StatelessWidget {
   final String hint;
   final bool isDark;
   final ValueChanged<String>? onChanged;
+  final TextInputType? keyboardType;
   const _DialogInput({
     required this.controller,
     required this.hint,
     required this.isDark,
     this.onChanged,
+    this.keyboardType,
   });
 
   @override
@@ -1049,6 +1185,7 @@ class _DialogInput extends StatelessWidget {
       child: TextField(
         controller: controller,
         onChanged: onChanged,
+        keyboardType: keyboardType,
         style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w500,

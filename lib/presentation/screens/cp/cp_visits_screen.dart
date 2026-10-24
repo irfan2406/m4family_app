@@ -799,6 +799,34 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
               ),
             ],
           ),
+          // Visit notes — read-only for the CP (the deck keeps notes
+          // admin-controlled; the CP sees what was entered, capped at two
+          // lines so long notes can't blow up the card).
+          if ((v['notes'] ?? '').toString().trim().isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: scheme.onSurface.withValues(alpha: 0.03),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: scheme.onSurface.withValues(alpha: 0.06),
+                ),
+              ),
+              child: Text(
+                (v['notes'] ?? '').toString().trim(),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.inter(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w500,
+                  color: scheme.onSurfaceVariant,
+                  height: 1.4,
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           // Footer actions
           Row(

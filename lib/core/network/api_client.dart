@@ -357,8 +357,14 @@ class ApiClient {
     return dio.get('/api/catalog/locations');
   }
 
-  Future<Response> getCustomizationOptions() async {
-    return dio.get('/api/catalog/customization-options');
+  /// Customization categories/materials. Pass [projectId] to get only that
+  /// project's items — without it the server returns every project's options
+  /// (a flat must never offer another project's choices).
+  Future<Response> getCustomizationOptions({String? projectId}) async {
+    return dio.get(
+      '/api/catalog/customization-options',
+      queryParameters: projectId == null ? null : {'projectId': projectId},
+    );
   }
 
   Future<Response> getCommunities() async {
@@ -398,6 +404,14 @@ class ApiClient {
   // Lead Generation
   Future<Response> submitLead(Map<String, dynamic> data) async {
     return dio.post('/api/leads', data: data);
+  }
+
+  /// Update a lead created earlier — the CP flow registers a customer first
+  /// (POST /api/leads) and the follow-up visit form PATCHes that same lead
+  /// (interest / visitDate / visitTime / notes) instead of creating a second
+  /// one.
+  Future<Response> updateLead(String id, Map<String, dynamic> data) async {
+    return dio.patch('/api/leads/$id', data: data);
   }
 
   // Profile Management
@@ -633,6 +647,13 @@ class ApiClient {
   /// Raw investor portfolio (list of investments).
   Future<Response> getInvestorPortfolio() async {
     return dio.get('/api/investor/portfolio');
+  }
+
+  /// Investor stakes in square feet (web `GET /api/investor/holdings`):
+  /// each stake carries `squareFeet`; amounts / current value / equity share
+  /// are no longer recorded for stakes.
+  Future<Response> getInvestorHoldings() async {
+    return dio.get('/api/investor/holdings');
   }
 
   /// Secure investor vault documents (`GET /api/investor/documents`).

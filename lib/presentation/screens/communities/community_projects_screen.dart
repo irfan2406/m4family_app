@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/widgets/image_loading_shimmer.dart';
 import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -377,7 +378,7 @@ class _ProjectCard extends StatelessWidget {
           fit: fit,
           fadeInDuration: Duration.zero,
           fadeOutDuration: Duration.zero,
-          placeholder: (context, url) => Container(color: Colors.black12),
+          placeholder: (context, url) => const ImageLoadingShimmer(),
           errorWidget: (context, url, error) => Container(
             color: Colors.black26,
             child: const Icon(LucideIcons.alertCircle, color: Colors.white38),

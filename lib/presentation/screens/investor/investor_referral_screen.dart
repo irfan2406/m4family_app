@@ -23,9 +23,13 @@ class InvestorReferralScreen extends ConsumerStatefulWidget {
 
 class _InvestorReferralScreenState
     extends ConsumerState<InvestorReferralScreen> {
+  // REWARDED is the terminal state once the admin assigns points; CREDITED
+  // is its legacy name. Both stay in the closed set so rewarded referrals
+  // keep listing as closed.
   static const _closedStatuses = {
     'CLOSED',
     'CREDITED',
+    'REWARDED',
     'BOOKING_DONE',
     'Booked',
   };
@@ -81,6 +85,13 @@ class _InvestorReferralScreenState
 
   bool _isClosed(dynamic r) =>
       _closedStatuses.contains((r is Map ? r['status'] : null)?.toString());
+
+  // Referral points are assigned by the admin only, so a referral has
+  // actually paid out only once it reached REWARDED (or the legacy CREDITED).
+  bool _isRewarded(dynamic r) {
+    final s = (r is Map ? r['status'] : null)?.toString();
+    return s == 'REWARDED' || s == 'CREDITED';
+  }
 
   List<dynamic> get _activeReferrals =>
       _referrals.where((r) => !_isClosed(r)).toList();
@@ -564,6 +575,11 @@ class _InvestorReferralScreenState
     final project = _refProject(r);
     final status = _refStatus(r);
     final code = (r is Map ? r['referralCode'] : null)?.toString();
+    // Points land only after the admin credits them: REWARDED/CREDITED paid
+    // out, any other closed status is still waiting on the admin. The list
+    // renders active referrals only, but keep the chip truthful regardless.
+    final rewarded = _isRewarded(r);
+    final rewardPending = !rewarded && _isClosed(r);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -629,17 +645,31 @@ class _InvestorReferralScreenState
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: textPrimary.withValues(alpha: 0.04),
+              color: rewarded
+                  ? const Color(0xFF163A2C).withValues(alpha: 0.08)
+                  : textPrimary.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: border),
+              border: Border.all(
+                color: rewarded
+                    ? const Color(0xFF163A2C).withValues(alpha: 0.2)
+                    : border,
+              ),
             ),
             child: Text(
-              status.toUpperCase(),
+              rewarded
+                  ? 'REWARDED'
+                  : rewardPending
+                  ? 'REWARD PENDING'
+                  : status.toUpperCase(),
               style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1,
-                color: textPrimary.withValues(alpha: 0.75),
+                color: rewarded
+                    ? const Color(0xFF163A2C)
+                    : rewardPending
+                    ? textPrimary.withValues(alpha: 0.45)
+                    : textPrimary.withValues(alpha: 0.75),
               ),
             ),
           ),

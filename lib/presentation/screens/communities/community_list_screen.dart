@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:m4_mobile/presentation/widgets/image_loading_shimmer.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/presentation/providers/live_sync_provider.dart';
@@ -348,7 +349,7 @@ Widget _communityImage(String url, {BoxFit fit = BoxFit.cover}) {
     memCacheWidth: 1080,
     imageUrl: url,
     fit: fit,
-    placeholder: (context, u) => Container(color: Colors.black12),
+    placeholder: (context, u) => const ImageLoadingShimmer(),
     errorWidget: (context, u, e) => _communityImagePlaceholder(),
   );
 }

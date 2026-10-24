@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:m4_mobile/presentation/providers/privacy_mode_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,22 +9,25 @@ import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/ios/ios_sheets.dart';
 
-/// INVESTOR PORTFOLIO — "MY INVESTMENTS" performance dashboard.
+/// INVESTOR PORTFOLIO — "MY INVESTMENTS" holdings dashboard.
 ///
-/// Mirrors the structure of the user-side `PortfolioScreen`
-/// (`app/(user)/profile/portfolio`) and the investor web prototype
-/// `app/investor/profile/portfolio/page.tsx`, but reframed for an investor:
-///  - Header: PORTFOLIO / MY INVESTMENTS
-///  - Summary card: invested capital + current valuation
-///  - Performance strip: total ROI, unrealised gains, avg yield
-///  - Allocation breakdown by project (capital share + performance metric)
+/// Stakes are recorded in square feet: each holding carries a `squareFeet`
+/// figure and the screen reports AREA (per stake) and TOTAL AREA (aggregate).
+/// Amount / current value / equity share are no longer recorded for stakes,
+/// so no money figures are rendered here and privacy masking isn't needed.
+///
+/// Structure:
+///  - Header: PORTFOLIO
+///  - Summary card: total area + active holdings count
+///  - Performance strip: avg yield (only when the server still supplies one)
+///  - Allocation breakdown by project (area share)
 ///  - INVESTMENT BREAKDOWN: image card per holding with project, location,
-///    invested value, current value, ROI badge, and a VIEW PERFORMANCE sheet.
+///    area, units/stake, status, and a VIEW PERFORMANCE sheet.
 ///
-/// Data is fetched live from `GET /api/investor/portfolio`
-/// (`apiClient.getInvestorPortfolio()`). Field shapes are parsed defensively so
-/// the screen renders whether the backend returns a flat list or an envelope
-/// with summary + holdings.
+/// Data is fetched live from `GET /api/investor/holdings`
+/// (`apiClient.getInvestorHoldings()`), falling back to the legacy
+/// `GET /api/investor/portfolio` so the screen never breaks. Response shapes
+/// are parsed defensively (bare list, `{status, data}`, or `data.holdings`).
 class InvestorPortfolioScreen extends ConsumerStatefulWidget {
   const InvestorPortfolioScreen({super.key});
 
@@ -36,9 +38,6 @@ class InvestorPortfolioScreen extends ConsumerStatefulWidget {
 
 class _InvestorPortfolioScreenState
     extends ConsumerState<InvestorPortfolioScreen> {
-  // Privacy mode (Settings → Mask sensitive values) hides money figures.
-  bool get _hideAmounts => ref.read(privacyModeProvider);
-
   static const Color _gold = Color(0xFFC5A35B);
   static const Color _green = Color(0xFF163A2C);
   static const Color _amber = Color(0xFFC5A35B);
@@ -47,8 +46,7 @@ class _InvestorPortfolioScreenState
   bool _hasError = false;
 
   List<dynamic> _holdings = [];
-  double _invested = 0;
-  double _currentValue = 0;
+  double _totalArea = 0;
   Map<String, dynamic>? _summary;
 
   @override
@@ -66,61 +64,51 @@ class _InvestorPortfolioScreenState
     }
     try {
       final apiClient = ref.read(apiClientProvider);
-      final res = await apiClient.getInvestorPortfolio();
-      final body = res.data;
-      if (body is Map && body['status'] == true) {
-        final dynamic data = body['data'];
+      List<dynamic>? holdings;
+      Map<String, dynamic>? summary;
 
-        List<dynamic> holdings = [];
-        Map<String, dynamic>? summary;
+      // Stakes are denominated in square feet, so the holdings endpoint is
+      // the source of truth. The legacy portfolio endpoint stays as a
+      // fallback so the screen still renders if the new one is missing,
+      // failing, or returns nothing list-shaped.
+      try {
+        final res = await apiClient.getInvestorHoldings();
+        final parsed = _parseHoldingsBody(res.data);
+        holdings = parsed.holdings;
+        summary = parsed.summary;
+      } catch (e) {
+        debugPrint('Error fetching investor holdings: $e');
+      }
 
-        if (data is List) {
-          holdings = data;
-        } else if (data is Map) {
-          summary = Map<String, dynamic>.from(data);
-          final dynamic list =
-              data['holdings'] ??
-              data['investments'] ??
-              data['items'] ??
-              data['portfolio'];
-          if (list is List) holdings = list;
-        }
+      if (holdings == null) {
+        final res = await apiClient.getInvestorPortfolio();
+        final parsed = _parseHoldingsBody(res.data);
+        holdings = parsed.holdings;
+        summary = parsed.summary;
+      }
 
-        final invested = holdings.fold<double>(
-          0,
-          (sum, h) =>
-              sum +
-              _num(h, ['investedAmount', 'invested', 'amount', 'investment']),
-        );
-        final current = holdings.fold<double>(
-          0,
-          (sum, h) =>
-              sum +
-              _num(h, ['currentValue', 'marketValue', 'valuation', 'value']),
-        );
+      if (holdings == null) {
+        if (mounted) setState(() => _hasError = true);
+        return;
+      }
 
-        if (mounted) {
-          setState(() {
-            _holdings = holdings;
-            _summary = summary;
-            _invested = _summary != null
-                ? _summaryNum([
-                    'totalInvested',
-                    'invested',
-                    'capitalDeployed',
-                  ], fallback: invested)
-                : invested;
-            _currentValue = _summary != null
-                ? _summaryNum([
-                    'currentValue',
-                    'totalValue',
-                    'valuation',
-                  ], fallback: current > 0 ? current : invested)
-                : (current > 0 ? current : invested);
-          });
-        }
-      } else if (mounted) {
-        setState(() => _hasError = true);
+      // Prefer a server-reported total; otherwise sum the stakes ourselves.
+      final summedArea = holdings.fold<double>(
+        0,
+        (sum, h) => sum + _squareFeet(h),
+      );
+      final serverArea = _num(summary, [
+        'totalArea',
+        'totalSquareFeet',
+        'totalSqft',
+      ]);
+
+      if (mounted) {
+        setState(() {
+          _holdings = holdings!;
+          _summary = summary;
+          _totalArea = serverArea > 0 ? serverArea : summedArea;
+        });
       }
     } catch (e) {
       debugPrint('Error fetching investor portfolio: $e');
@@ -138,14 +126,8 @@ class _InvestorPortfolioScreenState
     }
   }
 
-  // ─── Derived metrics ──────────────────────────────────────────────────────
-  double get _gains => _currentValue - _invested;
-  double get _roiPct => _invested <= 0 ? 0 : (_gains / _invested) * 100;
-
   @override
   Widget build(BuildContext context) {
-    // Redraw with figures hidden or shown when privacy mode changes.
-    ref.watch(privacyModeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
 
@@ -243,17 +225,21 @@ class _InvestorPortfolioScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Web parity: with nothing invested yet the page is just the invitation
-            // to explore. The valuation card, performance tiles and breakdown only
-            // appear once there are real holdings to report.
+            // Web parity: with nothing allotted yet the page is just the
+            // invitation to explore. The area card, performance tile and
+            // breakdown only appear once there are real holdings to report.
             if (_holdings.isEmpty)
               _buildEmptyState(isDark)
             else ...[
               _buildSummaryCard(isDark),
-              const SizedBox(height: 16),
-              _buildPerformanceStrip(isDark),
+              // Yield is the only performance metric still supplied for
+              // stakes; hide the strip entirely when the server omits it.
+              if (_avgYield != null) ...[
+                const SizedBox(height: 16),
+                _buildPerformanceStrip(isDark),
+              ],
               const SizedBox(height: 28),
-              _sectionLabel('CAPITAL ALLOCATION', isDark),
+              _sectionLabel('AREA ALLOCATION', isDark),
               const SizedBox(height: 16),
               _buildAllocationCard(isDark),
               const SizedBox(height: 28),
@@ -318,7 +304,7 @@ class _InvestorPortfolioScreenState
               const Icon(LucideIcons.crown, size: 16, color: _gold),
               const SizedBox(width: 8),
               Text(
-                'PORTFOLIO VALUATION',
+                'PORTFOLIO AREA',
                 style: GoogleFonts.gelasio(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
@@ -329,12 +315,13 @@ class _InvestorPortfolioScreenState
             ],
           ),
           const SizedBox(height: 20),
+          // Flexible keeps the grouped figure on one line on narrow screens.
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Flexible(
                 child: Text(
-                  _formatValue(_currentValue),
+                  _formatArea(_totalArea),
                   style: GoogleFonts.gelasio(
                     fontSize: 32,
                     fontWeight: FontWeight.w700,
@@ -344,48 +331,11 @@ class _InvestorPortfolioScreenState
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: (_gains >= 0 ? _green : _amber).withValues(
-                      alpha: 0.15,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        _gains >= 0
-                            ? LucideIcons.trendingUp
-                            : LucideIcons.trendingDown,
-                        size: 12,
-                        color: _gains >= 0 ? _green : _amber,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${_roiPct >= 0 ? '+' : ''}${_roiPct.toStringAsFixed(1)}%',
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: _gains >= 0 ? _green : _amber,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ],
           ),
           const SizedBox(height: 6),
           Text(
-            'CURRENT MARKET VALUE',
+            'TOTAL AREA',
             style: GoogleFonts.gelasio(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -396,18 +346,6 @@ class _InvestorPortfolioScreenState
           const SizedBox(height: 22),
           Row(
             children: [
-              Expanded(
-                child: _summaryStat(
-                  'CAPITAL DEPLOYED',
-                  _formatValue(_invested),
-                  valueColor: Colors.white,
-                ),
-              ),
-              Container(
-                width: 1,
-                height: 36,
-                color: Colors.white.withValues(alpha: 0.1),
-              ),
               Expanded(
                 child: _summaryStat(
                   'ACTIVE HOLDINGS',
@@ -455,33 +393,18 @@ class _InvestorPortfolioScreenState
   }
 
   // ─── Performance strip ───────────────────────────────────────────────────────
+  // Yield is the only performance metric still reported for stakes, so the
+  // strip is a single AVG YIELD tile (the strip itself is only built when
+  // [_avgYield] is non-null).
   Widget _buildPerformanceStrip(bool isDark) {
-    final avgYield =
-        (_summary?['avgYield'] ??
-                _summary?['averageYield'] ??
-                (_invested > 0 ? '${(_roiPct).toStringAsFixed(1)}%' : '0.0%'))
-            .toString();
-
     return Row(
       children: [
         Expanded(
           child: _metricTile(
             isDark,
-            icon: _gains >= 0
-                ? LucideIcons.trendingUp
-                : LucideIcons.trendingDown,
-            label: 'UNREALISED GAINS',
-            value: '${_hideAmounts ? '' : (_gains >= 0 ? '+' : '-')}${_formatValue(_gains.abs())}',
-            accent: _gains >= 0 ? _green : _amber,
-          ),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: _metricTile(
-            isDark,
             icon: LucideIcons.percent,
             label: 'AVG YIELD',
-            value: avgYield,
+            value: _avgYield ?? '—',
             accent: M4Theme.premiumBlue,
           ),
         ),
@@ -571,7 +494,8 @@ class _InvestorPortfolioScreenState
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
 
-    final total = _holdings.fold<double>(0, (sum, h) => sum + _holdingValue(h));
+    // Bar + percentages are weighted by allotted area, not money.
+    final total = _holdings.fold<double>(0, (sum, h) => sum + _squareFeet(h));
     final palette = [
       _gold,
       M4Theme.premiumBlue,
@@ -610,7 +534,7 @@ class _InvestorPortfolioScreenState
                   for (var i = 0; i < _holdings.length; i++)
                     Expanded(
                       flex:
-                          ((_holdingValue(_holdings[i]) /
+                          ((_squareFeet(_holdings[i]) /
                                       (total <= 0 ? 1 : total)) *
                                   1000)
                               .round()
@@ -645,8 +569,8 @@ class _InvestorPortfolioScreenState
     Color muted,
   ) {
     final name = _projectName(h);
-    final value = _holdingValue(h);
-    final pct = total <= 0 ? 0.0 : (value / total) * 100;
+    final area = _squareFeet(h);
+    final pct = total <= 0 ? 0.0 : (area / total) * 100;
 
     return Row(
       children: [
@@ -670,12 +594,17 @@ class _InvestorPortfolioScreenState
           ),
         ),
         const SizedBox(width: 12),
-        Text(
-          '${pct.toStringAsFixed(0)}%',
-          style: GoogleFonts.inter(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: muted,
+        // Area share: square footage next to its percentage of the total.
+        Flexible(
+          child: Text(
+            '${_formatArea(area)} · ${pct.toStringAsFixed(0)}%',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.inter(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: muted,
+            ),
           ),
         ),
       ],
@@ -698,9 +627,15 @@ class _InvestorPortfolioScreenState
     final id = (holding['id'] ?? holding['_id'] ?? '—').toString();
     final shortId = id.length > 8 ? id.substring(id.length - 8) : id;
     final status = (holding['status'] ?? 'Active').toString();
-    final invested = _num(holding, ['investedAmount', 'invested', 'amount']);
-    final current = _holdingValue(holding);
-    final roi = invested <= 0 ? 0.0 : ((current - invested) / invested) * 100;
+    final units =
+        (holding['units'] ??
+                holding['unitNumber'] ??
+                holding['quantity'] ??
+                '—')
+            .toString();
+    // Stakes are denominated in square feet; absent means not allotted yet.
+    final area = _squareFeet(holding);
+    final areaText = area > 0 ? _formatArea(area) : '—';
     final imageUrl = _firstImage(holding);
 
     return Container(
@@ -806,6 +741,8 @@ class _InvestorPortfolioScreenState
                     ],
                   ),
                   const SizedBox(height: 16),
+                  // Wrap (not Row) so the items flow onto a second line instead
+                  // of overflowing on narrow screens.
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     decoration: BoxDecoration(
@@ -814,24 +751,21 @@ class _InvestorPortfolioScreenState
                         bottom: BorderSide(color: border),
                       ),
                     ),
-                    child: Row(
+                    child: Wrap(
+                      spacing: 24,
+                      runSpacing: 12,
                       children: [
-                        Expanded(
-                          child: _DetailItem(
-                            label: 'INVESTED',
-                            value: _formatValue(invested),
-                            muted: muted,
-                            textPrimary: textPrimary,
-                          ),
+                        _DetailItem(
+                          label: 'AREA',
+                          value: areaText,
+                          muted: muted,
+                          textPrimary: textPrimary,
                         ),
-                        Expanded(
-                          child: _DetailItem(
-                            label: 'CURRENT VALUE',
-                            value: _formatValue(current),
-                            muted: muted,
-                            textPrimary: textPrimary,
-                            alignEnd: true,
-                          ),
+                        _DetailItem(
+                          label: 'UNITS / STAKE',
+                          value: units,
+                          muted: muted,
+                          textPrimary: textPrimary,
                         ),
                       ],
                     ),
@@ -839,7 +773,6 @@ class _InvestorPortfolioScreenState
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      _RoiBadge(roi: roi),
                       const Spacer(),
                       _PressableScale(
                         onTap: () => _showPerformance(holding, isDark),
@@ -928,16 +861,14 @@ class _InvestorPortfolioScreenState
   void _showPerformance(dynamic holding, bool isDark) {
     final name = _projectName(holding);
     final location = _location(holding);
-    final invested = _num(holding, ['investedAmount', 'invested', 'amount']);
-    final current = _holdingValue(holding);
-    final gains = current - invested;
-    final roi = invested <= 0 ? 0.0 : (gains / invested) * 100;
     final units =
         (holding['units'] ??
                 holding['unitNumber'] ??
                 holding['quantity'] ??
                 '—')
             .toString();
+    final area = _squareFeet(holding);
+    final areaText = area > 0 ? _formatArea(area) : '—';
     final yieldVal =
         (holding['yield'] ??
                 holding['rentalYield'] ??
@@ -1053,83 +984,22 @@ class _InvestorPortfolioScreenState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Net return banner
-                        Container(
-                          padding: const EdgeInsets.all(18),
-                          decoration: BoxDecoration(
-                            color: (gains >= 0 ? _green : _amber).withValues(
-                              alpha: 0.1,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: (gains >= 0 ? _green : _amber).withValues(
-                                alpha: 0.25,
-                              ),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                gains >= 0
-                                    ? LucideIcons.trendingUp
-                                    : LucideIcons.trendingDown,
-                                size: 22,
-                                color: gains >= 0 ? _green : _amber,
-                              ),
-                              const SizedBox(width: 14),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'NET RETURN',
-                                      style: GoogleFonts.gelasio(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w700,
-                                        color: muted,
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      '${_hideAmounts ? '' : (gains >= 0 ? '+' : '-')}${_formatValue(gains.abs())}',
-                                      style: GoogleFonts.gelasio(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                        color: gains >= 0 ? _green : _amber,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Text(
-                                '${roi >= 0 ? '+' : ''}${roi.toStringAsFixed(1)}%',
-                                style: GoogleFonts.gelasio(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  color: gains >= 0 ? _green : _amber,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 24),
                         Row(
                           children: [
                             Expanded(
                               child: _SpecItem(
-                                icon: LucideIcons.wallet,
-                                label: 'INVESTED',
-                                value: _formatValue(invested),
+                                icon: LucideIcons.ruler,
+                                label: 'AREA',
+                                value: areaText,
                                 muted: muted,
                                 textPrimary: textPrimary,
                               ),
                             ),
                             Expanded(
                               child: _SpecItem(
-                                icon: LucideIcons.lineChart,
-                                label: 'CURRENT VALUE',
-                                value: _formatValue(current),
+                                icon: LucideIcons.percent,
+                                label: 'YIELD',
+                                value: yieldVal,
                                 muted: muted,
                                 textPrimary: textPrimary,
                               ),
@@ -1144,15 +1014,6 @@ class _InvestorPortfolioScreenState
                                 icon: LucideIcons.layers,
                                 label: 'UNITS / STAKE',
                                 value: units,
-                                muted: muted,
-                                textPrimary: textPrimary,
-                              ),
-                            ),
-                            Expanded(
-                              child: _SpecItem(
-                                icon: LucideIcons.percent,
-                                label: 'YIELD',
-                                value: yieldVal,
                                 muted: muted,
                                 textPrimary: textPrimary,
                               ),
@@ -1339,23 +1200,53 @@ class _InvestorPortfolioScreenState
     return 0;
   }
 
-  double _summaryNum(List<String> keys, {required double fallback}) {
-    final s = _summary;
-    if (s == null) return fallback;
-    final v = _num(s, keys);
-    return v > 0 ? v : fallback;
+  /// Square footage allotted to a stake. Stakes are denominated in area now;
+  /// amounts / market value / equity share are no longer recorded for them.
+  double _squareFeet(dynamic h) =>
+      _num(h, ['squareFeet', 'square_ft', 'sqft', 'areaSqft', 'area']);
+
+  /// Thousands-grouped square footage, e.g. `1,250 SQ FT`.
+  String _formatArea(double area) {
+    if (area <= 0) return '—';
+    return '${NumberFormat('#,##0').format(area)} SQ FT';
   }
 
-  /// Best-effort "current value" of a holding, falling back to invested amount.
-  double _holdingValue(dynamic h) {
-    final current = _num(h, [
-      'currentValue',
-      'marketValue',
-      'valuation',
-      'value',
-    ]);
-    if (current > 0) return current;
-    return _num(h, ['investedAmount', 'invested', 'amount', 'investment']);
+  // Yield is the only performance metric still supplied for stakes; when the
+  // server omits it there is nothing to show and the strip stays hidden.
+  String? get _avgYield {
+    final s = _summary;
+    if (s == null) return null;
+    final v = s['avgYield'] ?? s['averageYield'] ?? s['yield'];
+    if (v == null) return null;
+    final str = v.toString();
+    return str.isEmpty ? null : str;
+  }
+
+  /// Extracts the holdings list (and summary map, when present) from an
+  /// investor response envelope: a bare list, `{status, data}`, or
+  /// `data.holdings`-style nesting. A map-shaped payload without a list means
+  /// "nothing held" (empty list), not an error; null means the body was
+  /// unusable (`status: false` or no recognizable shape) so the caller can
+  /// fall back to the legacy endpoint.
+  ({List<dynamic>? holdings, Map<String, dynamic>? summary}) _parseHoldingsBody(
+    dynamic body,
+  ) {
+    if (body is List) return (holdings: body, summary: null);
+    if (body is Map) {
+      if (body['status'] == false) return (holdings: null, summary: null);
+      final dynamic data = body['data'] ?? body;
+      if (data is List) return (holdings: data, summary: null);
+      if (data is Map) {
+        final summary = Map<String, dynamic>.from(data);
+        final dynamic list =
+            data['holdings'] ??
+            data['investments'] ??
+            data['items'] ??
+            data['portfolio'];
+        return (holdings: list is List ? list : <dynamic>[], summary: summary);
+      }
+    }
+    return (holdings: null, summary: null);
   }
 
   String _projectName(dynamic h) {
@@ -1415,13 +1306,6 @@ class _InvestorPortfolioScreenState
       if (first is Map && first['url'] is String) return first['url'] as String;
     }
     return null;
-  }
-
-  String _formatValue(double value) {
-    // Hidden whatever the value, so even a zero isn't revealed.
-    if (_hideAmounts) return 'AED $kHiddenAmount';
-    if (value <= 0) return 'AED --';
-    return 'AED ${NumberFormat('#,##,###').format(value)}';
   }
 }
 
@@ -1516,65 +1400,22 @@ class _StatusPill extends StatelessWidget {
   }
 }
 
-class _RoiBadge extends StatelessWidget {
-  final double roi;
-  const _RoiBadge({required this.roi});
-
-  @override
-  Widget build(BuildContext context) {
-    final positive = roi >= 0;
-    final color = positive ? const Color(0xFF163A2C) : const Color(0xFFC5A35B);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.25)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            positive ? LucideIcons.trendingUp : LucideIcons.trendingDown,
-            size: 13,
-            color: color,
-          ),
-          const SizedBox(width: 6),
-          Text(
-            '${positive ? '+' : ''}${roi.toStringAsFixed(1)}% ROI',
-            style: GoogleFonts.inter(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: color,
-              letterSpacing: 0.3,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _DetailItem extends StatelessWidget {
   final String label;
   final String value;
   final Color muted;
   final Color textPrimary;
-  final bool alignEnd;
   const _DetailItem({
     required this.label,
     required this.value,
     required this.muted,
     required this.textPrimary,
-    this.alignEnd = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: alignEnd
-          ? CrossAxisAlignment.end
-          : CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
@@ -1588,7 +1429,6 @@ class _DetailItem extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           value.toUpperCase(),
-          textAlign: alignEnd ? TextAlign.right : TextAlign.left,
           style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w500,

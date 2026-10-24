@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/utils/external_link.dart';
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
+import 'package:m4_mobile/presentation/widgets/project_registration_form.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
@@ -1481,9 +1482,11 @@ class _GuestProjectDetailScreenState
                 const SizedBox(height: 32),
                 _buildConstructionSection(project),
                 const SizedBox(height: 32),
-                _buildPaymentPlansSection(),
+                // Registration form directly below Construction Progress
+                // (spec: Construction → Registration → Location).
+                _buildRegistrationSection(project),
                 const SizedBox(height: 32),
-                _buildInterestSection(project),
+                _buildPaymentPlansSection(),
                 const SizedBox(height: 32),
                 _buildLocationSection(project),
                 const SizedBox(height: 100),
@@ -1778,6 +1781,55 @@ class _GuestProjectDetailScreenState
         ),
       ],
     );
+  }
+
+  // Inline registration form below Construction Progress (shared widget with
+  // its own post-submit confirmation echoing the entered details).
+  Widget _buildRegistrationSection(dynamic project) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader('Registration'),
+          const SizedBox(height: 24),
+          ProjectRegistrationForm(
+            onSubmit: (data) => _submitRegistrationLead(data, project),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _submitRegistrationLead(
+    RegistrationFormData data,
+    dynamic project,
+  ) async {
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      String two(int v) => v.toString().padLeft(2, '0');
+      final dt = data.dateTime;
+      final title =
+          (_fullProject ?? widget.projectData)?['title'] ?? 'General';
+      final res = await apiClient.submitLead({
+        'name': data.name,
+        'phone': data.phone,
+        'email': data.email.isNotEmpty ? data.email : null,
+        'interest': data.visitType == 'Video Call' ? 'Video Call' : 'Site Visit',
+        'configuration': data.configuration,
+        'visitDate': '${dt.year}-${two(dt.month)}-${two(dt.day)}',
+        'visitTime':
+            '${dt.hour % 12 == 0 ? 12 : dt.hour % 12}:${two(dt.minute)} ${dt.hour < 12 ? 'AM' : 'PM'}',
+        if (data.notes.isNotEmpty) 'notes': data.notes,
+        'source': 'online',
+        if (widget.projectId.length == 24) 'projectId': widget.projectId,
+        'project': title,
+        'message': '${data.visitType} request for $title',
+      });
+      return res.data['status'] == true;
+    } catch (_) {
+      return false;
+    }
   }
 
   Widget _buildConstructionSection(dynamic project) {
@@ -2422,26 +2474,36 @@ class _OverviewActionCard extends StatelessWidget {
             ),
             Column(
               children: [
-                Text(
-                  label.toUpperCase(),
-                  style: GoogleFonts.gelasio(
-                    color: isDark ? Colors.white38 : const Color(0xFF155A4F),
-                    fontSize: 8,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.5,
+                // Scale-to-fit, never clip: the card is ~68dp wide at 320dp,
+                // too narrow for "COMPLETION" at a fixed 8px + tracking.
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label.toUpperCase(),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    style: GoogleFonts.gelasio(
+                      color: isDark ? Colors.white38 : const Color(0xFF155A4F),
+                      fontSize: 8,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.5,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: GoogleFonts.inter(
-                    color: isDark ? Colors.white : const Color(0xFF155A4F),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.2,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    value,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    style: GoogleFonts.inter(
+                      color: isDark ? Colors.white : const Color(0xFF155A4F),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.2,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ],
             ),

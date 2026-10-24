@@ -159,49 +159,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             stops: const [0.0, 0.5, 1.0],
           ),
         ),
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Web parity: serif "MY" (light) + "PORTFOLIO" (bold).
-            RichText(
-              text: TextSpan(
-                children: [
-                  // Web parity: dark `text-foreground`; MY (light) + PORTFOLIO (bold).
-                  TextSpan(
-                    text: 'ELITE ',
-                    style: GoogleFonts.gelasio(
-                      color: const Color(0xFF0C312B),
-                      fontSize: 30,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  TextSpan(
-                    text: 'PORTFOLIO',
-                    style: GoogleFonts.gelasio(
-                      color: _kPortfolioOrange,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                ],
-              ),
-            ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.2, end: 0),
-            Text(
-              'PERSONALISATION SUITE',
-              style: GoogleFonts.gelasio(
-                // Web parity: orange `text-primary`, readable on the light fade.
-                color: _kPortfolioOrange,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 3,
-              ),
-            ).animate().fadeIn(delay: 400.ms),
-          ],
-        ),
+        // Text overlay removed — the hero shows a clean image only.
       ),
     );
   }
@@ -738,7 +696,13 @@ class _UnitCard extends ConsumerWidget {
 
                 ref.read(customViewsBookingIdProvider.notifier).state =
                     bookingId;
-                ref.read(customViewsProjectProvider.notifier).state = project;
+                // The unit's OWN project (the id may also arrive under
+                // `project`); switching clears the previous project's rooms.
+                selectCustomViewsProject(
+                  ref,
+                  customViewsProjectIdOf(project ?? unit['project']),
+                );
+                ref.read(customViewsActiveSpaceProvider.notifier).state = null;
                 ref.read(customViewsUnitNumberProvider.notifier).state = unitNo
                     ?.toString();
                 ref.read(customViewsUnitProvider.notifier).state =
@@ -1326,7 +1290,11 @@ class _DetailDialog {
                                             ? booking['unitNumber']
                                             : null;
                                         final config = req['unitType'];
-                                        final project = req['project']?['_id'];
+                                        // `project` arrives populated or as
+                                        // the bare id.
+                                        final project = customViewsProjectIdOf(
+                                          req['project'],
+                                        );
 
                                         ref
                                                 .read(
@@ -1335,13 +1303,28 @@ class _DetailDialog {
                                                 )
                                                 .state =
                                             bId;
+                                        // Clears another project's rooms;
+                                        // this request's own values follow.
+                                        selectCustomViewsProject(ref, project);
                                         ref
                                                 .read(
-                                                  customViewsProjectProvider
+                                                  customViewsActiveSpaceProvider
                                                       .notifier,
                                                 )
                                                 .state =
-                                            project;
+                                            null;
+                                        ref
+                                            .read(
+                                              customViewsBlockProvider.notifier,
+                                            )
+                                            .state = req['block']
+                                            ?.toString();
+                                        ref
+                                            .read(
+                                              customViewsWingProvider.notifier,
+                                            )
+                                            .state = req['wing']
+                                            ?.toString();
                                         ref
                                             .read(
                                               customViewsUnitNumberProvider

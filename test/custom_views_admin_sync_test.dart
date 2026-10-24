@@ -48,6 +48,9 @@ class _FakeApi extends ApiClient {
   int optionCalls = 0;
   int unitConfigCalls = 0;
 
+  /// The projectId each options request asked for.
+  final optionProjects = <String?>[];
+
   Response _ok(String path, Object? data, [String? message]) => Response(
     requestOptions: RequestOptions(path: path),
     statusCode: 200,
@@ -61,8 +64,9 @@ class _FakeApi extends ApiClient {
   }
 
   @override
-  Future<Response> getCustomizationOptions() async {
+  Future<Response> getCustomizationOptions({String? projectId}) async {
     optionCalls++;
+    optionProjects.add(projectId);
     return _ok('/api/catalog/customization-options', options);
   }
 
@@ -164,6 +168,65 @@ void main() {
     });
   });
 
+  // PDF p12: a Clédor flat was opening with SKAI's rooms and finishes.
+  group('Custom Views stay within one project', () {
+    test('no project picked: no options are fetched at all', () async {
+      final api = _FakeApi();
+      final c = ProviderContainer(
+        overrides: [apiClientProvider.overrideWithValue(api)],
+      );
+      addTearDown(c.dispose);
+      expect(await c.read(customizationOptionsProvider.future), isEmpty);
+      expect(api.optionCalls, 0);
+    });
+
+    test('options are asked for the chosen project only', () async {
+      final api = _FakeApi();
+      final c = ProviderContainer(
+        overrides: [
+          apiClientProvider.overrideWithValue(api),
+          customViewsProjectProvider.overrideWith((ref) => 'skai'),
+        ],
+      );
+      addTearDown(c.dispose);
+      await c.read(customizationOptionsProvider.future);
+      expect(api.optionProjects, ['skai']);
+    });
+
+    test('a config is never shown for another project', () async {
+      final api = _FakeApi()
+        ..unitConfig = {
+          'categories': [
+            {
+              'title': 'Flooring',
+              'spaces': [
+                {'name': 'SKAI Lounge'},
+              ],
+            },
+          ],
+        };
+      final c = ProviderContainer(
+        overrides: [apiClientProvider.overrideWithValue(api)],
+      );
+      addTearDown(c.dispose);
+      c.read(customViewsProjectProvider.notifier).state = 'skai';
+      await c.read(customViewsConfigProvider.future);
+      expect(c.read(currentCustomViewsConfigProvider), isNotNull);
+
+      // Switch to Clédor: until ITS config arrives, nothing (not SKAI's).
+      c.read(customViewsProjectProvider.notifier).state = 'cledor';
+      expect(c.read(currentCustomViewsConfigProvider), isNull);
+      expect(c.read(customViewsConfigLoadingProvider), isTrue);
+    });
+
+    test('project ids are read from populated or bare project fields', () {
+      expect(customViewsProjectIdOf({'_id': 'p1', 'title': 'SKAI'}), 'p1');
+      expect(customViewsProjectIdOf('p2'), 'p2');
+      expect(customViewsProjectIdOf(''), isNull);
+      expect(customViewsProjectIdOf(null), isNull);
+    });
+  });
+
   group('wizard (customer)', () {
     Future<void> settle(WidgetTester tester) async {
       for (var i = 0; i < 5; i++) {
@@ -185,6 +248,9 @@ void main() {
               ],
             ),
             customViewsStepProvider.overrideWith((ref) => step),
+            // Rooms and finishes are per project (PDF p12): the wizard works
+            // on the project the user picked.
+            customViewsProjectProvider.overrideWith((ref) => 'p1'),
           ],
           child: const MaterialApp(home: CustomViewsScreen()),
         ),
@@ -198,6 +264,8 @@ void main() {
 
       // A first open fetches each source once, not twice.
       expect(api.configCalls, 1);
+      // Options are only ever asked for the chosen project.
+      expect(api.optionProjects, everyElement('p1'));
 
       expect(
         find.text('EXQUISITE SELECTION ONLY FOR DISCERNING FEW'),

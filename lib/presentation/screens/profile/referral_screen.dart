@@ -19,11 +19,13 @@ class ReferralScreen extends ConsumerStatefulWidget {
 }
 
 class _ReferralScreenState extends ConsumerState<ReferralScreen> {
-  // Same closed-set the investor referral screen uses, so both portals agree
-  // on what "CLOSED" means.
+  // Same closed-set the investor referral screens use, so all portals agree
+  // on what "CLOSED" means. REWARDED is the terminal state the admin moves a
+  // referral to after assigning points; CREDITED is its legacy name.
   static const _closedStatuses = {
     'CLOSED',
     'CREDITED',
+    'REWARDED',
     'BOOKING_DONE',
     'Booked',
   };
@@ -69,6 +71,13 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
 
   bool _isClosed(dynamic r) =>
       _closedStatuses.contains((r is Map ? r['status'] : null)?.toString());
+
+  // Referral points are assigned by the admin only, so a referral has
+  // actually paid out only once it reached REWARDED (or the legacy CREDITED).
+  bool _isRewarded(dynamic r) {
+    final s = (r is Map ? r['status'] : null)?.toString();
+    return s == 'REWARDED' || s == 'CREDITED';
+  }
 
   List<dynamic> get _activeReferrals =>
       _referrals.where((r) => !_isClosed(r)).toList();
@@ -569,6 +578,11 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     final name = lead['referralName'] ?? lead['clientName'] ?? 'REFERRAL LEAD';
     final project = lead['projectName'] ?? 'GENERAL SELECTION';
     final points = lead['pointsEarned'] ?? 0;
+    // The admin assigns points after a referral closes, so a closed lead that
+    // is not rewarded yet has earned nothing — its estimate must not read as
+    // credited points.
+    final rewarded = _isRewarded(lead);
+    final rewardPending = _isClosed(lead) && !rewarded;
 
     final theme = Theme.of(context);
     final foreground = theme.colorScheme.onSurface;
@@ -618,16 +632,25 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.05),
+                    // Rewarded referrals get a distinct green chip (CREDITED
+                    // normalises to the same label); everything else keeps the
+                    // primary-tinted chip.
+                    color: rewarded
+                        ? const Color(0xFF163A2C).withValues(alpha: 0.08)
+                        : theme.colorScheme.primary.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: theme.colorScheme.primary.withOpacity(0.2),
+                      color: rewarded
+                          ? const Color(0xFF163A2C).withValues(alpha: 0.25)
+                          : theme.colorScheme.primary.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Text(
-                    status,
+                    rewarded ? 'REWARDED' : status,
                     style: GoogleFonts.inter(
-                      color: theme.colorScheme.primary,
+                      color: rewarded
+                          ? const Color(0xFF163A2C)
+                          : theme.colorScheme.primary,
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
                     ),
@@ -647,18 +670,26 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 Text(
                   'EST. REWARD',
                   style: GoogleFonts.inter(
-                    color: foreground.withOpacity(0.72),
+                    color: rewardPending
+                        ? foreground.withValues(alpha: 0.4)
+                        : foreground.withValues(alpha: 0.72),
                     fontSize: 9,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1,
                   ),
                 ),
                 Text(
-                  '${NumberFormat('#,###').format(points)} PTS',
+                  // Closed-but-not-rewarded leads show a muted placeholder
+                  // instead of the estimate — open leads keep the estimate.
+                  rewardPending
+                      ? 'REWARD PENDING'
+                      : '${NumberFormat('#,###').format(points)} PTS',
                   style: GoogleFonts.inter(
                     // Was the gold accent — plain green ink, matching the rest
                     // of the palette.
-                    color: foreground,
+                    color: rewardPending
+                        ? foreground.withValues(alpha: 0.4)
+                        : foreground,
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     fontStyle: FontStyle.italic,
@@ -727,7 +758,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
         ? DateTime.parse(txn['createdAt'].toString())
         : DateTime.now();
     final amount = _txnAmount(txn);
-    final status = (txn['status'] ?? 'Completed').toString().toUpperCase();
+    // No server-provided status means there is nothing to claim — hide the
+    // line rather than defaulting to "Completed" (points are admin-assigned,
+    // so an unlabelled transaction is not necessarily complete).
+    final status = (txn['status'] ?? '').toString().toUpperCase();
     final isRedemption = type == 'REDEMPTION' || type == 'WITHDRAWAL';
 
     final theme = Theme.of(context);
@@ -787,15 +821,16 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
-                'STATUS: $status',
-                maxLines: 1,
-                style: GoogleFonts.inter(
-                  color: foreground.withOpacity(0.72),
-                  fontSize: 9,
-                  fontWeight: FontWeight.w600,
+              if (status.isNotEmpty)
+                Text(
+                  'STATUS: $status',
+                  maxLines: 1,
+                  style: GoogleFonts.inter(
+                    color: foreground.withValues(alpha: 0.72),
+                    fontSize: 9,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
             ],
           ),
         ],

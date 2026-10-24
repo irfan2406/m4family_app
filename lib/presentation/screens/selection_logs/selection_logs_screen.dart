@@ -789,10 +789,12 @@ class _LogDetailDialog extends ConsumerWidget {
                           'MODIFY SPECS',
                           onTap: () {
                             // Pre-load state for edit mode
-                            final project = log['project'];
-                            final projectId = project is Map
-                                ? project['_id']?.toString()
-                                : null;
+                            // `project` arrives populated or as the bare id;
+                            // a bare id used to be dropped here, which loaded
+                            // every project's finishes into this flat.
+                            final projectId = customViewsProjectIdOf(
+                              log['project'],
+                            );
                             final unitType =
                                 log['unitType']?.toString() ?? '3 BHK';
                             final unitNumber = log['unitNumber']?.toString();
@@ -803,10 +805,19 @@ class _LogDetailDialog extends ConsumerWidget {
                             final space = log['space']?.toString();
 
                             // Update providers
+                            // Clears another project's rooms; this log's own
+                            // values follow.
+                            selectCustomViewsProject(ref, projectId);
                             ref
-                                    .read(customViewsProjectProvider.notifier)
+                                    .read(
+                                      customViewsActiveSpaceProvider.notifier,
+                                    )
                                     .state =
-                                projectId;
+                                null;
+                            ref.read(customViewsBlockProvider.notifier).state =
+                                log['block']?.toString();
+                            ref.read(customViewsWingProvider.notifier).state =
+                                log['wing']?.toString();
                             ref.read(customViewsUnitProvider.notifier).state =
                                 unitType;
                             ref

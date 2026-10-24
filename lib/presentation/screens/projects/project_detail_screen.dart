@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/utils/external_link.dart';
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
+import 'package:m4_mobile/presentation/widgets/project_registration_form.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/core/utils/media_url.dart';
@@ -1587,6 +1588,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       const SizedBox(height: 40),
                       _buildConstructionSection(project),
                       const SizedBox(height: 40),
+                      // Registration form directly below Construction Progress
+                      // (spec: Construction → Registration → Location).
+                      _buildRegistrationSection(project),
+                      const SizedBox(height: 40),
                       // Web parity: no standalone Documents section here.
                       _buildLocationSection(project),
                     ],
@@ -1965,6 +1970,50 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             ?.toString()
             .trim() ??
         '';
+  }
+
+  // Inline registration form below Construction Progress (shared widget, with
+  // its own post-submit confirmation that echoes the entered details).
+  Widget _buildRegistrationSection(dynamic project) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader('Registration'),
+        const SizedBox(height: 24),
+        ProjectRegistrationForm(
+          onSubmit: (data) => _submitRegistrationLead(data, project),
+        ),
+      ],
+    );
+  }
+
+  Future<bool> _submitRegistrationLead(
+    RegistrationFormData data,
+    dynamic project,
+  ) async {
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      String two(int v) => v.toString().padLeft(2, '0');
+      final dt = data.dateTime;
+      final res = await apiClient.submitLead({
+        'name': data.name,
+        'phone': data.phone,
+        'email': data.email.isNotEmpty ? data.email : null,
+        'interest': data.visitType == 'Video Call' ? 'Video Call' : 'Site Visit',
+        'configuration': data.configuration,
+        'source': 'online',
+        if (widget.projectId.length == 24) 'projectId': widget.projectId,
+        'project': project?['title'] ?? 'General',
+        'visitDate': '${dt.year}-${two(dt.month)}-${two(dt.day)}',
+        'visitTime': _formatInquiryDateTime(dt),
+        'message': data.notes.isNotEmpty
+            ? data.notes
+            : '${data.visitType} request for project ${project?['title']}',
+      });
+      return res.data['status'] == true;
+    } catch (_) {
+      return false;
+    }
   }
 
   Widget _buildConstructionSection(dynamic project) {
@@ -2819,16 +2868,20 @@ class _OverviewActionCard extends StatelessWidget {
             ),
             Column(
               children: [
-                Text(
-                  label.toUpperCase(),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.gelasio(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white70 : const Color(0xFF155A4F),
-                    letterSpacing: 1.2,
+                // Scale-to-fit, never clip: at 320dp the card is ~68dp wide,
+                // too narrow for "COMPLETION" at a fixed 9px.
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label.toUpperCase(),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    style: GoogleFonts.gelasio(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? Colors.white70 : const Color(0xFF155A4F),
+                      letterSpacing: 1.2,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 4),

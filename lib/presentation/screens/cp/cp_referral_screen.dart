@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -57,6 +58,51 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
   String _name(dynamic r) =>
       (r['referralName'] ?? r['clientName'] ?? '').toString();
   String _status(dynamic r) => (r['status'] ?? 'Pending').toString();
+
+  /// Points come from the admin only (PDF): a referral that is CLOSED or
+  /// BOOKING_DONE waits for the admin to assign its points, then becomes
+  /// REWARDED. Until then the badge reads "REWARD PENDING".
+  static const _awaitingReward = {
+    'CLOSED',
+    'BOOKING_DONE',
+    'BOOKED',
+    'CONVERTED',
+  };
+
+  /// REWARDED (CREDITED is the old name for it).
+  bool _isRewarded(String status) {
+    final s = status.trim().toUpperCase();
+    return s == 'REWARDED' || s == 'CREDITED';
+  }
+
+  /// The points the admin assigned, or 0 when not sent. Accepts a number or
+  /// a numeric string ("1,500").
+  int _rewardPoints(dynamic r) {
+    final v = r['pointsEarned'] ?? r['rewardAmount'] ?? r['points'];
+    if (v is num) return v.toInt();
+    return int.tryParse(
+          (v ?? '').toString().replaceAll(RegExp(r'[^0-9]'), ''),
+        ) ??
+        0;
+  }
+
+  /// The badge text: REWARD PENDING while the admin has not assigned points,
+  /// REWARDED (with the points when sent) once they have, otherwise the
+  /// lead's own status.
+  String _badgeText(dynamic r) {
+    final status = _status(r);
+    if (_isRewarded(status)) {
+      final pts = _rewardPoints(r);
+      return pts > 0
+          ? 'REWARDED · +${NumberFormat('#,##0').format(pts)} PTS'
+          : 'REWARDED';
+    }
+    if (_awaitingReward.contains(status.trim().toUpperCase())) {
+      return 'REWARD PENDING';
+    }
+    return status.toUpperCase();
+  }
+
   String _project(dynamic r) {
     final pid = r['projectId'];
     if (pid is Map) return pid['title']?.toString() ?? '';
@@ -446,7 +492,9 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
 
   Widget _buildReferralCard(dynamic r, ColorScheme scheme, bool isDark) {
     final name = _name(r);
-    final status = _status(r);
+    final badge = _badgeText(r);
+    // Highlighted once the admin has rewarded it.
+    final highlight = _isRewarded(_status(r));
     final project = _project(r);
 
     return Container(
@@ -508,7 +556,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: status == 'CONVERTED'
+              color: highlight
                   ? scheme.primary.withValues(alpha: 0.1)
                   : scheme.onSurface.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(8),
@@ -517,12 +565,12 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
               ),
             ),
             child: Text(
-              status.toUpperCase(),
+              badge,
               style: GoogleFonts.inter(
                 fontSize: 8,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1,
-                color: status == 'CONVERTED'
+                color: highlight
                     ? scheme.primary
                     : scheme.onSurface.withValues(alpha: 0.68),
               ),

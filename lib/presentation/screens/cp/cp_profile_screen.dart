@@ -20,11 +20,12 @@ class CpProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
-  static const _defaultAvatar =
-      'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=200&q=80';
-
   bool _loading = true;
   Map<String, dynamic>? _me;
+
+  /// The partner's team (GET /api/cp/employees), shown on the profile.
+  /// Null until loaded (or when it could not be).
+  List<dynamic>? _employees;
 
   @override
   void initState() {
@@ -47,6 +48,21 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
       debugPrint('CP profile /auth/me: $e');
     }
     if (mounted) setState(() => _loading = false);
+    _fetchEmployees();
+  }
+
+  Future<void> _fetchEmployees() async {
+    try {
+      final res = await ref.read(apiClientProvider).getCpEmployees();
+      final body = res.data;
+      if (body is Map && body['status'] == true && body['data'] is List) {
+        if (mounted) {
+          setState(() => _employees = List<dynamic>.from(body['data']));
+        }
+      }
+    } catch (e) {
+      debugPrint('CP profile /cp/employees: $e');
+    }
   }
 
   Map<String, dynamic> _effectiveUser() {
@@ -74,10 +90,41 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
     return 'Partner';
   }
 
+  /// The firm's logo — the partner account's uploaded picture (`avatar` /
+  /// `avatarUrl`, the same field the website's partner profile shows). Empty
+  /// when none is uploaded: the card then shows the firm's initials, never a
+  /// stock photo of a stranger.
   String _avatarUrl(Map<String, dynamic> u) {
     final raw = u['avatar'] ?? u['avatarUrl'];
-    if (raw == null || raw.toString().isEmpty) return _defaultAvatar;
+    if (raw == null || raw.toString().trim().isEmpty) return '';
     return ref.read(apiClientProvider).resolveUrl(raw.toString());
+  }
+
+  /// "3 employees · Rahul, Priya, Amit +1" — or "No employees added yet".
+  static String _teamSummary(List<dynamic> employees) {
+    final names = [
+      for (final e in employees)
+        if (e is Map && (e['name'] ?? '').toString().trim().isNotEmpty)
+          (e['name'] as Object).toString().trim(),
+    ];
+    final n = employees.length;
+    if (n == 0) return 'No employees added yet';
+    final count = '$n employee${n == 1 ? '' : 's'}';
+    if (names.isEmpty) return count;
+    final shown = names.take(3).join(', ');
+    final more = names.length > 3 ? ' +${names.length - 3}' : '';
+    return '$count · $shown$more';
+  }
+
+  /// Up to two initials of the firm (or the partner's name).
+  static String _initials(String text) {
+    final words = text
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty && RegExp(r'[A-Za-z0-9]').hasMatch(w[0]))
+        .toList();
+    if (words.isEmpty) return 'M4';
+    return words.take(2).map((w) => w[0].toUpperCase()).join();
   }
 
   String? _bornLine(Map<String, dynamic> u) {
@@ -228,7 +275,11 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                   const SizedBox(height: 12),
                   _teamAccessRow(
                     context,
-                    onTap: () => context.push('/cp/profile/employees'),
+                    // Re-read the team on return, so adds/removes show here.
+                    onTap: () async {
+                      await context.push('/cp/profile/employees');
+                      if (mounted) _fetchEmployees();
+                    },
                     scheme: scheme,
                   ),
                   const SizedBox(height: 28),
@@ -269,7 +320,9 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         context,
                         label: 'Tracker',
                         icon: LucideIcons.clipboardList,
-                        onTap: () => context.push('/cp/visits'),
+                        // Was '/cp/visits' — duplicated the Visit tile; the
+                        // deck (p11) wants a shortcut to the CP Tracker.
+                        onTap: () => context.push('/cp/tracker'),
                         scheme: scheme,
                       ),
                       _serviceTile(
@@ -431,7 +484,25 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         ),
                       ),
                       child: ClipOval(
-                        child: CachedNetworkImage(
+                        // No logo uploaded: the firm's initials, not a photo.
+                        child: avatarUrl.isEmpty
+                            ? Container(
+                                color: const Color(0xFF0C312B),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  _initials(
+                                    (firm != null && firm.isNotEmpty)
+                                        ? firm
+                                        : name,
+                                  ),
+                                  style: GoogleFonts.gelasio(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFFF4EFE3),
+                                  ),
+                                ),
+                              )
+                            : CachedNetworkImage(
                           imageUrl: avatarUrl,
                           fit: BoxFit.cover,
                           alignment: Alignment.center,
@@ -624,20 +695,23 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  // Flexed: the label gives way rather than pushing the column
-                  // past the cell if a label wraps or the font scale grows.
+                  // One line that shrinks to fit the cell: wrapping broke
+                  // "BOOKING" mid-word at large text and the cell (sized for
+                  // one line) clipped the second line of "BOOK VISIT".
                   Flexible(
-                    child: Text(
-                      label.toUpperCase(),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.w600,
-                        color: scheme.onSurface,
-                        letterSpacing: 1.2,
-                        height: 1.15,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        label.toUpperCase(),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        style: GoogleFonts.inter(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w600,
+                          color: scheme.onSurface,
+                          letterSpacing: 1.2,
+                          height: 1.15,
+                        ),
                       ),
                     ),
                   ),
@@ -692,15 +766,35 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
               ),
               const SizedBox(width: 14),
               Expanded(
-                child: Text(
-                  'EMPLOYEE MANAGEMENT',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: scheme.onSurface,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'EMPLOYEE MANAGEMENT',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: scheme.onSurface,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    // The partner's team at a glance: count + first names.
+                    if (_employees != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        _teamSummary(_employees!),
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ],
                 ),
               ),
               Icon(
