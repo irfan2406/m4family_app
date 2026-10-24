@@ -87,4 +87,50 @@ void main() {
     expect(result!.isBefore(floor), isFalse);
     expect(result, floor);
   });
+
+  testWidgets('date-only mode (Family Date of Birth) has no time wheels', (
+    tester,
+  ) async {
+    DateTime? result;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (ctx) => Scaffold(
+            body: Center(
+              child: ElevatedButton(
+                onPressed: () async => result = await showM4DateTimeSheet(
+                  ctx,
+                  initial: DateTime(2000, 10, 24),
+                  maxDate: DateTime(2026, 10, 24),
+                  showTime: false,
+                  title: 'SELECT DATE',
+                ),
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('SELECT DATE'), findsOneWidget);
+    expect(find.text('SELECT DATE & TIME'), findsNothing);
+    // No hour:minute colon, no AM/PM column.
+    expect(find.text(':'), findsNothing);
+    expect(find.text('AM'), findsNothing);
+    expect(find.text('PM'), findsNothing);
+    // The date wheels are all there.
+    expect(find.text('OCT'), findsOneWidget);
+    expect(find.text('2000'), findsOneWidget);
+
+    await tester.tap(find.text('CONFIRM'));
+    await tester.pumpAndSettle();
+    expect(result, isNotNull);
+    expect(
+      [result!.year, result!.month, result!.day],
+      [2000, 10, 24],
+    );
+  });
 }

@@ -279,6 +279,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                 ctx,
                 initial: initial,
                 maxDate: DateTime(now.year, now.month, now.day),
+                // A birthday has no time of day: date wheels only.
+                showTime: false,
+                title: 'SELECT DATE',
               );
               if (picked != null) {
                 setDialogState(
